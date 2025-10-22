@@ -56,6 +56,7 @@ import { Geometry } from "../math/geometry.js";
 import { Type } from "../utils/type.js";
 import { Env } from "../utils/env.js";
 
+
 /**
  * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
  * actually does not render anything. This is up to the {@link JXG.SVGRenderer}* and {@link JXG.CanvasRenderer}
@@ -89,7 +90,7 @@ import { Env } from "../utils/env.js";
  * @see JXG.SVGRenderer
  * @see JXG.CanvasRenderer
  */
-export class AbstractRenderer {
+export abstract class AbstractRenderer {
     // WHY THIS IS A CLASS INSTEAD OF A SINGLETON OBJECT:
     //
     // The renderers need to keep track of some stuff which is not always the same on different boards,
@@ -881,18 +882,6 @@ export class AbstractRenderer {
         return this;
     }
 
-    /**
-     * Update the line endings (linecap) of a straight line from its attribute
-     * 'linecap'.
-     * Possible values for the attribute 'linecap' are: 'butt', 'round', 'square'.
-     * The default value is 'butt'. Not available for VML renderer.
-     *
-     * @param {JXG.Line} element A arbitrary line.
-     * @see Line
-     * @see JXG.Line
-     * @see JXG.AbstractRenderer#updateLine
-     */
-    setLineCap(el) { /* stub */ }
 
     /* ********* Ticks related stuff *********** */
 
@@ -913,17 +902,6 @@ export class AbstractRenderer {
         this.appendNodesToElement(el, "path");
     }
 
-    /**
-     * Update {@link Ticks} on a {@link JXG.Line}. This method is only a stub and has to be implemented
-     * in any descendant renderer class.
-     * @param {JXG.Ticks} el Reference of a ticks object that has to be updated.
-     * @see Line
-     * @see Ticks
-     * @see JXG.Line
-     * @see JXG.Ticks
-     * @see JXG.AbstractRenderer#drawTicks
-     */
-    updateTicks(el) { /* stub */ }
 
     /* ********* Circle related stuff *********** */
 
@@ -1006,49 +984,9 @@ export class AbstractRenderer {
 
     /* ********* Text related stuff *********** */
 
-    /**
-     * Shows a small copyright notice in the top left corner of the board.
-     * @param {String} str The copyright notice itself
-     * @param {Number} fontsize Size of the font the copyright notice is written in
-     * @see JXG.AbstractRenderer#displayLogo
-     * @see Text#fontSize
-     */
-    displayCopyright(str, fontsize) { /* stub */ }
 
-    /**
-     * Shows a small JSXGraph logo in the top left corner of the board.
-     * @param {String} str The data-URL of the logo
-     * @param {Number} fontsize Size of the font the copyright notice is written in
-     * @see JXG.AbstractRenderer#displayCopyright
-     * @see Text#fontSize
-     */
-    displayLogo(str, fontsize) { /* stub */ }
 
-    /**
-     * An internal text is a {@link JXG.Text} element which is drawn using only
-     * the given renderer but no HTML. This method is only a stub, the drawing
-     * is done in the special renderers.
-     * @param {JXG.Text} el Reference to a {@link JXG.Text} object
-     * @see Text
-     * @see JXG.Text
-     * @see JXG.AbstractRenderer#updateInternalText
-     * @see JXG.AbstractRenderer#drawText
-     * @see JXG.AbstractRenderer#updateText
-     * @see JXG.AbstractRenderer#updateTextStyle
-     */
-    drawInternalText(el) { /* stub */ }
 
-    /**
-     * Updates visual properties of an already existing {@link JXG.Text} element.
-     * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
-     * @see Text
-     * @see JXG.Text
-     * @see JXG.AbstractRenderer#drawInternalText
-     * @see JXG.AbstractRenderer#drawText
-     * @see JXG.AbstractRenderer#updateText
-     * @see JXG.AbstractRenderer#updateTextStyle
-     */
-    updateInternalText(el) { /* stub */ }
 
     /**
      * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
@@ -1470,29 +1408,20 @@ export class AbstractRenderer {
         return this;
     }
 
-    /**
-     * Set color and opacity of internal texts.
-     * This method is used for Canvas and VML.
-     * SVG needs its own version.
-     * @private
-     * @see JXG.AbstractRenderer#updateTextStyle
-     * @see JXG.SVGRenderer#updateInternalTextStyle
-     */
-    updateInternalTextStyle(el, strokeColor, strokeOpacity) {
-        this.setObjectStrokeColor(el, strokeColor, strokeOpacity);
-    }
+    // /**
+    //  * Set color and opacity of internal texts.
+    //  * This method is used for Canvas and VML.
+    //  * SVG needs its own version.
+    //  * @private
+    //  * @see JXG.AbstractRenderer#updateTextStyle
+    //  * @see JXG.SVGRenderer#updateInternalTextStyle
+    //  */
+    // updateInternalTextStyle(el, strokeColor, strokeOpacity) {
+    //     this.setObjectStrokeColor(el, strokeColor, strokeOpacity);
+    // }
 
     /* ********* Image related stuff *********** */
 
-    /**
-     * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special
-     * renderers.
-     * @param {JXG.Image} el Reference to the image object that is to be drawn
-     * @see Image
-     * @see JXG.Image
-     * @see JXG.AbstractRenderer#updateImage
-     */
-    drawImage(el) { /* stub */ }
 
     /**
      * Updates the properties of an {@link JXG.Image} element.
@@ -1556,25 +1485,7 @@ export class AbstractRenderer {
         return m;
     }
 
-    /**
-     * Applies transformations on images and text elements. This method has to implemented in
-     * all descendant classes where text and image transformations are to be supported.
-     * <p>
-     * Only affine transformation are supported, no proper projective transformations. This means, the
-     * respective entries of the transformation matrix are simply ignored.
-     *
-     * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
-     * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
-     * transformations property of the given element <tt>el</tt>.
-     */
-    transformRect(el, transformations) { /* stub */ }
 
-    /**
-     * If the URL of the image is provided by a function the URL has to be updated during updateImage()
-     * @param {JXG.Image} el Reference to an image object.
-     * @see JXG.AbstractRenderer#updateImage
-     */
-    updateImageURL(el) { /* stub */ }
 
     /**
      * Updates CSS style properties of a {@link JXG.Image} node.
@@ -1596,164 +1507,25 @@ export class AbstractRenderer {
         );
     }
 
-    drawForeignObject(el) { /* stub */ }
-
-    updateForeignObject(el) {
-        /* stub */
-    }
-
     /* ********* Render primitive objects *********** */
 
-    /**
-     * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
-     * in all renderers that want to use the <tt>createPrim</tt> model to draw.
-     * @param {Node} node A DOM tree node.
-     * @param {Number} level The layer the node is attached to. This is the index of the layer in
-     * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in SVGRenderer.
-     */
-    appendChildPrim(node, level) { /* stub */ }
 
-    /**
-     * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
-     * the <tt>createPrim</tt> method.
-     * @param {JXG.GeometryElement} el A JSXGraph element.
-     * @param {String} type The XML node name. Only used in VMLRenderer.
-     */
-    appendNodesToElement(el, type) { /* stub */ }
 
-    /**
-     * Creates a node of a given type with a given id.
-     * @param {String} type The type of the node to create.
-     * @param {String} id Set the id attribute to this.
-     * @returns {Node} Reference to the created node.
-     */
-    createPrim(type, id) { /* stub */ return null; }
 
-    /**
-     * Removes an element node. Just a stub.
-     * @param {Node} node The node to remove.
-     */
-    remove(node) { /* stub */ }
 
-    /**
-     * Can be used to create the nodes to display arrows. This is an abstract method which has to be implemented
-     * in any descendant renderer.
-     * @param {JXG.GeometryElement} el The element the arrows are to be attached to.
-     * @param {Object} arrowData Data concerning possible arrow heads
-     *
-     */
-    makeArrows(el, arrowData) { /* stub */ }
 
-    /**
-     * Updates width of an arrow DOM node. Used in
-     * @param {Node} node The arrow node.
-     * @param {Number} width
-     * @param {Node} parentNode Used in IE only
-     */
-    _setArrowWidth(node, width, parentNode) { /* stub */ }
 
-    /**
-     * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
-     * that use the <tt>createPrim</tt> method.
-     * @param {Node} node Reference to the node.
-     * @param {Number} x Centre X coordinate
-     * @param {Number} y Centre Y coordinate
-     * @param {Number} rx The x-axis radius.
-     * @param {Number} ry The y-axis radius.
-     */
-    updateEllipsePrim(node, x, y, rx, ry) { /* stub */ }
 
-    /**
-     * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
-     * the <tt>createPrim</tt> method.
-     * @param {Node} node The node to be refreshed.
-     * @param {Number} p1x The first point's x coordinate.
-     * @param {Number} p1y The first point's y coordinate.
-     * @param {Number} p2x The second point's x coordinate.
-     * @param {Number} p2y The second point's y coordinate.
-     * @param {JXG.Board} board
-     */
-    updateLinePrim(node, p1x, p1y, p2x, p2y, board) { /* stub */ }
 
-    /**
-     * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
-     * the <tt>createPrim</tt> method.
-     * @param {Node} node The path node.
-     * @param {String} pathString A string formatted like e.g. <em>'M 1,2 L 3,1 L5,5'</em>. The format of the string
-     * depends on the rendering engine.
-     * @param {JXG.Board} board Reference to the element's board.
-     */
-    updatePathPrim(node, pathString, board) { /* stub */ }
 
-    /**
-     * Builds a path data string to draw a point with a face other than <em>rect</em> and <em>circle</em>. Since
-     * the format of such a string usually depends on the renderer this method
-     * is only an abstract method. Therefore, it has to be implemented in the descendant renderer itself unless
-     * the renderer does not use the createPrim interface but the draw* interfaces to paint.
-     * @param {JXG.Point} el The point element
-     * @param {Number} size A positive number describing the size. Usually the half of the width and height of
-     * the drawn point.
-     * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-     * each possible face: <tt>x, +, |, -, [], <>, <<>>,^, v, >, < </tt>
-     */
-    updatePathStringPoint(el, size, type) { /* stub */ }
 
-    /**
-     * Builds a path data string from a {@link JXG.Curve} element. Since the path data strings heavily depend on the
-     * underlying rendering technique this method is just a stub. Although such a path string is of no use for the
-     * CanvasRenderer, this method is used there to draw a path directly.
-     * @param {JXG.GeometryElement} el
-     */
-    updatePathStringPrim(el) { /* stub */ }
 
-    /**
-     * Builds a path data string from a {@link JXG.Curve} element such that the curve looks like hand drawn. Since
-     * the path data strings heavily depend on the underlying rendering technique this method is just a stub.
-     * Although such a path string is of no use for the CanvasRenderer, this method is used there to draw a path
-     * directly.
-     * @param  {JXG.GeometryElement} el
-     */
-    updatePathStringBezierPrim(el) { /* stub */ }
 
-    /**
-     * Update a polygon primitive.
-     * @param {Node} node
-     * @param {JXG.Polygon} el A JSXGraph element of type {@link JXG.Polygon}
-     */
-    updatePolygonPrim(node, el) { /* stub */ }
 
-    /**
-     * Update a rectangle primitive. This is used only for points with face of type 'rect'.
-     * @param {Node} node The node yearning to be updated.
-     * @param {Number} x x coordinate of the top left vertex.
-     * @param {Number} y y coordinate of the top left vertex.
-     * @param {Number} w Width of the rectangle.
-     * @param {Number} h The rectangle's height.
-     */
-    updateRectPrim(node, x, y, w, h) { /* stub */ }
+
 
     /* ********* Set attributes *********** */
 
-    /**
-     * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
-     * @param {JXG.GeometryElement} el Reference to the object that has to appear.
-     * @param {Boolean} value true to show the element, false to hide the element.
-     */
-    display(el, value) {
-        if (el) {
-            el.visPropOld.visible = value;
-        }
-    }
-
-    /**
-     * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
-     *
-     * Please use JXG.AbstractRenderer#display instead
-     * @param {JXG.GeometryElement} el Reference to the geometry element that has to disappear.
-     * @see JXG.AbstractRenderer#show
-     * @deprecated
-     */
-    hide(el) { /* stub */ }
 
     /**
      * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
@@ -1882,44 +1654,6 @@ export class AbstractRenderer {
         }
     }
 
-    /**
-     * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
-     * properties "enabled", "label", and "live". Additionally, all available properties from
-     * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
-     * <p>
-     * In JSXGraph, the available properties are used without the leading 'aria-'.
-     * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
-     * HTML attribute 'aria-label'.
-     *
-     * @param {JXG.GeometryElement} el Reference of the object that wants new
-     *        ARIA attributes.
-     */
-    setARIA(el) { /* stub */ }
-
-    /**
-     * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other
-     * browsers. Although this feature is only supported by SVG we have this method in {@link JXG.AbstractRenderer}
-     * because it is called from outside the renderer.
-     * @param {Node} node The SVG DOM Node which buffering type to update.
-     * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
-     *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
-     */
-    setBuffering(node, type) { /* stub */ }
-
-    /**
-     * Sets CSS classes for elements (relevant for SVG only).
-     *
-     * @param {JXG.GeometryElement} el Reference of the object that wants a
-     *         new set of CSS classes.
-     * @param {String} cssClass String containing a space separated list of CSS classes.
-     */
-    setCssClass(el, cssClass) { /* stub */ }
-
-    /**
-     * Sets an element's dash style.
-     * @param {JXG.GeometryElement} el An JSXGraph element.
-     */
-    setDashStyle(el) { /* stub */ }
 
     /**
      * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards
@@ -1946,113 +1680,6 @@ export class AbstractRenderer {
             this.setObjectStrokeWidth(el, el.board.options.elements.draft.strokeWidth);
         }
     }
-
-    /**
-     * Sets up nodes for rendering a gradient fill.
-     * @param {JXG.GeometryElement}  el Reference of the object which gets the gradient
-     */
-    setGradient(el) { /* stub */ }
-
-    /**
-     * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
-     * Does not work dynamically, i.e. if level is a function.
-     *
-     * @param {JXG.GeometryElement} el Element which is put into different layer
-     * @param {Number} value Layer number
-     * @private
-     */
-    setLayer(el, level) { /* stub */ }
-
-    /**
-     * Sets an objects fill color.
-     * @param {JXG.GeometryElement} el Reference of the object that wants a new fill color.
-     * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose
-     * 'none'.
-     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
-     */
-    setObjectFillColor(el, color, opacity) { /* stub */ }
-
-    /**
-     * Changes an objects stroke color to the given color.
-     * @param {JXG.GeometryElement} el Reference of the {@link JXG.GeometryElement} that gets a new stroke
-     * color.
-     * @param {String} color Color value in a HTML compatible format, e.g. <strong>#00ff00</strong> or
-     * <strong>green</strong> for green.
-     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
-     */
-    setObjectStrokeColor(el, color, opacity) { /* stub */ }
-
-    /**
-     * Sets an element's stroke width.
-     * @param {JXG.GeometryElement} el Reference to the geometry element.
-     * @param {Number} width The new stroke width to be assigned to the element.
-     */
-    setObjectStrokeWidth(el, width) { /* stub */ }
-
-    /**
-     * Sets the transition duration (in milliseconds) for fill color and stroke
-     * color and opacity.
-     * @param {JXG.GeometryElement} el Reference of the object that wants a
-     *         new transition duration.
-     * @param {Number} duration (Optional) duration in milliseconds. If not given,
-     *        element.visProp.transitionDuration is taken. This is the default.
-     */
-    setObjectTransition(el, duration) { /* stub */ }
-
-    /**
-     * Sets a node's attribute.
-     * @param {Node} node The node that is to be updated.
-     * @param {String} key Name of the attribute.
-     * @param {String} val New value for the attribute.
-     */
-    setPropertyPrim(node, key, val) { /* stub */ }
-
-    /**
-     * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual
-     * renderers.
-     * @param {JXG.GeometryElement} el Reference to a geometry object, that should get a shadow
-     */
-    setShadow(el) { /* stub */ }
-
-    /**
-     * Set the attribute `tabindex` to the attribute `tabindex` of an element.
-     * This is only relevant for the SVG renderer.
-     *
-     * @param {JXG.GeometryElement} el
-     */
-    setTabindex(el) { /* stub */ }
-
-    /**
-     * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
-     *
-     * Please use JXG.AbstractRenderer#display instead
-     * @param {JXG.GeometryElement} el Reference to the object that has to appear.
-     * @see JXG.AbstractRenderer#hide
-     * @deprecated
-     */
-    show(el) { /* stub */ }
-
-    /**
-     * Updates the gradient fill.
-     * @param {JXG.GeometryElement} el An JSXGraph element with an area that can be filled.
-     */
-    updateGradient(el) { /* stub */ }
-
-    /* ********* Renderer control *********** */
-
-    /**
-     * Stop redraw. This method is called before every update, so a non-vector-graphics based renderer can use this
-     * method to delete the contents of the drawing panel. This is an abstract method every descendant renderer
-     * should implement, if appropriate.
-     * @see JXG.AbstractRenderer#unsuspendRedraw
-     */
-    suspendRedraw() { /* stub */ }
-
-    /**
-     * Restart redraw. This method is called after updating all the rendering node attributes.
-     * @see JXG.AbstractRenderer#suspendRedraw
-     */
-    unsuspendRedraw() { /* stub */ }
 
     /**
      * The tiny zoom bar shown on the bottom of a board (if board attribute "showNavigation" is true).
@@ -2112,7 +1739,7 @@ export class AbstractRenderer {
                 function (e) {
                     Type.bind(handler, board)();
                     return false;
-                }
+                },
                 board
             );
             // prevent the click from bubbling down to the board
@@ -2154,8 +1781,8 @@ export class AbstractRenderer {
                     board.attr.fullscreen.symbol,
                     function () {
                         board.toFullscreen(board.attr.fullscreen.id);
-                    }
-                board.container, "fullscreen"
+                    },
+                    board.container, "fullscreen"
                 );
             }
 
@@ -2165,9 +1792,9 @@ export class AbstractRenderer {
                     function () {
                         window.setTimeout(function () {
                             board.renderer.screenshot(board, "", false);
-                        } 330);
-                    }
-                board.container, "screenshot"
+                        }, 330);
+                    },
+                    board.container, "screenshot"
                 );
             }
 
@@ -2179,8 +1806,8 @@ export class AbstractRenderer {
                     "\u21BB",
                     function () {
                         board.reload();
-                    }
-                board.container, "reload"
+                    },
+                    board.container, "reload"
                 );
             }
 
@@ -2189,8 +1816,8 @@ export class AbstractRenderer {
                 createButton("\u2297",
                     function () {
                         board.clearTraces();
-                    }
-                board.container, "cleartraces"
+                    },
+                    board.container, "cleartraces"
                 );
             }
 
@@ -2254,62 +1881,61 @@ export class AbstractRenderer {
         };
     }
 
-    /**
-     * Resizes the rendering element
-     * @param {Number} w New width
-     * @param {Number} h New height
-     */
-    resize(w, h) { /* stub */ }
 
-    /**
-     * Create crosshair elements (Fadenkreuz) for presentations.
-     * @param {Number} n Number of crosshairs.
-     */
-    createTouchpoints(n) { /* stub */ }
 
-    /**
-     * Show a specific crosshair.
-     * @param {Number} i Number of the crosshair to show
-     */
-    showTouchpoint(i) { /* stub */ }
-
-    /**
-     * Hide a specific crosshair.
-     * @param {Number} i Number of the crosshair to show
-     */
-    hideTouchpoint(i) { /* stub */ }
-
-    /**
-     * Move a specific crosshair.
-     * @param {Number} i Number of the crosshair to show
-     * @param {Array} pos New positon in screen coordinates
-     */
-    updateTouchpoint(i, pos) { /* stub */ }
-
-    /* ********* Dump related stuff *********** */
-
-    /**
-     * Convert SVG construction to base64 encoded SVG data URL.
-     * Only available on SVGRenderer.
-     *
-     * @see JXG.SVGRenderer#dumpToDataURI
-     */
-    dumpToDataURI(_ignoreTexts) { /* stub */ }
-
-    /**
-     * Convert SVG construction to canvas.
-     * Only available on SVGRenderer.
-     *
-     * @see JXG.SVGRenderer#dumpToCanvas
-     */
-    dumpToCanvas(canvasId, w, h, _ignoreTexts) { /* stub */ }
-
-    /**
-     * Display SVG image in html img-tag which enables
-     * easy download for the user.
-     *
-     * See JXG.SVGRenderer#screenshot
-     */
-    screenshot(board) { /* stub */ }
+    // these are stubs, documentation moved to svg.ts
+    abstract _setArrowWidth(node, width, parentNode, size)
+    abstract setLineCap(el)
+    abstract updateTicks(ticks)
+    abstract displayCopyright(str, fontsize)
+    abstract displayLogo(str, fontsize)
+    abstract drawInternalText(el)
+    abstract updateInternalText(el)
+    abstract drawImage(el)
+    abstract transformRect(el, transformations)
+    abstract updateImageURL(el)
+    abstract drawForeignObject(el)
+    abstract updateForeignObject(el)
+    abstract appendChildPrim(node, level)
+    abstract appendNodesToElement(el, type)
+    abstract createPrim(type, id)
+    abstract remove(node)
+    abstract makeArrows(el, arrowData)
+    abstract updateEllipsePrim(node, x, y, rx, ry)
+    abstract updateLinePrim(node, p1x, p1y, p2x, p2y, board)
+    abstract updatePathPrim(node, pathString, board)
+    abstract updatePathStringPoint(el, size, type)
+    abstract updatePathStringPrim(el)
+    abstract updatePathStringBezierPrim(el)
+    abstract updatePolygonPrim(node, el)
+    abstract updateRectPrim(node, x, y, w, h)
+    abstract display(el, value)
+    abstract hide(el)
+    abstract setARIA(el)
+    abstract setBuffering(node, type)
+    abstract setCssClass(el, cssClass)
+    abstract setDashStyle(el)
+    abstract setGradient(el)
+    abstract setLayer(el, level)
+    abstract setObjectFillColor(el, color, opacity, rendnodw)
+    abstract setObjectStrokeColor(el, color, opacity)
+    abstract setObjectStrokeWidth(el, width)
+    abstract setObjectTransition(el, duration?)
+    abstract setPropertyPrim(node, key, val)
+    abstract setShadow(el)
+    abstract setTabindex(el)
+    abstract show(el)
+    abstract updateGradient(el)
+    abstract suspendRedraw()
+    abstract unsuspendRedraw()rendNodeCheckbox
+    abstract resize(w, h)
+    abstract createTouchpoints(n)
+    abstract showTouchpoint(i)
+    abstract hideTouchpoint(i)
+    abstract updateTouchpoint(i, pos)
+    abstract dumpToDataURI(_ignoreTexts)
+    abstract dumpToCanvas(canvasId, w, h, _ignoreTexts)
+    abstract screenshot(board, imgId, ignoreTexts)
+    abstract updateInternalTextStyle(el, strokeColor, strokeOpacity)
 
 }

@@ -36,10 +36,10 @@ import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
 import { CoordsElement } from "./coordselement.js";
 import { JSXMath } from "../math/jsxmath.js";
-import Statistics from "../math/statistics.js";
-import {Options} from "../options.js";
-import {Events} from "../utils/event.js";
-import {Color} from "../utils/color.js";
+import {Statistics} from "../math/statistics.js";
+import { Options } from "../options.js";
+import { Events } from "../utils/event.js";
+import { Color } from "../utils/color.js";
 import { Type } from "../utils/type.js";
 
 
@@ -190,7 +190,7 @@ export interface GeometryElementAttributes extends ShortcutAttributes {
 
 
 
-export class GeometryElement extends Events{
+export class GeometryElement extends Events {
 
     /**
      * Controls if updates are necessary
@@ -354,6 +354,16 @@ export class GeometryElement extends Events{
      * @type Object
      */
     public rendNode = null;
+
+    /**
+     * Storage for HTMLElements for arrows
+     */
+    public rendNodeTriangleStart = null
+    /**
+     * Storage for HTMLElements for arrows
+     */
+    public rendNodeTriangleEnd = null
+
 
     /**
      * The string used with {@link JXG.Board#create}
@@ -1752,68 +1762,68 @@ export class GeometryElement extends Events{
      * @see GeometryElement#eval
      * @see JXG#evaluate
      */
-        evalVisProp (key:string) {
-            var val, arr, i, le,
-                e, o, found;
+    evalVisProp(key: string) {
+        var val, arr, i, le,
+            e, o, found;
 
-            key = key.toLowerCase();
-            if (key.indexOf('.') === -1) {
-                // e.g. 'visible'
-                val = this.visProp[key];
-            } else {
-                // e.g. label.visible
-                arr = key.split('.');
-                le = arr.length;
-                val = this.visProp;
-                for (i = 0; i < le; i++) {
-                    if (Type.exists(val)) {
-                        val = val[arr[i]];
-                    }
+        key = key.toLowerCase();
+        if (key.indexOf('.') === -1) {
+            // e.g. 'visible'
+            val = this.visProp[key];
+        } else {
+            // e.g. label.visible
+            arr = key.split('.');
+            le = arr.length;
+            val = this.visProp;
+            for (i = 0; i < le; i++) {
+                if (Type.exists(val)) {
+                    val = val[arr[i]];
                 }
             }
+        }
 
-            if (Type.isFunction(val)) {
-                // For labels supply the anchor element as parameter.
-                if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
-                    // 3D: supply the 3D element
-                    if (this.visProp.anchor.visProp.element3d !== null) {
-                        return val(this.visProp.anchor.visProp.element3d);
-                    }
-                    // 2D: supply the 2D element
-                    return val(this.visProp.anchor);
+        if (Type.isFunction(val)) {
+            // For labels supply the anchor element as parameter.
+            if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                // 3D: supply the 3D element
+                if (this.visProp.anchor.visProp.element3d !== null) {
+                    return val(this.visProp.anchor.visProp.element3d);
                 }
-                // For 2D elements representing 3D elements, return the 3D element.
-                if (Type.exists(this.visProp.element3d)) {
-                    return val(this.visProp.element3d);
-                }
-                // In all other cases, return the element itself
-                return val(this);
+                // 2D: supply the 2D element
+                return val(this.visProp.anchor);
             }
-            // val is not of type function
+            // For 2D elements representing 3D elements, return the 3D element.
+            if (Type.exists(this.visProp.element3d)) {
+                return val(this.visProp.element3d);
+            }
+            // In all other cases, return the element itself
+            return val(this);
+        }
+        // val is not of type function
 
-            if (val === 'inherit') {
-                for (e in this.descendants) {
-                    if (this.descendants.hasOwnProperty(e)) {
-                        o = this.descendants[e];
-                        // Check if this is in inherits of one of its descendant
-                        found = false;
-                        le = o.inherits.length;
-                        for (i = 0; i < le; i++) {
-                            if (this.id === o.inherits[i].id) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found) {
-                            val = o.evalVisProp(key);
+        if (val === 'inherit') {
+            for (e in this.descendants) {
+                if (this.descendants.hasOwnProperty(e)) {
+                    o = this.descendants[e];
+                    // Check if this is in inherits of one of its descendant
+                    found = false;
+                    le = o.inherits.length;
+                    for (i = 0; i < le; i++) {
+                        if (this.id === o.inherits[i].id) {
+                            found = true;
                             break;
                         }
                     }
+                    if (found) {
+                        val = o.evalVisProp(key);
+                        break;
+                    }
                 }
             }
-
-            return val;
         }
+
+        return val;
+    }
 
     // /**
     //  * Get value of a parameter. If the parameter is a function, call the function and return its value.

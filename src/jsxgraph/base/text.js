@@ -48,15 +48,15 @@
  */
 
 import { JXG } from "../jxg.js";
-import { Constants } from "./constants.js";
+import { OBJECT_CLASS, OBJECT_TYPE } from "./constants.js";
 import { Geometry } from "../math/geometry.js"
-import { Element } from "./element.js";
+import { GeometryElement } from "./element.js";
 
-import GeonextParser from "../parser/geonext.js";
+import {GeonextParser} from "../parser/geonext.js";
 import { Env } from "../utils/env.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "../math/jsxmath.js";
-import CoordsElement from "./coordselement.js";
+import { Type } from "../utils/type.js";
+import { JSXMath } from "../math/jsxmath.js";
+import { CoordsElement } from "./coordselement.js";
 
 var priv = {
     /**
@@ -87,10 +87,13 @@ var priv = {
  * @param {string|function} content A string or a function returning a string.
  *
  */
-JXG.Text = function (board, coords, attributes, content) {
-    var tmp;
+export class Text{
 
-    this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
+    constructor  (board, coords, attributes, content) {
+
+    let tmp;
+
+    // this.constructor(board, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT);
 
     this.element = this.board.select(attributes.anchor);
     this.coordsConstructor(coords, this.evalVisProp('islabel'));
@@ -1182,7 +1185,7 @@ JXG.extend(
                     // If is label or point use other conflict detection
                     if (
                         obj.visProp.islabel ||
-                        obj.elementClass === Const.OBJECT_CLASS_POINT
+                        obj.elementClass === Const.OBJECT_CLASS.POINT
                     ) {
                         // get coords and size of the object
                         coords = obj.coords.scrCoords;
@@ -1747,7 +1750,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     ];
 
     t = JXG.createText(board, par, attr);
-    t.type = Type.OBJECT_TYPE_HTMLSLIDER;
+    t.type = Type.OBJECT_TYPE.HTMLSLIDER;
 
     t.rendNodeForm = t.rendNode.childNodes[0];
 

@@ -106,7 +106,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
     this.board.renderer.drawImage(this);
     this.board.finalizeAdding(this);
 
-    this.methodMap = JXG.deepCopy(this.methodMap, {
+    this.methodMap = Type.deepcopy(this.methodMap, {
         addTransformation: "addTransform",
         trans: "addTransform",
         W: "W",

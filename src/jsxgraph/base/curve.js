@@ -44,7 +44,7 @@ import{Geometry}   from "../math/geometry.js";
 import { Geometry } from "../math/geometry.js"
 import { Element } from "./element.js";
 
-import GeonextParser from "../parser/geonext.js";
+import {GeonextParser} from "../parser/geonext.js";
 import ImplicitPlot from "../math/implicitplot.js";
  import {JSXMath}  from "../math/jsxmath.js";
 import Metapost from "../math/metapost.js";

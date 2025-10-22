@@ -49,7 +49,7 @@ export class Color {
 
     // simple colors contains string color constants that can be used in various browser
     // in javascript
-    public simpleColors = {
+    static simpleColors = {
         aliceblue: "f0f8ff",
         antiquewhite: "faebd7",
         aqua: "00ffff",
@@ -197,7 +197,7 @@ export class Color {
     }
 
     // array of color definition objects
-    public colorDefs = [
+    static colorDefs = [
         {
             re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d.]{1,3})\s*\)\s*$/,
             example: ["rgba(123, 234, 45, 0.5)", "rgba(255,234,245,1.0)"],
@@ -244,7 +244,7 @@ export class Color {
      * @param {Number} ab
      * @returns {Array} RGB color values as an array [r, g, b] with values ranging from 0 to 255.
      */
-    rgbParser(color, ag?, ab?) {
+    static rgbParser(color, ag?, ab?) {
         var color_string,
             channels,
             re,
@@ -330,7 +330,7 @@ export class Color {
         return [r, g, b];
     };
 
-    isColor(strColor) {
+    static isColor(strColor) {
         var s = new Option().style;
         s.color = strColor;
         return s.color !== '';
@@ -346,7 +346,7 @@ export class Color {
      * @param {Number} ab
      * @returns {String} A 'rgb(r, g, b)' formatted string
      */
-    rgb2css(color, ag?, ab?) {
+    static rgb2css(color, ag?, ab?) {
         var r;
 
         r = this.rgbParser(color, ag, ab);
@@ -364,7 +364,7 @@ export class Color {
      * @param {Number} ab
      * @returns {String} A '#rrggbb' formatted string
      */
-    rgb2hex(color, ag?, ab?) {
+    static rgb2hex(color, ag?, ab?) {
         var r, g, b;
 
         r = this.rgbParser(color, ag, ab);
@@ -396,7 +396,7 @@ export class Color {
      * @deprecated Use {@link JXG#rgb2css} instead.
      * @returns {String} A 'rgb(r, g, b)' formatted string
      */
-    hex2rgb(hex) {
+    static hex2rgb(hex) {
         JXG.deprecated("JXG.hex2rgb()", "JXG.rgb2css()");
         return this.rgb2css(hex);
     };
@@ -411,7 +411,7 @@ export class Color {
      * @param {Number} V value between 0.0 (black) to 1.0 (white)
      * @returns {String} RGB color string
      */
-    hsv2rgb(H, S, V) {
+    static hsv2rgb(H, S, V) {
         var R, G, B, f, i, hTemp, p, q, t;
 
         H = ((H % 360.0) + 360.0) % 360;
@@ -496,7 +496,7 @@ export class Color {
      * @returns {Array} Contains the h, s, and v value in this order.
      *
      */
-    rgb2hsv(color, ag, ab) {
+    static rgb2hsv(color, ag, ab) {
         var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min;
 
         r = this.rgbParser(color, ag, ab);
@@ -554,7 +554,7 @@ export class Color {
      * @param {Number} ab
      * @returns {Array} Contains the l, m, and s value in this order.
      */
-    rgb2LMS(color, ag?, ab?) {
+    static rgb2LMS(color, ag?, ab?) {
         var r,
             g,
             b,
@@ -599,7 +599,7 @@ export class Color {
      * @param {Number} s
      * @returns {Array} Contains the r, g, and b value in this order.
      */
-    LMS2rgb(l, m, s) {
+    static LMS2rgb(l, m, s) {
         var r,
             g,
             b,
@@ -666,7 +666,7 @@ export class Color {
      * @param {String} rgba A RGBA color value
      * @returns {Array} An array containing the rgb color value in the first and the opacity in the second field.
      */
-    rgba2rgbo(rgba) {
+    static rgba2rgbo(rgba) {
         var opacity;
 
         if (rgba.length === 9 && rgba.charAt(0) === "#") {
@@ -687,7 +687,7 @@ export class Color {
      * @param {Number} o The desired opacity >=0, <=1.
      * @returns {String} The RGBA color value.
      */
-    rgbo2rgba(rgb, o) {
+    static rgbo2rgba(rgb, o) {
         var rgba;
 
         if (rgb === "none" || rgb === "transparent") {
@@ -737,7 +737,7 @@ export class Color {
      * options are <i>protanopia</i>, <i>deuteranopia</i>, and <i>tritanopia</i>.
      * @returns {String} Returns a HTML color string
      */
-    rgb2cb(color, deficiency) {
+    static rgb2cb(color, deficiency) {
         var rgb,
             l,
             m,
@@ -839,7 +839,7 @@ export class Color {
      * @param {Number} percent
      * @returns {String}
      */
-    shadeColor(color, percent) {
+    static shadeColor(color, percent) {
         var arr = this.rgbParser(color),
             r = arr[0],
             g = arr[1],
@@ -872,28 +872,28 @@ export class Color {
      *
      * @see JXG.shadeColor
      */
-    lightenColor(color, percent) {
+    static lightenColor(color, percent) {
         return this.shadeColor(color, percent);
     };
 
-/**
- * Darkens the color by the specified factor.
- * @param {String} color
- * @param {Number} percent
- * @returns {String}
- *
- * @see JXG.shadeColor
- */
-darkenColor  (color, percent) {
+    /**
+     * Darkens the color by the specified factor.
+     * @param {String} color
+     * @param {Number} percent
+     * @returns {String}
+     *
+     * @see JXG.shadeColor
+     */
+    static darkenColor(color, percent) {
         return this.shadeColor(color, -1 * percent);
     };
 
-/**
- * Determines highlight color to a given color. Done by reducing (or increasing) the opacity.
- * @param {String} color HTML RGBA string containing the HTML color code.
- * @returns {String} Returns a HTML RGBA color string
- */
-autoHighlight  (colstr) {
+    /**
+     * Determines highlight color to a given color. Done by reducing (or increasing) the opacity.
+     * @param {String} color HTML RGBA string containing the HTML color code.
+     * @returns {String} Returns a HTML RGBA color string
+     */
+    static autoHighlight(colstr) {
         var col = this.rgba2rgbo(colstr),
             c = col[0],
             opa = col[1];
@@ -911,17 +911,17 @@ autoHighlight  (colstr) {
         return colstr;
     };
 
-/**
- * Calculate whether a light or a dark color is needed as a contrast.
- * Especially useful to determine whether white or black font goes
- * better with a given background color.
- * @param {String} hexColor HEX value of color.
- * @param {String} [darkColor="#000000"] HEX string for a dark color.
- * @param {String} [lightColor="#ffffff"] HEX string for a light color.
- * @param {Number} [threshold=8]
- * @returns {String} Returns darkColor or lightColor.
- */
-contrast  (hexColor, darkColor, lightColor, threshold) {
+    /**
+     * Calculate whether a light or a dark color is needed as a contrast.
+     * Especially useful to determine whether white or black font goes
+     * better with a given background color.
+     * @param {String} hexColor HEX value of color.
+     * @param {String} [darkColor="#000000"] HEX string for a dark color.
+     * @param {String} [lightColor="#ffffff"] HEX string for a light color.
+     * @param {Number} [threshold=8]
+     * @returns {String} Returns darkColor or lightColor.
+     */
+    static contrast(hexColor, darkColor, lightColor, threshold) {
         var rgb,
             black = "#000000",
             rgbBlack,
@@ -980,135 +980,130 @@ contrast  (hexColor, darkColor, lightColor, threshold) {
      */
     setClassicColors() {
         Options.elements.strokeColor = "blue";
-        JXG.Options.elements.fillColor = "red";
-        JXG.Options.hatch.strokeColor = "blue";
-        JXG.Options.angle.fillColor = "#ff7f00";
-        JXG.Options.angle.highlightFillColor = "#ff7f00";
-        JXG.Options.angle.strokeColor = "#ff7f00";
-        JXG.Options.angle.label.strokeColor = "blue";
-        JXG.Options.arc.strokeColor = "blue";
-        JXG.Options.circle.center.fillColor = "red";
-        JXG.Options.circle.center.strokeColor = "blue";
-        JXG.Options.circumcircle.strokeColor = "blue";
-        JXG.Options.circumcircle.center.fillColor = "red";
-        JXG.Options.circumcircle.center.strokeColor = "blue";
-        JXG.Options.circumcirclearc.strokeColor = "blue";
-        JXG.Options.circumcirclesector.strokeColor = "blue";
-        JXG.Options.circumcirclesector.fillColor = "green";
-        JXG.Options.circumcirclesector.highlightFillColor = "green";
-        JXG.Options.conic.strokeColor = "blue";
-        JXG.Options.curve.strokeColor = "blue";
-        JXG.Options.incircle.strokeColor = "blue";
-        JXG.Options.incircle.center.fillColor = "red";
-        JXG.Options.incircle.center.strokeColor = "blue";
-        JXG.Options.inequality.fillColor = "red";
-        JXG.Options.integral.fillColor = "red";
-        JXG.Options.integral.curveLeft.color = "red";
-        JXG.Options.integral.curveRight.color = "red";
-        JXG.Options.line.strokeColor = "blue";
-        JXG.Options.point.fillColor = "red";
-        JXG.Options.point.strokeColor = "red";
-        JXG.Options.polygon.fillColor = "green";
-        JXG.Options.polygon.highlightFillColor = "green";
-        JXG.Options.polygon.vertices.strokeColor = "red";
-        JXG.Options.polygon.vertices.fillColor = "red";
-        JXG.Options.regularpolygon.fillColor = "green";
-        JXG.Options.regularpolygon.highlightFillColor = "green";
-        JXG.Options.regularpolygon.vertices.strokeColor = "red";
-        JXG.Options.regularpolygon.vertices.fillColor = "red";
-        JXG.Options.riemannsum.fillColor = "yellow";
-        JXG.Options.sector.fillColor = "green";
-        JXG.Options.sector.highlightFillColor = "green";
-        JXG.Options.semicircle.center.fillColor = "red";
-        JXG.Options.semicircle.center.strokeColor = "blue";
-        JXG.Options.slopetriangle.fillColor = "red";
-        JXG.Options.slopetriangle.highlightFillColor = "red";
-        JXG.Options.turtle.arrow.strokeColor = "blue";
+        Options.elements.fillColor = "red";
+        Options.hatch.strokeColor = "blue";
+        Options.angle.fillColor = "#ff7f00";
+        Options.angle.highlightFillColor = "#ff7f00";
+        Options.angle.strokeColor = "#ff7f00";
+        Options.angle.label.strokeColor = "blue";
+        Options.arc.strokeColor = "blue";
+        Options.circle.center.fillColor = "red";
+        Options.circle.center.strokeColor = "blue";
+        Options.circumcircle.strokeColor = "blue";
+        Options.circumcircle.center.fillColor = "red";
+        Options.circumcircle.center.strokeColor = "blue";
+        Options.circumcirclearc.strokeColor = "blue";
+        Options.circumcirclesector.strokeColor = "blue";
+        Options.circumcirclesector.fillColor = "green";
+        Options.circumcirclesector.highlightFillColor = "green";
+        Options.conic.strokeColor = "blue";
+        Options.curve.strokeColor = "blue";
+        Options.incircle.strokeColor = "blue";
+        Options.incircle.center.fillColor = "red";
+        Options.incircle.center.strokeColor = "blue";
+        Options.inequality.fillColor = "red";
+        Options.integral.fillColor = "red";
+        Options.integral.curveLeft.color = "red";
+        Options.integral.curveRight.color = "red";
+        Options.line.strokeColor = "blue";
+        Options.point.fillColor = "red";
+        Options.point.strokeColor = "red";
+        Options.polygon.fillColor = "green";
+        Options.polygon.highlightFillColor = "green";
+        Options.polygon.vertices.strokeColor = "red";
+        Options.polygon.vertices.fillColor = "red";
+        Options.regularpolygon.fillColor = "green";
+        Options.regularpolygon.highlightFillColor = "green";
+        Options.regularpolygon.vertices.strokeColor = "red";
+        Options.regularpolygon.vertices.fillColor = "red";
+        Options.riemannsum.fillColor = "yellow";
+        Options.sector.fillColor = "green";
+        Options.sector.highlightFillColor = "green";
+        Options.semicircle.center.fillColor = "red";
+        Options.semicircle.center.strokeColor = "blue";
+        Options.slopetriangle.fillColor = "red";
+        Options.slopetriangle.highlightFillColor = "red";
+        Options.turtle.arrow.strokeColor = "blue";
     };
 
-JXG.extend(
-        JXG,
-    /** @lends JXG */ {
-            /**
-             * Bang Wong color palette,
-             * optimized for various type
-             * of color blindness.
-             * It contains values for
-             * <ul>
-             * <li> 'black'
-             * <li> 'orange'
-             * <li> 'skyblue'
-             * <li> 'bluishgreen'
-             * <li> 'yellow'
-             * <li> 'darkblue'
-             * <li> 'vermillion'
-             * <li> 'reddishpurple'
-             * </ul>
-             *
-             * As substitutes for standard colors, it contains the following aliases:
-             *
-             * <ul>
-             * <li> black (= #000000)
-             * <li> blue (= darkblue)
-             * <li> green (= bluishgreen)
-             * <li> purple (= reddishpurple)
-             * <li> red (= vermillion)
-             * <li> white (= #ffffff)
-             * </ul>
-             *
-             * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>
-             * and
-             * <a href="https://davidmathlogic.com/colorblind/">https://davidmathlogic.com/colorblind/</a>.
-             *
-             * @name JXG.paletteWong
-             * @type Object
-             * @see JXG.palette
-             * @example
-             * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.paletteWong.yellow});
-             */
-            paletteWong: {
-                black: "#000000",
-                orange: "#E69F00",
-                skyblue: "#56B4E9",
-                bluishgreen: "#009E73",
-                yellow: "#F0E442",
-                darkblue: "#0072B2",
-                vermillion: "#D55E00",
-                reddishpurple: "#CC79A7",
+    /**
+     * Bang Wong color palette,
+     * optimized for various type
+     * of color blindness.
+     * It contains values for
+     * <ul>
+     * <li> 'black'
+     * <li> 'orange'
+     * <li> 'skyblue'
+     * <li> 'bluishgreen'
+     * <li> 'yellow'
+     * <li> 'darkblue'
+     * <li> 'vermillion'
+     * <li> 'reddishpurple'
+     * </ul>
+     *
+     * As substitutes for standard colors, it contains the following aliases:
+     *
+     * <ul>
+     * <li> black (= #000000)
+     * <li> blue (= darkblue)
+     * <li> green (= bluishgreen)
+     * <li> purple (= reddishpurple)
+     * <li> red (= vermillion)
+     * <li> white (= #ffffff)
+     * </ul>
+     *
+     * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>
+     * and
+     * <a href="https://davidmathlogic.com/colorblind/">https://davidmathlogic.com/colorblind/</a>.
+     *
+     * @name JXG.paletteWong
+     * @type Object
+     * @see JXG.palette
+     * @example
+     * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.paletteWong.yellow});
+     */
+    static paletteWong = {
+        black: "#000000",
+        orange: "#E69F00",
+        skyblue: "#56B4E9",
+        bluishgreen: "#009E73",
+        yellow: "#F0E442",
+        darkblue: "#0072B2",
+        vermillion: "#D55E00",
+        reddishpurple: "#CC79A7",
 
-                blue: "#0072B2",
-                red: "#D55E00", // vermillion
-                green: "#009E73", // bluishgreen
-                purple: "#CC79A7", // reddishpurple
-                white: "#ffffff"
-        }
-        }
-    );
+        blue: "#0072B2",
+        red: "#D55E00", // vermillion
+        green: "#009E73", // bluishgreen
+        purple: "#CC79A7", // reddishpurple
+        white: "#ffffff"
+    }
 
-/**
- * Default color palette.
- * Contains at least color values for
- * <ul>
- * <li> black
- * <li> blue
- * <li> green
- * <li> purple
- * <li> red
- * <li> white
- * <li> yellow
- * </ul>
- *
- * @name JXG.palette
- * @type Object
- * @default JXG.paletteWong
- * @see JXG.paletteWong
- *
- * @example
- *
- * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.palette.yellow});
- *
- */
+    /**
+     * Default color palette.
+     * Contains at least color values for
+     * <ul>
+     * <li> black
+     * <li> blue
+     * <li> green
+     * <li> purple
+     * <li> red
+     * <li> white
+     * <li> yellow
+     * </ul>
+     *
+     * @name JXG.palette
+     * @type Object
+     * @default JXG.paletteWong
+     * @see JXG.paletteWong
+     *
+     * @example
+     *
+     * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.palette.yellow});
+     *
+     */
 
-JXG.palette = JXG.paletteWong;
+    static palette = this.paletteWong;
 
 }

@@ -177,7 +177,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         ti.dump = false;
     }
 
-    li.methodMap = JXG.deepCopy(li.methodMap, {
+    li.methodMap = Type.deepcopy(li.methodMap, {
         Value: "Value"
     });
 

@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>JSXGraph3D Example</title>
-    <link rel="stylesheet" type="text/css" href="jsxgraph.css">
+    <link rel="stylesheet" type="text/css" href="lib/jsxgraph.css">
     <!-- <script type='module' src="../build/jsxgraph/jsxgraph.js"></script> -->
 </head>
 <body>
     <div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div>
 
     <script type="module">
-        import {JXG} from '../build/jsxgraph/jxg.js'
-        let board = JXG.JSXGraph.initBoard(
+        import {JXG} from './build/jsxgraph/jxg.js'
+        let board = JXG.initBoard(
                 'box', {
                     boundingbox: [-10, 10, 10, -10],
                     axis:true

@@ -39,8 +39,8 @@ import { JXG } from "../jxg.js";
 import { Board } from "../base/board.js"
 import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";
-import {Numerics} from "../math/numerics.js";
-import Statistics from "../math/statistics.js";
+import { Numerics } from "../math/numerics.js";
+import { Statistics } from "../math/statistics.js";
 import { Coords } from "./coords.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Type } from "../utils/type.js";
@@ -255,9 +255,9 @@ export class CoordsElement extends GeometryElement {
             }
         }
         this.updateTransform(fromParent);
-            if (!Type.exists(this._initialized)) {
-                this._initialized = true;
-            }
+        if (!Type.exists(this._initialized)) {
+            this._initialized = true;
+        }
 
         return this;
     }
@@ -2474,65 +2474,66 @@ export class CoordsElement extends GeometryElement {
 
         return p;
     }
-}
 
 
-/**
- * Generic method to create point, text or image.
- * Determines the type of the construction, i.e. free, or constrained by function,
- * transformation or of glider type.
- * @param{Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
- * @param{Object} board Link to the board object
- * @param{Array} coords Array with coordinates. This may be: array of numbers, function
- * returning an array of numbers, array of functions returning a number, object and transformation.
- * If the attribute "slideObject" exists, a glider element is constructed.
- * @param{Object} attr Attributes object
- * @param{Object} arg1 Optional argument 1: in case of text this is the text content,
- * in case of an image this is the url.
- * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of
- * the image.
- * @returns{Object} returns the created object or false.
- */
-JXG.CoordsElement.create = function (Callback, board, coords, attr, arg1, arg2) {
-    var el,
-        isConstrained = false,
-        i;
 
-    for (i = 0; i < coords.length; i++) {
-        if (Type.isFunction(coords[i]) || Type.isString(coords[i])) {
-            isConstrained = true;
-        }
-    }
+    /**
+     * Generic method to create point, text or image.
+     * Determines the type of the construction, i.e. free, or constrained by function,
+     * transformation or of glider type.
+     * @param{Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
+     * @param{Object} board Link to the board object
+     * @param{Array} coords Array with coordinates. This may be: array of numbers, function
+     * returning an array of numbers, array of functions returning a number, object and transformation.
+     * If the attribute "slideObject" exists, a glider element is constructed.
+     * @param{Object} attr Attributes object
+     * @param{Object} arg1 Optional argument 1: in case of text this is the text content,
+     * in case of an image this is the url.
+     * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of
+     * the image.
+     * @returns{Object} returns the created object or false.
+     */
+   public create(Callback, board, coords, attr, arg1, arg2) {
+        var el,
+            isConstrained = false,
+            i;
 
-    if (!isConstrained) {
-        if (Type.isNumber(coords[0]) && Type.isNumber(coords[1])) {
-            el = new Callback(board, coords, attr, arg1, arg2);
-
-            if (Type.exists(attr.slideobject)) {
-                el.makeGlider(attr.slideobject);
-            } else {
-                // Free element
-                el.baseElement = el;
+        for (i = 0; i < coords.length; i++) {
+            if (Type.isFunction(coords[i]) || Type.isString(coords[i])) {
+                isConstrained = true;
             }
-            el.isDraggable = true;
-        } else if (Type.isObject(coords[0]) && Type.isTransformationOrArray(coords[1])) {
-            // Transformation
-            // TODO less general specification of isObject
-            el = new Callback(board, [0, 0], attr, arg1, arg2);
-            el.addTransform(coords[0], coords[1]);
-            el.isDraggable = false;
-        } else {
-            return false;
         }
-    } else {
-        el = new Callback(board, [0, 0], attr, arg1, arg2);
-        el.addConstraint(coords);
+
+        if (!isConstrained) {
+            if (Type.isNumber(coords[0]) && Type.isNumber(coords[1])) {
+                el = new Callback(board, coords, attr, arg1, arg2);
+
+                if (Type.exists(attr.slideobject)) {
+                    el.makeGlider(attr.slideobject);
+                } else {
+                    // Free element
+                    el.baseElement = el;
+                }
+                el.isDraggable = true;
+            } else if (Type.isObject(coords[0]) && Type.isTransformationOrArray(coords[1])) {
+                // Transformation
+                // TODO less general specification of isObject
+                el = new Callback(board, [0, 0], attr, arg1, arg2);
+                el.addTransform(coords[0], coords[1]);
+                el.isDraggable = false;
+            } else {
+                return false;
+            }
+        } else {
+            el = new Callback(board, [0, 0], attr, arg1, arg2);
+            el.addConstraint(coords);
+        }
+
+        el.handleSnapToGrid();
+        el.handleSnapToPoints();
+        el.handleAttractors();
+
+        el.addParents(coords);
+        return el;
     }
-
-    el.handleSnapToGrid();
-    el.handleSnapToPoints();
-    el.handleAttractors();
-
-    el.addParents(coords);
-    return el;
 }

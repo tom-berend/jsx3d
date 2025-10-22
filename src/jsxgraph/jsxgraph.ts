@@ -43,10 +43,10 @@ import { JXG } from './jxg.js';
 import { Env } from './utils/env.js';
 import { Type } from './utils/type.js';
 //  import {JSXMath}  from "./math/math.js";
-import {Board} from './base/board.js';
-import {FileReader} from './reader/filereader.js';
-import {Options} from './options.js';
-import {SVGRenderer} from './renderer/svg.js';
+import { Board } from './base/board.js';
+import { FileReader } from './reader/filereader.js';
+import { Options } from './options.js';
+import { SVGRenderer } from './renderer/svg.js';
 // import CanvasRenderer from './renderer/canvas.js';
 // import NoRenderer from './renderer/no.js';
 
@@ -60,11 +60,11 @@ export class JSXGraph {
      * Stores the renderer that is used to draw the boards.
      * @type String
      */
-    rendererType: string = 'svg';   // tbtb for
-
-    constructor() {
-        this.rendererType = this.setRendererType();
-    }
+    static rendererType: string = 'svg';   // tbtb for
+    static renderer: Object
+    // constructor() {
+    //     this.rendererType = this.setRendererType();
+    // }
 
     static setRendererType() {
         Options.board.renderer = 'no';
@@ -102,7 +102,7 @@ export class JSXGraph {
      * @returns {Object}           Reference to the rendering engine object.
      * @private
      */
-    initRenderer(box, dim, doc, attrRenderer) {
+    static initRenderer(box, dim, doc, attrRenderer) {
         var boxid, renderer;
 
         // Former version:
@@ -146,7 +146,7 @@ export class JSXGraph {
      *
      * @private
      */
-    _setAttributes(attributes, options) {
+    static _setAttributes(attributes, options) {
         // merge attributes
         var attr = Type.copyAttributes(attributes, options, 'board'),
             // These attributes - which are objects - have to be copied separately.
@@ -191,7 +191,7 @@ export class JSXGraph {
      *
      * @private
      */
-    _fillBoard(board, attr, dimensions) {
+    static _fillBoard(board, attr, dimensions) {
         board.initInfobox(attr.infobox);
         board.maxboundingbox = attr.maxboundingbox;
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
@@ -207,7 +207,7 @@ export class JSXGraph {
      *
      * @private
      */
-    _setARIA(container, attr) {
+    static _setARIA(container, attr) {
         var doc = attr.document,
             node_jsx;
         // Unused variables, made obsolete in db3e50f4dfa8b86b1ff619b578e243a97b41151c
@@ -241,7 +241,7 @@ export class JSXGraph {
      *
      * @private
      */
-    _removeARIANodes(board) {
+    static _removeARIANodes(board) {
         var node, id, doc;
 
         doc = board.document || document;
@@ -280,7 +280,7 @@ export class JSXGraph {
      *
      * @see JXG.AbstractRenderer#drawNavigationBar
      */
-    initBoard(box, attributes) {
+    static initBoard(box, attributes) {
         var originX,
             originY,
             unitX,
@@ -469,7 +469,7 @@ export class JSXGraph {
      *      function (board) { console.log("Done loading"); }
      * );
      */
-    loadBoardFromFile(box, file, format, attributes, callback) {
+    static loadBoardFromFile(box, file, format, attributes, callback) {
         var attr, renderer, board, dimensions, encoding;
 
         attributes = attributes || {};
@@ -516,7 +516,7 @@ export class JSXGraph {
      * @see JXG.IntergeoReader
      * @see JXG.CinderellaReader
      */
-    loadBoardFromString(box, string, format, attributes, callback) {
+    static loadBoardFromString(box, string, format, attributes, callback) {
         var attr, renderer, board, dimensions;
 
         attributes = attributes || {};
@@ -551,7 +551,7 @@ export class JSXGraph {
      * @param {JXG.Board|String} board id of or reference to the DOM element in which the board is drawn.
      *
      */
-    freeBoard(board) {
+    static freeBoard(board) {
         var el;
 
         if (typeof board === 'string') {
@@ -597,7 +597,7 @@ export class JSXGraph {
      * @param element
      * @param creator
      */
-    registerElement(element, creator) {
+    static registerElement(element, creator) {
         JXG.deprecated('JXG.JSXGraph.registerElement()', 'JXG.registerElement()');
         JXG.registerElement(element, creator);
     }

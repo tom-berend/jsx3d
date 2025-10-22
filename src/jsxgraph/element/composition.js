@@ -2628,7 +2628,7 @@ JXG.createIntegral = function (board, parents, attributes) {
      */
     p.curveRight = pb_on_curve;
 
-    p.methodMap = JXG.deepCopy(p.methodMap, {
+    p.methodMap = Type.deepcopy(p.methodMap, {
         curveLeft: "curveLeft",
         baseLeft: "baseLeft",
         curveRight: "curveRight",

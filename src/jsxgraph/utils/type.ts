@@ -1448,7 +1448,7 @@ export class Type {
         len = arguments.length;
         if (len < 3 || primitives[s]) {
             // Default options from Options.elements
-            a = JXG.deepCopy(options.elements, null, true);
+            a = this.deepCopy(options.elements, null, true);
         } else {
             a = {};
         }
@@ -1474,7 +1474,7 @@ export class Type {
             }
         }
         if (isAvail) {
-            a = JXG.deepCopy(a, o, true);
+            a = this.deepCopy(a, o, true);
         }
 
         // Merge the specific options given in the parameter 'attributes'
@@ -1516,9 +1516,9 @@ export class Type {
             }
         }
         if (isAvail && this.exists(o.label)) {
-            a.label = JXG.deepCopy(o.label, a.label, true);
+            a.label = this.deepCopy(o.label, a.label, true);
         }
-        a.label = JXG.deepCopy(options.label, a.label, true);
+        a.label = this.deepCopy(options.label, a.label, true);
 
         return a;
     }

@@ -63,6 +63,8 @@
 import { Board } from "./base/board.js"
 import { JSXGraph } from "./jsxgraph.js";
 
+
+
 // this file now incorporates parts of constants.js, type.js
 
 const VERSION = '1.12.1-beta';

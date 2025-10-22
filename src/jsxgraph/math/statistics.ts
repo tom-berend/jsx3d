@@ -32,9 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import {JXG} from"../jxg.js";
- import {JSXMath}  from "./jsxmath.js";
-import {Type} from "../utils/type.js";
+import { JXG } from "../jxg.js";
+import { JSXMath } from "./jsxmath.js";
+import { Type } from "../utils/type.js";
 
 /**
  * Functions for mathematical statistics. Most functions are like in the statistics package R.
@@ -42,14 +42,14 @@ import {Type} from "../utils/type.js";
  * @exports Mat.Statistics as JXG.Math.Statistics
  * @namespace
  */
-Mat.Statistics = {
+export class Statistics {
     /**
      * Sums up all elements of the given array.
      * @param {Array} arr An array of numbers.
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    sum: function (arr) {
+    static sum(arr) {
         var i,
             len = arr.length,
             res = 0;
@@ -58,7 +58,7 @@ Mat.Statistics = {
             res += arr[i];
         }
         return res;
-    },
+    }
 
     /**
      * Multiplies all elements of the given array.
@@ -66,7 +66,7 @@ Mat.Statistics = {
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    prod: function (arr) {
+    static prod(arr) {
         var i,
             len = arr.length,
             res = 1;
@@ -75,7 +75,7 @@ Mat.Statistics = {
             res *= arr[i];
         }
         return res;
-    },
+    }
 
     /**
      * Determines the mean value of the values given in an array.
@@ -83,13 +83,13 @@ Mat.Statistics = {
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    mean: function (arr) {
+    static mean(arr) {
         if (arr.length > 0) {
             return this.sum(arr) / arr.length;
         }
 
         return 0.0;
-    },
+    }
 
     /**
      * The median of a finite set of values is the value that divides the set
@@ -98,7 +98,7 @@ Mat.Statistics = {
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    median: function (arr) {
+    static median(arr) {
         var tmp, len;
 
         if (arr.length > 0) {
@@ -122,7 +122,7 @@ Mat.Statistics = {
         }
 
         return 0.0;
-    },
+    }
 
     /**
      * The P-th percentile ( <i>0 < P ≤ 100</i> ) of a list of <i>N</i> ordered values (sorted from least to greatest)
@@ -136,7 +136,7 @@ Mat.Statistics = {
      * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentiles
      * is returned.
      */
-    percentile: function (arr, percentile) {
+    static percentile(arr, percentile) {
         var tmp,
             len,
             i,
@@ -179,7 +179,7 @@ Mat.Statistics = {
         }
 
         return 0.0;
-    },
+    }
 
     /**
      * Bias-corrected sample variance. A variance is a measure of how far a
@@ -188,7 +188,7 @@ Mat.Statistics = {
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    variance: function (arr) {
+    static variance(arr) {
         var m,
             res,
             i,
@@ -204,7 +204,7 @@ Mat.Statistics = {
         }
 
         return 0.0;
-    },
+    }
 
     /**
      * Determines the <strong>s</strong>tandard <strong>d</strong>eviation which shows how much
@@ -213,9 +213,9 @@ Mat.Statistics = {
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    sd: function (arr) {
+    static sd(arr) {
         return Math.sqrt(this.variance(arr));
-    },
+    }
 
     /**
      * Weighted mean value is basically the same as {@link JXG.Math.Statistics.mean} but here the values
@@ -227,7 +227,7 @@ Mat.Statistics = {
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    weightedMean: function (arr, w) {
+    static weightedMean(arr, w) {
         if (arr.length !== w.length) {
             throw new Error(
                 "JSXGraph error (Math.Statistics.weightedMean): Array dimension mismatch."
@@ -239,7 +239,7 @@ Mat.Statistics = {
         }
 
         return 0.0;
-    },
+    }
 
     /**
      * Extracts the maximum value from the array.
@@ -249,9 +249,9 @@ Mat.Statistics = {
      * as a number.
      * @memberof JXG.Math.Statistics
      */
-    max: function (arr) {
+    static max(arr) {
         return Math.max.apply(this, arr);
-    },
+    }
 
     /**
      * Extracts the minimum value from the array.
@@ -261,9 +261,9 @@ Mat.Statistics = {
      * as a number.
      * @memberof JXG.Math.Statistics
      */
-    min: function (arr) {
+    static min(arr) {
         return Math.min.apply(this, arr);
-    },
+    }
 
     /**
      * Determines the lowest and the highest value from the given array.
@@ -271,9 +271,9 @@ Mat.Statistics = {
      * @returns {Array} The minimum value as the first and the maximum value as the second value.
      * @memberof JXG.Math.Statistics
      */
-    range: function (arr) {
+    static range(arr) {
         return [this.min(arr), this.max(arr)];
-    },
+    }
 
     /**
      * Determines the absolute value of every given value.
@@ -281,7 +281,7 @@ Mat.Statistics = {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    abs: function (arr) {
+    static abs(arr) {
         var i, len, res;
 
         if (Type.isArray(arr)) {
@@ -301,7 +301,7 @@ Mat.Statistics = {
             res = Math.abs(arr);
         }
         return res;
-    },
+    }
 
     /**
      * Adds up two (sequences of) values. If one value is an array and the other one is a number the number
@@ -312,7 +312,7 @@ Mat.Statistics = {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    add: function (arr1, arr2) {
+    static add(arr1, arr2) {
         var i,
             len,
             res = [];
@@ -343,7 +343,7 @@ Mat.Statistics = {
         }
 
         return res;
-    },
+    }
 
     /**
      * Divides two (sequences of) values. If two arrays are given and the lengths don't match the shortest length
@@ -353,7 +353,7 @@ Mat.Statistics = {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    div: function (arr1, arr2) {
+    static div(arr1, arr2) {
         var i,
             len,
             res = [];
@@ -384,17 +384,17 @@ Mat.Statistics = {
         }
 
         return res;
-    },
+    }
 
     /**
      * @function
      * @deprecated Use {@link JXG.Math.Statistics.div} instead.
      * @memberof JXG.Math.Statistics
      */
-    divide: function () {
+    static divide() {
         JXG.deprecated("Statistics.divide()", "Statistics.div()");
         Mat.Statistics.div.apply(Mat.Statistics, arguments);
-    },
+    }
 
     /**
      * Divides two (sequences of) values and returns the remainder. If two arrays are given and the lengths don't
@@ -405,7 +405,7 @@ Mat.Statistics = {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    mod: function (arr1, arr2, math) {
+    static mod(arr1, arr2, math) {
         var i,
             len,
             res = [],
@@ -445,7 +445,7 @@ Mat.Statistics = {
         }
 
         return res;
-    },
+    }
 
     /**
      * Multiplies two (sequences of) values. If one value is an array and the other one is a number the number
@@ -456,7 +456,7 @@ Mat.Statistics = {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    multiply: function (arr1, arr2) {
+    static multiply(arr1, arr2) {
         var i,
             len,
             res = [];
@@ -487,7 +487,7 @@ Mat.Statistics = {
         }
 
         return res;
-    },
+    }
 
     /**
      * Subtracts two (sequences of) values. If two arrays are given and the lengths don't match the shortest
@@ -497,7 +497,7 @@ Mat.Statistics = {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    subtract: function (arr1, arr2) {
+    static subtract(arr1, arr2) {
         var i,
             len,
             res = [];
@@ -528,7 +528,7 @@ Mat.Statistics = {
         }
 
         return res;
-    },
+    }
 
     /**
      * The Theil-Sen estimator can be used to determine a more robust linear regression of a set of sample
@@ -577,7 +577,7 @@ Mat.Statistics = {
      * </script><pre>
      *
      */
-    TheilSenRegression: function (coords) {
+    static TheilSenRegression(coords) {
         var i,
             j,
             slopes = [],
@@ -600,7 +600,7 @@ Mat.Statistics = {
         }
 
         return [this.median(yintercepts), this.median(slopes), -1];
-    },
+    }
 
     /**
      * Generate values of a standard normal random variable with the Marsaglia polar method, see
@@ -612,7 +612,7 @@ Mat.Statistics = {
      * @returns {Number} value of a standard normal random variable
      * @memberof JXG.Math.Statistics
      */
-    generateGaussian: function (mean, stdDev) {
+    static generateGaussian(mean, stdDev) {
         var u, v, s;
 
         if (this.hasSpare) {
@@ -631,7 +631,7 @@ Mat.Statistics = {
         this.spare = v * s;
         this.hasSpare = true;
         return mean + stdDev * u * s;
-    },
+    }
 
     /**
      * Generate value of a standard normal random variable with given mean and standard deviation.
@@ -689,9 +689,9 @@ Mat.Statistics = {
      * </script><pre>
 
      */
-    randomNormal: function (mean, stdDev) {
+    static randomNormal(mean, stdDev) {
         return this.generateGaussian(mean, stdDev);
-    },
+    }
 
     /**
      * Generate value of a uniform distributed random variable in the interval [a, b].
@@ -700,9 +700,9 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomUniform: function (a, b) {
+    static randomUniform(a, b) {
         return Math.random() * (b - a) + a;
-    },
+    }
 
     /**
      * Generate value of a random variable with exponential distribution, i.e.
@@ -758,7 +758,7 @@ Mat.Statistics = {
      * </script><pre>
 
     */
-    randomExponential: function (lbda) {
+    static randomExponential(lbda) {
         var u;
 
         // Knuth, TAOCP 2, p 128
@@ -772,7 +772,7 @@ Mat.Statistics = {
         } while (u === 0);
 
         return -Math.log(u) / lbda;
-    },
+    }
 
     /**
      * Generate value of a random variable with gamma distribution of order alpha.
@@ -841,7 +841,7 @@ Mat.Statistics = {
      * </script><pre>
      *
      */
-    randomGamma: function (a, b, t) {
+    static randomGamma(a, b, t) {
         var u, v, x, y,
             p, q;
 
@@ -891,7 +891,7 @@ Mat.Statistics = {
         } while (x <= 0.0 || v > (1 + y * y) * Math.exp((a - 1) * Math.log(x / (a - 1)) - Math.sqrt(2 * a - 1) * y));
 
         return b * x + t;
-    },
+    }
 
     /**
      * Generate value of a random variable with beta distribution with shape parameters alpha and beta.
@@ -902,7 +902,7 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomBeta: function (a, b) {
+    static randomBeta(a, b) {
         // Knuth, TAOCP 2, p 129
         var x1, x2, x;
 
@@ -914,7 +914,7 @@ Mat.Statistics = {
         x2 = this.randomGamma(b);
         x = x1 / (x1 + x2);
         return x;
-    },
+    }
 
     /**
      * Generate value of a random variable with chi-square distribution with k degrees of freedom.
@@ -924,7 +924,7 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomChisquare: function (nu) {
+    static randomChisquare(nu) {
         // Knuth, TAOCP 2, p 130
 
         if (nu <= 0) {
@@ -932,7 +932,7 @@ Mat.Statistics = {
         }
 
         return 2 * this.randomGamma(nu * 0.5);
-    },
+    }
 
     /**
      * Generate value of a random variable with F-distribution with d<sub>1</sub> and d<sub>2</sub> degrees of freedom.
@@ -942,7 +942,7 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomF: function (nu1, nu2) {
+    static randomF(nu1, nu2) {
         // Knuth, TAOCP 2, p 130
         var y1, y2;
 
@@ -954,7 +954,7 @@ Mat.Statistics = {
         y2 = this.randomChisquare(nu2);
 
         return (y1 * nu2) / (y2 * nu1);
-    },
+    }
 
     /**
      * Generate value of a random variable with Students-t-distribution with &nu; degrees of freedom.
@@ -963,7 +963,7 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomT: function (nu) {
+    static randomT(nu) {
         // Knuth, TAOCP 2, p 130
         var y1, y2;
 
@@ -975,7 +975,7 @@ Mat.Statistics = {
         y2 = this.randomChisquare(nu);
 
         return y1 / Math.sqrt(y2 / nu);
-    },
+    }
 
     /**
      * Generate values for a random variable in binomial distribution with parameters <i>n</i> and <i>p</i>.
@@ -1038,7 +1038,7 @@ Mat.Statistics = {
      * </script><pre>
      *
      */
-    randomBinomial: function (n, p) {
+    static randomBinomial(n, p) {
         var x, y, c,
             a, b, N1;
 
@@ -1102,7 +1102,7 @@ Mat.Statistics = {
             }
         }
         return x;
-    },
+    }
 
     /**
      * Generate values for a random variable in geometric distribution with probability <i>p</i>.
@@ -1112,7 +1112,7 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomGeometric: function (p) {
+    static randomGeometric(p) {
         var u;
 
         if (p < 0 || p > 1) {
@@ -1122,7 +1122,7 @@ Mat.Statistics = {
         u = Math.random();
 
         return Math.ceil(Math.log(u) / Math.log(1 - p));
-    },
+    }
 
     /**
      * Generate values for a random variable in Poisson distribution with mean <i>mu</i>.
@@ -1132,7 +1132,7 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomPoisson: function (mu) {
+    static randomPoisson(mu) {
         var e = Math.exp(-mu),
             N,
             m = 0,
@@ -1161,7 +1161,7 @@ Mat.Statistics = {
             }
         }
         return N;
-    },
+    }
 
     /**
      * Generate values for a random variable in Pareto distribution with
@@ -1174,14 +1174,14 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomPareto: function (gamma, k) {
+    static randomPareto(gamma, k) {
         var u = Math.random();
 
         if (gamma <= 0 || k <= 0) {
             return NaN;
         }
         return k * Math.pow(1 - u, -1 / gamma);
-    },
+    }
 
     /**
      * Generate values for a random variable in hypergeometric distribution.
@@ -1196,7 +1196,7 @@ Mat.Statistics = {
      * @returns
      * @memberof JXG.Math.Statistics
      */
-    randomHypergeometric: function (good, bad, k) {
+    static randomHypergeometric(good, bad, k) {
         var i, u,
             x = 0,
             // kk,
@@ -1241,7 +1241,7 @@ Mat.Statistics = {
         } else {
             return k - x;
         }
-    },
+    }
 
     /**
      * Compute the histogram of a dataset.
@@ -1340,7 +1340,7 @@ Mat.Statistics = {
      * </script><pre>
      *
      */
-    histogram: function (x, opt) {
+    static histogram(x, opt) {
         var i, le, k,
             mi, ma, num_bins, delta,
             range,
@@ -1409,6 +1409,5 @@ Mat.Statistics = {
 
         return [counts, bins];
     }
-};
+}
 
-export default Mat.Statistics;

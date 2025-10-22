@@ -111,7 +111,7 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
     this.board.renderer.drawForeignObject(this);
     this.board.finalizeAdding(this);
 
-    this.methodMap = JXG.deepCopy(this.methodMap, {
+    this.methodMap = Type.deepcopy(this.methodMap, {
         addTransformation: "addTransform",
         trans: "addTransform",
         W: "W",

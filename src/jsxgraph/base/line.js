@@ -49,7 +49,7 @@ import {JXG} from"../jxg.js";
  import {JSXMath}  from "../math/jsxmath.js";
 import{Geometry}   from "../math/geometry.js";
 import Numerics from "../math/numerics.js";
-import Statistics from "../math/statistics.js";
+import {Statistics} from "../math/statistics.js";
 import {Constants} from "./constants.js";
 import{Coords} from "./coords.js";
 import { Geometry } from "../math/geometry.js"
@@ -140,7 +140,7 @@ JXG.Line = function (board, p1, p2, attributes) {
     // create Label
     this.createLabel();
 
-    this.methodMap = JXG.deepCopy(this.methodMap, {
+    this.methodMap = Type.deepcopy(this.methodMap, {
         point1: "point1",
         point2: "point2",
         getSlope: "Slope",

@@ -1,4 +1,4 @@
-JXG.Options = JXG.deepCopy(JXG.Options, {
+JXG.Options = Type.deepcopy(JXG.Options, {
     showCopyright: false,
     showNavigation: false,
 

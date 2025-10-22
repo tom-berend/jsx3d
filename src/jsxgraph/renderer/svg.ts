@@ -35,11 +35,14 @@
 import { JXG } from "../jxg.js";
 import { Options } from "../options.js";
 import { AbstractRenderer } from "./abstract.js";
-import { OBJECT_CLASS,OBJECT_TYPE } from "../base/constants.js";
+import { OBJECT_CLASS, OBJECT_TYPE } from "../base/constants.js";
 import { Type } from "../utils/type.js";
 import { Color } from "../utils/color.js";
 import { Base64 } from "../utils/base64.js";
 import { Numerics } from "../math/numerics.js";
+import { LayerOptions } from "../optionInterfaces.js";
+import { GeometryElement } from "../base/element.js";
+import { Board } from "../base/board.js";
 
 /**
  * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -52,10 +55,17 @@ import { Numerics } from "../math/numerics.js";
  * @see JXG.AbstractRenderer
  */
 
+
+
+
+
 export class SVGRenderer extends AbstractRenderer {
+
 
     // docstring in AbstractRenderer
     type = "svg";
+
+    isSafari: boolean
 
     /**
      * SVG root node
@@ -78,6 +88,7 @@ export class SVGRenderer extends AbstractRenderer {
 
     layer: any
 
+
     /**
      * The xlink namespace. This is used for images.
      * @see http://www.w3.org/TR/xlink/
@@ -89,13 +100,14 @@ export class SVGRenderer extends AbstractRenderer {
         super()
         var i;
 
+        // https://stackoverflow.com/questions/7944460/detect-safari-browser
+        this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
         // container is documented in AbstractRenderer.
         // Type node
         this.container = container;
 
         // prepare the div container and the svg root node for use with JSXGraph
-        this.container.style.MozUserSelect = "none";
         this.container.style.userSelect = "none";
 
         this.container.style.overflow = "hidden";
@@ -126,7 +138,7 @@ export class SVGRenderer extends AbstractRenderer {
 
         /**
          * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
-         * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
+         * of other types of elements. For the order used see {@link Options.layer}. The number of layers is documented
          * there, too. The higher the number, the "more on top" are the elements on this layer.
          * @type Array
          */
@@ -257,7 +269,7 @@ export class SVGRenderer extends AbstractRenderer {
      * // Output:
      * // xxx_bbbTriangleEnd
      */
-    toStr() {
+    toStr(...args) {
         // ES6 would be [...arguments].join()
         var str = Array.prototype.slice.call(arguments).join('');
         // Mask special symbols like '/' and '\' in id
@@ -406,7 +418,7 @@ export class SVGRenderer extends AbstractRenderer {
             }
             if (
                 // !Type.exists(el.rendNode.getTotalLength) &&
-                el.elementClass === Const.OBJECT_CLASS_LINE
+                el.elementClass === OBJECT_CLASS.LINE
             ) {
                 if (type === 2) {
                     v = 4.9;
@@ -466,7 +478,7 @@ export class SVGRenderer extends AbstractRenderer {
             }
             if (
                 // !Type.exists(el.rendNode.getTotalLength) &&
-                el.elementClass === Const.OBJECT_CLASS_LINE
+                el.elementClass === OBJECT_CLASS.LINE
             ) {
                 if (type === 2) {
                     v = 5.1;
@@ -508,24 +520,28 @@ export class SVGRenderer extends AbstractRenderer {
                         node.setAttributeNS(null, "fill", color);
                         node.setAttributeNS(null, "stroke-opacity", opacity);
                         node.setAttributeNS(null, "fill-opacity", opacity);
-                    } el.visPropOld.fillcolor);
+                    }, el.visPropOld.fillcolor);
                 } else {
                     this._setAttribute(function () {
                         node.setAttributeNS(null, "fill", "none");
                         node.setAttributeNS(null, "stroke", color);
                         node.setAttributeNS(null, "stroke-opacity", opacity);
-                    } el.visPropOld.fillcolor);
+                    }, el.visPropOld.fillcolor);
                 }
             }
 
-            // if (this.isIE) {
-            // Necessary, since Safari is the new IE (11.2024)
-            el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
-            // }
+            if (this.isSafari) {
+                // Necessary, since Safari is the new IE (11.2024)
+                el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
+            }
         }
     }
-
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Updates width of an arrow DOM node. Used in
+     * @param {Node} node The arrow node.
+     * @param {Number} width
+     * @param {Node} parentNode Used in IE only
+     */
     _setArrowWidth(node, width, parentNode, size) {
         var s, d;
 
@@ -542,16 +558,25 @@ export class SVGRenderer extends AbstractRenderer {
             node.setAttributeNS(null, "display", "inherit");
             // }
 
-            // if (this.isIE) {
-            // Necessary, since Safari is the new IE (11.2024)
-            parentNode.parentNode.insertBefore(parentNode, parentNode);
-            // }
+            if (this.isSafari) {
+                // Necessary, since Safari is the new IE (11.2024)
+                parentNode.parentNode.insertBefore(parentNode, parentNode);
+            }
         }
     }
 
     /* ********* Line related stuff *********** */
 
-    // documented in AbstractRenderer
+    /**
+     * Update {@link Ticks} on a {@link JXG.Line}. This method is only a stub and has to be implemented
+     * in any descendant renderer class.
+     * @param {JXG.Ticks} el Reference of a ticks object that has to be updated.
+     * @see Line
+     * @see Ticks
+     * @see JXG.Line
+     * @see JXG.Ticks
+     * @see JXG.AbstractRenderer#drawTicks
+     */
     updateTicks(ticks) {
         var i,
             j,
@@ -610,7 +635,13 @@ export class SVGRenderer extends AbstractRenderer {
 
     /* ********* Text related stuff *********** */
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Shows a small copyright notice in the top left corner of the board.
+     * @param {String} str The copyright notice itself
+     * @param {Number} fontsize Size of the font the copyright notice is written in
+     * @see JXG.AbstractRenderer#displayLogo
+     * @see Text#fontSize
+     */
     displayCopyright(str, fontsize) {
         var node, t,
             x = 4 + 1.8 * fontsize,
@@ -630,7 +661,13 @@ export class SVGRenderer extends AbstractRenderer {
         this.appendChildPrim(node, 0);
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Shows a small JSXGraph logo in the top left corner of the board.
+     * @param {String} str The data-URL of the logo
+     * @param {Number} fontsize Size of the font the copyright notice is written in
+     * @see JXG.AbstractRenderer#displayCopyright
+     * @see Text#fontSize
+     */
     displayLogo(str, fontsize) {
         var node,
             s = 1.5 * fontsize,
@@ -649,7 +686,18 @@ export class SVGRenderer extends AbstractRenderer {
         this.appendChildPrim(node, 0);
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * An internal text is a {@link JXG.Text} element which is drawn using only
+     * the given renderer but no HTML. This method is only a stub, the drawing
+     * is done in the special renderers.
+     * @param {JXG.Text} el Reference to a {@link JXG.Text} object
+     * @see Text
+     * @see JXG.Text
+     * @see JXG.AbstractRenderer#updateInternalText
+     * @see JXG.AbstractRenderer#drawText
+     * @see JXG.AbstractRenderer#updateText
+     * @see JXG.AbstractRenderer#updateTextStyle
+     */
     drawInternalText(el) {
         var node = this.createPrim("text", el.id);
 
@@ -665,7 +713,16 @@ export class SVGRenderer extends AbstractRenderer {
         return node;
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Updates visual properties of an already existing {@link JXG.Text} element.
+     * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+     * @see Text
+     * @see JXG.Text
+     * @see JXG.AbstractRenderer#drawInternalText
+     * @see JXG.AbstractRenderer#drawText
+     * @see JXG.AbstractRenderer#updateText
+     * @see JXG.AbstractRenderer#updateTextStyle
+     */
     updateInternalText(el) {
         var content = el.plaintext,
             v, css,
@@ -735,13 +792,20 @@ export class SVGRenderer extends AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      * @see JXG.AbstractRenderer#updateInternalTextStyle
      */
-    updateInternalTextStyle(el, strokeColor, strokeOpacity, duration) {
+    updateInternalTextStyle(el: GeometryElement, strokeColor: string, strokeOpacity: number) {
         this.setObjectFillColor(el, strokeColor, strokeOpacity);
     }
 
     /* ********* Image related stuff *********** */
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special
+     * renderers.
+     * @param {JXG.Image} el Reference to the image object that is to be drawn
+     * @see Image
+     * @see JXG.Image
+     * @see JXG.AbstractRenderer#updateImage
+     */
     drawImage(el) {
         var node = this.createPrim("image", el.id);
 
@@ -752,7 +816,17 @@ export class SVGRenderer extends AbstractRenderer {
         this.updateImage(el);
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Applies transformations on images and text elements. This method has to implemented in
+     * all descendant classes where text and image transformations are to be supported.
+     * <p>
+     * Only affine transformation are supported, no proper projective transformations. This means, the
+     * respective entries of the transformation matrix are simply ignored.
+     *
+     * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
+     * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
+     * transformations property of the given element <tt>el</tt>.
+     */
     transformRect(el, t) {
         var s, m, node,
             str = "",
@@ -786,7 +860,11 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * If the URL of the image is provided by a function the URL has to be updated during updateImage()
+     * @param {JXG.Image} el Reference to an image object.
+     * @see JXG.AbstractRenderer#updateImage
+     */
     updateImageURL(el) {
         var url = el.eval(el.url);
 
@@ -841,12 +919,26 @@ export class SVGRenderer extends AbstractRenderer {
             el.rendNode.innerHTML = el.content;
             el.renderedOnce = true;
         }
-        this._updateVisual(el, { stroke: true, dash: true } true);
+        this._updateVisual(el, { stroke: true, dash: true }, true);
     }
 
     /* ********* Render primitive objects *********** */
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+    * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
+    * the <tt>createPrim</tt> method.
+    * @param {JXG.GeometryElement} el A JSXGraph element.
+    * @param {String} type The XML node name. Only used in VMLRenderer.
+    */
+    appendNodesToElement(el, type) { /* stub */ }  // TODO: this was never implemented !!
+
+    /**
+     * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
+     * in all renderers that want to use the <tt>createPrim</tt> model to draw.
+     * @param {Node} node A DOM tree node.
+     * @param {Number} level The layer the node is attached to. This is the index of the layer in
+     * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in SVGRenderer.
+     */
     appendChildPrim(node, level) {
         if (!Type.exists(level)) {
             // trace nodes have level not set
@@ -859,9 +951,14 @@ export class SVGRenderer extends AbstractRenderer {
         return node;
     }
 
-    // Already documented in JXG.AbstractRenderer
-    createPrim(type, id) {
-        var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
+    /**
+     * Creates a node of a given type with a given id.
+     * @param  type The type of the node to create.
+     * @param  id Set the id attribute to this.
+     * @returns {Node} Reference to the created node.
+     */
+    createPrim(type: string, id: string): HTMLElement {
+        let node = this.container.ownerDocument.createElementNS(this.svgNamespace, type) as HTMLElement
         node.setAttributeNS(null, "id", this.uniqName(id));
         node.style.position = "absolute";
         if (type === "path") {
@@ -873,15 +970,25 @@ export class SVGRenderer extends AbstractRenderer {
         return node;
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Removes an element node.
+     * @param {Node} node The node to remove.
+     */
     remove(shape) {
         if (Type.exists(shape) && Type.exists(shape.parentNode)) {
             shape.parentNode.removeChild(shape);
         }
     }
 
-    // Already documented in JXG.AbstractRenderer
-    setLayer(el, level) {
+    /**
+     * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
+     * Does not work dynamically, i.e. if level is a function.
+     *
+     * @param  el Element which is put into different layer
+     * @param  value Layer number
+     * @private
+     */
+    setLayer(el: GeometryElement, level: number) {
         if (!Type.exists(level)) {
             level = 0;
         } else if (level >= Options.layer.numlayers) {
@@ -891,13 +998,19 @@ export class SVGRenderer extends AbstractRenderer {
         this.layer[level].appendChild(el.rendNode);
     }
 
-    // Already documented in JXG.AbstractRenderer
-    makeArrows(el, a) {
+    /**
+     * Can be used to create the nodes to display arrows. This is an abstract method which has to be implemented
+     * in any descendant renderer.
+     * @param {JXG.GeometryElement} el The element the arrows are to be attached to.
+     * @param {Object} arrowData Data concerning possible arrow heads
+     *
+     */
+    makeArrows(el: GeometryElement, a) {
         var node2, str,
             ev_fa = a.evFirst,
             ev_la = a.evLast;
 
-        if (this.isIE && el.visPropCalc.visible && (ev_fa || ev_la)) {
+        if (this.isSafari && el.visPropCalc.visible && (ev_fa || ev_la)) {
             // Necessary, since Safari is the new IE (11.2024)
             el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
             return;
@@ -956,7 +1069,15 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
+     * that use the <tt>createPrim</tt> method.
+     * @param {Node} node Reference to the node.
+     * @param {Number} x Centre X coordinate
+     * @param {Number} y Centre Y coordinate
+     * @param {Number} rx The x-axis radius.
+     * @param {Number} ry The y-axis radius.
+     */
     updateEllipsePrim(node, x, y, rx, ry) {
         var huge = 1000000;
 
@@ -974,7 +1095,16 @@ export class SVGRenderer extends AbstractRenderer {
         node.setAttributeNS(null, "ry", Math.abs(ry));
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
+     * the <tt>createPrim</tt> method.
+     * @param {Node} node The node to be refreshed.
+     * @param {Number} p1x The first point's x coordinate.
+     * @param {Number} p1y The first point's y coordinate.
+     * @param {Number} p2x The second point's x coordinate.
+     * @param {Number} p2y The second point's y coordinate.
+     * @param {JXG.Board} board
+     */
     updateLinePrim(node, p1x, p1y, p2x, p2y) {
         var huge = 1000000;
 
@@ -994,15 +1124,32 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // Already documented in JXG.AbstractRenderer
-    updatePathPrim(node, pointString) {
+    /**
+     * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
+     * the <tt>createPrim</tt> method.
+     * @param {Node} node The path node.
+     * @param {String} pathString A string formatted like e.g. <em>'M 1,2 L 3,1 L5,5'</em>. The format of the string
+     * depends on the rendering engine.
+     * @param {JXG.Board} board Reference to the element's board.
+     */
+    updatePathPrim(node, pointString, board: Board) {
         if (pointString === "") {
             pointString = "M 0 0";
         }
         node.setAttributeNS(null, "d", pointString);
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Builds a path data string to draw a point with a face other than <em>rect</em> and <em>circle</em>. Since
+     * the format of such a string usually depends on the renderer this method
+     * is only an abstract method. Therefore, it has to be implemented in the descendant renderer itself unless
+     * the renderer does not use the createPrim interface but the draw* interfaces to paint.
+     * @param {JXG.Point} el The point element
+     * @param {Number} size A positive number describing the size. Usually the half of the width and height of
+     * the drawn point.
+     * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
+     * each possible face: <tt>x, +, |, -, [], <>, <<>>,^, v, >, < </tt>
+     */
     updatePathStringPoint(el, size, type) {
         var s = "",
             scr = el.coords.scrCoords,
@@ -1151,7 +1298,12 @@ export class SVGRenderer extends AbstractRenderer {
         return s;
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Builds a path data string from a {@link JXG.Curve} element. Since the path data strings heavily depend on the
+     * underlying rendering technique this method is just a stub. Although such a path string is of no use for the
+     * CanvasRenderer, this method is used there to draw a path directly.
+     * @param {JXG.GeometryElement} el
+     */
     updatePathStringPrim(el) {
         var i,
             scr,
@@ -1211,7 +1363,13 @@ export class SVGRenderer extends AbstractRenderer {
         return pStr;
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Builds a path data string from a {@link JXG.Curve} element such that the curve looks like hand drawn. Since
+     * the path data strings heavily depend on the underlying rendering technique this method is just a stub.
+     * Although such a path string is of no use for the CanvasRenderer, this method is used there to draw a path
+     * directly.
+     * @param  {JXG.GeometryElement} el
+     */
     updatePathStringBezierPrim(el) {
         var i, j, k,
             scr,
@@ -1278,7 +1436,11 @@ export class SVGRenderer extends AbstractRenderer {
         return pStr;
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Update a polygon primitive.
+     * @param {Node} node
+     * @param {JXG.Polygon} el A JSXGraph element of type {@link JXG.Polygon}
+     */
     updatePolygonPrim(node, el) {
         var i,
             pStr = "",
@@ -1309,7 +1471,14 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // Already documented in JXG.AbstractRenderer
+    /**
+     * Update a rectangle primitive. This is used only for points with face of type 'rect'.
+     * @param {Node} node The node yearning to be updated.
+     * @param {Number} x x coordinate of the top left vertex.
+     * @param {Number} y y coordinate of the top left vertex.
+     * @param {Number} w Width of the rectangle.
+     * @param {Number} h The rectangle's height.
+     */
     updateRectPrim(node, x, y, w, h) {
         node.setAttributeNS(null, "x", x);
         node.setAttributeNS(null, "y", y);
@@ -1346,29 +1515,58 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    display(el, val) {
-        var node;
+    /**
+    * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+    * @param {JXG.GeometryElement} el Reference to the object that has to appear.
+    * @param {Boolean} value true to show the element, false to hide the element.
+    */
 
-        if (el && el.rendNode) {
-            el.visPropOld.visible = val;
-            node = el.rendNode;
-            if (val) {
-                node.setAttributeNS(null, "display", "inline");
-                node.style.visibility = "inherit";
-            } else {
-                node.setAttributeNS(null, "display", "none");
-                node.style.visibility = "hidden";
-            }
+    display(el, value) {
+        if (el) {
+            el.visPropOld.visible = value;
         }
+
+        ///////////////////// tbtb - this was in svg.js, but above code implement in abstract.js
+        // var node;
+
+        // if (el && el.rendNode) {
+        //     el.visPropOld.visible = val;
+        //     node = el.rendNode;
+        //     if (val) {
+        //         node.setAttributeNS(null, "display", "inline");
+        //         node.style.visibility = "inherit";
+        //     } else {
+        //         node.setAttributeNS(null, "display", "none");
+        //         node.style.visibility = "hidden";
+        //     }
+        // }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+     *
+     * Please use JXG.AbstractRenderer#display instead
+     * @param {JXG.GeometryElement} el Reference to the geometry element that has to disappear.
+     * @see JXG.AbstractRenderer#show
+     * @deprecated
+     */
     hide(el) {
         JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
         this.display(el, false);
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
+     * properties "enabled", "label", and "live". Additionally, all available properties from
+     * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+     * <p>
+     * In JSXGraph, the available properties are used without the leading 'aria-'.
+     * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+     * HTML attribute 'aria-label'.
+     *
+     * @param {JXG.GeometryElement} el Reference of the object that wants new
+     *        ARIA attributes.
+     */
     setARIA(el) {
         // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
         var key, k, v;
@@ -1387,12 +1585,25 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other
+     * browsers. Although this feature is only supported by SVG we have this method in {@link JXG.AbstractRenderer}
+     * because it is called from outside the renderer.
+     * @param {Node} node The SVG DOM Node which buffering type to update.
+     * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
+     *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+     */
     setBuffering(el, type) {
         el.rendNode.setAttribute("buffered-rendering", type);
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Sets CSS classes for elements (relevant for SVG only).
+     *
+     * @param {JXG.GeometryElement} el Reference of the object that wants a
+     *         new set of CSS classes.
+     * @param {String} cssClass String containing a space separated list of CSS classes.
+     */
     setCssClass(el, cssClass) {
 
         if (el.visPropOld.cssclass !== cssClass) {
@@ -1401,7 +1612,10 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Sets an element's dash style.
+     * @param {JXG.GeometryElement} el An JSXGraph element.
+     */
     setDashStyle(el) {
         var dashStyle = el.evalVisProp('dash'),
             ds = el.evalVisProp('dashscale'),
@@ -1421,7 +1635,10 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Sets up nodes for rendering a gradient fill.
+     * @param {JXG.GeometryElement}  el Reference of the object which gets the gradient
+     */
     setGradient(el) {
         var fillNode = el.rendNode,
             node, node2, node3,
@@ -1448,7 +1665,17 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Update the line endings (linecap) of a straight line from its attribute
+     * 'linecap'.
+     * Possible values for the attribute 'linecap' are: 'butt', 'round', 'square'.
+     * The default value is 'butt'. Not available for VML renderer.
+     *
+     * @param {JXG.Line} element A arbitrary line.
+     * @see Line
+     * @see JXG.Line
+     * @see JXG.AbstractRenderer#updateLine
+     */
     setLineCap(el) {
         var capStyle = el.evalVisProp('linecap');
 
@@ -1465,8 +1692,14 @@ export class SVGRenderer extends AbstractRenderer {
         el.visPropOld.linecap = capStyle;
     }
 
-    // documented in JXG.AbstractRenderer
-    setObjectFillColor(el, color, opacity, rendNode) {
+    /**
+     * Sets an objects fill color.
+     * @param {JXG.GeometryElement} el Reference of the object that wants a new fill color.
+     * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose
+     * 'none'.
+     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
+     */
+    setObjectFillColor(el: GeometryElement, color: string, opacity: number, rendNode?: HTMLElement) {
         var node, c, rgbo, oo,
             rgba = color,
             o = opacity,
@@ -1503,13 +1736,13 @@ export class SVGRenderer extends AbstractRenderer {
             if (c !== "none" && c !== "" && c !== false) {
                 this._setAttribute(function () {
                     node.setAttributeNS(null, "fill", c);
-                } el.visPropOld.fillcolor);
+                }, el.visPropOld.fillcolor);
             }
 
             if (el.type === OBJECT_TYPE.IMAGE) {
                 this._setAttribute(function () {
                     node.setAttributeNS(null, "opacity", oo);
-                } el.visPropOld.fillopacity);
+                }, el.visPropOld.fillopacity);
                 //node.style['opacity'] = oo;  // This would overwrite values set by CSS class.
             } else {
                 if (c === "none") {
@@ -1524,7 +1757,7 @@ export class SVGRenderer extends AbstractRenderer {
                 }
                 this._setAttribute(function () {
                     node.setAttributeNS(null, "fill-opacity", oo);
-                } el.visPropOld.fillopacity);
+                }, el.visPropOld.fillopacity);
             }
 
             if (grad === "linear" || grad === "radial") {
@@ -1535,7 +1768,14 @@ export class SVGRenderer extends AbstractRenderer {
         el.visPropOld.fillopacity = o;
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Changes an objects stroke color to the given color.
+     * @param {JXG.GeometryElement} el Reference of the {@link JXG.GeometryElement} that gets a new stroke
+     * color.
+     * @param {String} color Color value in a HTML compatible format, e.g. <strong>#00ff00</strong> or
+     * <strong>green</strong> for green.
+     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
+     */
     setObjectStrokeColor(el, color, opacity) {
         var rgba = color,
             c, rgbo,
@@ -1567,18 +1807,18 @@ export class SVGRenderer extends AbstractRenderer {
                     this._setAttribute(function () {
                         node.style.color = c;
                         node.style.opacity = oo;
-                    } el.visPropOld.strokecolor);
+                    }, el.visPropOld.strokecolor);
                 } else {
                     this._setAttribute(function () {
                         node.setAttributeNS(null, "style", "fill:" + c);
                         node.setAttributeNS(null, "style", "fill-opacity:" + oo);
-                    } el.visPropOld.strokecolor);
+                    }, el.visPropOld.strokecolor);
                 }
             } else {
                 this._setAttribute(function () {
                     node.setAttributeNS(null, "stroke", c);
                     node.setAttributeNS(null, "stroke-opacity", oo);
-                } el.visPropOld.strokecolor);
+                }, el.visPropOld.strokecolor);
             }
 
             if (
@@ -1607,7 +1847,11 @@ export class SVGRenderer extends AbstractRenderer {
         el.visPropOld.strokeopacity = o;
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Sets an element's stroke width.
+     * @param {JXG.GeometryElement} el Reference to the geometry element.
+     * @param {Number} width The new stroke width to be assigned to the element.
+     */
     setObjectStrokeWidth(el, width) {
         var node,
             w = width;
@@ -1635,8 +1879,15 @@ export class SVGRenderer extends AbstractRenderer {
         el.visPropOld.strokewidth = w;
     }
 
-    // documented in JXG.AbstractRenderer
-    setObjectTransition(el, duration) {
+    /**
+     * Sets the transition duration (in milliseconds) for fill color and stroke
+     * color and opacity.
+     * @param {JXG.GeometryElement} el Reference of the object that wants a
+     *         new transition duration.
+     * @param {Number} duration (Optional) duration in milliseconds. If not given,
+     *        element.visProp.transitionDuration is taken. This is the default.
+     */
+    setObjectTransition(el: GeometryElement, duration?: number) {
         var node, props,
             transitionArr = [],
             transitionStr,
@@ -1694,7 +1945,11 @@ export class SVGRenderer extends AbstractRenderer {
         el.visPropOld.transitionproperties = props;
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual
+     * renderers.
+     * @param {JXG.GeometryElement} el Reference to a geometry object, that should get a shadow
+     */
     setShadow(el) {
         var ev_s = el.evalVisProp('shadow'),
             ev_s_json, c, b, bl, o, op, id, node,
@@ -1718,7 +1973,7 @@ export class SVGRenderer extends AbstractRenderer {
             if (el.evalVisProp('shadow.enabled')) {
                 use_board_filter = false;
                 show = true;
-                c = JXG.rgbParser(el.evalVisProp('shadow.color'));
+                c = Color.rgbParser(el.evalVisProp('shadow.color'));
                 b = el.evalVisProp('shadow.blur');
                 bl = el.evalVisProp('shadow.blend');
                 o = el.evalVisProp('shadow.offset');
@@ -1751,7 +2006,12 @@ export class SVGRenderer extends AbstractRenderer {
         el.visPropOld.shadow = ev_s_json;
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Set the attribute `tabindex` to the attribute `tabindex` of an element.
+     * This is only relevant for the SVG renderer.
+     *
+     * @param {JXG.GeometryElement} el
+     */
     setTabindex(el) {
         var val;
         if (el.board.attr.keyboard.enabled && Type.exists(el.rendNode)) {
@@ -1766,7 +2026,12 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Sets a node's attribute.
+     * @param {Node} node The node that is to be updated.
+     * @param {String} key Name of the attribute.
+     * @param {String} val New value for the attribute.
+     */
     setPropertyPrim(node, key, val) {
         if (key === "stroked") {
             return;
@@ -1774,7 +2039,14 @@ export class SVGRenderer extends AbstractRenderer {
         node.setAttributeNS(null, key, val);
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
+     *
+     * Please use JXG.AbstractRenderer#display instead
+     * @param {JXG.GeometryElement} el Reference to the object that has to appear.
+     * @see JXG.AbstractRenderer#hide
+     * @deprecated
+     */
     show(el) {
         JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
         this.display(el, true);
@@ -1787,7 +2059,10 @@ export class SVGRenderer extends AbstractRenderer {
         // }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Updates the gradient fill.
+     * @param {JXG.GeometryElement} el An JSXGraph element with an area that can be filled.
+     */
     updateGradient(el) {
         var col,
             op,
@@ -1899,26 +2174,41 @@ export class SVGRenderer extends AbstractRenderer {
 
     /* ********* Renderer control *********** */
 
-    // documented in JXG.AbstractRenderer
+    /**
+      * Stop redraw. This method is called before every update, so a non-vector-graphics based renderer can use this
+      * method to delete the contents of the drawing panel. This is an abstract method every descendant renderer
+      * should implement, if appropriate.
+      * @see JXG.AbstractRenderer#unsuspendRedraw
+      */
     suspendRedraw() {
         // It seems to be important for the Linux version of firefox
         this.suspendHandle = this.svgRoot.suspendRedraw(10000);
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Restart redraw. This method is called after updating all the rendering node attributes.
+     * @see JXG.AbstractRenderer#suspendRedraw
+     */
     unsuspendRedraw() {
         this.svgRoot.unsuspendRedraw(this.suspendHandle);
         // this.svgRoot.unsuspendRedrawAll();
         //this.svgRoot.forceRedraw();
     }
 
-    // documented in AbstractRenderer
+    /**
+     * Resizes the rendering element
+     * @param {Number} w New width
+     * @param {Number} h New height
+     */
     resize(w, h) {
         this.svgRoot.setAttribute("width", parseFloat(w));
         this.svgRoot.setAttribute("height", parseFloat(h));
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Create crosshair elements (Fadenkreuz) for presentations.
+     * @param {Number} n Number of crosshairs.
+     */
     createTouchpoints(n) {
         var i, na1, na2, node;
         this.touchpoints = [];
@@ -1952,7 +2242,10 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Show a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     */
     showTouchpoint(i) {
         if (this.touchpoints && i >= 0 && 2 * i < this.touchpoints.length) {
             this.touchpoints[2 * i].setAttributeNS(null, "display", "inline");
@@ -1960,7 +2253,10 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Hide a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     */
     hideTouchpoint(i) {
         if (this.touchpoints && i >= 0 && 2 * i < this.touchpoints.length) {
             this.touchpoints[2 * i].setAttributeNS(null, "display", "none");
@@ -1968,7 +2264,11 @@ export class SVGRenderer extends AbstractRenderer {
         }
     }
 
-    // documented in JXG.AbstractRenderer
+    /**
+     * Move a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     * @param {Array} pos New positon in screen coordinates
+     */
     updateTouchpoint(i, pos) {
         var x,
             y,
@@ -2167,7 +2467,7 @@ export class SVGRenderer extends AbstractRenderer {
         // In IE we have to remove the namespace again.
         // Since 2024 we have to check if the namespace attribute appears twice in one tag, because
         // there might by a svg inside of the svg, e.g. the screenshot icon.
-        if (this.isIE &&
+        if (this.isSafari &&
             (svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"\s+xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1
         ) {
             svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"\s+xmlns="http:\/\/www.w3.org\/2000\/svg"/g, "");
@@ -2270,7 +2570,7 @@ export class SVGRenderer extends AbstractRenderer {
                     } catch (err) {
                         console.log("screenshots not longer supported on IE");
                     }
-                } 200);
+                }, 200);
             };
             return this;
         }
@@ -2279,7 +2579,7 @@ export class SVGRenderer extends AbstractRenderer {
             try {
                 tmpImg.onload = function () {
                     ctx.drawImage(tmpImg, 0, 0, w, h);
-                    resolve();
+                    this.resolve();
                 };
             } catch (e) {
                 reject(e);
@@ -2408,13 +2708,15 @@ export class SVGRenderer extends AbstractRenderer {
         };
 
         // Create screenshot in image element
-        if ("Promise" in window) {
-            this.dumpToCanvas(id, w, h, ignoreTexts).then(_copyCanvasToImg);
-        } else {
-            // IE
-            this.dumpToCanvas(id, w, h, ignoreTexts);
-            window.setTimeout(_copyCanvasToImg, 200);
-        }
+        // if ("Promise" in window) {
+
+        this.dumpToCanvas(id, w, h, ignoreTexts).then(_copyCanvasToImg);
+
+        // } else {
+        //     // IE
+        //     this.dumpToCanvas(id, w, h, ignoreTexts);
+        //     window.setTimeout(_copyCanvasToImg, 200);
+        // }
 
         // Reinsert navigation bar in board
         if (Type.exists(navbar)) {

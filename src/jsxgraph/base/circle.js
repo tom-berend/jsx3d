@@ -45,7 +45,7 @@ import { Element } from "./element.js";
 import{Coords} from "./coords.js";
 import {Constants} from "./constants.js";
  import {JSXMath}  from "../math/jsxmath.js";
-import GeonextParser from "../parser/geonext.js";
+import {GeonextParser} from "../parser/geonext.js";
 import {Type} from "../utils/type.js";
 
 /**

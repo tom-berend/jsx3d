@@ -35,7 +35,7 @@
 import {JXG} from"../jxg.js";
 import{Geometry}   from "../math/geometry.js";
  import {JSXMath}  from "../math/jsxmath.js";
-import Statistics from "../math/statistics.js";
+import {Statistics} from "../math/statistics.js";
 import{Coords} from "../base/coords.js";
 import {Constants} from "../base/constants.js";
 import {Type} from "../utils/type.js";
@@ -345,7 +345,7 @@ JXG.createSector = function (board, parents, attributes) {
             el.direction2 = parents[3] >= 0 ? 1 : -1;
         }
 
-        el.methodMap = JXG.deepCopy(el.methodMap, {
+        el.methodMap = Type.deepcopy(el.methodMap, {
             arc: "arc",
             center: "center",
             line1: "line1",
@@ -503,7 +503,7 @@ JXG.createSector = function (board, parents, attributes) {
             el.point4.addChild(el);
         }
 
-        el.methodMap = JXG.deepCopy(el.methodMap, {
+        el.methodMap = Type.deepcopy(el.methodMap, {
             arc: "arc",
             center: "center",
             radiuspoint: "radiuspoint",
@@ -903,7 +903,7 @@ JXG.createSector = function (board, parents, attributes) {
         };
     }
 
-    el.methodMap = JXG.deepCopy(el.methodMap, {
+    el.methodMap = Type.deepcopy(el.methodMap, {
         radius: "Radius",
         Radius: "Radius",
         getRadius: "Radius",

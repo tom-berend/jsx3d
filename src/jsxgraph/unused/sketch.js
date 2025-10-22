@@ -2505,7 +2505,7 @@
                         // Adapt the steps to the new IDs
                         for (el in step.args.steps) {
                             if (step.args.steps.hasOwnProperty(el)) {
-                                step2 = JXG.deepCopy(step_log[step.args.steps[el]]);
+                                step2 = Type.deepcopy(step_log[step.args.steps[el]]);
 
                                 if (step2.type === JXG.GENTYPE_COPY) {
                                     for (i = 0; i < step2.args.map.length; i++) {

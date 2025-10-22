@@ -41,111 +41,21 @@
 import { JXG } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY } from './constants.js';
 import { Coords } from './coords.js';
-import {Options} from '../options.js';
-import {Numerics} from '../math/numerics.js';
+import { Options } from '../options.js';
+import { Numerics } from '../math/numerics.js';
 //  import {JSXMath}  from '../math/jsxmath.js';
 import { Geometry } from '../math/geometry.js';
-import {Complex} from '../math/complex.js';
-// import Statistics from '../math/statistics.js';
-// import JessieCode from '../parser/jessiecode.js';
-import {Color} from '../utils/color.js';
+import { Complex } from '../math/complex.js';
+// import {Statistics} from '../math/statistics.js';
+import {JessieCode} from '../parser/jessiecode.js';
+import { Color } from '../utils/color.js';
 import { Type } from '../utils/type.js';
-import {Events} from '../utils/event.js';
+import { Events } from '../utils/event.js';
 import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
-import { GeometryElement } from 'jsxgraph';
+import { GeometryElement } from 'element';
 
-export class Board extends Events{
-
-    /** The html-id of the html element containing the board. */
-    public container: string
-
-    /**  ID of the board */
-    public id: string = '';
-
-    /**  Pointer to the html element containing the board.   */
-    public containerObj: HTMLElement | null  // (Env.isBrowser ? this.document.getElementById(this.container) : null);
-
-    /**
-* A reference to this boards renderer.
-* @type JXG.AbstractRenderer
-* @name JXG.Board#renderer
-* @private
-* @ignore
-*/
-    public renderer;
-
-    /**
-     * Grids keeps track of all grids attached to this board.
-     * @type Array
-     * @private
-     */
-    public grids: any[] = [];
-
-    /**
-     * Copy of the default options
-     * @type JXG.Options
-     */
-    public options: Object;  // A possible theme is not yet merged in
-
-    /**
-     * Board attributes
-     * @type Object
-     */
-    public attr: Object;
-
-
-    /**
-     * Dimension of the board.
-     * @default 2
-     * @type Number
-     */
-    public dimension = 2;
-
-    public jc = new JessieCode();
-
-    /**
-     * Coordinates of the boards origin. This a object with the two properties
-     * usrCoords and scrCoords. usrCoords always equals [1, 0, 0] and scrCoords
-     * stores the boards origin in homogeneous screen coordinates.
-     * @type Object
-     * @private
-     */
-    public origin: Object;
-
-    /**
-     * Zoom factor in X direction. It only stores the zoom factor to be able
-     * to get back to 100% in zoom100().
-     * @name JXG.Board.zoomX
-     * @type Number
-     * @private
-     * @ignore
-     */
-    public zoomX: number
-
-    /**
-     * Zoom factor in Y direction. It only stores the zoom factor to be able
-     * to get back to 100% in zoom100().
-     * @name JXG.Board.zoomY
-     * @type Number
-     * @private
-     * @ignore
-     */
-    public zoomY: number;
-
-    /**
-     * The number of pixels which represent one unit in user-coordinates in x direction.
-     * @type Number
-     * @private
-     */
-    public unitX: number;;
-
-    /**
-     * The number of pixels which represent one unit in user-coordinates in y direction.
-     * @type Number
-     * @private
-     */
-    public unitY: number;
+export class Board extends Events {
 
     /**
      * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
@@ -524,6 +434,42 @@ export class Board extends Events{
     public document: Object
 
     /**
+     * The html-id of the html element containing the board.
+     * @type String
+     */
+    public container: string
+
+    /**
+    * ID of the board
+    * @type String
+    */
+    public id = '';
+
+    /**
+    * A reference to this boards renderer.
+    * @type JXG.AbstractRenderer
+    * @name JXG.Board#renderer
+    * @private
+    * @ignore
+    */
+   public renderer:'svg'|'canvas'
+
+   /**
+    * Grids keeps track of all grids attached to this board.
+    * @type Array
+    * @private
+    */
+   public grids = [];
+
+    /**
+     * Copy of the default options
+     * @type JXG.Options
+     */
+    public options :Object
+
+
+
+    /**
      * Constructs a new Board object.
      * @class Board controls all properties and methods used to manage a geonext board like managing geometric
      * elements, managing mouse and touch events, etc. You probably don't want to use this constructor directly.
@@ -550,6 +496,7 @@ export class Board extends Events{
     constructor(container, renderer, id,
         origin, zoomX, zoomY, unitX, unitY,
         canvasWidth, canvasHeight, attributes) {
+        super()
 
         if (('document' in attributes) && attributes.document !== false) {
             this.document = attributes.document;
@@ -557,17 +504,8 @@ export class Board extends Events{
             this.document = document;
         }
 
-        /**
-         * The html-id of the html element containing the board.
-         * @type String
-         */
         this.container = ''; // container
 
-        /**
-         * ID of the board
-         * @type String
-         */
-        this.id = '';
 
         /**
          * Pointer to the html element containing the board.
@@ -616,13 +554,6 @@ export class Board extends Events{
          * @ignore
          */
         this.renderer = renderer;
-
-        /**
-         * Grids keeps track of all grids attached to this board.
-         * @type Array
-         * @private
-         */
-        this.grids = [];
 
         /**
          * Copy of the default options
@@ -5279,51 +5210,51 @@ export class Board extends Events{
      * property. This is necessary after changing the viewport.
      * @returns {JXG.Board} Reference to this board.
      **/
-  updateCoords() {
-            var el, ob,
-                froz, e, o, f,
-                len = this.objectsList.length;
+    updateCoords() {
+        var el, ob,
+            froz, e, o, f,
+            len = this.objectsList.length;
 
-            for (ob = 0; ob < len; ob++) {
-                el = this.objectsList[ob];
+        for (ob = 0; ob < len; ob++) {
+            el = this.objectsList[ob];
 
-                if (Type.exists(el.coords)) {
-                    froz = el.evalVisProp('frozen');
-                    if (froz === 'inherit') {
-                        // Search if a descendant of 'el' is set to 'frozen'.
-                        // If yes, set element 'el' as frozen, too.
-                        for (e in el.descendants/*el.childElements*/) {
-                            if (el.descendants.hasOwnProperty(e)) {
-                                o = el.descendants[e];
-                                f = o.evalVisProp('frozen');
-                                if (f === true || f === false) {
-                                    froz = f;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (froz === true) {
-                        if (el.is3D) {
-                            el.element2D.coords.screen2usr();
-                        } else {
-                            el.coords.screen2usr();
-                        }
-                    } else {
-                        if (el.is3D) {
-                            el.element2D.coords.usr2screen();
-                        } else {
-                            el.coords.usr2screen();
-                            if (Type.exists(el.actualCoords)) {
-                                el.actualCoords.usr2screen();
-
+            if (Type.exists(el.coords)) {
+                froz = el.evalVisProp('frozen');
+                if (froz === 'inherit') {
+                    // Search if a descendant of 'el' is set to 'frozen'.
+                    // If yes, set element 'el' as frozen, too.
+                    for (e in el.descendants/*el.childElements*/) {
+                        if (el.descendants.hasOwnProperty(e)) {
+                            o = el.descendants[e];
+                            f = o.evalVisProp('frozen');
+                            if (f === true || f === false) {
+                                froz = f;
+                                break;
                             }
                         }
                     }
                 }
+                if (froz === true) {
+                    if (el.is3D) {
+                        el.element2D.coords.screen2usr();
+                    } else {
+                        el.coords.screen2usr();
+                    }
+                } else {
+                    if (el.is3D) {
+                        el.element2D.coords.usr2screen();
+                    } else {
+                        el.coords.usr2screen();
+                        if (Type.exists(el.actualCoords)) {
+                            el.actualCoords.usr2screen();
+
+                        }
+                    }
+                }
             }
-            return this;
         }
+        return this;
+    }
     /**
      * Moves the origin and initializes an update of all elements.
      * @param {Number} x
@@ -7366,7 +7297,7 @@ export class Board extends Events{
                 if (deficiency !== 'none') {
                     if (this.currentCBDef === 'none') {
                         // this could be accomplished by JXG.extend, too. But do not use
-                        // JXG.deepCopy as this could result in an infinite loop because in
+                        // Type.deepcopy as this could result in an infinite loop because in
                         // visProp there could be geometry elements which contain the board which
                         // contains all objects which contain board etc.
                         o.visPropOriginal = {

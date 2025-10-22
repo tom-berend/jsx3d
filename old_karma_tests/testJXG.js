@@ -149,7 +149,7 @@ describe("Test JXG util functions", function () {
             },
             copy;
 
-        copy = JXG.deepCopy(o);
+        copy = Type.deepcopy(o);
 
         expect(copy.str).toEqual("string");
         expect(copy.num).toEqual(123);
@@ -182,7 +182,7 @@ describe("Test JXG util functions", function () {
             },
             copy;
 
-        copy = JXG.deepCopy(o1, o2);
+        copy = Type.deepcopy(o1, o2);
         expect(copy.color).toEqual("def");
         expect(copy.arr).toEqual([4, 5, 6]);
         expect(copy.o.subprop).toEqual(12);
