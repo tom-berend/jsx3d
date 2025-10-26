@@ -38,7 +38,7 @@ import Extrapolate from "./extrapolate.js";
 import Numerics from "./numerics.js";
 import {Statistics} from "./statistics.js";
 import{Geometry}   from "./geometry.js";
-import IntervalArithmetic from "./ia.js";
+import IntervalArithmetic from "./intervalarithmetic.js";
 import {Type} from "../utils/type.js";
 
 /**

@@ -47,15 +47,23 @@ import { Numerics } from '../math/numerics.js';
 import { Geometry } from '../math/geometry.js';
 import { Complex } from '../math/complex.js';
 // import {Statistics} from '../math/statistics.js';
-import {JessieCode} from '../parser/jessiecode.js';
+// import {JessieCode} from '../parser/jessiecode.js';
 import { Color } from '../utils/color.js';
 import { Type } from '../utils/type.js';
 import { Events } from '../utils/event.js';
 import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
 import { GeometryElement } from 'element';
+import { SVGRenderer } from '../renderer/svg.js';
+
+import {Text} from '../base/text.js'
 
 export class Board extends Events {
+
+    public containerObj: HTMLElement | null
+
+
+
 
     /**
      * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
@@ -439,6 +447,7 @@ export class Board extends Events {
      */
     public container: string
 
+
     /**
     * ID of the board
     * @type String
@@ -452,20 +461,20 @@ export class Board extends Events {
     * @private
     * @ignore
     */
-   public renderer:'svg'|'canvas'
+    public renderer: SVGRenderer // 'svg' | 'canvas'
 
-   /**
-    * Grids keeps track of all grids attached to this board.
-    * @type Array
-    * @private
-    */
-   public grids = [];
+    /**
+     * Grids keeps track of all grids attached to this board.
+     * @type Array
+     * @private
+     */
+    public grids = [];
 
     /**
      * Copy of the default options
      * @type JXG.Options
      */
-    public options :Object
+    public options: Object
 
 
 
@@ -493,6 +502,9 @@ export class Board extends Events {
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
+
+    public attr
+
     constructor(container, renderer, id,
         origin, zoomX, zoomY, unitX, unitY,
         canvasWidth, canvasHeight, attributes) {
@@ -517,7 +529,7 @@ export class Board extends Events {
         if (Type.isString(container)) {
             // Hosting div is given as string
             this.container = container; // container
-            this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+            this.containerObj = (Env.isBrowser ? document.getElementById(this.container) : null);
 
         } else if (Env.isBrowser) {
 
@@ -527,7 +539,7 @@ export class Board extends Events {
             if (this.container === null) {
                 // Set random ID to this.container, but not to the DOM element
 
-                this.container = 'null' + parseInt(Math.random() * 16777216).toString();
+                this.container = 'null' + (Math.random() * 16777216).toString();
             }
         }
 
@@ -577,8 +589,10 @@ export class Board extends Events {
          * @type Number
          */
         this.dimension = 2;
-        this.jc = new JessieCode();
-        this.jc.use(this);
+
+        // TODO:  have coomented this out
+        // this.jc = new JessieCode();
+        // this.jc.use(this);
 
         /**
          * Coordinates of the boards origin. This a object with the two properties
@@ -825,11 +839,11 @@ export class Board extends Events {
         this.focusObjects = [];
 
         if (this.attr.showcopyright || this.attr.showlogo) {
-            this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
+            this.renderer.displayLogo(JXG.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
         }
 
         if (this.attr.showcopyright) {
-            this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
+            this.renderer.displayCopyright(JXG.licenseText, parseInt(this.options.text.fontSize, 10));
         }
 
         /**
@@ -6564,19 +6578,27 @@ export class Board extends Events {
             }
         }
 
-        if (Type.isFunction(JXG.elements[elementType])) {
-            el = JXG.elements[elementType](this, parents, attributes);
+
+        // TODO: main switch
+        if (elementType == 'text') {
+            el = new Text(this, parents, attributes);
         } else {
-            throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
-        }
 
-        if (!Type.exists(el)) {
-            JXG.debug('JSXGraph: create: failure creating ' + elementType);
-            return el;
-        }
 
-        if (el.prepareUpdate && el.update && el.updateRenderer) {
-            el.fullUpdate();
+            if (Type.isFunction(JXG.elements[elementType])) {
+                el = JXG.elements[elementType](this, parents, attributes);
+            } else {
+                throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
+            }
+
+            if (!Type.exists(el)) {
+                JXG.debug('JSXGraph: create: failure creating ' + elementType);
+                return el;
+            }
+
+            if (el.prepareUpdate && el.update && el.updateRenderer) {
+                el.fullUpdate();
+            }
         }
         return el;
     }

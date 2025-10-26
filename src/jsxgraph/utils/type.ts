@@ -57,9 +57,10 @@
 
 // TS has strong types - get rid of whatever we can
 
-import { OBJECT_CLASS,OBJECT_TYPE } from '../base/constants.js';
+import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
 import { JSXMath } from '../math/jsxmath.js';
-import { HtmlSanitizer } from './htmlsanitizer.js';
+import { Options } from '../options.js';
+// import { HtmlSanitizer } from './htmlsanitizer.js';
 
 export class Type {
     /**
@@ -213,7 +214,7 @@ export class Type {
      */
     static isPoint3D(v) {
         if (v !== null && typeof v === 'object' && this.exists(v.type)) {
-            return v.type === Const.OBJECT_TYPE_POINT3D;
+            return v.type === OBJECT_TYPE.POINT3D;
         }
 
         return false;
@@ -457,7 +458,8 @@ export class Type {
             f = board.jc.snippet(term, true, variableName, false);
         } else if (this.isFunction(term)) {
             f = term;
-            f.deps = this.isObject(term.deps) ? term.deps : {};
+            if (f)
+                f.deps = this.isObject(term.deps) ? term.deps : {};
         } else if (this.isNumber(term) || this.isArray(term)) {
             /** @ignore */
             f = function () {
@@ -1248,7 +1250,7 @@ export class Type {
         // Missing hasOwnProperty is on purpose in this function
         if (this.isArray(obj)) {
             c = [];
-            for (i = 0; i < obj.length; i++) {
+            for (i = 0; i < Object.keys(obj).length; i++) {  // warning: Object.keys() can be slow!
                 prop = obj[i];
                 // Attention: typeof null === 'object'
                 if (prop !== null && typeof prop === 'object') {
@@ -1448,14 +1450,14 @@ export class Type {
         len = arguments.length;
         if (len < 3 || primitives[s]) {
             // Default options from Options.elements
-            a = this.deepCopy(options.elements, null, true);
+            a = this.deepCopy(Options.elements, null, true);
         } else {
             a = {};
         }
 
         // Only the layer of the main element is set.
-        if (len < 4 && this.exists(s) && this.exists(options.layer[s])) {
-            a.layer = options.layer[s];
+        if (len < 4 && this.exists(s) && this.exists(Options.layer[s])) {
+            a.layer = Options.layer[s];
         }
 
         // Default options from the specific element like 'line' in
@@ -1518,7 +1520,7 @@ export class Type {
         if (isAvail && this.exists(o.label)) {
             a.label = this.deepCopy(o.label, a.label, true);
         }
-        a.label = this.deepCopy(options.label, a.label, true);
+        a.label = this.deepCopy(Options.label, a.label, true);
 
         return a;
     }
@@ -1925,7 +1927,8 @@ export class Type {
         //     str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         // }
 
-        str = HtmlSanitizer.SanitizeHtml(str);
+        // TODO: test and get it working
+        // str = HtmlSanitizer.SanitizeHtml(str);
 
         return str;
     }

@@ -177,7 +177,7 @@ export class JSXGraph {
         attr.movetarget =
             attributes.moveTarget ||
             attributes.movetarget ||
-            options.board.moveTarget;
+            Options.board.moveTarget;
 
         return attr;
     }
@@ -193,7 +193,7 @@ export class JSXGraph {
      */
     static _fillBoard(board, attr, dimensions) {
         board.initInfobox(attr.infobox);
-        board.maxboundingbox = attr.maxboundingbox;
+        board.maxBoundingBox = attr.maxBoundingBox;
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
         board.renderer.drawNavigationBar(board, attr.navbar);
@@ -207,9 +207,9 @@ export class JSXGraph {
      *
      * @private
      */
-    static _setARIA(container, attr) {
-        var doc = attr.document,
-            node_jsx;
+     static _setARIA(container, attr) {
+        let doc: Document = attr.document
+
         // Unused variables, made obsolete in db3e50f4dfa8b86b1ff619b578e243a97b41151c
         // doc_glob,
         // newNode,
@@ -217,14 +217,14 @@ export class JSXGraph {
         // id_label,
         // id_description;
 
-        if (typeof doc !== 'object') {
+        if (!doc) {
             if (!Env.isBrowser) {
                 return;
             }
             doc = document;
         }
 
-        node_jsx = Type.isString(container)
+        let node_jsx = Type.isString(container)
             ? doc.getElementById(container)
             : container;
         node_jsx.setAttribute('role', 'region');
@@ -307,7 +307,7 @@ export class JSXGraph {
         ) {
             theme = JXG.themes[attributes.theme];
         }
-        options = Type.deepCopy(Options, theme, true);
+        options = Type.deepCopy(Options.board, theme);
         attr = this._setAttributes(attributes, options);
 
         dimensions = Env.getDimensions(box, attr.document);
@@ -319,17 +319,17 @@ export class JSXGraph {
             unitY = Type.def(attr.unity, 50);
         } else {
             bbox = attr.boundingbox;
-            if (bbox[0] < attr.maxboundingbox[0]) {
-                bbox[0] = attr.maxboundingbox[0];
+            if (bbox[0] < attr.maxBoundingBox[0]) {
+                bbox[0] = attr.maxBoundingBox[0];
             }
-            if (bbox[1] > attr.maxboundingbox[1]) {
-                bbox[1] = attr.maxboundingbox[1];
+            if (bbox[1] > attr.maxBoundingBox[1]) {
+                bbox[1] = attr.maxBoundingBox[1];
             }
-            if (bbox[2] > attr.maxboundingbox[2]) {
-                bbox[2] = attr.maxboundingbox[2];
+            if (bbox[2] > attr.maxBoundingBox[2]) {
+                bbox[2] = attr.maxBoundingBox[2];
             }
-            if (bbox[3] < attr.maxboundingbox[3]) {
-                bbox[3] = attr.maxboundingbox[3];
+            if (bbox[3] < attr.maxBoundingBox[3]) {
+                bbox[3] = attr.maxBoundingBox[3];
             }
 
             // Size of HTML div.

@@ -76,6 +76,7 @@ export class JXG extends JSXGraph {
     /**  Constant: the currently used JSXGraph version.  */
     static version = VERSION; // -dev  -beta ??
 
+
     /**
      * Constant: the small gray version indicator in the top left corner of every JSXGraph board (if
      * showCopyright is not set to false on board creation).

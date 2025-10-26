@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "es6",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "lib": ["ES2015","DOM"],
     "allowJs": true,
     "outDir": "build",
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["node", "jest"],
+    "types": ["node"],
     "skipLibCheck": true,
     "noImplicitAny": false,
     "sourceMap":true
   },
   "include": ["src/**/*"],
-  "exclude": ["src/**/*.spec.ts"]
 }

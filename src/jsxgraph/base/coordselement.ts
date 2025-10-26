@@ -48,7 +48,7 @@ import { GeometryElement } from "../base/element.js";
 
 
 
-export class CoordsElement extends GeometryElement {
+export class CoordsElement extends Coords {
 
     public usrCoords: number[] = [];
     public scrCoords: number[] = [];
@@ -73,8 +73,9 @@ export class CoordsElement extends GeometryElement {
      * @param {Array} coordinates An array with the affine user coordinates of the point.
      * {@link JXG.Options#elements} and - optionally - a name and an id.
      */
-    constructor(board: Board, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS, method: COORDS_BY) {
-        super(board, attributes, JSX_type, JSX_class)
+    // constructor(board: Board, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS, method: COORDS_BY) {
+    constructor(board: Board, attributes:object) {
+        super(board, attributes)
 
         // for (let i = 0; i < coordinates.length; ++i) {
         //     coordinates[i] = parseFloat(coordinates[i]);
@@ -90,7 +91,10 @@ export class CoordsElement extends GeometryElement {
         // if (this.emitter) {
         // EventEmitter.eventify(this);  // tb now handled by class hierarchy
         // }
-        this.setCoordinates(this.method, coordinates, false, true);
+
+
+        //TODO -  MOVE THIS TO EACH ELEMENT CLASS (eg: Text, Line, )
+        // this.setCoordinates(this.method, coordinates, false, true);
 
 
         /**
@@ -2493,7 +2497,7 @@ export class CoordsElement extends GeometryElement {
      * the image.
      * @returns{Object} returns the created object or false.
      */
-   public create(Callback, board, coords, attr, arg1, arg2) {
+    public create(Callback, board, coords, attr, arg1, arg2) {
         var el,
             isConstrained = false,
             i;

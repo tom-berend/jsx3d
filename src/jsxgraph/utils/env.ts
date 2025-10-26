@@ -108,8 +108,10 @@ export class Env {
      * @type Boolean
      * @default false
      */
- static    isBrowser() {
-        return typeof window === "object" && typeof document === "object"
+    static isBrowser() {
+        console.log ("isBrowser",window !== null && document !== null)
+
+        return (window !== null && document !== null)
     }
 
     /**
@@ -117,7 +119,7 @@ export class Env {
      * @type Boolean
      * @default false
      */
- static    supportsES6() {
+    static supportsES6() {
         // var testMap;
         /* jshint ignore:start */
         try {
@@ -134,7 +136,7 @@ export class Env {
      * Detect browser support for SVG.
      * @returns {Boolean} True, if the browser supports SVG.
      */
-  static   supportsSVG() {
+    static supportsSVG() {
         var svgSupport;
         if (!this.isBrowser) {
             return false;
@@ -147,7 +149,7 @@ export class Env {
      * Detect browser support for Canvas.
      * @returns {Boolean} True, if the browser supports HTML canvas.
      */
- static    supportsCanvas():Boolean {
+    static supportsCanvas(): Boolean {
         var hasCanvas = false;
 
         // if (this.isNode()) {
@@ -180,7 +182,7 @@ export class Env {
      * True, if run inside a node.js environment.
      * @returns {Boolean}
      */
-   static  isNode() {
+    static isNode() {
         // This is not a 100% sure but should be valid in most cases
         // We are not inside a browser
         /* eslint-disable no-undef */
@@ -204,7 +206,7 @@ export class Env {
      * True if run inside a webworker environment.
      * @returns {Boolean}
      */
-   static  isWebWorker() {
+    static isWebWorker() {
         return (
             !this.isBrowser &&
             typeof self === "object" &&
@@ -216,7 +218,7 @@ export class Env {
      * Checks if the environments supports the W3C Pointer Events API {@link https://www.w3.org/TR/pointerevents/}
      * @returns {Boolean}
      */
-  static   supportsPointerEvents() {
+    static supportsPointerEvents() {
         return !!(
             (
                 this.isBrowser &&
@@ -232,7 +234,7 @@ export class Env {
      * Determine if the current browser supports touch events
      * @returns {Boolean} True, if the browser supports touch events.
      */
- static    isTouchDevice() {
+    static isTouchDevice() {
         return this.isBrowser && window.ontouchstart !== undefined;
     }
 
@@ -241,7 +243,7 @@ export class Env {
      * @returns {Boolean}
      * @deprecated
      */
-  static   isAndroid() {
+    static isAndroid() {
         return (
             Type.exists(navigator) &&
             navigator.userAgent.toLowerCase().indexOf("android") > -1
@@ -253,7 +255,7 @@ export class Env {
      * @returns {Boolean}
      * @deprecated
      */
- static    isWebkitAndroid() {
+    static isWebkitAndroid() {
         return this.isAndroid() && navigator.userAgent.indexOf(" AppleWebKit/") > -1;
     }
 
@@ -262,7 +264,7 @@ export class Env {
      * @returns {Boolean}
      * @deprecated
      */
-  static   isApple() {
+    static isApple() {
         return (
             Type.exists(navigator) &&
             (navigator.userAgent.indexOf("iPad") > -1 ||
@@ -275,7 +277,7 @@ export class Env {
      * @returns {Boolean}
      * @deprecated
      */
-  static   isWebkitApple() {
+    static isWebkitApple() {
         return (
             this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
         );
@@ -286,7 +288,7 @@ export class Env {
      * @returns {Boolean}
      * @deprecated
      */
- static    isMetroApp() {
+    static isMetroApp() {
         return (
             typeof window === "object" &&
             window.clientInformation &&
@@ -300,7 +302,7 @@ export class Env {
      * @returns {Boolean}
      * @deprecated
      */
-  static   isMozilla() {
+    static isMozilla() {
         return (
             Type.exists(navigator) &&
             navigator.userAgent.toLowerCase().indexOf("mozilla") > -1 &&
@@ -313,7 +315,7 @@ export class Env {
      * @returns {Boolean}
      * @deprecated
      */
- static    isFirefoxOS() {
+    static isFirefoxOS() {
         return (
             Type.exists(navigator) &&
             navigator.userAgent.toLowerCase().indexOf("android") === -1 &&
@@ -329,7 +331,7 @@ export class Env {
      *
      * @deprecated
      */
-  static   isDesktop() {
+    static isDesktop() {
         return true;
         // console.log("isDesktop", screen.orientation);
         // const navigatorAgent =
@@ -351,7 +353,7 @@ export class Env {
      * @deprecated
      *
      */
-   static  isMobile() {
+    static isMobile() {
         return true;
         // return Type.exists(navigator) && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
@@ -444,7 +446,7 @@ export class Env {
      * an options object or the useCapture Boolean.
      *
      */
- static    addEvent(obj, type, fn, owner, options) {
+    static addEvent(obj, type, fn, owner, options) {
         var el = function () {
             return fn.apply(owner, arguments);
         };
@@ -475,7 +477,7 @@ export class Env {
      * @param {Function} fn The function to call when the event is triggered.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-  static   removeEvent(obj, type, fn, owner) {
+    static removeEvent(obj, type, fn, owner) {
         var i;
 
         if (!Type.exists(owner)) {
@@ -524,7 +526,7 @@ export class Env {
      * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-   static  removeAllEvents(obj, type, owner) {
+    static removeAllEvents(obj, type, owner) {
         var i, len;
         if (owner["x_internal" + type]) {
             len = owner["x_internal" + type].length;
@@ -548,7 +550,7 @@ export class Env {
      * @param {Object} [doc] The document object.
      * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
      */
-  static   getPosition(e, index, doc) {
+    static getPosition(e, index, doc) {
         var i,
             len,
             evtTouches,
@@ -597,7 +599,7 @@ export class Env {
      * @param {Object} obj A DOM element
      * @returns {Array} An array with the elements left and top offset.
      */
-  static   getOffset(obj) {
+    static getOffset(obj) {
         var cPos,
             o = obj,
             o2 = obj,
@@ -653,7 +655,7 @@ export class Env {
      * @param {String} stylename The CSS property to read.
      * @returns The value of the CSS property and <tt>undefined</tt> if it is not set.
      */
-   static  getStyle(obj, stylename) {
+    static getStyle(obj, stylename) {
         var r,
             doc = obj.ownerDocument;
 
@@ -683,7 +685,7 @@ export class Env {
      * @param {string} css
      * @returns {number}
      */
-  static   getProp(el, css) {
+    static getProp(el, css) {
         var n = parseInt(this.getStyle(el, css), 10);
         return isNaN(n) ? 0 : n;
     }
@@ -697,7 +699,7 @@ export class Env {
      * @param {Object} obj A DOM element
      * @returns {Array} The corrected position.
      */
-  static   getCSSTransform(cPos, obj) {
+    static getCSSTransform(cPos, obj) {
         var i,
             j,
             str,
@@ -771,7 +773,7 @@ export class Env {
      * are determined. In IE prior to 9, 'rotate', 'skew', 'skewX', 'skewY' are not supported.
      * @returns {Array} 3x3 transformation matrix without translation part. See {@link JXG.Board#updateCSSTransforms}.
      */
- static    getCSSTransformMatrix(obj) {
+    static getCSSTransformMatrix(obj) {
         var i, j, str, arrstr, arr,
             start, len, len2, st,
             doc = obj.ownerDocument,
@@ -864,7 +866,7 @@ export class Env {
      * @param {Object} context The scope of function process
      * @param {Function} callback This function is called after the last array element has been processed.
      */
-  static   timedChunk(items, process, context, callback) {
+    static timedChunk(items, process, context, callback) {
         //create a clone of the original
         var todo = items.slice(),
             timerFun = function () {
@@ -900,7 +902,7 @@ export class Env {
      * @see JXG.Board#fullscreenListener
      *
      */
- static    scaleJSXGraphDiv(wrap_id, inner_id, doc, scale) {
+    static scaleJSXGraphDiv(wrap_id, inner_id, doc, scale) {
         var w, h, b,
             wi, hi,
             wo, ho, inner,

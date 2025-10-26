@@ -20,7 +20,8 @@
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
     JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    but WITHOUT ANY WARRAN
+    TY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
@@ -38,7 +39,21 @@ import { JSXMath } from "./math/jsxmath.js";
 import { Color } from "./utils/color.js";
 import { Type } from "./utils/type.js";
 
-import { BoardOptions, GeometryElementOptions,LayerOptions } from "./optionInterfaces.js"
+import {
+    BoardOptions, GeometryElementOptions, GridOptions, LayerOptions,
+    NavbarOptions, PointOptions, TextOptions, LegendOptions,
+    TickOptions, CurveOptions, PrecisionOptions,
+    HatchOptions, AngleOptions, ArcOptions, ArrowOptions,
+    AxisOptions,
+    BisectorOptions,
+    BisectorlinesOptions,
+    BoxplotOptions,
+    CardinalsplineOptions,
+    ChartOptions,
+    CircleOptions,
+    CircumcircleOptions,
+    CircumcirclearcOptions,
+} from "./optionInterfaces.js"
 
 /**
  * Options Namespace
@@ -85,7 +100,7 @@ export class Options {
     }
 
 
-    jc: {
+    static jc: {
         enabled: true
         compile: true
     }
@@ -138,7 +153,7 @@ export class Options {
                 }
             }
         },
-        document: false,
+        document: null,
         drag: { enabled: true },
         fullscreen: {
             symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
@@ -206,21 +221,20 @@ export class Options {
     }
 
     navbar: NavbarOptions = {
-        navbar: {
-            strokeColor: '#333333',
-            fillColor: 'transparent', //#f5f5f5',
-            highlightFillColor: '#aaaaaa',
-            padding: '2px',
-            position: 'absolute',
-            fontSize: '14px',
-            cursor: 'pointer',
-            zIndex: '100',
-            right: '5px',
-            bottom: '5px'
-        }
+        strokeColor: '#333333',
+        fillColor: 'transparent', //#f5f5f5',
+        highlightFillColor: '#aaaaaa',
+        padding: '2px',
+        position: 'absolute',
+        fontSize: '14px',
+        cursor: 'pointer',
+        zIndex: '100',
+        right: '5px',
+        bottom: '5px'
     }
 
-    elements: GeometryElementOptions = {
+
+    static elements: GeometryElementOptions = {
 
         aria: { enabled: false, label: '', live: 'assertive', },
         cssClass: '',
@@ -276,788 +290,242 @@ export class Options {
         ignoreForLabelAutoposition: false
     }
 
-    /*
-     *  Generic options used by {@link JXG.Ticks}
-     */
-    ticks: {
+    static text: TextOptions = {
+        fontSize: 12,
+        fontUnit: 'px',
+        formatNumber: false,
+        digits: 2,
+        intl: {
+            enabled: 'inherit',
+            options: {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+            }
+        },
+        parse: true,
+        useCaja: false,
+        isLabel: false,
+        strokeColor: '#000000',
+        highlightStrokeColor: '#000000',
+        highlightStrokeOpacity: 0.666666,
+        cssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
+        highlightCssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
+        cssStyle: '',
+        highlightCssStyle: '',
+        transitionProperties: ['color', 'opacity'],
+        useASCIIMathML: false,
+        useMathJax: false,
+        useKatex: false,
+        katexMacros: {},
+        toFraction: false,
+        display: 'html',
+        anchor: null,
+        anchorX: 'left',
+        anchorY: 'middle',
+        cssClass: 'JXGtext',
+        highlightCssClass: 'JXGtext',
+        dragArea: 'all',
+        withLabel: false,
+        rotate: 0,
+        visible: true,
+        snapSizeX: 1,
+        snapSizeY: 1,
+        attractors: []
+    }
+
+
+    static point: PointOptions = {
+        withLabel: true,
+        label: {},
+        style: 5,
+        face: 'o',
+        size: 3,
+        sizeUnit: 'screen',
+        strokeWidth: 2,
+        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry'],
+        fillColor: Color.palette.red,
+        strokeColor: Color.palette.red,
+        highlightFillColor: '#c3d9ff',
+        highlightStrokeColor: '#c3d9ff',
+        zoom: false,
+        showInfobox: 'inherit',
+        infoboxDigits: 'auto',
+        draft: false,
+        attractors: [],
+        attractorUnit: 'user',
+        attractorDistance: 0.0,
+        snatchDistance: 0.0,
+        snapToGrid: false,
+        attractToGrid: false,
+        snapSizeX: 1,
+        snapSizeY: 1,
+        snapToPoints: false,
+        ignoredSnapToPoints: [],
+    }
+
+    static grid: GridOptions = {
+        needsRegularUpdate: false,
+        hasGrid: false,  // Used in standardoptions
+        highlight: false,
+        majorStep: 'auto',
+        minorElements: 0,
+        forceSquare: false,
+        includeBoundaries: false,
+        size: undefined,
+        face: undefined,
+        margin: undefined,
+        drawZero: undefined,
+        polygonVertices: undefined,
+        major: { size: 5, margin: 0, drawZero: true, polygonVertices: 6 },
+        minor: { visible: 'inherit', size: 3, face: 'point', margin: 0, drawZero: true, polygonVertices: 6 },
+        snapToGrid: false,
+        strokeColor: '#c0c0c0',
+        strokeWidth: 1,
+        strokeOpacity: 0.5,
+        dash: 0,
+        theme: 0,
+        themes: [
+            {
+                // default values
+            },
+
+            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily smaller one
+                forceSquare: 'min',
+                major: {
+                    face: 'line'
+                }
+            },
+
+            {   // Theme 2: lines and points in between
+                major: {
+                    face: 'line'
+                },
+                minor: {
+                    size: 3,
+                    face: 'point'
+                },
+                minorElements: 'auto'
+            },
+
+            {   // Theme 3: lines and thinner lines in between
+                major: {
+                    face: 'line'
+                },
+                minor: {
+                    face: 'line',
+                    strokeOpacity: 0.25
+                },
+                minorElements: 'auto'
+            },
+
+            {   // Theme 4: lines with grid of '+'s plotted in between
+                major: {
+                    face: 'line'
+                },
+                minor: {
+                    face: '+',
+                    size: '95%'
+                },
+                minorElements: 'auto'
+            },
+
+            {   // Theme 5: grid of '+'s and more points in between
+                major: {
+                    face: '+',
+                    size: 10,
+                    strokeOpacity: 1
+                },
+                minor: {
+                    face: 'point',
+                    size: 3
+                },
+                minorElements: 'auto'
+            },
+
+            {   // Theme 6: grid of circles with points in between
+                major: {
+                    face: 'circle',
+                    size: 8,
+                    fillColor: '#c0c0c0'
+                },
+                minor: {
+                    face: 'point',
+                    size: 3
+                },
+                minorElements: 'auto'
+            },
+        ]
+    }
+    static label: LabelOptions = {
         /**#@+
          * @visprop
          */
 
-        /**
-         * A function that expects two {@link JXG.Coords} the first one representing the coordinates of the
-         * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
-         * The third parameter is a null number or a string. In the latter two cases, this value is taken.
-         * Returns a string.
-         *
-         * @type function
-         * @name Ticks#generateLabelText
-         *
-         * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', { boundingBox: [-10, 10, 10, -10], axis: true
-         *     defaultAxes: {
-         *         x: {
-         *                 margin: -4,
-         *                 ticks: {
-         *                     minTicksDistance: 0,
-         *                     minorTicks:4,
-         *                     ticksDistance: 3,
-         *                     scale: Math.PI,
-         *                     scaleSymbol: 'π',
-         *                     insertTicks: true
-         *                 }
-         *              }
-         *         y: {}
-         *     }
-         * });
-         *
-         * // Generate a logarithmic labelling of the vertical axis by defining the function generateLabelText directly.
-         * board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
-         *     var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
-         *     return this.formatLabelText(value);
-         * };
-         *
-         * </pre><div id="JXG3d2203ee-a797-416a-a33c-409581fafdd7" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG3d2203ee-a797-416a-a33c-409581fafdd7',
-         *             {boundingbox: [-10, 10, 10, -10], axis: true showcopyright: false shownavigation: false
-         *         defaultAxes: {
-         *             x: {
-         *                     margin: -4,
-         *                     ticks: {
-         *                         minTicksDistance: 0,
-         *                         minorTicks:4,
-         *                         ticksDistance: 3,
-         *                         scale: Math.PI,
-         *                         scaleSymbol: 'π',
-         *                         insertTicks: true
-         *                     }
-         *                  }
-         *             y: {}
-         *         }
-         *     });
-         *
-         *     // Generate a logarithmic labelling of the vertical axis.
-         *     board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
-         *         var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
-         *         return this.formatLabelText(value);
-         *     };
-         *
-         *     })();
-         *
-         * </script><pre>
-         * @example
-         * // Generate a logarithmic labelling of the vertical axis by setting the attribute generateLabelText.
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *   boundingBox: [-10, 10, 10, -10], axis: true
-         *   defaultAxes: {
-         *     x: {
-         *       margin: -4,
-         *       ticks: {
-         *         minTicksDistance: 0,
-         *         minorTicks: 4,
-         *         ticksDistance: 3,
-         *         scale: Math.PI,
-         *         scaleSymbol: 'π',
-         *         insertTicks: true
-         *       }
-         *     }
-         *     y: {
-         *       ticks: {
-         *         // Generate a logarithmic labelling of the vertical axis.
-         *         generateLabelText: function (tick, zero) {
-         *           var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
-         *           return this.formatLabelText(value);
-         *         }
-         *       }
-         *     }
-         *   }
-         * });
-         *
-         * </pre><div id="JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *
-         *         const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *           boundingBox: [-10, 10, 10, -10], axis: true
-         *           defaultAxes: {
-         *             x: {
-         *               margin: -4,
-         *               ticks: {
-         *                 minTicksDistance: 0,
-         *                 minorTicks: 4,
-         *                 ticksDistance: 3,
-         *                 scale: Math.PI,
-         *                 scaleSymbol: 'π',
-         *                 insertTicks: true
-         *               }
-         *             }
-         *             y: {
-         *               ticks: {
-         *                 // Generate a logarithmic labelling of the vertical axis.
-         *                 generateLabelText: function (tick, zero) {
-         *                   var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
-         *                   return this.formatLabelText(value);
-         *                 }
-         *               }
-         *             }
-         *           }
-         *         });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         *
-         */
-        generateLabelText: null
+        visible: 'inherit',
+        strokeColor: '#000000',
+        strokeOpacity: 1,
+        highlightStrokeOpacity: 0.666666,
+        highlightStrokeColor: '#000000',
+        fixed: true,
+        tabindex: null,
+        position: 'urt',
+        distance: 1.5,
+        offset: [10, 10],
+        autoPosition: false,
+        autoPositionMinDistance: 12,
+        autoPositionMaxDistance: 28,
+        autoPositionWhitelist: []
+    }
 
-        /**
-         * A function that expects two {@link JXG.Coords} the first one representing the coordinates of the
-         * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
-         *
-         * @deprecated Use {@link JGX.Options@generateLabelText}
-         * @type function
-         * @name Ticks#generateLabelValue
-         */
-        generateLabelValue: null
+    /* special legend options */
+    static legend: LegendOptions = {
+        style: 'vertical',
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8'],
+        colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
+        lineLength: 1,
+        strokeOpacity: [1],
+        rowHeight: 20,
+        strokeWidth: 5,
+        frozen: false,
+    }
 
-        /**
-         * Draw labels yes/no
-         *
-         * @type Boolean
-         * @name Ticks#drawLabels
-         * @default false
-         */
-        drawLabels: false
 
-        /**
-         * Attributes for the ticks labels.
-         *
-         * @name Ticks#label
-         * @type Object
-         * @default <pre>{
-         *   tabindex: null
-         *   layer: 7, // line
-         *   highlight: false
-         *   }</pre>
-         *
-         */
-        label: {
-            tabindex: null
-            layer: 7, // line
-            highlight: false
-            autoPosition: false
-        }
 
-        /**
-        * Format tick labels that were going to have scientific notation
-        * like 5.00e+6 to look like 5•10⁶.
-        *
-        * @example
-        * var board = JXG.JSXGraph.initBoard("jxgbox", {
-        *     boundingbox: [-500000, 500000, 500000, -500000],
-        *     axis: true
-        *     defaultAxes: {
-        *         x: {
-        *             scalable: true
-        *             ticks: {
-        *                 beautifulScientificTickLabels: true
-        *           }
-        *         }
-        *         y: {
-        *             scalable: true
-        *             ticks: {
-        *                 beautifulScientificTickLabels: true
-        *           }
-        *         }
-        *     }
-        * });
-        *
-        * </pre><div id="JXGc1e46cd1-e025-4002-80aa-b450869fdaa2" class="jxgbox" style="width: 300px; height: 300px;"></div>
-        * <script type="text/javascript">
-        *     (function() {
-        *     var board = JXG.JSXGraph.initBoard('JXGc1e46cd1-e025-4002-80aa-b450869fdaa2', {
-        *         boundingbox: [-500000, 500000, 500000, -500000],
-        *         showcopyright: false shownavigation: false
-        *         axis: true
-        *         defaultAxes: {
-        *             x: {
-        *                 scalable: true
-        *                 ticks: {
-        *                     beautifulScientificTickLabels: true
-        *               }
-        *             }
-        *             y: {
-        *                 scalable: true
-        *                 ticks: {
-        *                     beautifulScientificTickLabels: true
-        *               }
-        *             }
-        *         }
-        *     });
-        *
-        *     })();
-        *
-        * </script><pre>
-        *
-        * @name Ticks#beautifulScientificTickLabels
-        * @type Boolean
-        * @default false
-        */
-        beautifulScientificTickLabels: false
 
-        /**
-         * Use the unicode character 0x2212, i.e. the HTML entity &amp;minus; as minus sign.
-         * That is &minus;1 instead of -1.
-         *
-         * @type Boolean
-         * @name Ticks#useUnicodeMinus
-         * @default true
-         */
-        useUnicodeMinus: true
 
-        /**
-         * Determine the position of the tick with value 0. 'left' means point1 of the line, 'right' means point2,
-         * and 'middle' is equivalent to the midpoint of the defining points. This attribute is ignored if the parent
-         * line is of type axis.
-         *
-         * @type String
-         * @name Ticks#anchor
-         * @default 'left'
-         *
-         * @example
-         * var li = board.create('segment', [[-4, -3], [4, 2]]);
-         * var t = board.create('ticks', [li], {
-         *     // drawZero: true
-         *     anchor: 'left',
-         *     drawLabels: true
-         *     minorTicks: 0,
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'top',
-         *         offset: [0, -5]
-         *     }
-         * });
-         *
-         *
-         * </pre><div id="JXG3dd23f77-a31d-4649-b0f0-7472722158d8" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG3dd23f77-a31d-4649-b0f0-7472722158d8',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *     var li = board.create('segment', [[-4, -3], [4, 2]]);
-         *     var t = board.create('ticks', [li], {
-         *         // drawZero: true
-         *         anchor: 'left',
-         *         drawLabels: true
-         *         minorTicks: 0,
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'top',
-         *             offset: [0, -5]
-         *         }
-         *     });
-         *
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var li = board.create('segment', [[-4, -3], [4, 2]]);
-         * var t = board.create('ticks', [li], {
-         *     drawZero: true
-         *     anchor: 'middle',
-         *     drawLabels: true
-         *     minorTicks: 0,
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'top',
-         *         offset: [0, -5]
-         *     }
-         * });
-         *
-         * </pre><div id="JXG430914fd-4e12-44de-b510-e3cc2fd473e0" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG430914fd-4e12-44de-b510-e3cc2fd473e0',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *     var li = board.create('segment', [[-4, -3], [4, 2]]);
-         *     var t = board.create('ticks', [li], {
-         *         drawZero: true
-         *         anchor: 'middle',
-         *         drawLabels: true
-         *         minorTicks: 0,
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'top',
-         *             offset: [0, -5]
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
+
+
+
+
+    /*
+     *  Generic options used by {@link JXG.Ticks}
+     */
+    static ticks: TickOptions = {
+        generateLabelText: null,
+        generateLabelValue: null,
+        drawLabels: false,
+        label: { tabindex: null, layer: 7, highlight: false, autoPosition: false }, // line layer
+        beautifulScientificTickLabels: false,
+        useUnicodeMinus: true,
         anchor: 'left',
-
-        /**
-         * Draw the zero tick, that lies at line.point1?
-         *
-         * @type Boolean
-         * @name Ticks#drawZero
-         * @default false
-         *
-         * @example
-         * var li = board.create('segment', [[-4, 2], [4, 2]]);
-         * var t = board.create('ticks', [li], {
-         *     drawZero: false
-         *     anchor: 'middle',
-         *     drawLabels: true
-         *     minorTicks: 0,
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'top',
-         *         offset: [0, -5]
-         *     }
-         * });
-         *
-         * var li2 = board.create('segment', [[-4, -2], [4, -2]]);
-         * var t2 = board.create('ticks', [li2], {
-         *     drawZero: true
-         *     anchor: 'middle',
-         *     drawLabels: true
-         *     minorTicks: 0,
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'top',
-         *         offset: [0, -5]
-         *     }
-         * });
-         *
-         * </pre><div id="JXG91584dc4-0ca8-4b3e-841c-c877f2ccdcf1" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG91584dc4-0ca8-4b3e-841c-c877f2ccdcf1',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false showcopyright: false shownavigation: false});
-         *     var li = board.create('segment', [[-4, 2], [4, 2]]);
-         *     var t = board.create('ticks', [li], {
-         *         drawZero: false
-         *         anchor: 'middle',
-         *         drawLabels: true
-         *         minorTicks: 0,
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'top',
-         *             offset: [0, -5]
-         *         }
-         *     });
-         *
-         *     var li2 = board.create('segment', [[-4, -2], [4, -2]]);
-         *     var t2 = board.create('ticks', [li2], {
-         *         drawZero: true
-         *         anchor: 'middle',
-         *         drawLabels: true
-         *         minorTicks: 0,
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'top',
-         *             offset: [0, -5]
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        drawZero: false
-
-        /**
-         * Let JSXGraph determine the distance between ticks automatically.
-         * If <tt>true</tt>, the attribute <tt>ticksDistance</tt> is ignored.
-         * The distance between ticks is affected by the size of the board and
-         * the attribute <tt>minTicksDistance</tt> (in pixel).
-         *
-         * @type Boolean
-         * @name Ticks#insertTicks
-         * @see Ticks#ticksDistance
-         * @see Ticks#minTicksDistance
-         * @default false
-         * @example
-         * // Create an axis providing two coord pairs.
-         *   var p1 = board.create('point', [0, 0]);
-         *   var p2 = board.create('point', [50, 25]);
-         *   var l1 = board.create('line', [p1, p2]);
-         *   var t = board.create('ticks', [l1], {
-         *      insertTicks: true
-         *      majorHeight: -1,
-         *      label: {
-         *          offset: [4, -9]
-         *      }
-         *      drawLabels: true
-         *  });
-         * </pre><div class="jxgbox" id="JXG2f6fb842-40bd-4223-aa28-3e9369d2097f" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         * (function () {
-         *   var board = JXG.JSXGraph.initBoard('JXG2f6fb842-40bd-4223-aa28-3e9369d2097f', {
-         *     boundingbox: [-100, 70, 70, -100], axis: true showcopyright: false shownavigation: true});
-         *   var p1 = board.create('point', [0, 0]);
-         *   var p2 = board.create('point', [50, 25]);
-         *   var l1 = board.create('line', [p1, p2]);
-         *   var t = board.create('ticks', [l1], {insertTicks: true majorHeight: -1, label: {offset: [4, -9]} drawLabels: true});
-         * })();
-         * </script><pre>
-         */
-        insertTicks: false
-
-        /**
-         * Minimum distance in pixel of equidistant ticks in case insertTicks==true.
-         * @name Ticks#minTicksDistance
-         * @type Number
-         * @default 10
-         * @see Ticks#insertTicks
-         */
+        drawZero: false,
+        insertTicks: false,
         minTicksDistance: 10,
-
-        /**
-         * Total height of a minor tick. If negative the full height of the board is taken.
-         *
-         * @type Number
-         * @name Ticks#minorHeight
-         * @default 4
-         */
         minorHeight: 4,
-
-        /**
-         * Total height of a major tick. If negative the full height of the board is taken.
-         *
-         * @type Number
-         * @name Ticks#majorHeight
-         * @default 10
-         */
         majorHeight: 10,
-
-        /**
-         * Decides in which direction minor ticks are visible. Possible values are either the constants
-         * 0=false or 1=true or a function returning 0 or 1.
-         *
-         * In case of [0,1] the tick is only visible to the right of the line. In case of
-         * [1,0] the tick is only visible to the left of the line.
-         *
-         * @type Array
-         * @name Ticks#tickEndings
-         * @see Ticks#majorTickEndings
-         * @default [1, 1]
-         */
         tickEndings: [1, 1],
-
-        /**
-         * Decides in which direction major ticks are visible. Possible values are either the constants
-         * 0=false or 1=true or a function returning 0 or 1.
-         *
-         * In case of [0,1] the tick is only visible to the right of the line. In case of
-         * [1,0] the tick is only visible to the left of the line.
-         *
-        * @example
-        *         var board = JXG.JSXGraph.initBoard("jxgbox", {
-        *             boundingbox: [-5, 5, 5, -5],
-        *             axis: true
-        *             defaultAxes: {
-        *                 x: {
-        *                     ticks: {
-        *                         majorTickEndings: [1, 0],
-        *                         ignoreInfiniteTickEndings: false
-        *                     }
-        *                 }
-        *                 y: {
-        *                     ticks: {
-        *                         majorTickEndings: [0, 1],
-        *                         ignoreInfiniteTickEndings: false
-        *                     }
-        *                 }
-        *             }
-        *         });
-        *
-        *         var p = board.create('point', [1, 1]);
-        *         var l = board.create('line', [1, -1, 1]);
-        *
-        * </pre><div id="JXGf9ccb731-7a73-44d1-852e-f9c9c405a9d1" class="jxgbox" style="width: 300px; height: 300px;"></div>
-        * <script type="text/javascript">
-        *     (function() {
-        *         var board = JXG.JSXGraph.initBoard('JXGf9ccb731-7a73-44d1-852e-f9c9c405a9d1',
-        *             {   showcopyright: false shownavigation: false
-        *                 boundingbox: [-5, 5, 5, -5],
-        *                 axis: true
-        *                 defaultAxes: {
-        *                     x: {
-        *                         ticks: {
-        *                             majorTickEndings: [1, 0],
-        *                             ignoreInfiniteTickEndings: false
-        *                         }
-        *                     }
-        *                     y: {
-        *                         ticks: {
-        *                             majorTickEndings: [0, 1],
-        *                             ignoreInfiniteTickEndings: false
-        *                         }
-        *                     }
-        *                 }
-        *             });
-        *
-        *             var p = board.create('point', [1, 1]);
-        *             var l = board.create('line', [1, -1, 1]);
-        *
-        *     })();
-        *
-        * </script><pre>
-        *
-        * @type Array
-         * @name Ticks#majorTickEndings
-         * @see Ticks#tickEndings
-         * @see Ticks#ignoreInfiniteTickEndings
-         * @default [1, 1]
-         */
         majorTickEndings: [1, 1],
-
-        /**
-         * If true ignore the tick endings attribute for infinite (full height) ticks.
-         * This affects major and minor ticks.
-         *
-         * @type Boolean
-         * @name Ticks#ignoreInfiniteTickEndings
-         * @see Ticks#tickEndings
-         * @see Ticks#majorTickEndings
-         * @default true
-         */
-        ignoreInfiniteTickEndings: true
-
-        /**
-         * The number of minor ticks between two major ticks.
-         * @type Number
-         * @name Ticks#minorTicks
-         * @default 4
-         */
+        ignoreInfiniteTickEndings: true,
         minorTicks: 4,
-
-        /**
-         * By default, i.e. if ticksPerLabel==false labels are generated for major ticks, only.
-         * If ticksPerLabel is set to a(n integer) number, this denotes the number of minor ticks
-         * between two labels.
-         *
-         * @type {Number|Boolean}
-         * @name Ticks#ticksPerLabel
-         * @default false
-         *
-         * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4],
-         *     axis: true
-         *     defaultAxes: {
-         *         x: {
-         *             ticks: {
-         *                 minorTicks: 7,
-         *                 ticksPerLabel: 4,
-         *                 minorHeight: 20,
-         *             }
-         *         }
-         *         y: {
-         *             ticks: {
-         *                 minorTicks: 3,
-         *                 ticksPerLabel: 2,
-         *                 minorHeight: 20
-         *             }
-         *         }
-         *     }
-         * });
-         *
-         * </pre><div id="JXGbc45a421-c867-4b0a-9b8d-2b2576020690" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGbc45a421-c867-4b0a-9b8d-2b2576020690',
-         *             {showcopyright: false shownavigation: false
-         *              boundingbox: [-4, 4, 4, -4],
-         *         axis: true
-         *         defaultAxes: {
-         *             x: {
-         *                 ticks: {
-         *                     minorTicks: 7,
-         *                     ticksPerLabel: 4,
-         *                     minorHeight: 20,
-         *                 }
-         *             }
-         *             y: {
-         *                 ticks: {
-         *                     minorTicks: 3,
-         *                     ticksPerLabel: 2,
-         *                     minorHeight: 20
-         *                 }
-         *             }
-         *         }
-         *     });
-         *     })();
-         *
-         * </script><pre>
-         */
-        ticksPerLabel: false
-
-        /**
-         * Scale the ticks but not the tick labels.
-         * @type Number
-         * @default 1
-         * @name Ticks#scale
-         * @see Ticks#scaleSymbol
-         *
-         * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', { boundingBox: [-10, 10, 10, -10], axis: true
-         *     defaultAxes: {
-         *         x : {
-         *                 margin: -4,
-         *                 ticks: {
-         *                     minTicksDistance: 0,
-         *                     minorTicks:4,
-         *                     ticksDistance: 3,
-         *                     scale: Math.PI,
-         *                     scaleSymbol: 'π',
-         *                     insertTicks: true
-         *                 }
-         *              }
-         *         y : {}
-         *     }
-         * });
-         *
-         * </pre><div id="JXG23bfda5d-4a85-4469-a552-aa9b4cf62b4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG23bfda5d-4a85-4469-a552-aa9b4cf62b4a',
-         *             {boundingbox: [-10, 10, 10, -10], axis: true showcopyright: false shownavigation: false
-         *         defaultAxes: {
-         *             x : {
-         *                     margin: -4,
-         *                     ticks: {
-         *                         minTicksDistance: 0,
-         *                         minorTicks:4,
-         *                         ticksDistance: 3,
-         *                         scale: Math.PI,
-         *                         scaleSymbol: 'π',
-         *                         insertTicks: true
-         *                     }
-         *                  }
-         *             y : {
-         *                  }
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         */
+        ticksPerLabel: false,
         scale: 1,
-
-        /**
-         * A string that is appended to every tick, used to represent the scale
-         * factor given in {@link Ticks#scale}.
-         *
-         * @type String
-         * @default ''
-         * @name Ticks#scaleSymbol
-         * @see Ticks#scale
-         */
-        scaleSymbol: ''
-
-        /**
-         * User defined labels for special ticks. Instead of the i-th tick's position, the i-th string stored in this array
-         * is shown. If the number of strings in this array is less than the number of special ticks, the tick's position is
-         * shown as a fallback.
-         *
-         * @type Array
-         * @name Ticks#labels
-         * @default []
-         */
+        scaleSymbol: '',
         labels: [],
-
-        /**
-         * The maximum number of characters a tick label can use.
-         *
-         * @type Number
-         * @name Ticks#maxLabelLength
-         * @see Ticks#digits
-         * @default 5
-         */
         maxLabelLength: 5,
-
-        /**
-         * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
-         * Deprecated! Replaced by the attribute <tt>digits</tt>.
-         *
-         * @type Number
-         * @name Ticks#precision
-         * @see Ticks#maxLabelLength
-         * @see Ticks#digits
-         * @deprecated
-         * @default 3
-         */
         precision: 3,
-
-        /**
-         * If a label exceeds {@link Ticks#maxLabelLength} this determines the number of digits used to shorten the tick label.
-         *
-         * @type Number
-         * @name Ticks#digits
-         * @see Ticks#maxLabelLength
-         * @deprecated
-         * @default 3
-         */
         digits: 3,
-
-        /**
-         * The default distance (in user coordinates, not  pixels) between two ticks. Please be aware that this value is overruled
-         * if {@link Ticks#insertTicks} is set to true. In case, {@link Ticks#insertTicks} is false the maximum number of ticks
-         * is hard coded to be less than 2048.
-         *
-         * @type Number
-         * @name Ticks#ticksDistance
-         * @see Ticks#insertTicks
-         * @default 1
-         */
         ticksDistance: 1,
-
-        /**
-         * Tick face for major ticks of finite length.  By default (face: '|') this is a straight line.
-         * Possible other values are '<' and '>'. These faces are used in
-         * {@link JXG.Hatch} for hatch marking parallel lines.
-         * @type String
-         * @name Ticks#face
-         * @see hatch
-         * @default '|'
-         * @example
-         *   var p1 = board.create('point', [0, 3]);
-         *   var p2 = board.create('point', [1, 3]);
-         *   var l1 = board.create('line', [p1, p2]);
-         *   var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>', minorTicks: 0});
-         *
-         * </pre><div id="JXG950a568a-1264-4e3a-b61d-b6881feecf4b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG950a568a-1264-4e3a-b61d-b6881feecf4b',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *       var p1 = board.create('point', [0, 3]);
-         *       var p2 = board.create('point', [1, 3]);
-         *       var l1 = board.create('line', [p1, p2]);
-         *       var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>', minorTicks: 0});
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
         face: '|',
-
         strokeOpacity: 1,
         strokeWidth: 1,
         strokeColor: '#000000',
@@ -1065,243 +533,22 @@ export class Options {
         fillColor: 'none',
         highlightFillColor: 'none',
         visible: 'inherit',
-
-        /**
-         * Whether line boundaries should be included or not in the lower and upper bounds when
-         * creating ticks. In mathematical terms: if a segment considered as interval is open (includeBoundaries:false)
-         * or closed (includeBoundaries:true). In case of open interval, the interval is shortened by a small
-         * &epsilon;.
-         *
-         * @type Boolean
-         * @name Ticks#includeBoundaries
-         * @default false
-         *
-         * @example
-         * var li = board.create('segment', [[-4, 2], [4, 2]]);
-         * var t = board.create('ticks', [li], {
-         *     includeBoundaries: true
-         *     drawZero: true
-         *     anchor: 'middle',
-         *     drawLabels: true
-         *     minorTicks: 0,
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'top',
-         *         offset: [0, -5]
-         *     }
-         * });
-         *
-         * var li2 = board.create('segment', [[-4, -2], [4, -2]]);
-         * var t2 = board.create('ticks', [li2], {
-         *     includeBoundaries: false
-         *     drawZero: true
-         *     anchor: 'middle',
-         *     drawLabels: true
-         *     minorTicks: 0,
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'top',
-         *         offset: [0, -5]
-         *     }
-         * });
-         *
-         * </pre><div id="JXG08e79180-7c9a-4638-bb72-8aa7fd8a8b96" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG08e79180-7c9a-4638-bb72-8aa7fd8a8b96',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false showcopyright: false shownavigation: false});
-         *     var li = board.create('segment', [[-4, 2], [4, 2]]);
-         *     var t = board.create('ticks', [li], {
-         *         includeBoundaries: true
-         *         drawZero: true
-         *         anchor: 'middle',
-         *         drawLabels: true
-         *         minorTicks: 0,
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'top',
-         *             offset: [0, -5]
-         *         }
-         *     });
-         *
-         *     var li2 = board.create('segment', [[-4, -2], [4, -2]]);
-         *     var t2 = board.create('ticks', [li2], {
-         *         includeBoundaries: false
-         *         drawZero: true
-         *         anchor: 'middle',
-         *         drawLabels: true
-         *         minorTicks: 0,
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'top',
-         *             offset: [0, -5]
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        includeBoundaries: false
-
-        /**
-         * Set the ticks type.
-         * Possible values are 'linear' or 'polar'.
-         *
-         * @type String
-         * @name Ticks#type
-         * @default 'linear'
-         *
-         * @example
-         * var ax = board.create('axis', [[0,0], [1,0]], {
-         *              needsRegularUpdate: false
-         *              ticks: {
-         *                      type: 'linear',
-         *                      majorHeight: 0
-         *                  }
-         *              });
-         * var ay = board.create('axis', [[0,0], [0,1]], {
-         *              ticks: {
-         *                      type: 'polar'
-         *                  }
-         *              });
-         *
-         * var p = board.create('point', [3, 2]);
-         *
-         * </pre><div id="JXG9ab0b50c-b486-4f95-9698-c0dd276155ff" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG9ab0b50c-b486-4f95-9698-c0dd276155ff',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false showcopyright: false shownavigation: false});
-         *     var ax = board.create('axis', [[0,0], [1,0]], { needsRegularUpdate: false ticks: { type: 'linear', majorHeight: 0}});
-         *     var ay = board.create('axis', [[0,0], [0,1]], { ticks: { type: 'polar'}});
-         *
-         *     var p = board.create('point', [3, 2]);
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
+        includeBoundaries: false,
         type: 'linear',
-
-        /**
-         * Internationalization support for ticks labels.
-         * @name intl
-         * @memberOf Ticks.prototype
-         * @default <pre>{
-         *    enabled: 'inherit',
-         *    options: {}
-         * }</pre>
-         * @see JXG.Board#intl
-         * @see Text#intl
-         *
-                  * @example
-         * // Here, locale is disabled in general, but enabled for the horizontal
-         * // axis and the infobox.
-         * const board = JXG.JSXGraph.initBoard(BOARDID, {
-         *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
-         *     intl: {
-         *         enabled: false
-         *         locale: 'de-DE'
-         *     }
-         *     keepaspectratio: true
-         *     axis: true
-         *     defaultAxes: {
-         *         x: {
-         *             ticks: {
-         *                 intl: {
-         *                         enabled: true
-         *                         options: {
-         *                             style: 'unit',
-         *                             unit: 'kilometer-per-hour',
-         *                             unitDisplay: 'narrow'
-         *                         }
-         *                 }
-         *             }
-         *         }
-         *         y: {
-         *             ticks: {
-         *             }
-         *         }
-         *     }
-         *     infobox: {
-         *         fontSize: 12,
-         *         intl: {
-         *             enabled: true
-         *             options: {
-         *                 minimumFractionDigits: 4,
-         *                 maximumFractionDigits: 5
-         *             }
-         *         }
-         *     }
-         * });
-         *
-         * var p = board.create('point', [0.1, 0.1], {});
-         *
-         * </pre><div id="JXG820b60ff-b453-4be9-a9d5-06c0342a9dbe" class="jxgbox" style="width: 600px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *     var board = JXG.JSXGraph.initBoard('JXG820b60ff-b453-4be9-a9d5-06c0342a9dbe', {
-         *         boundingbox: [-0.5, 0.5, 0.5, -0.5], showcopyright: false shownavigation: false
-         *         intl: {
-         *             enabled: false
-         *             locale: 'de-DE'
-         *         }
-         *         keepaspectratio: true
-         *         axis: true
-         *         defaultAxes: {
-         *             x: {
-         *                 ticks: {
-         *                     intl: {
-         *                             enabled: true
-         *                             options: {
-         *                                 style: 'unit',
-         *                                 unit: 'kilometer-per-hour',
-         *                                 unitDisplay: 'narrow'
-         *                             }
-         *                     }
-         *                 }
-         *             }
-         *             y: {
-         *                 ticks: {
-         *                 }
-         *             }
-         *         }
-         *         infobox: {
-         *             fontSize: 12,
-         *             intl: {
-         *                 enabled: true
-         *                 options: {
-         *                     minimumFractionDigits: 4,
-         *                     maximumFractionDigits: 5
-         *                 }
-         *             }
-         *         }
-         *     });
-         *
-         *     var p = board.create('point', [0.1, 0.1], {});
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
         intl: {
             enabled: 'inherit',
             options: {}
-        }
+        },
 
         // TODO implementation and documentation
-        minorTicksInArrow: false
-        majorTicksInArrow: true
-        labelInArrow: true
-        minorTicksInMargin: false
-        majorTicksInMargin: true
-        labelInMargin: true
+        minorTicksInArrow: false,
+        majorTicksInArrow: true,
+        labelInArrow: true,
+        minorTicksInMargin: false,
+        majorTicksInMargin: true,
+        labelInMargin: true,
 
-        ignoreForLabelAutoposition: true
+        ignoreForLabelAutoposition: true,
 
         // close the meta tag
         /**#@-*/
@@ -1310,21 +557,14 @@ export class Options {
     /*
      *  Generic options used by {@link JXG.Hatch}
      */
-    hatch: {
-        drawLabels: false
-        drawZero: true
+    static hatch: HatchOptions = {
+        drawLabels: false,
+        drawZero: true,
         majorHeight: 20,
         anchor: 'middle',
         face: '|',
         strokeWidth: 2,
         strokeColor: Color.palette.blue,
-        /**
-         * The default distance (in user coordinates, not  pixels) between two hatch symbols.
-         *
-         * @type Number
-         * @name Hatch#ticksDistance
-         * @default 0.2
-         */
         ticksDistance: 0.2
     }
 
@@ -1350,7 +590,7 @@ export class Options {
      * @name JXG.Options#precision
      * @see JXG.GeometryElement#precision
      */
-    precision: {
+    static precision: PrecisionOptions = {
         touch: 30,
         touchMax: 100,
         mouse: 4,
@@ -1360,545 +600,76 @@ export class Options {
     }
 
     /* special angle options */
-    angle: {
-        /**#@+
-         * @visprop
-         */
-
-        withLabel: true
-
-        /**
-         * Radius of the sector, displaying the angle.
-         * The radius can be given as number (in user coordinates)
-         * or as string 'auto'. In the latter case, the angle
-         * is set to an value between 20 and 50 px.
-         *
-         * @type {Number|String}
-         * @name Angle#radius
-         * @default 'auto'
-         * @visprop
-         */
+    static angle: AngleOptions = {
+        withLabel: true,
         radius: 'auto',
-
-        /**
-         * Display type of the angle field. Possible values are
-         * 'sector' or 'sectordot' or 'square' or 'none'.
-         *
-         * @type String
-         * @default 'sector'
-         * @name Angle#type
-         * @visprop
-         */
         type: 'sector',
-
-        /**
-         * Display type of the angle field in case of a right angle. Possible values are
-         * 'sector' or 'sectordot' or 'square' or 'none'.
-         *
-         * @type String
-         * @default square
-         * @name Angle#orthoType
-         * @see Angle#orthoSensitivity
-         * @visprop
-         */
         orthoType: 'square',
-
-        /**
-         * Sensitivity (in degrees) to declare an angle as right angle.
-         * If the angle measure is inside this distance from a rigth angle, the orthoType
-         * of the angle is used for display.
-         *
-         * @type Number
-         * @default 1.0
-         * @name Angle#orthoSensitivity
-         * @see Angle#orthoType
-         * @visprop
-         */
         orthoSensitivity: 1.0,
-
         fillColor: Color.palette.orange,
         highlightFillColor: Color.palette.orange,
         strokeColor: Color.palette.orange,
-        // fillColor: '#ff7f00',
-        // highlightFillColor: '#ff7f00',
-        // strokeColor: '#ff7f00',
-
         fillOpacity: 0.3,
         highlightFillOpacity: 0.3,
-
-        /**
-         * @name Angle#radiuspoint
-         * @type Object
-         * @deprecated
-         */
-        radiuspoint: {
-            withLabel: false
-            visible: false
-            name: ''
-        }
-
-        /**
-         * @name Angle#pointsquare
-         * @type Object
-         * @deprecated
-         */
-        pointsquare: {
-            withLabel: false
-            visible: false
-            name: ''
-        }
-
-        /**
-         * Attributes of the dot point marking right angles.
-         * @name Angle#dot
-         * @type Object
-         * @default <tt>{face: 'o', size: 2}</tt>
-         */
-        dot: {
-            visible: false
-            strokeColor: 'none',
-            fillColor: '#000000',
-            size: 2,
-            face: 'o',
-            withLabel: false
-            name: ''
-        }
-
-        label: {
-            position: 'top',
-            offset: [0, 0],
-            strokeColor: Color.palette.blue
-        }
-
-        /**
-         * Attributes for sub-element arc. In general, the arc will run through the first point and
-         * thus will not have the same radius as the angle sector.
-         *
-         * @type Arc
-         * @name Angle#arc
-         * @default '{visible:false}'
-         */
-        arc: {
-            visible: false
-            fillColor: 'none'
-        }
-
-        /**#@-*/
+        radiuspoint: { withLabel: false, visible: false, name: '', },
+        pointsquare: { withLabel: false, visible: false, name: '', },
+        dot: { visible: false, strokeColor: 'none', fillColor: '#000000', size: 2, face: 'o', withLabel: false, name: '', },
+        label: { position: 'top', offset: [0, 0], strokeColor: Color.palette.blue, },
+        arc: { visible: false, fillColor: 'none', },
     }
 
     /* special arc options */
-    arc: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Type of arc. Possible values are 'minor', 'major', and 'auto'.
-         *
-         * @type String
-         * @name Arc#selection
-         * @default 'auto'
-         */
+    static arc: ArcOptions = {
         selection: 'auto',
-
-        /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
-         *
-         * @see JXG.GeometryElement#hasPoint
-         * @name Arc#hasInnerPoints
-         * @type Boolean
-         * @default false
-         */
-        hasInnerPoints: false
-
-        label: {
-            anchorX: 'auto',
-            anchorY: 'auto'
-        }
-        firstArrow: false
-        lastArrow: false
+        hasInnerPoints: false,
+        label: { anchorX: 'auto', anchorY: 'auto', },
+        firstArrow: false,
+        lastArrow: false,
         fillColor: 'none',
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
-
-        /**
-         * If true there is a fourth parent point, i.e. the parents are [center, p1, p2, p3].
-         * p1 is still the radius point, p2 the angle point. The arc will be that part of the
-         * the circle with center 'center' which starts at p1, ends at the ray between center
-         * and p2, and passes p3.
-         * <p>
-         * This attribute is immutable (by purpose).
-         * This attribute is necessary for circumCircleArcs
-         *
-         * @type Boolean
-         * @name Arc#useDirection
-         * @default false
-         * @private
-         */
-        useDirection: false
-
-        /**
-         * Attributes for center point.
-         *
-         * @type Point
-         * @name Arc#center
-         * @default {}
-         */
-        center: {
-        }
-
-        /**
-         * Attributes for radius point.
-         *
-         * @type Point
-         * @name Arc#radiusPoint
-         * @default {}
-         */
-        radiusPoint: {
-        }
-
-        /**
-         * Attributes for angle point.
-         *
-         * @type Point
-         * @name Arc#anglePoint
-         * @default {}
-         */
-        anglePoint: {
-        }
+        useDirection: false,
+        center: null,  // was {}
+        radiusPoint: null, // was {}
+        anglePoint: null, // was {}
 
         /**#@-*/
     }
 
     /* special arrow options */
-    arrow: {
-        /**#@+
-         * @visprop
-         */
-
-        firstArrow: false
-
-        lastArrow: {
-            type: 1,
-            highlightSize: 6,
-            size: 6
-        }
-
-        /**#@-*/
+    static arrow: ArrowOptions = {
+        firstArrow: false,
+        lastArrow: { type: 1, highlightSize: 6, size: 6 },
     }
 
     /* special arrowparallel options */
-    arrowparallel: {
-        /**#@+
-         * @visprop
-         */
-
-        firstArrow: false
-
-        lastArrow: {
-            type: 1,
-            highlightSize: 6,
-            size: 6
-        }
-
-        /**#@-*/
+    static arrowparallel: ArrowOptions = {
+        firstArrow: false,
+        lastArrow: { type: 1, highlightSize: 6, size: 6 },
     }
 
-    /* special axis options */
-    axis: {
-        /**#@+
-         * @visprop
-         */
 
-        name: ''                            // By default, do not generate names for axes.
-        needsRegularUpdate: false           // Axes only updated after zooming and moving of the origin.
+    /* special axis options */
+    static axis: AxisOptions = {
+        name: '',                            // By default, do not generate names for axes.
+        needsRegularUpdate: false,           // Axes only updated after zooming and moving of the origin.
         strokeWidth: 1,
-        lastArrow: {
-            type: 1,
-            highlightSize: 8,
-            size: 8
-        }
+        lastArrow: { type: 1, highlightSize: 8, size: 8 },
         strokeColor: '#666666',
         highlightStrokeWidth: 1,
         highlightStrokeColor: '#888888',
-
-        /**
-         * Is used to define the behaviour of the axis.
-         * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
-         * Possible values are:
-         * <ul>
-         *     <li><tt>'static'</tt>: Standard behavior of the axes as know in JSXGraph.
-         *     <li><tt>'fixed'</tt>: The axis is placed in a fixed position. Depending on the attribute <tt>anchor</tt>, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in <tt>distanceBoarder</tt>. The axis will stay at the given position, when the user navigates through the board.
-         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>anchor</tt> and <tt>anchorDist</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
-         * </ul>
-         *
-         * @type {String}
-         * @name Axis#position
-         * @default 'static'
-         * @see Axis#anchor
-         * @see Axis#anchorDist
-         *
-         * @example // Use navigation to see effect.
-         *  var axis1, axis2, circle;
-         *
-         *  board.create('axis', [[0,0],[1,0]],{
-         *      position: 'fixed',
-         *      anchor: 'right',
-         *      anchorDist: '0.1fr'
-         *  });
-         *
-         *  board.create('axis', [[0,0],[0,1]], {
-         *      position: 'fixed',
-         *      anchor: 'left',
-         *      anchorDist: 1
-         *  });
-         *
-         * </pre><div id="JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *      var board = JXG.JSXGraph.initBoard('JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a',
-         *             {boundingbox: [-1, 10, 10,-1], axis: false showcopyright: false shownavigation: true});
-         *
-         *      board.create('axis', [[0,0],[1,0]],{
-         *          position: 'fixed',
-         *          anchor: 'right',
-         *          anchorDist: '0.1fr'
-         *      });
-         *
-         *      board.create('axis', [[0,0],[0,1]], {
-         *          position: 'fixed',
-         *          anchor: 'left',
-         *          anchorDist: 1
-         *      });
-         *
-         *      board.create('circle', [[5,5], 2.5]);
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example // Use navigation to see effect.
-         *      board.create('axis', [[0,0],[1,0]],{
-         *          position: 'sticky',
-         *          anchor: 'right',
-         *          anchorDist: '0.2fr'
-         *      });
-         *
-         *      board.create('axis', [[0,0],[0,1]], {
-         *          position: 'sticky',
-         *          anchor: 'right left',
-         *          anchorDist: '75px'
-         *      });
-         *
-         * </pre><div id="JXG42a90935-80aa-4a6b-8adf-279deef84485" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *          var board = JXG.JSXGraph.initBoard('JXG42a90935-80aa-4a6b-8adf-279deef84485',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false showcopyright: false shownavigation: true});
-         *          board.create('axis', [[0,0],[1,0]],{
-         *              position: 'sticky',
-         *              anchor: 'right',
-         *              anchorDist: '0.2fr'
-         *          });
-         *
-         *          board.create('axis', [[0,0],[0,1]], {
-         *              position: 'sticky',
-         *              anchor: 'right left',
-         *              anchorDist: '75px'
-         *          });
-         *
-         *          board.create('functiongraph', [function(x){ return 1/(x-5) + 2;}]);
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
         position: 'static',
-
-        /**
-         * Position is used in cases: <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
-         * Possible values are <tt>'right'</tt>, <tt>'left'</tt>, <tt>'right left'</tt>. Left and right indicate the side as seen from the axis.
-         * It is used in combination with the attribute position to decide on which side of the board the axis should stick or be fixed.
-         *
-         * @type {String}
-         * @name Axis#anchor
-         * @default ''
-         * @example
-         *  board.create('axis', [[0,0],[0,1]],{
-         *      position: 'fixed',
-         *      anchor: 'left',
-         *      anchorDist: 2,
-         *      strokeColor : 'green',
-         *      ticks: {
-         *          majorHeight: 7,
-         *          drawZero: true
-         *      }
-         *  });
-         *
-         *  board.create('axis', [[0,0],[0,1]], {
-         *      position: 'fixed',
-         *      anchor: 'right',
-         *      anchorDist: 2,
-         *      strokeColor : 'blue',
-         *      ticks: {
-         *          majorHeight: 7,
-         *          drawZero: true
-         *      }
-         *  });
-         *
-         *  board.create('axis', [[0,0],[0,-1]], {
-         *      position: 'fixed',
-         *      anchor: 'left',
-         *      anchorDist: 4,
-         *      strokeColor : 'red',
-         *      ticks:{
-         *          majorHeight: 7,
-         *          drawZero: true
-         *      }
-         *  });
-         *
-         * </pre><div id="JXG11448b49-02b4-48d4-b0e0-8f06a94e909c" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *      var board = JXG.JSXGraph.initBoard('JXG11448b49-02b4-48d4-b0e0-8f06a94e909c',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false showcopyright: false shownavigation: true});
-         *
-         *      board.create('axis', [[0,0],[0,1]],{
-         *          position: 'fixed',
-         *          anchor: 'left',
-         *          anchorDist: 4,
-         *          strokeColor : 'green',
-         *          ticks: {
-         *              majorHeight: 7,
-         *              drawZero: true
-         *          }
-         *      });
-         *
-         *      board.create('axis', [[0,0],[0,1]], {
-         *          position: 'fixed',
-         *          anchor: 'right',
-         *          anchorDist: 2,
-         *          strokeColor : 'blue',
-         *          ticks: {
-         *              majorHeight: 7,
-         *              drawZero: true
-         *          }
-         *      });
-         *
-         *      board.create('axis', [[0,0],[0,-1]], {
-         *          position: 'fixed',
-         *          anchor: 'left',
-         *          anchorDist: 4,
-         *          strokeColor : 'red',
-         *          ticks:{
-         *              majorHeight: 7,
-         *              drawZero: true
-         *          }
-         *      });
-         *
-         *     })();
-         *
-         * </script><pre>
-         */
-        anchor: ''
-
-        /**
-         * Used to define at which distance to the edge of the board the axis should stick or be fixed.
-         * This only has an effect if <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
-         * There are the following possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
-         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
-         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
-         * </ul>
-         *
-         * @type {Number|String}
-         * @name Axis#anchorDist
-         * @default '10%'
-         */
+        anchor: '',
         anchorDist: '10%',
-
-        /**
-         * If set to true the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
-         * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
-         * This option overrides <tt>offset</tt>, <tt>anchorX</tt> and <tt>anchorY</tt> of axis tick labels.
-         *
-         * @type {Boolean}
-         * @name Axis#ticksAutoPos
-         * @default false
-         * @example
-         * // Navigate to see an effect.
-         * board.create('axis', [[0, 0], [1, 0]], {
-         *     position: 'sticky',
-         *     anchor: 'left right',
-         *     anchorDist: '0.1',
-         *     ticksAutoPos: true
-         * });
-         *
-         * board.create('axis', [[0, 0], [0, 1]], {
-         *     position: 'sticky',
-         *     anchor: 'left right',
-         *     anchorDist: '0.1',
-         *     ticksAutoPos: true
-         * });
-         *
-         * </pre><div id="JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false showcopyright: false shownavigation: false});
-         *
-         *     board.create('axis', [[0, 0], [1, 0]], {
-         *         position: 'sticky',
-         *         anchor: 'left right',
-         *         anchorDist: '0.1',
-         *         ticksAutoPos: true
-         *     });
-         *
-         *     board.create('axis', [[0, 0], [0, 1]], {
-         *         position: 'sticky',
-         *         anchor: 'left right',
-         *         anchorDist: '0.1',
-         *         ticksAutoPos: true
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         */
-        ticksAutoPos: false
-
-        /**
-         * Defines, when <tt>ticksAutoPos</tt> takes effect.
-         * There are the following possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
-         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
-         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
-         * </ul>
-         *
-         * @type {Number|String}
-         * @name Axis#ticksAutoPosThreshold
-         * @default '5%'
-         */
+        ticksAutoPos: false,
         ticksAutoPosThreshold: '5%',
-
-        /**
-         * Show / hide ticks.
-         *
-         * Deprecated. Suggested alternative is "ticks: {visible: false}"
-         *
-         * @type Boolean
-         * @name Axis#withTicks
-         * @default true
-         * @deprecated
-         */
-        withTicks: true
-        straightFirst: true
-        straightLast: true
+        withTicks: true,
+        straightFirst: true,
+        straightLast: true,
         margin: -4,
-        withLabel: false
-        scalable: false
+        withLabel: false,
+        scalable: false,
 
         /**
          * Attributes for ticks of the axis.
@@ -1907,22 +678,16 @@ export class Options {
          * @name Axis#ticks
          */
         ticks: {
-            label: {
-                offset: [4, -15],     // This seems to be a good offset for 12 point fonts
-                parse: false
-                needsRegularUpdate: false
-                display: 'internal',
-                visible: 'inherit',
-                layer: 9
-            }
+            // [4,-15] seems to be a good offset for 12 point fonts
+            label: { offset: [4, -15], parse: false, needsRegularUpdate: false, display: 'internal', visible: 'inherit', layer: 9, },
             visible: 'inherit',
-            needsRegularUpdate: false
+            needsRegularUpdate: false,
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeColor: '#888888',
-            drawLabels: true
-            drawZero: false
-            insertTicks: true
+            drawLabels: true,
+            drawZero: false,
+            insertTicks: true,
             minTicksDistance: 5,
             minorHeight: 10,          // if <0: full width and height
             majorHeight: -1,          // if <0: full width and height
@@ -1931,124 +696,37 @@ export class Options {
             minorTicks: 4,
             ticksDistance: 1,         // TODO doc
             strokeOpacity: 0.25
-        }
-
-        /**
-         * Attributes for first point the axis.
-         *
-         * @type Point
-         * @name Axis#point1
-         */
-        point1: {                  // Default values for point1 if created by line
-            needsRegularUpdate: false
-            visible: false
-        }
-
-        /**
-         * Attributes for second point the axis.
-         *
-         * @type Point
-         * @name Axis#point2
-         */
-        point2: {                  // Default values for point2 if created by line
-            needsRegularUpdate: false
-            visible: false
-        }
-
+        },
+        point1: { needsRegularUpdate: false, visible: false, },    // Default values for point1 if created by line
+        point2: { needsRegularUpdate: false, visible: false, },
         tabindex: -1,
-
-        /**
-         * Attributes for the axis label.
-         *
-         * @type Label
-         * @name Axis#label
-         */
-        label: {
-            position: 'lft',
-            offset: [10, 10]
-        }
-
+        label: { position: 'lft', offset: [10, 10], },
         ignoreForLabelAutoposition: true
 
-        /**#@-*/
     }
 
     /* special options for angle bisector of 3 points */
-    bisector: {
-        /**#@+
-         * @visprop
-         */
-
+    static bisector: BisectorOptions = {
         strokeColor: '#000000', // Bisector line
-
-        /**
-         * Attributes for the helper point of the bisector.
-         *
-         * @type Point
-         * @name Bisector#point
-         */
         point: {               // Bisector point
-            visible: false
-            fixed: false
-            withLabel: false
-            name: ''
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            name: '',
         }
-
-        /**#@-*/
     }
+
     /* special options for the 2 bisectors of 2 lines */
-    bisectorlines: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Attributes for first line.
-         *
-         * @type Line
-         * @name Bisectorlines#line1
-         */
-        line1: {               //
-            strokeColor: '#000000'
-        }
-
-        /**
-         * Attributes for second line.
-         *
-         * @type Line
-         * @name Bisectorlines#line2
-         */
-        line2: {               //
-            strokeColor: '#000000'
-        }
-
-        /**#@-*/
+    static bisectorlines: BisectorlinesOptions = {
+        line1: { strokeColor: '#000000', },
+        line2: { strokeColor: '#000000', },
     }
+
 
     /* special options for boxplot curves */
-    boxplot: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         *  Direction of the box plot: 'vertical' or 'horizontal'
-         *
-         * @type String
-         * @name Boxplot#dir
-         * @default 'vertical'
-         */
+    static boxplot: BoxplotOptions = {
         dir: 'vertical',
-
-        /**
-         * Relative width of the maximum and minimum quantile
-         *
-         * @type Number
-         * @name Boxplot#smallWidth
-         * @default 0.5
-         */
         smallWidth: 0.5,
-
         strokeWidth: 2,
         strokeColor: Color.palette.blue,
         fillColor: Color.palette.blue,
@@ -2057,8 +735,6 @@ export class Options {
         highlightStrokeColor: Color.palette.blue,
         highlightFillColor: Color.palette.blue,
         highlightFillOpacity: 0.1
-
-        /**#@-*/
     }
 
     /* special button options */
@@ -2084,81 +760,33 @@ export class Options {
     }
 
     /* special cardinal spline options */
-    cardinalspline: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Controls if the data points of the cardinal spline when given as
-         * arrays should be converted into {@link JXG.Points}.
-         *
-         * @name createPoints
-         * @memberOf Cardinalspline.prototype
-         *
-         * @see Cardinalspline#points
-         *
-         * @type Boolean
-         * @default true
-         */
-        createPoints: true
-
-        /**
-         * If set to true the supplied coordinates are interpreted as
-         * [[x_0, y_0], [x_1, y_1], p, ...].
-         * Otherwise, if the data consists of two arrays of equal length,
-         * it is interpreted as
-         * [[x_o x_1, ..., x_n], [y_0, y_1, ..., y_n]]
-         *
-         * @name isArrayOfCoordinates
-         * @memberOf Cardinalspline.prototype
-         * @type Boolean
-         * @default true
-         */
-        isArrayOfCoordinates: true
-
-        /**
-         * Attributes for the points generated by Cardinalspline in cases
-         * {@link createPoints} is set to true
-         *
-         * @name points
-         * @memberOf Cardinalspline.prototype
-         *
-         * @see Cardinalspline#createPoints
-         * @type Object
-         */
+    static cardinalspline: CardinalsplineOptions = {
+        createPoints: true,
+        isArrayOfCoordinates: true,
         points: {
             strokeOpacity: 0.05,
             fillOpacity: 0.05,
             highlightStrokeOpacity: 1.0,
             highlightFillOpacity: 1.0,
-            withLabel: false
-            name: ''
+            withLabel: false,
+            name: '',
             fixed: false
         }
-
-        /**#@-*/
     }
 
     /* special chart options */
-    chart: {
-        /**#@+
-         * @visprop
-         */
-
+    static chart: ChartOptions = {
         chartStyle: 'line',
         colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
-        highlightcolors: null
-        fillcolor: null
-        highlightonsector: false
-        highlightbysize: false
+        highlightcolors: null,
+        fillcolor: 'none',
+        highlightonsector: false,
+        highlightbysize: false,
 
         fillOpacity: 0.6,
-        withLines: false
+        withLines: false,
 
-        label: {
-        }
-        /**#@-*/
+        label: {}
     }
 
     /* special html slider options */
@@ -2195,101 +823,53 @@ export class Options {
     }
 
     /*special circle options */
-    circle: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
-         *
-         * @see JXG.GeometryElement#hasPoint
-         * @name Circle#hasInnerPoints
-         * @type Boolean
-         * @default false
-         */
-        hasInnerPoints: false
+    static circle: CircleOptions = {
+        hasInnerPoints: false,
 
         fillColor: 'none',
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
 
-        /**
-         * Attributes for center point.
-         *
-         * @type Point
-         * @name Circle#center
-         */
         center: {
-            visible: false
-            withLabel: false
-            fixed: false
-
-            fillColor: Color.palette.red
-            strokeColor: Color.palette.red
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
             highlightFillColor: '#c3d9ff',
             highlightStrokeColor: '#c3d9ff',
             layer: 9,
-
-            name: ''
-        }
-
-        /**
-         * Attributes for center point.
-         *
-         * @type Point
-         * @name Circle#point2
-         */
+            name: '',
+        },
         point2: {
-            fillColor: Color.palette.red
-            strokeColor: Color.palette.red
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
             highlightFillColor: '#c3d9ff',
             highlightStrokeColor: '#c3d9ff',
             layer: 9,
-
-            visible: false
-            withLabel: false
-            fixed: false
-            name: ''
-        }
-
-        /**
-         * Attributes for circle label.
-         *
-         * @type Label
-         * @name Circle#label
-         */
-        label: {
-            position: 'urt'
-        }
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: '',
+        },
+        label: { position: 'urt', }
 
         /**#@-*/
     }
 
     /* special options for circumcircle of 3 points */
-    circumcircle: {
-        /**#@+
-         * @visprop
-         */
-
+    static circumcircle: CircumcircleOptions = {
         fillColor: 'none',
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
-
-        /**
-         * Attributes for center point.
-         *
-         * @type Point
-         * @name Circumcircle#center
-         */
         center: {               // center point
-            visible: false
-            fixed: false
-            withLabel: false
-            fillColor: Color.palette.red
-            strokeColor: Color.palette.red
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
             highlightFillColor: '#c3d9ff',
             highlightStrokeColor: '#c3d9ff',
             name: ''
@@ -2297,11 +877,7 @@ export class Options {
         /**#@-*/
     }
 
-    circumcirclearc: {
-        /**#@+
-         * @visprop
-         */
-
+    static circumcirclearc: CircumcirclearcOptions = {
         fillColor: 'none',
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
@@ -2498,8 +1074,9 @@ export class Options {
         /**#@-*/
     }
 
+
     /* special curve options */
-    curve: {
+    static curve: CurveOptions = {
         /**#@+
          * @visprop
          */
@@ -2507,165 +1084,19 @@ export class Options {
         strokeWidth: 1,
         strokeColor: Color.palette.blue,
         fillColor: 'none',
-        fixed: true
-
-        /**
-         * The curveType is set in {@link JXG.Curve#generateTerm} and used in {@link JXG.Curve#updateCurve}.
-         * Possible values are <ul>
-         * <li>'none'</li>
-         * <li>'plot': Data plot</li>
-         * <li>'parameter': we can not distinguish function graphs and parameter curves</li>
-         * <li>'functiongraph': function graph</li>
-         * <li>'polar'</li>
-         * <li>'implicit' (not yet)</li></ul>
-         * Only parameter and plot are set directly. Polar is set with {@link JXG.GeometryElement#setAttribute} only.
-         * @name Curve#curveType
-         * @type String
-         * @default null
-         */
-        curveType: null
-
-        /**
-         * If true use a recursive bisection algorithm.
-         * It is slower, but usually the result is better. It tries to detect jumps
-         * and singularities.
-         *
-         * @name Curve#doAdvancedPlot
-         * @type Boolean
-         * @default true
-         */
-        doAdvancedPlot: true
-
-        /**
-         * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
-         *
-         * @name Curve#doAdvancedPlotOld
-         * @see Curve#doAdvancedPlot
-         * @type Boolean
-         * @default false
-         * @deprecated
-         */
-        doAdvancedPlotOld: false   // v1
-
-        /**
-         * Configure arrow head at the start position for curve.
-         * Recommended arrow head type is 7.
-         *
-         * @name Curve#firstArrow
-         * @type Boolean | Object
-         * @default false
-         * @see Line#firstArrow for options
-         */
-        firstArrow: false
-
-        /**
-         * The data points of the curve are not connected with straight lines but with bezier curves.
-         * @name Curve#handDrawing
-         * @type Boolean
-         * @default false
-         */
-        handDrawing: false
-
-        /**
-         * Attributes for curve label.
-         *
-         * @type Label
-         * @name Curve#label
-         */
-        label: {
-            position: 'lft'
-        }
-
-        /**
-         * Configure arrow head at the end position for curve.
-         * Recommended arrow head type is 7.
-         *
-         * @name Curve#lastArrow
-         * @see Line#lastArrow for options
-         * @type Boolean | Object
-         * @default false
-         */
-        lastArrow: false
-
-        /**
-         * Line endings (linecap) of a curve stroke.
-         * Possible values are:
-         * <ul>
-         * <li> 'butt',
-         * <li> 'round',
-         * <li> 'square'.
-         * </ul>
-         *
-         * @name JXG.Curve#lineCap
-         * @type String
-         * @default 'round'
-         */
+        fixed: true,
+        curveType: null,
+        doAdvancedPlot: true,
+        doAdvancedPlotOld: false,
+        firstArrow: false,
+        handDrawing: false,
+        label: { position: 'lft' },
+        lastArrow: false,
         lineCap: 'round',
-
-        /**
-         * Number of points used for plotting triggered by up events
-         * (i.e. high quality plotting) in case
-         * {@link Curve#doAdvancedPlot} is false.
-         *
-         * @name Curve#numberPointsHigh
-         * @see Curve#doAdvancedPlot
-         * @type Number
-         * @default 1600
-         */
         numberPointsHigh: 1600,  // Number of points on curves after mouseUp
-
-        /**
-         * Number of points used for plotting triggered by move events
-         * (i.e. lower quality plotting but fast) in case
-         * {@link Curve#doAdvancedPlot} is false.
-         *
-         * @name Curve#numberPointsLow
-         * @see Curve#doAdvancedPlot
-         * @type Number
-         * @default 400
-         */
         numberPointsLow: 400,    // Number of points on curves after mousemove
-
-        /**
-         * Select the version of the plot algorithm.
-         * <ul>
-         * <li> Version 1 is very outdated
-         * <li> Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
-         * <li> Version 3 is an internal version that was never published in  a stable version.
-         * <li> Version 4 is available since JSXGraph v1.2.0
-         * </ul>
-         * Version 4 plots correctly logarithms if the function term is supplied as string (i.e. as JessieCode)
-         *
-         * @example
-         *   var c = board.create('functiongraph', ["log(x)"]);
-         *
-         * @name Curve#plotVersion
-         * @type Number
-         * @default 2
-         */
         plotVersion: 2,
-
-        /**
-         * Configure arrow head at the start position for curve.
-         * Recommended arrow head type is 7.
-         *
-         * @name Curve#recursionDepthHigh
-         * @see Curve#doAdvancedPlot
-         * @type Number
-         * @default 17
-         */
         recursionDepthHigh: 17,
-
-        /**
-         * Number of points used for plotting triggered by move events in case
-         * (i.e. lower quality plotting but fast)
-         * {@link Curve#doAdvancedPlot} is true.
-         *
-         * @name Curve#recursionDepthLow
-         * @see Curve#doAdvancedPlot
-         * @type Number
-         * @default 13
-         */
         recursionDepthLow: 15
 
         /**#@-*/
@@ -2723,538 +1154,6 @@ export class Options {
          */
 
         label: {}
-        /**#@-*/
-    }
-
-    /* special grid options */
-    grid: {
-        /**#@+
-         * @visprop
-         */
-
-        needsRegularUpdate: false
-        hasGrid: false  // Used in standardoptions
-        highlight: false
-
-        /**
-         * Deprecated. Use {@link Grid#majorStep} instead.
-         *
-         * @deprecated
-         * @type {Number|String}
-         * @name Grid#gridX
-         * @default null
-         */
-        gridX: null
-
-        /**
-         * Deprecated. Use {@link Grid#majorStep} instead.
-         *
-         * @deprecated
-         * @type {Number|String}
-         * @name Grid#gridY
-         * @default null
-         */
-        gridY: null
-
-        /**
-         * Distance of major grid elements. There are three possibilities:
-         * <ul>
-         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the corresponding axis.
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with the unit 'px' are interpreted as distance in screen pixels.
-         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
-         * </ul>
-         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
-         * These are used as distance in x- and y-direction.
-         *
-         * @type {Number|String|Array}
-         * @name Grid#majorStep
-         * @default 'auto'
-         * @see JXG.Ticks#getDistanceMajorTicks
-         */
-        majorStep: 'auto',
-
-        /**
-         * Number of elements in minor grid between elements of the major grid. There are three possibilities:
-         * <ul>
-         *     <li>If set to 'auto', the number minor elements is equal to the number of minorTicks of the corresponding axis.
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as quantity.
-         * </ul>
-         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
-         * These are used as number in x- and y-direction.
-         *
-         * @type {Number|String|Array}
-         * @name Grid#minorElements
-         * @default 0
-         */
-        minorElements: 0,
-
-        /**
-         * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
-         * <tt>'min'</tt> or <tt>true</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
-         * <tt>'max'</tt> to the primarily greater value.
-         *
-         * @type {Boolean|String}
-         * @name Grid#forceSquare
-         * @default false
-         */
-        forceSquare: false
-
-        /**
-         * To decide whether major or minor grid elements on boundaries of the boundingBox shall be shown, half-ones as well.
-         *
-         * @type {Boolean}
-         * @name Grid#includeBoundaries
-         * @default false
-         */
-        includeBoundaries: false
-
-        /**
-         * Size of grid elements. There are the following possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-         *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-         * </ul>
-         * Unused for 'line' which will use the value of strokeWidth.
-         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
-         * These are used as size in x- and y-direction.
-         *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {size: ...}</tt>
-         * For default values have a look there.</p>
-         *
-         * @type {Number|String|Array}
-         * @name Grid#size
-         */
-        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        size: undefined,
-
-        /**
-         * Appearance of grid elements.
-         * There are different styles which differ in appearance.
-         * Possible values are (comparing to {@link Point#face}):
-         * <table>
-         * <tr><th>Input</th><th>Output</th><th>Fillable by fillColor,...</th></tr>
-         * <tr><td>point, .</td><td>.</td><td>no</td></tr>
-         * <tr><td>line</td><td>&minus;</td><td>no</td></tr>
-         * <tr><td>cross, x</td><td>x</td><td>no</td></tr>
-         * <tr><td>circle, o</td><td>o</td><td>yes</td></tr>
-         * <tr><td>square, []</td><td>[]</td><td>yes</td></tr>
-         * <tr><td>plus, +</td><td>+</td><td>no</td></tr>
-         * <tr><td>minus, -</td><td>-</td><td>no</td></tr>
-         * <tr><td>divide, |</td><td>|</td><td>no</td></tr>
-         * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td><td>yes</td></tr>
-         * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td><td>yes</td></tr>
-         * <tr><td>triangleup, ^, a, A</td><td>^</td><td>no</td></tr>
-         * <tr><td>triangledown, v</td><td>v</td><td>no</td></tr>
-         * <tr><td>triangleleft, &lt;</td><td> &lt;</td><td>no</td></tr>
-         * <tr><td>triangleright, &gt;</td><td>&gt;</td><td>no</td></tr>
-         * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
-         * </table>
-         *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {face: ...}</tt>
-         * For default values have a look there.</p>
-         *
-         * @type {String}
-         * @name Grid#face
-         */
-        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        face: undefined,
-
-        /**
-         * This number (pixel value) controls where grid elements end at the canvas edge. If zero, the line
-         * ends exactly at the end, if negative there is a margin to the inside, if positive the line
-         * ends outside of the canvas (which is invisible).
-         *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {margin: ...}</tt>
-         * For default values have a look there.</p>
-         *
-         * @name Grid#margin
-         * @type {Number}
-         */
-        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        margin: undefined,
-
-        /**
-         * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
-         * and (for major grid only) at <tt>(0, 0)</tt> are displayed.
-         * The main reason to set this attribute to "false", might be in combination with axes.
-         * <ul>
-         *     <li>If <tt>false</tt>, then all these elements are hidden.
-         *     <li>If <tt>true</tt>, all these elements are shown.
-         *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-         *     <tt>{x: true|false y: true|false origin: true|false}</tt>
-         * </ul>
-         *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {drawZero: ...}</tt>
-         * For default values have a look there.</p>
-         *
-         * @type {Boolean|Object}
-         * @name Grid#drawZero
-         */
-        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        drawZero: undefined,
-
-        /**
-         * Number of vertices for face 'polygon'.
-         *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {polygonVertices: ...}</tt>
-         * For default values have a look there.</p>
-         *
-         * @type {Number}
-         * @name Grid#polygonVertices
-         */
-        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        polygonVertices: undefined,
-
-        /**
-         * This object contains the attributes for major grid elements.
-         * You can override the following grid attributes individually here:
-         * <ul>
-         *     <li>{@link Grid#size}
-         *     <li>{@link Grid#face}
-         *     <li>{@link Grid#margin}
-         *     <li>{@link Grid#drawZero}
-         *     <li>{@link Grid#polygonVertices}
-         * </ul>
-         * Default values are:
-         * <pre>{
-         *      size: 5,
-         *      face: 'line',
-         *      margin: 0,
-         *      drawZero: true
-         *      polygonVertices: 6
-         *  }</pre>
-         *
-         * @name Grid#major
-         * @type {Object}
-         */
-        major: {
-
-            /**
-             * Documented in Grid#size
-             * @class
-             * @ignore
-             */
-            size: 5,
-
-            /**
-             * Documented in Grid#face
-             * @class
-             * @ignore
-             */
-            face: 'line',
-
-            /**
-             * Documented in Grid#margin
-             * @class
-             * @ignore
-             */
-            margin: 0,
-
-            /**
-             * Documented in Grid#drawZero
-             * @class
-             * @ignore
-             */
-            drawZero: true
-
-            /**
-             * Documented in Grid#polygonVertices
-             * @class
-             * @ignore
-             */
-            polygonVertices: 6
-        }
-
-        /**
-         * This object contains the attributes for minor grid elements.
-         * You can override the following grid attributes individually here:
-         * <ul>
-         *     <li>{@link Grid#size}
-         *     <li>{@link Grid#face}
-         *     <li>{@link Grid#margin}
-         *     <li>{@link Grid#drawZero}
-         *     <li>{@link Grid#polygonVertices}
-         * </ul>
-         * Default values are:
-         * <pre>{
-         *      size: 3,
-         *      face: 'point',
-         *      margin: 0,
-         *      drawZero: true
-         *      polygonVertices: 6
-         *  }</pre>
-         *
-         * @name Grid#minor
-         * @type {Object}
-         */
-        minor: {
-
-            /**
-             * @class
-             * @ignore
-             */
-            visible: 'inherit',
-
-            /**
-             * Documented in Grid#size
-             * @class
-             * @ignore
-             */
-            size: 3,
-
-            /**
-             * Documented in Grid#face
-             * @class
-             * @ignore
-             */
-            face: 'point',
-
-            /**
-             * Documented in Grid#margin
-             * @class
-             * @ignore
-             */
-            margin: 0,
-
-            /**
-             * Documented in Grid#drawZero
-             * @class
-             * @ignore
-             */
-            drawZero: true
-
-            /**
-             * Documented in Grid#polygonVertices
-             * @class
-             * @ignore
-             */
-            polygonVertices: 6
-        }
-
-        /**
-         * @class
-         * @ignore
-         * @deprecated
-         */
-        snapToGrid: false
-
-        strokeColor: '#c0c0c0',
-        strokeWidth: 1,
-        strokeOpacity: 0.5,
-        dash: 0,
-
-        /**
-         * Use a predefined theme for grid.
-         * Attributes can be overwritten by explicitly set the specific value.
-         *
-         * @type {Number}
-         * @default 0
-         * @see Grid#themes
-         */
-        theme: 0,
-
-        /**
-         * Array of theme attributes.
-         * The index of the entry is the number of the theme.
-         *
-         * @type {Array}
-         * @name Grid#themes
-         * @private
-         *
-         * @example
-         * // Theme 1
-         * // quadratic grid appearance with distance of major grid elements set to the primarily greater one
-         *
-         * JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: true
-         *     defaultAxes: {
-         *         x: { ticks: {majorHeight: 10} }
-         *         y: { ticks: {majorHeight: 10} }
-         *     }
-         *     grid: { theme: 1 }
-         * });
-         * </pre> <div id="JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898" class="jxgbox" style="width: 300px; height: 200px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         JXG.JSXGraph.initBoard('JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898',
-         *             {boundingbox: [-4, 4, 4, -4], axis: true showcopyright: false shownavigation: false
-         *                 defaultAxes: {
-         *                     x: { ticks: {majorHeight: 10} }
-         *                     y: { ticks: {majorHeight: 10} }
-         *                 }
-         *                grid: { theme: 1 }
-         *             });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // Theme 2
-         * // lines and points in between
-         *
-         * JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false
-         *     grid: { theme: 2 }
-         * });
-         * </pre> <div id="JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         JXG.JSXGraph.initBoard('JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false showcopyright: false shownavigation: false
-         *                 grid: { theme: 2 }
-         *             })
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // Theme 3
-         * // lines and thinner lines in between
-         *
-         * JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false
-         *     grid: { theme: 3 }
-         * });
-         * </pre> <div id="JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         JXG.JSXGraph.initBoard('JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false showcopyright: false shownavigation: false
-         *                 grid: { theme: 3 }
-         *         });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // Theme 4
-         * // lines with grid of '+'s plotted in between
-         *
-         * JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false
-         *     grid: { theme: 4 }
-         * });
-         * </pre> <div id="JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         JXG.JSXGraph.initBoard('JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false showcopyright: false shownavigation: false
-         *                 grid: { theme: 4 }
-         *             });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // Theme 5
-         * // grid of '+'s and points in between
-         *
-         * JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false
-         *     grid: { theme: 5 }
-         * });
-         * </pre> <div id="JXG6a967d83-4179-4827-9e97-63fbf1e872c8" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false showcopyright: false shownavigation: false
-         *                 grid: { theme: 5 }
-         *         });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // Theme 6
-         * // grid of circles with points in between
-         *
-         * JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false
-         *     grid: { theme: 6 }
-         * });
-         * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false showcopyright: false shownavigation: false
-         *                 grid: { theme: 6 }
-         *         });
-         *     })();
-         * </script> <pre>
-         */
-        themes: [
-            {
-                // default values
-            },
-
-            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily smaller one
-                forceSquare: 'min',
-                major: {
-                    face: 'line'
-                }
-            },
-
-            {   // Theme 2: lines and points in between
-                major: {
-                    face: 'line'
-                }
-                minor: {
-                    size: 3,
-                    face: 'point'
-                }
-                minorElements: 'auto'
-            },
-
-            {   // Theme 3: lines and thinner lines in between
-                major: {
-                    face: 'line'
-                }
-                minor: {
-                    face: 'line',
-                    strokeOpacity: 0.25
-                }
-                minorElements: 'auto'
-            },
-
-            {   // Theme 4: lines with grid of '+'s plotted in between
-                major: {
-                    face: 'line'
-                }
-                minor: {
-                    face: '+',
-                    size: '95%'
-                }
-                minorElements: 'auto'
-            },
-
-            {   // Theme 5: grid of '+'s and more points in between
-                major: {
-                    face: '+',
-                    size: 10,
-                    strokeOpacity: 1
-                }
-                minor: {
-                    face: 'point',
-                    size: 3
-                }
-                minorElements: 'auto'
-            },
-
-            {   // Theme 6: grid of circles with points in between
-                major: {
-                    face: 'circle',
-                    size: 8,
-                    fillColor: '#c0c0c0'
-                }
-                minor: {
-                    face: 'point',
-                    size: 3
-                }
-                minorElements: 'auto'
-            },
-        ]
-
         /**#@-*/
     }
 
@@ -3834,422 +1733,6 @@ export class Options {
          * @default true
          */
         alwaysIntersect: true
-
-        /**#@-*/
-    }
-
-    /* special label options */
-    label: {
-        /**#@+
-         * @visprop
-         */
-
-        visible: 'inherit',
-        strokeColor: '#000000',
-        strokeOpacity: 1,
-        highlightStrokeOpacity: 0.666666,
-        highlightStrokeColor: '#000000',
-
-        fixed: true
-        tabindex: null
-
-        /**
-         * Point labels are positioned by setting {@link Point#anchorX} {@link Point#anchorY}
-         * and {@link Label#offset}.
-         * For line, circle and curve elements (and their derived objects)
-         * there are two possibilities to position labels.
-         * <ul>
-         * <li> The first (old) possibility uses the <a href="https://www.tug.org/metapost.html">MetaPost</a> system:
-         * Possible string values for the position of a label for
-         * label anchor points are:
-         * <ul>
-         * <li> 'first' (lines only)
-         * <li> 'last' (lines only)
-         * <li> 'lft'
-         * <li> 'rt'
-         * <li> 'top'
-         * <li> 'bot'
-         * <li> 'ulft'
-         * <li> 'urt'
-         * <li> 'llft'
-         * <li> 'lrt'
-         * </ul>
-         * <li> the second (preferred) possibility (since v1.9.0) is:
-         * with <tt>position: 'len side'</tt> the label can be positioned exactly along the
-         * element's path. Here,
-         * <ul>
-         * <li> 'len' is an expression of the form
-         *   <ul>
-         *     <li> xfr, denoting a fraction of the whole. x is expected to be a number between 0 and 1.
-         *     <li> x%, a percentage. x is expected to be a number between 0 and 100.
-         *     <li> x, a number: only possible for line elements and circles. For lines, the label is positioned x
-         *          user units from the starting point. For circles, the number is interpreted as degree, e.g. 45°.
-         *          For everything else, 0 is taken instead.
-         *     <li> xpx, a pixel value: only possible for line elements.
-         *          The label is positioned x pixels from the starting point.
-         *          For non-lines, 0% is taken instead.
-         *   </ul>
-         *   If the domain of a curve is not connected, a position of the label close to the line
-         *   between the first and last point of the curve is chosen.
-         * <li> 'side' is either 'left' or 'right'. The label is positioned to the left or right of the path, when moving from the
-         * first point to the last. For circles, 'left' means inside of the circle, 'right' means outside of the circle.
-         * The distance of the label from the path can be controlled by {@link Label#distance}.
-         * </ul>
-         * Recommended for this second possibility is to use anchorX: 'middle' and 'anchorY: 'middle'.
-         * </ul>
-         *
-         * @example
-         * var l1 = board.create('segment', [[-3, 2], [3, 2]], {
-         *     name: 'l_1',
-         *     withLabel: true
-         *     point1: { visible: true name: 'A', withLabel: true }
-         *     point2: { visible: true name: 'B', withLabel: true }
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'middle',
-         *         offset: [0, 0],
-         *         distance: 1.2,
-         *         position: '0.2fr left'
-         *     }
-         * });
-         *
-         * </pre><div id="JXG66395d34-fd7f-42d9-97dc-14ae8882c11f" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG66395d34-fd7f-42d9-97dc-14ae8882c11f',
-         *             {boundingbox: [-5, 5, 5, -5], axis: true showcopyright: false shownavigation: false});
-         *     var l1 = board.create('segment', [[-3, 2], [3, 2]], {
-         *         name: 'l_1',
-         *         withLabel: true
-         *         point1: { visible: true name: 'A', withLabel: true }
-         *         point2: { visible: true name: 'B', withLabel: true }
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'middle',
-         *             offset: [0, 0],
-         *             distance: 1.2,
-         *             position: '0.2fr left'
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var c1 = board.create('circle', [[0, 0], 3], {
-         *     name: 'c_1',
-         *     withLabel: true
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'middle',
-         *         offset: [0, 0],
-         *         fontSize: 32,
-         *         distance: 1.5,
-         *         position: '50% right'
-         *     }
-         * });
-         *
-         * </pre><div id="JXG98ee16ab-fc5f-476c-bf57-0107ac69d91e" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG98ee16ab-fc5f-476c-bf57-0107ac69d91e',
-         *             {boundingbox: [-5, 5, 5, -5], axis: true showcopyright: false shownavigation: false});
-         *     var c1 = board.create('circle', [[0, 0], 3], {
-         *         name: 'c_1',
-         *         withLabel: true
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'middle',
-         *             offset: [0, 0],
-         *             fontSize: 32,
-         *             distance: 1.5,
-         *             position: '50% right'
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var cu1 = board.create('functiongraph', ['3 * sin(x)', -3, 3], {
-         *     name: 'cu_1',
-         *     withLabel: true
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'middle',
-         *         offset: [0, 0],
-         *         distance: 2,
-         *         position: '0.8fr right'
-         *     }
-         * });
-         *
-         * </pre><div id="JXG65b2edee-12d8-48a1-94b2-d6e79995de8c" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG65b2edee-12d8-48a1-94b2-d6e79995de8c',
-         *             {boundingbox: [-5, 5, 5, -5], axis: true showcopyright: false shownavigation: false});
-         *     var cu1 = board.create('functiongraph', ['3 * sin(x)', -3, 3], {
-         *         name: 'cu_1',
-         *         withLabel: true
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'middle',
-         *             offset: [0, 0],
-         *             distance: 2,
-         *             position: '0.8fr right'
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var A = board.create('point', [-1, 4]);
-         * var B = board.create('point', [-1, -4]);
-         * var C = board.create('point', [1, 1]);
-         * var cu2 = board.create('ellipse', [A, B, C], {
-         *     name: 'cu_2',
-         *     withLabel: true
-         *     label: {
-         *         anchorX: 'middle',
-         *         anchorY: 'middle',
-         *         offset: [0, 0],
-         *         fontSize: 20,
-         *         distance: 1.5,
-         *         position: '75% right'
-         *     }
-         * });
-         *
-         * </pre><div id="JXG9c3b2213-1b5a-4cb8-b547-a8d179b851f2" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG9c3b2213-1b5a-4cb8-b547-a8d179b851f2',
-         *             {boundingbox: [-5, 5, 5, -5], axis: true showcopyright: false shownavigation: false});
-         *     var A = board.create('point', [-1, 4]);
-         *     var B = board.create('point', [-1, -4]);
-         *     var C = board.create('point', [1, 1]);
-         *     var cu2 = board.create('ellipse', [A, B, C], {
-         *         name: 'cu_2',
-         *         withLabel: true
-         *         label: {
-         *             anchorX: 'middle',
-         *             anchorY: 'middle',
-         *             offset: [0, 0],
-         *             fontSize: 20,
-         *             distance: 1.5,
-         *             position: '75% right'
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         *
-         * @name Label#position
-         * @type String
-         * @default 'urt'
-         * @see Label#distance
-         * @see Label#offset
-         */
-        position: 'urt',
-
-        /**
-         * Distance of the label from a path element, like line, circle, curve.
-         * The true distance is this value multiplied by 0.5 times the size of the bounding box of the label text.
-         * That means, with a value of 1 the label will touch the path element.
-         * @name Label#distance
-         * @type Number
-         * @default 1.5
-         *
-         * @see Label#position
-         *
-         */
-        distance: 1.5,
-
-        /**
-         *  Label offset from label anchor.
-         *  The label anchor is determined by {@link Label#position}
-         *
-         * @name Label#offset
-         * @see Label#position
-         * @type Array
-         * @default [10,10]
-         */
-        offset: [10, 10],
-
-        /**
-         * Automatic position of label text. When called first, the positioning algorithm
-         * starts at the position defined by offset.
-         * The algorithm tries to find a position with the least number of
-         * overlappings with other elements, while retaining the distance
-         * to the anchor element.
-         *
-         * @name Label#autoPosition
-         * @see Label#offset
-         * @type Boolean
-         * @see GeometryElement#ignoreForLabelAutoposition
-         * @see Label#autoPositionMinDistance
-         * @see Label#autoPositionMaxDistance
-         * @see Label#autoPositionWhitelist
-         * @default false
-         *
-         * @example
-         * 	var p1 = board.create('point', [-2, 1], {id: 'A'});
-         * 	var p2 = board.create('point', [-0.85, 1], {
-         *      name: 'B', id: 'B', label:{autoPosition: true offset:[10, 10]}
-         *  });
-         * 	var p3 = board.create('point', [-1, 1.2], {
-         *      name: 'C', id: 'C', label:{autoPosition: true offset:[10, 10]}
-         *  });
-         *  var c = board.create('circle', [p1, p2]);
-         * 	var l = board.create('line', [p1, p2]);
-         *
-         * </pre><div id="JXG7d4dafe7-1a07-4d3f-95cb-bfed9d96dea2" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG7d4dafe7-1a07-4d3f-95cb-bfed9d96dea2',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *     	var p1 = board.create('point', [-2, 1], {id: 'A'});
-         *     	var p2 = board.create('point', [-0.85, 1], {name: 'B', id: 'B', label:{autoPosition: true offset:[10, 10]}});
-         *     	var p3 = board.create('point', [-1, 1.2], {name: 'C', id: 'C', label:{autoPosition: true offset:[10, 10]}});
-         *      var c = board.create('circle', [p1, p2]);
-         *     	var l = board.create('line', [p1, p2]);
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         *
-         */
-        autoPosition: false
-
-        /**
-         * The auto position algorithm tries to put a label to a conflict-free
-         * position around it's anchor element. For this, the algorithm tests 12 positions
-         * around the anchor element starting at a distance from the anchor
-         * defined here (in pixel).
-         *
-         * @name Label#autoPositionMinDistance
-         * @see Label#autoPosition
-         * @see Label#autoPositionMaxDistance
-         * @see Label#autoPositionWhitelist
-         * @type Number
-         * @default 12
-         *
-         */
-        autoPositionMinDistance: 12,
-
-        /**
-         * The auto position algorithm tries to put a label to a conflict-free
-         * position around it's anchor element. For this, the algorithm tests 12 positions
-         * around the anchor element up to a distance from the anchor
-         * defined here (in pixel).
-         *
-         * @name Label#autoPositionMaxDistance
-         * @see Label#autoPosition
-         * @see Label#autoPositionMinDistance
-         * @see Label#autoPositionWhitelist
-         * @type Number
-         * @default 28
-         *
-         */
-        autoPositionMaxDistance: 28,
-
-        /**
-         * List of object ids which should be ignored on setting automatic position of label text.
-         *
-         * @name Label#autoPositionWhitelist
-         * @see Label#autoPosition
-         * @see Label#autoPositionMinDistance
-         * @see Label#autoPositionMaxDistance
-         * @type Array
-         * @default []
-         */
-        autoPositionWhitelist: []
-
-        /**#@-*/
-    }
-
-    /* special legend options */
-    legend: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Default style of a legend element. The only possible value is 'vertical'.
-         * @name Legend#style
-         * @type String
-         * @default 'vertical'
-         */
-        style: 'vertical',
-
-        /**
-         * Label names of a legend element.
-         * @name Legend#labels
-         * @type Array
-         * @default "['1', '2', '3', '4', '5', '6', '7', '8']"
-         */
-        labels: ['1', '2', '3', '4', '5', '6', '7', '8'],
-
-        /**
-         * (Circular) array of label colors.
-         * @name Legend#colors
-         * @type Array
-         * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00']"
-         */
-        colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
-
-        /**
-         * Length of line in one legend entry
-         * @name Legend#lineLength
-         * @type Number
-         * @default 1
-         *
-         */
-        lineLength: 1,
-
-        /**
-         * (Circular) array of opacity for legend line stroke color for one legend entry.
-         * @name Legend#strokeOpacity
-         * @type Array
-         * @default [1]
-         *
-         */
-        strokeOpacity: [1],
-
-        /**
-         * Height (in px) of one legend entry
-         * @name Legend#rowHeight
-         * @type Number
-         * @default 20
-         *
-         */
-        rowHeight: 20,
-
-        /**
-         * Height (in px) of one legend entry
-         * @name Legend#strokeWidth
-         * @type Number
-         * @default 5
-         *
-         */
-        strokeWidth: 5,
-
-        /**
-         * The element can be fixed and may not be dragged around. If true the legend will even stay at its position on zoom and
-         * moveOrigin events.
-         * @name Legend#frozen
-         * @type Boolean
-         * @default false
-         * @see JXG.GeometryElement#frozen
-         *
-         */
-        frozen: false
 
         /**#@-*/
     }
@@ -5125,304 +2608,6 @@ export class Options {
         }
         /**#@-*/
     }
-
-    // /* special point options */
-    // point: {
-    //     /**#@+
-    //      * @visprop
-    //      */
-
-    //     withLabel: true
-    //     label: {}
-
-    //     /**
-    //      * This attribute was used to determined the point layout. It was derived from GEONExT and was
-    //      * replaced by {@link Point#face} and {@link Point#size}.
-    //      *
-    //      * @name Point#style
-    //      *
-    //      * @see Point#face
-    //      * @see Point#size
-    //      * @type Number
-    //      * @default 5
-    //      * @deprecated
-    //      */
-    //     style: 5
-
-    //     /**
-    //      * There are different point styles which differ in appearance.
-    //      * Posssible values are
-    //      * <table>
-    //      * <tr><th>Input</th><th>Output</th></tr>
-    //      * <tr><td>cross</td><td>x</td></tr>
-    //      * <tr><td>circle</td><td>o</td></tr>
-    //      * <tr><td>square, []</td><td>[]</td></tr>
-    //      * <tr><td>plus</td><td>+</td></tr>
-    //      * <tr><td>minus</td><td>-</td></tr>
-    //      * <tr><td>divide</td><td>|</td></tr>
-    //      * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
-    //      * <tr><td>diamond2</td><td>&lt;&gt; (bigger)</td></tr>
-    //      * <tr><td>triangleup</td><td>^, a, A</td></tr>
-    //      * <tr><td>triangledown</td><td>v</td></tr>
-    //      * <tr><td>triangleleft</td><td>&lt;</td></tr>
-    //      * <tr><td>triangleright</td><td>&gt;</td></tr>
-    //      * </table>
-    //      *
-    //      * @name Point#face
-    //      *
-    //      * @type String
-    //      * @see JXG.Point#setStyle
-    //      * @default circle
-    //      */
-    //     face: 'o'
-
-    //     /**
-    //      * Size of a point, either in pixel or user coordinates.
-    //      * Means radius resp. half the width of a point (depending on the face).
-    //      *
-    //      * @name Point#size
-    //      *
-    //      * @see Point#face
-    //      * @see JXG.Point#setStyle
-    //      * @see Point#sizeUnit
-    //      * @type Number
-    //      * @default 3
-    //      */
-    //     size: 3
-
-    //     /**
-    //      * Unit for size.
-    //      * Possible values are 'screen' and 'user.
-    //      *
-    //      * @name Point#sizeUnit
-    //      *
-    //      * @see Point#size
-    //      * @type String
-    //      * @default 'screen'
-    //      */
-    //     sizeUnit: 'screen'
-
-    //     strokeWidth: 2
-
-    //     transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry']
-    //     fillColor: Color.palette.red
-    //     strokeColor: Color.palette.red
-    //     highlightFillColor: '#c3d9ff'
-    //     highlightStrokeColor: '#c3d9ff'
-    //     // strokeOpacity: 1.0,
-    //     // fillOpacity: 1.0,
-    //     // highlightFillOpacity: 0.5,
-    //     // highlightStrokeOpacity: 0.5,
-
-    //     // fillColor: '#ff0000',
-    //     // highlightFillColor: '#eeeeee',
-    //     // strokeWidth: 2,
-    //     // strokeColor: '#ff0000',
-    //     // highlightStrokeColor: '#c3d9ff',
-
-    //     /**
-    //      * If true the point size changes on zoom events.
-    //      *
-    //      * @type Boolean
-    //      * @name Point#zoom
-    //      * @default false
-    //      *
-    //      */
-    //     zoom: false             // Change the point size on zoom
-
-    //     /**
-    //      * If true the infobox is shown on mouse/pen over, if false not.
-    //      * If the value is 'inherit', the value of
-    //      * {@link JXG.Board#showInfobox} is taken.
-    //      *
-    //      * @name Point#showInfobox
-    //      * @see JXG.Board#showInfobox
-    //      * @type Boolean|String
-    //      * @description true | false | 'inherit'
-    //      * @default true
-    //      */
-    //     showInfobox: 'inherit'
-
-    //     /**
-    //      * Truncating rule for the digits in the infobox.
-    //      * <ul>
-    //      * <li>'auto': done automatically by JXG.autoDigits()
-    //      * <li>'none': no truncation
-    //      * <li>number: truncate after "number digits" with JXG.toFixed()
-    //      * </ul>
-    //      *
-    //      * @name Point#infoboxDigits
-    //      *
-    //      * @type String| Number
-    //      * @default 'auto'
-    //      * @see JXG#autoDigits
-    //      * @see JXG#toFixed
-    //      */
-    //     infoboxDigits: 'auto'
-
-    //     draft: false
-
-    //     /**
-    //      * List of attractor elements. If the distance of the point is less than
-    //      * attractorDistance the point is made to glider of this element.
-    //      *
-    //      * @name Point#attractors
-    //      *
-    //      * @type Array
-    //      * @default empty
-    //      */
-    //     attractors: []
-
-    //     /**
-    //      * Unit for attractorDistance and snatchDistance, used for magnetized points and for snapToPoints.
-    //      * Possible values are 'screen' and 'user'.
-    //      *
-    //      * @name Point#attractorUnit
-    //      *
-    //      * @see Point#attractorDistance
-    //      * @see Point#snatchDistance
-    //      * @see Point#snapToPoints
-    //      * @see Point#attractors
-    //      * @type String
-    //      * @default 'user'
-    //      */
-    //     attractorUnit: 'user'    // 'screen', 'user'
-
-    //     /**
-    //      * If the distance of the point to one of its attractors is less
-    //      * than this number the point will be a glider on this
-    //      * attracting element.
-    //      * If set to zero nothing happens.
-    //      *
-    //      * @name Point#attractorDistance
-    //      *
-    //      * @type Number
-    //      * @default 0.0
-    //      */
-    //     attractorDistance: 0.0
-
-    //     /**
-    //      * If the distance of the point to one of its attractors is at least
-    //      * this number the point will be released from being a glider on the
-    //      * attracting element.
-    //      * If set to zero nothing happens.
-    //      *
-    //      * @name Point#snatchDistance
-    //      *
-    //      * @type Number
-    //      * @default 0.0
-    //      */
-    //     snatchDistance: 0.0
-
-    //     /**
-    //      * If set to true the point will snap to a grid of integer multiples of
-    //      * {@link Point#snapSizeX} and {@link Point#snapSizeY} (in user coordinates).
-    //      * <p>
-    //      * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
-    //      * (given in user coordinates, not pixels) or are the intersection points
-    //      * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
-    //      *
-    //      * @name Point#snapToGrid
-    //      *
-    //      * @see Point#snapSizeX
-    //      * @see Point#snapSizeY
-    //      * @type Boolean
-    //      * @default false
-    //      */
-    //     snapToGrid: false
-
-    //     /**
-    //      * If set to true the point will only snap to (possibly invisibly) grid points
-    //      * when within {@link Point#attractorDistance} of such a grid point.
-    //      * <p>
-    //      * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
-    //      * (given in user coordinates, not pixels) or are the intersection points
-    //      * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
-    //      *
-    //      * @name Point#attractToGrid
-    //      *
-    //      * @see Point#attractorDistance
-    //      * @see Point#attractorUnit
-    //      * @see Point#snapToGrid
-    //      * @see Point#snapSizeX
-    //      * @see Point#snapSizeY
-    //      * @type Boolean
-    //      * @default false
-    //      *
-    //      * @example
-    //      * board.create('point', [3, 3], { attractToGrid: true attractorDistance: 10, attractorunit: 'screen' });
-    //      *
-    //      * </pre><div id="JXG397ab787-cd40-449c-a7e7-a3f7bab1d4f6" class="jxgbox" style="width: 300px; height: 300px;"></div>
-    //      * <script type="text/javascript">
-    //      *     (function() {
-    //      *         var board = JXG.JSXGraph.initBoard('JXG397ab787-cd40-449c-a7e7-a3f7bab1d4f6',
-    //      *             {boundingbox: [-1, 4, 7,-4], axis: true showcopyright: false shownavigation: false});
-    //      *     board.create('point', [3, 3], { attractToGrid: true attractorDistance: 10, attractorunit: 'screen' });
-    //      *
-    //      *     })();
-    //      *
-    //      * </script><pre>
-    //      *
-    //      */
-    //     attractToGrid: false
-
-    //     /**
-    //      * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
-    //      * It is given in user coordinates, not in pixels.
-    //      * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-    //      * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-    //      * of the default ticks of the default x axes of the board.
-    //      *
-    //      * @name Point#snapSizeX
-    //      *
-    //      * @see Point#snapToGrid
-    //      * @see Point#snapSizeY
-    //      * @see JXG.Board#defaultAxes
-    //      * @type Number
-    //      * @default 1
-    //      */
-    //     snapSizeX: 1
-
-    //     /**
-    //      * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
-    //      * It is given in user coordinates, not in pixels.
-    //      * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-    //      * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-    //      * of the default ticks of the default y axes of the board.
-    //      *
-    //      * @name Point#snapSizeY
-    //      *
-    //      * @see Point#snapToGrid
-    //      * @see Point#snapSizeX
-    //      * @see JXG.Board#defaultAxes
-    //      * @type Number
-    //      * @default 1
-    //      */
-    //     snapSizeY: 1
-
-    //     /**
-    //      * If set to true the point will snap to the nearest point in distance of
-    //      * {@link Point#attractorDistance}.
-    //      *
-    //      * @name Point#snapToPoints
-    //      *
-    //      * @see Point#attractorDistance
-    //      * @type Boolean
-    //      * @default false
-    //      */
-    //     snapToPoints: false
-
-    //     /**
-    //      * List of elements which are ignored by snapToPoints.
-    //      * @name Point#ignoredSnapToPoints
-    //      *
-    //      * @type Array
-    //      * @default empty
-    //      */
-    //     ignoredSnapToPoints: []
-
-    //     /**#@-*/
-    // }
 
     /* special polygon options */
     polygon: {
@@ -7839,78 +5024,84 @@ export class Options {
      * Apply the options stored in this object to all objects on the given board.
      * @param {JXG.Board} board The board to which objects the options will be applied.
      */
-    useStandardOptions(board: Board) {
-        var el, t, p, copyProps,
-            o = this,   // make it easy if we move to individual elements
-            boardHadGrid = board.hasGrid;
 
-        board.options.grid.hasGrid = o.grid.hasGrid;
-        board.options.grid.gridX = o.grid.gridX;
-        board.options.grid.gridY = o.grid.gridY;
-        // POI: Do we have to add something here?
-        board.options.grid.gridColor = o.grid.gridColor;
-        board.options.grid.gridOpacity = o.grid.gridOpacity;
-        board.options.grid.gridDash = o.grid.gridDash;
-        board.options.grid.snapToGrid = o.grid.snapToGrid;
-        board.options.grid.snapSizeX = o.grid.SnapSizeX;
-        board.options.grid.snapSizeY = o.grid.SnapSizeY;
-        board.takeSizeFromFile = o.takeSizeFromFile;
+    //TODO this is never used
+    /*
+   function useStandardOptions(board: Board) {
+       var el, t, p, copyProps,
+           o = this,   // make it easy if we move to individual elements
+           boardHadGrid = board.hasGrid;
 
-        copyProps = function (p, o) {
-            p.visProp.fillcolor = o.fillColor;
-            p.visProp.highlightfillcolor = o.highlightFillColor;
-            p.visProp.strokecolor = o.strokeColor;
-            p.visProp.highlightstrokecolor = o.highlightStrokeColor;
-        };
+       board.options.grid.hasGrid = o.grid.hasGrid;
+       board.options.grid.gridX = o.grid.gridX;
+       board.options.grid.gridY = o.grid.gridY;
+       // POI: Do we have to add something here?
+       board.options.grid.gridColor = o.grid.gridColor;
+       board.options.grid.gridOpacity = o.grid.gridOpacity;
+       board.options.grid.gridDash = o.grid.gridDash;
+       board.options.grid.snapToGrid = o.grid.snapToGrid;
+       board.options.grid.snapSizeX = o.grid.SnapSizeX;
+       board.options.grid.snapSizeY = o.grid.SnapSizeY;
+       board.takeSizeFromFile = o.takeSizeFromFile;
 
-        for (el in board.objects) {
-            if (board.objects.hasOwnProperty(el)) {
-                p = board.objects[el];
-                if (p.elementClass === Const.OBJECT_CLASS_POINT) {
-                    copyProps(p, o.point);
-                } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
-                    copyProps(p, o.line);
+       copyProps = function (p, o) {
+           p.visProp.fillcolor = o.fillColor;
+           p.visProp.highlightfillcolor = o.highlightFillColor;
+           p.visProp.strokecolor = o.strokeColor;
+           p.visProp.highlightstrokecolor = o.highlightStrokeColor;
+       };
 
-                    for (t = 0; t < p.ticks.length; t++) {
-                        p.ticks[t].majorTicks = o.line.ticks.majorTicks;
-                        p.ticks[t].minTicksDistance = o.line.ticks.minTicksDistance;
-                        p.ticks[t].visProp.minorheight = o.line.ticks.minorHeight;
-                        p.ticks[t].visProp.majorheight = o.line.ticks.majorHeight;
-                    }
-                } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                    copyProps(p, o.circle);
-                } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
-                    copyProps(p, o.angle);
-                } else if (p.type === Const.OBJECT_TYPE_ARC) {
-                    copyProps(p, o.arc);
-                } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
-                    copyProps(p, o.polygon);
-                } else if (p.type === Const.OBJECT_TYPE_CONIC) {
-                    copyProps(p, o.conic);
-                } else if (p.type === Const.OBJECT_TYPE_CURVE) {
-                    copyProps(p, o.curve);
-                } else if (p.type === Const.OBJECT_TYPE_SECTOR) {
-                    p.arc.visProp.fillcolor = o.sector.fillColor;
-                    p.arc.visProp.highlightfillcolor = o.sector.highlightFillColor;
-                    p.arc.visProp.fillopacity = o.sector.fillOpacity;
-                    p.arc.visProp.highlightfillopacity = o.sector.highlightFillOpacity;
-                }
-            }
-        }
+       for (el in board.objects) {
+           if (board.objects.hasOwnProperty(el)) {
+               p = board.objects[el];
+               if (p.elementClass === Const.OBJECT_CLASS_POINT) {
+                   copyProps(p, o.point);
+               } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
+                   copyProps(p, o.line);
 
-        board.fullUpdate();
-        if (boardHadGrid && !board.hasGrid) {
-            board.removeGrids(board);
-        } else if (!boardHadGrid && board.hasGrid) {
-            board.create('grid', []);
-        }
-    };
+                   for (t = 0; t < p.ticks.length; t++) {
+                       p.ticks[t].majorTicks = o.line.ticks.majorTicks;
+                       p.ticks[t].minTicksDistance = o.line.ticks.minTicksDistance;
+                       p.ticks[t].visProp.minorheight = o.line.ticks.minorHeight;
+                       p.ticks[t].visProp.majorheight = o.line.ticks.majorHeight;
+                   }
+               } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                   copyProps(p, o.circle);
+               } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
+                   copyProps(p, o.angle);
+               } else if (p.type === Const.OBJECT_TYPE_ARC) {
+                   copyProps(p, o.arc);
+               } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
+                   copyProps(p, o.polygon);
+               } else if (p.type === Const.OBJECT_TYPE_CONIC) {
+                   copyProps(p, o.conic);
+               } else if (p.type === Const.OBJECT_TYPE_CURVE) {
+                   copyProps(p, o.curve);
+               } else if (p.type === Const.OBJECT_TYPE_SECTOR) {
+                   p.arc.visProp.fillcolor = o.sector.fillColor;
+                   p.arc.visProp.highlightfillcolor = o.sector.highlightFillColor;
+                   p.arc.visProp.fillopacity = o.sector.fillOpacity;
+                   p.arc.visProp.highlightfillopacity = o.sector.highlightFillOpacity;
+               }
+           }
+       }
+
+       board.fullUpdate();
+       if (boardHadGrid && !board.hasGrid) {
+           board.removeGrids(board);
+       } else if (!boardHadGrid && board.hasGrid) {
+           board.create('grid', []);
+       }
+   };
+   */
+
 
     /**
      * Converts all color values to greyscale and calls useStandardOption to put them onto the board.
      * @param {JXG.Board} board The board to which objects the options will be applied.
      * @see JXG.useStandardOptions
      */
+    /*
     useBlackWhiteOptions(board: Board) {
         var o = this // JXG.Options;
         o.point.fillColor = Color.rgb2bw(o.point.fillColor);
@@ -7944,5 +5135,5 @@ export class Options {
 
         this.useStandardOptions(board);
     }
-
+    */
 }

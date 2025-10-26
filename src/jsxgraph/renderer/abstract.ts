@@ -1927,7 +1927,7 @@ export abstract class AbstractRenderer {
     abstract show(el)
     abstract updateGradient(el)
     abstract suspendRedraw()
-    abstract unsuspendRedraw()rendNodeCheckbox
+    abstract unsuspendRedraw()
     abstract resize(w, h)
     abstract createTouchpoints(n)
     abstract showTouchpoint(i)

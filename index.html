@@ -9,7 +9,7 @@
 <body>
     <div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div>
 
-    <script type="module">
+<script type="module">
         import {JXG} from './build/jsxgraph/jxg.js'
         let board = JXG.initBoard(
                 'box', {
@@ -17,7 +17,7 @@
                     axis:true
                 });
 
-        board.create('point',[0,0])
+        board.create('text',[[0,0],'message'],{strokeColor:'red'})
 
     </script>
 </body>

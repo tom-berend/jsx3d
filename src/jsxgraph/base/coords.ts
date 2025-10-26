@@ -34,17 +34,18 @@
 
 import { JSXMath } from "../math/jsxmath.js";
 import { COORDS_BY, OBJECT_TYPE, OBJECT_CLASS } from "./constants.js";
-import {Events} from '../utils/event.js';
+import { Events } from '../utils/event.js';
 // import { Type } from "../utils/type.js";
 // import { JSXMath } from "../math/jsxmath.js";
 import { Board } from "jsxgraph";
+import { GeometryElement } from "./element.js";
 
 /**
  * @fileoverview In this file the Coords object is defined, a class to manage all
  * properties and methods coordinates usually have.
  */
 
-export class Coords {
+export class Coords extends GeometryElement {
     /**
      * Stores the board the object is used on.
      */
@@ -80,23 +81,31 @@ export class Coords {
      * @param {Boolean} [emitter=true]
      * @constructor
      */
-    constructor(method: number, coordinates: number[], board: Board, emitter: Boolean = true) {
+    constructor(board: Board, attributes: object) {
+        super(board, attributes)
 
 
-        this.board = board;
         this.method = method
 
         this.usrCoords = [];
         //this.usrCoords = new Float64Array(3);
 
         this.scrCoords = [];
+
+        // this.board = board;
+        // this.method = method
+
+        // this.usrCoords = [];
+        // //this.usrCoords = new Float64Array(3);
+
+        // this.scrCoords = [];
         //this.scrCoords = new Float64Array(3);
 
         // if (this.emitter) {
         // EventEmitter.eventify(this);  // tb now handled by class hierarchy
         // }
-        
-        this.setCoordinates(this.method, coordinates, false, true);
+
+        // this.setCoordinates(this.method, coordinates, false, true);
     };
 
     /**
@@ -152,7 +161,7 @@ export class Coords {
      * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
      * @returns {Number} The distance
      */
-    distance(coord_type:COORDS_BY, coordinates:Coords) {
+    distance(coord_type: COORDS_BY, coordinates: Coords) {
         var sum = 0,
             c,
             ucr = this.usrCoords,

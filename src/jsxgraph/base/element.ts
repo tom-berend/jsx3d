@@ -42,7 +42,7 @@ import { Events } from "../utils/event.js";
 import { Color } from "../utils/color.js";
 import { Type } from "../utils/type.js";
 
-
+import { BoardOptions } from "../optionInterfaces.js";
 
 interface ShortcutAttributes {
     // these are the 'shortcuts' in options.js.  we don't define them, but TypeScript needs to know they exist
@@ -307,7 +307,7 @@ export class GeometryElement extends Events {
      * @constant
      * @type Number
     */
-    private _org_type: number;
+    public _org_type: number;       // tbtb - was private, now set by each element
 
     /**
      * The element's class.
@@ -500,6 +500,9 @@ export class GeometryElement extends Events {
 
     public view = null;
 
+    // TODO - where do these actuall belong?
+    public otype
+    public oclass
 
 
     /**
@@ -508,14 +511,14 @@ export class GeometryElement extends Events {
      * @constructor
      * @param  board Reference to the board the element is constructed on.
      * @param {Object} attributes Hash of attributes and their values.
-     * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
+     * @param {Number} otype Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
      * @param {Number} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
      * @borrows JXG.EventEmitter#on as this.on
      * @borrows JXG.EventEmitter#off as this.off
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
-    constructor(board: Board, attributes: Object, type: OBJECT_TYPE, oclass: OBJECT_CLASS) {
+    constructor(board: Board, attributes: BoardOptions) {
         super() // eventify
 
         var name, key, attr;
@@ -524,27 +527,6 @@ export class GeometryElement extends Events {
 
         if (arguments.length > 0) {
             this.board = board;
-
-            /**
-             * Type of the element.
-             * @constant
-             * @type Number
-                */
-            this.type = type;
-
-            /**
-             * Original type of the element at construction time. Used for removing glider property.
-             * @constant
-             * @type Number
-            */
-            this._org_type = type;
-
-            /**
-             * The element's class.
-             * @constant
-             * @type Number
-            */
-            this.elementClass = oclass || OBJECT_CLASS.OTHER;
 
             // /**
             //  * Unique identifier for the element. Equivalent to id-attribute of renderer element.
