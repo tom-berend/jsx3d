@@ -39,8 +39,8 @@
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-import { JXG } from "../jxg.js";
-import { Type } from "./type.js";
+// import { JXG } from "../Env.js";
+import { LooseObject, Type } from "./type.js";
 
 export class Env {
     /**
@@ -49,7 +49,7 @@ export class Env {
      * @returns {Boolean}
      */
     static isTouchEvent(evt) {
-        return JXG.exists(evt['touches']); // Old iOS touch events
+        return Type.exists(evt['touches']); // Old iOS touch events
     }
 
     /**
@@ -58,7 +58,7 @@ export class Env {
      * @returns {Boolean}
      */
     static isPointerEvent(evt) {
-        return JXG.exists(evt.pointerId);
+        return Type.exists(evt.pointerId);
     }
 
     /**
@@ -67,7 +67,7 @@ export class Env {
      * @returns {Boolean}
      */
     static isMouseEvent(evt) {
-        return !JXG.isTouchEvent(evt) && !JXG.isPointerEvent(evt);
+        return !Env.isTouchEvent(evt) && !Env.isPointerEvent(evt);
     }
 
     /**
@@ -79,7 +79,7 @@ export class Env {
     static getNumberOfTouchPoints(evt) {
         var n = -1;
 
-        if (JXG.isTouchEvent(evt)) {
+        if (Env.isTouchEvent(evt)) {
             n = evt['touches'].length;
         }
 
@@ -94,9 +94,9 @@ export class Env {
      * @returns {boolean}
      */
     static isFirstTouch(evt) {
-        var touchPoints = JXG.getNumberOfTouchPoints(evt);
+        var touchPoints = Env.getNumberOfTouchPoints(evt);
 
-        if (JXG.isPointerEvent(evt)) {
+        if (Env.isPointerEvent(evt)) {
             return evt.isPrimary;
         }
 
@@ -109,7 +109,7 @@ export class Env {
      * @default false
      */
     static isBrowser() {
-        console.log ("isBrowser",window !== null && document !== null)
+        console.log("isBrowser", window !== null && document !== null)
 
         return (window !== null && document !== null)
     }
@@ -162,19 +162,19 @@ export class Env {
 
         if (this.isNode()) {
             //try {
-            //    JXG.createCanvas(500, 500);
+            //    Env.createCanvas(500, 500);
             hasCanvas = true;
             // } catch (err) {
-            //     throw new Error('JXG.createCanvas not available.\n' +
+            //     throw new Error('Env.createCanvas not available.\n' +
             //         'Install the npm package `canvas`\n' +
             //         'and call:\n' +
             //         '    import { createCanvas } from "canvas.js";\n' +
-            //         '    JXG.createCanvas = createCanvas;\n');
+            //         '    Env.createCanvas = createCanvas;\n');
             // }
         }
 
         return (
-            hasCanvas || (this.isBrowser && !!document.createElement("canvas").getContext)
+            hasCanvas || (this.isBrowser !== null && !!document.createElement("canvas").getContext)
         );
     }
 
@@ -219,23 +219,26 @@ export class Env {
      * @returns {Boolean}
      */
     static supportsPointerEvents() {
-        return !!(
-            (
-                this.isBrowser &&
-                window.navigator &&
-                (window.PointerEvent || // Chrome/Edge/IE11+
-                    window.navigator.pointerEnabled || // IE11+
-                    window.navigator.msPointerEnabled)
-            ) // IE10-
-        );
+        return true;    // TODO rewrite for modern web
     }
+
+    //     return !!(
+    //         (
+    //             this.isBrowser &&
+    //             window.navigator &&
+    //             (window.PointerEvent || // Chrome/Edge/IE11+
+    //                 window.navigator.pointerEnabled || // IE11+
+    //                 window.navigator.msPointerEnabled)
+    //         ) // IE10-
+    //     );
+    // }
 
     /**
      * Determine if the current browser supports touch events
      * @returns {Boolean} True, if the browser supports touch events.
      */
     static isTouchDevice() {
-        return this.isBrowser && window.ontouchstart !== undefined;
+        return this.isBrowser !== null && window.ontouchstart !== undefined;
     }
 
     /**
@@ -446,10 +449,13 @@ export class Env {
      * an options object or the useCapture Boolean.
      *
      */
-    static addEvent(obj, type, fn, owner, options) {
-        var el = function () {
-            return fn.apply(owner, arguments);
-        };
+    static addEvent(obj, type, fn, owner, options?: object | boolean) {
+
+
+        // var el = function () {    /// TBTB ???
+        //     return fn.apply(owner, arguments);
+        // };
+        let el: LooseObject = {}
 
         el.origin = fn;
         // Check if owner is a board
@@ -481,24 +487,24 @@ export class Env {
         var i;
 
         if (!Type.exists(owner)) {
-            JXG.debug("no such owner");
+            Env.debug("no such owner");
             return;
         }
 
         if (!Type.exists(owner["x_internal" + type])) {
-            JXG.debug("removeEvent: no such type: " + type);
+            Env.debug("removeEvent: no such type: " + type);
             return;
         }
 
         if (!Type.isArray(owner["x_internal" + type])) {
-            JXG.debug("owner[x_internal + " + type + "] is not an array");
+            Env.debug("owner[x_internal + " + type + "] is not an array");
             return;
         }
 
         i = Type.indexOf(owner["x_internal" + type], fn, "origin");
 
         if (i === -1) {
-            JXG.debug("removeEvent: no such event function in internal list: " + fn);
+            Env.debug("removeEvent: no such event function in internal list: " + fn);
             return;
         }
 
@@ -513,7 +519,7 @@ export class Env {
                 obj.detachEvent("on" + type, owner["x_internal" + type][i]);
             }
         } catch (e) {
-            JXG.debug("removeEvent: event not registered in browser: (" + type + " -- " + fn + ")");
+            Env.debug("removeEvent: event not registered in browser: (" + type + " -- " + fn + ")");
         }
 
         owner["x_internal" + type].splice(i, 1);
@@ -521,7 +527,7 @@ export class Env {
 
     /**
      * Removes all events of the given type from a given DOM node; Use with caution and do not use it on a container div
-     * of a {@link JXG.Board} because this might corrupt the event handling system.
+     * of a {@link Env.Board} because this might corrupt the event handling system.
      * @param {Object} obj Reference to a DOM node.
      * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
      * @param {Object} owner The scope in which the event trigger is called.
@@ -532,11 +538,11 @@ export class Env {
             len = owner["x_internal" + type].length;
 
             for (i = len - 1; i >= 0; i--) {
-                JXG.removeEvent(obj, type, owner["x_internal" + type][i].origin, owner);
+                Env.removeEvent(obj, type, owner["x_internal" + type][i].origin, owner);
             }
 
             if (owner["x_internal" + type].length > 0) {
-                JXG.debug("removeAllEvents: Not all events could be removed.");
+                Env.debug("removeAllEvents: Not all events could be removed.");
             }
         }
     }
@@ -660,20 +666,20 @@ export class Env {
             doc = obj.ownerDocument;
 
         // Non-IE
-        if (doc.defaultView && doc.defaultView.getComputedStyle) {
-            r = doc.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
-            // IE
-        } else if (obj.currentStyle && JXG.ieVersion >= 9) {
-            r = obj.currentStyle[stylename];
-        } else {
-            if (obj.style) {
-                // make stylename lower camelcase
-                stylename = stylename.replace(/-([a-z]|[0-9])/gi, function (all, letter) {
-                    return letter.toUpperCase();
-                });
-                r = obj.style[stylename];
-            }
-        }
+        // if (doc.defaultView && doc.defaultView.getComputedStyle) {
+        r = doc.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
+        //     // IE
+        // } else if (obj.currentStyle && Env.ieVersion >= 9) {
+        //     r = obj.currentStyle[stylename];
+        // } else {
+        //     if (obj.style) {
+        //         // make stylename lower camelcase
+        //         stylename = stylename.replace(/-([a-z]|[0-9])/gi, function (all, letter) {
+        //             return letter.toUpperCase();
+        //         });
+        //         r = obj.style[stylename];
+        //     }
+        // }
 
         return r;
     }
@@ -694,7 +700,7 @@ export class Env {
      * Correct position of upper left corner in case of
      * a CSS transformation. Here, only translations are
      * extracted. All scaling transformations are corrected
-     * in {@link JXG.Board#getMousePosition}.
+     * in {@link Env.Board#getMousePosition}.
      * @param {Array} cPos Previously determined position
      * @param {Object} obj A DOM element
      * @returns {Array} The corrected position.
@@ -771,7 +777,7 @@ export class Env {
     /**
      * Scaling CSS transformations applied to the div element containing the JSXGraph constructions
      * are determined. In IE prior to 9, 'rotate', 'skew', 'skewX', 'skewY' are not supported.
-     * @returns {Array} 3x3 transformation matrix without translation part. See {@link JXG.Board#updateCSSTransforms}.
+     * @returns {Array} 3x3 transformation matrix without translation part. See {@link Env.Board#updateCSSTransforms}.
      */
     static getCSSTransformMatrix(obj) {
         var i, j, str, arrstr, arr,
@@ -898,8 +904,8 @@ export class Env {
      * @param  {Number} scale    Relative size of the JSXGraph board in the fullscreen window.
      *
      * @private
-     * @see JXG.Board#toFullscreen
-     * @see JXG.Board#fullscreenListener
+     * @see Env.Board#toFullscreen
+     * @see Env.Board#fullscreenListener
      *
      */
     static scaleJSXGraphDiv(wrap_id, inner_id, doc, scale) {
@@ -969,13 +975,22 @@ export class Env {
                     ' matrix(' + scale_l + ',0,0,' + scale_l + ',0,' + vshift_l + ')';
                 break;
             } catch (err) {
-                JXG.debug("JXG.scaleJSXGraphDiv:\n" + err);
+                Env.debug("Env.scaleJSXGraphDiv:\n" + err);
             }
         }
         if (i === len_pseudo) {
-            JXG.debug("JXG.scaleJSXGraphDiv: Could not set any CSS property.");
+            Env.debug("Env.scaleJSXGraphDiv: Could not set any CSS property.");
         }
     }
 
 
+    static debug(msg: string) {
+        console.warn("Debug: " + msg)
+    }
+    static warn(msg: string) {
+        console.warn("Warning: " + msg)
+    }
+    static deprecated(old: string, replace: string = '') {
+        console.warn(`Deprecated:  '${old}', use: '${replace}' instead`)
+    }
 }

@@ -293,7 +293,7 @@ export class SVGRenderer extends AbstractRenderer {
      * // Output:
      * // url(#xxx_bbbTriangleEnd)
      */
-    toURL() {
+    toURL(...args:string[]) {
         return 'url(#' +
             this.toStr.apply(this, arguments) + // Pass the arguments to toStr
             ')';

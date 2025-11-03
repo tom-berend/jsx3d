@@ -32,9 +32,10 @@
 /*global JXG:true define: true*/
 /*jslint nomen: true plusplus: true*/
 
-import { JXG } from "./jxg.js";
-import { Board } from "./base/board.js";
-import { Point } from "./base/point.js";
+// import { JXG } from "./jxg.js";
+// import { Board } from "./base/board.js";
+// import { Point } from "./base/point.js";
+// import { GeometryElement } from "./base/element.js";
 import { JSXMath } from "./math/jsxmath.js";
 import { Color } from "./utils/color.js";
 import { Type } from "./utils/type.js";
@@ -52,11 +53,13 @@ import { BlobOptions } from "buffer";
 
 
 
+interface Point {}
+interface GeometryElement{}
 
 
-jc: {
-    enabled: true
-    compile: true
+export interface JcOptions {
+    enabled?: boolean
+    compile?: boolean
 }
 
 /**
@@ -1144,10 +1147,10 @@ export interface BoardOptions {
         fillColor?: string
 
         // immutable:
-        visible?: false
-        withLines?: false
+        visible?: boolean
+        withLines?: boolean
         vertices?: {
-            visible?: false
+            visible?: boolean
         }
     }
 
@@ -1598,7 +1601,7 @@ export interface GeometryElementOptions {
      * @defaultValue <tt>{@link JXG.Options.elements.draft#draft}</tt>
      */
     draft?: {
-        draft?: false
+        draft?: boolean
         strokeColor?: string
         fillColor?: string
         strokeOpacity?: number
@@ -2218,12 +2221,12 @@ export interface GeometryElementOptions {
      *
      * // Shadow uses same color as line
      * var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
-     *             shadow: {enabled: true color: '#000000', blend: 1}
+     *             shadow: {enabled: true color:string blend: 1}
      *         });
      *
      * // Shadow color as a mixture between black and the line color, additionally set opacity
      * var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
-     *             shadow: {enabled: true color: '#000000', blend: 0.5, opacity: 0.5}
+     *             shadow: {enabled: true color:string blend: 0.5, opacity: 0.5}
      *         });
      *
      * // Use different value for blur and offset [dx, dy]
@@ -2248,12 +2251,12 @@ export interface GeometryElementOptions {
      *
      *     // Shadow uses same color as line
      *     var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
-     *                 shadow: {enabled: true color: '#000000', blend: 1}
+     *                 shadow: {enabled: true color:string blend: 1}
      *             });
      *
      *     // Shadow color as a mixture between black and the line color, additionally set opacity
      *     var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
-     *                 shadow: {enabled: true color: '#000000', blend: 0.5, opacity: 0.5}
+     *                 shadow: {enabled: true color:string blend: 0.5, opacity: 0.5}
      *             });
      *
      *     // Use different value for blur and offset [dx, dy]
@@ -2357,7 +2360,7 @@ export interface GeometryElementOptions {
      * @defaultValue false
      * @name JXG.GeometryElement#trace
      */
-    trace?: false
+    trace?: boolean
 
     /**
      * Extra visual properties for traces of an element
@@ -2646,7 +2649,7 @@ export interface TickOptions {
      * @type function
      * @name Ticks#generateLabelValue
      */
-    generateLabelValue?: b
+    generateLabelValue?: boolean|null
 
     /**
      * Draw labels yes/no
@@ -2655,7 +2658,7 @@ export interface TickOptions {
      * @name Ticks#drawLabels
      * @defaultValue false
      */
-    drawLabels: boolean
+    drawLabels?: boolean
 
     /**
      * Attributes for the ticks labels.
@@ -3538,7 +3541,7 @@ export interface HatchOptions {
     majorHeight: number
     anchor: 'left' | 'middle' | 'right'
     face: '|'
-    strokeWidth: number
+    strokeWidth?: number
     strokeColor: string
     ticksDistance: number
 }
@@ -3556,9 +3559,9 @@ export interface LayerOptions {
      * <pre>
      * JXG.Options.layer: {
      *   numlayers: 20, // only important in SVG
-     *   text: 9,
-     *   point: 9,
-     *   glider: 9,
+     *   text?: number
+     *   point?: number
+     *   glider?: number
      *   arc: 8,
      *   line: 7,
      *   circle: 6,
@@ -3606,6 +3609,8 @@ export interface LayerOptions {
     grid?: number
     image?: number
     trace?: number
+    board?: number          // tbtb added
+
 }
 
 
@@ -4179,7 +4184,7 @@ export interface AxisOptions {
      */
     point2?: {                  // Default values for point2 if created by line
         needsRegularUpdate: false
-        visible?: false
+        visible?: boolean
     }
 
     tabindex?: number,
@@ -4248,7 +4253,7 @@ export interface BisectorlinesOptions {
      * @name Bisectorlines#line2
      */
     line2?: {               //
-        strokeColor?: '#000000'
+        strokeColor?: string
     }
 
     /**#@-*/
@@ -4276,7 +4281,7 @@ export interface BoxplotOptions {
      * @name Boxplot#smallWidth
      * @defaultValue 0.5
      */
-    smallWidth?: 0.5,
+    smallWidth?: number,
 
     strokeWidth?: number
     strokeColor?: string
@@ -4291,7 +4296,7 @@ export interface BoxplotOptions {
 }
 
 /* special button options */
-button: {
+export interface ButtonOptions {
     /**#@+
      * @visprop
      */
@@ -4305,7 +4310,7 @@ button: {
      * @type Boolean
      * @defaultValue false
      */
-    disabled: false
+    disabled:boolean
 
     display: 'html'
 
@@ -4378,18 +4383,18 @@ export interface ChartOptions {
     chartStyle?: string
     colors?: string[]
     highlightcolors: string[]
-    fillcolor?: string
-    highlightonsector?: false
-    highlightbysize?: false
+    fillColor?: string
+    highlightonsector?: boolean
+    highlightbysize?: boolean
     fillOpacity?: number
-    withLines?: false
+    withLines?: boolean
     label?: object
 }
 /**#@-*/
 
 
 /* special html slider options */
-checkbox: {
+export interface CheckboxOptions {
     /**#@+
      * @visprop
      */
@@ -4403,7 +4408,7 @@ checkbox: {
      * @type Boolean
      * @defaultValue false
      */
-    disabled: false
+    disabled: boolean
 
     /**
      * Control the attribute "checked" of the HTML checkbox.
@@ -4414,7 +4419,7 @@ checkbox: {
      * @type Boolean
      * @defaultValue false
      */
-    checked: false
+    checked: boolean
 
     display: 'html'
 
@@ -4458,7 +4463,7 @@ export interface CircleOptions {
         highlightStrokeColor?: string
         layer?: number
 
-        name?: ''
+        name?: string
     }
 
     /**
@@ -4468,16 +4473,16 @@ export interface CircleOptions {
      * @name Circle#point2
      */
     point2?: {
-        fillColor?: Color.palette.red
-        strokeColor?: Color.palette.red
-        highlightFillColor?: '#c3d9ff',
-        highlightStrokeColor?: '#c3d9ff',
-        layer?: 9,
+        fillColor?: string
+        strokeColor?: string
+        highlightFillColor?: string
+        highlightStrokeColor?: string
+        layer?: number
 
         visible?: boolean
         withLabel?: boolean
         fixed?: boolean
-        name?: ''
+        name?: string
     }
 
     /**
@@ -4518,7 +4523,7 @@ export interface CircumcircleOptions {
         strokeColor?: string
         highlightFillColor?: string
         highlightStrokeColor?: string
-        name?: ''
+        name?: string
     }
     /**#@-*/
 }
@@ -4544,42 +4549,42 @@ export interface CircumcirclearcOptions {
         visible?: boolean
         withLabel: boolean
         fixed: boolean
-        name: ''
+        name?: string
     }
     /**#@-*/
 }
 
 /* special options for circumcircle sector of 3 points */
-circumcirclesector: {
+export interface CircumcirclesectorOptions {
     /**#@+
      * @visprop
      */
 
-    useDirection: true
-    fillColor: Color.palette.yellow,
-        highlightFillColor: Color.palette.yellow,
-            fillOpacity: 0.3,
-                highlightFillOpacity: 0.3,
-                    strokeColor: string
-    highlightStrokeColor: '#c3d9ff',
+    useDirection: boolean
+    fillColor?: string
+    highlightFillColor?: string
+    fillOpacity?: number
+    highlightFillOpacity?: number
+    strokeColor: string
+    highlightStrokeColor: string
 
-        /**
-         * Attributes for center point.
-         *
-         * @type Point
-         * @name Circle#point
-         */
-        point: {
-        visible ?: boolean
-        fixed: boolean
-        withLabel: boolean
-        name: ''
+    /**
+     * Attributes for center point.
+     *
+     * @type Point
+     * @name Circle#point
+     */
+    point?: {
+        visible?: boolean
+        fixed?: boolean
+        withLabel?: boolean
+        name?: string
     }
     /**#@-*/
 }
 
 /* special options for comb */
-comb: {
+export interface CombOptions {
     /**#@+
      * @visprop
      */
@@ -4591,34 +4596,34 @@ comb: {
      * @name Comb#frequency
      * @defaultValue 0.2
      */
-    frequency: 0.2,
+    frequency?: number
 
-        /**
-         * Width of the comb.
-         *
-         * @type Number
-         * @name Comb#width
-         * @defaultValue 0.4
-         */
-        width: 0.4,
+    /**
+     * Width of the comb.
+     *
+     * @type Number
+     * @name Comb#width
+     * @defaultValue 0.4
+     */
+    width?: number
 
-            /**
-             * Angle - given in radians - under which comb elements are positioned.
-             *
-             * @type Number
-             * @name Comb#angle
-             * @defaultValue Math.PI / 3 (i.e. &pi; /3  or 60^° degrees)
-             */
-            angle: 1.04719755,    // Math.PI /3   // TS doesn't like Math (namespace) or computations here
+    /**
+     * Angle - given in radians - under which comb elements are positioned.
+     *
+     * @type Number
+     * @name Comb#angle
+     * @defaultValue Math.PI / 3 (i.e. &pi; /3  or 60^° degrees)
+     */
+    angle?: number    // Math.PI /3   // TS doesn't like Math (namespace) or computations here
 
-                /**
-                 * Should the comb go right to left instead of left to right.
-                 *
-                 * @type Boolean
-                 * @name Comb#reverse
-                 * @defaultValue false
-                 */
-                reverse: boolean
+    /**
+     * Should the comb go right to left instead of left to right.
+     *
+     * @type Boolean
+     * @name Comb#reverse
+     * @defaultValue false
+     */
+    reverse?: boolean
 
     /**
      * Attributes for first defining point of the comb.
@@ -4626,11 +4631,11 @@ comb: {
      * @type Point
      * @name Comb#point1
      */
-    point1: {
-        visible ?: boolean
-        withLabel: boolean
-        fixed: boolean
-        name: ''
+    point1?: {
+        visible?: boolean
+        withLabel?: boolean
+        fixed?: boolean
+        name?: string
     }
 
     /**
@@ -4639,11 +4644,11 @@ comb: {
      * @type Point
      * @name Comb#point2
      */
-    point2: {
-        visible ?: boolean
-        withLabel: boolean
-        fixed: boolean
-        name: ''
+    point2?: {
+        visible?: boolean
+        withLabel?: boolean
+        fixed?: boolean
+        name?: string
     }
 
     // /**
@@ -4653,38 +4658,38 @@ comb: {
     //  * @name Comb#curve
     //  */
     // curve: {
-    //     strokeWidth: 1,
+    //     strokeWidth?: 1,
     //     strokeColor: '#0000ff',
     //     fillColor: 'none'
     // }
-    strokeWidth: 1,
-        strokeColor: '#0000ff',
-            fillColor: string
+    strokeWidth?: number
+    strokeColor?: string
+    fillColor?: string
 }
 
 /* special conic options */
-conic: {
+export interface ConicOptions {
     /**#@+
      * @visprop
      */
 
-    fillColor: string,
-        highlightFillColor: string,
-            strokeColor: string
-    highlightStrokeColor: '#c3d9ff',
+    fillColor?: string
+    highlightFillColor?: string
+    strokeColor?: string
+    highlightStrokeColor?: string
 
-        /**
-         * Attributes for foci points.
-         *
-         * @type Point
-         * @name Conic#foci
-         */
-        foci: {
+    /**
+     * Attributes for foci points.
+     *
+     * @type Point
+     * @name Conic#foci
+     */
+    foci?: {
         // points
-        fixed: boolean
-        visible ?: boolean
-        withLabel: boolean
-        name: ''
+        fixed?: boolean
+        visible?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -4693,10 +4698,10 @@ conic: {
      * @type Point
      * @name Conic#center
      */
-    center: {
-        visible ?: boolean
-        withLabel: boolean
-        name: ''
+    center?: {
+        visible?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -4705,9 +4710,9 @@ conic: {
      * @type Point
      * @name Conic#point
      */
-    point: {
-        withLabel: boolean
-        name: ''
+    point?: {
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -4717,8 +4722,8 @@ conic: {
      * @type Line
      * @name Conic#line
      */
-    line: {
-        visible ?: boolean
+    line?: {
+        visible?: boolean
     }
 
     /**#@-*/
@@ -4900,14 +4905,14 @@ export interface CurveOptions {
 }
 
 /* special foreignObject options */
-foreignobject: {
+export interface ForeignobjectOptions {
     /**#@+
      * @visprop
      */
 
-    fixed: true
-    visible ?: true
-    needsRegularUpdate: boolean
+    fixed?: true
+    visible?: true
+    needsRegularUpdate?: boolean
 
     /**
      * List of attractor elements. If the distance of the foreignobject is less than
@@ -4918,24 +4923,24 @@ foreignobject: {
      * @type Array
      * @defaultValue empty
      */
-    attractors: [],
+    attractors?: GeometryElement[],
 
-        /**
-         * If set to true this object is only evaluated once and not re-evaluated on update.
-         * This is necessary if you want to have a board within a foreignObject of another board.
-         *
-         * @name ForeignObject#evaluateOnlyOnce
-         *
-         * @type Boolean
-         * @defaultValue false
-         */
-        evaluateOnlyOnce: boolean
+    /**
+     * If set to true this object is only evaluated once and not re-evaluated on update.
+     * This is necessary if you want to have a board within a foreignObject of another board.
+     *
+     * @name ForeignObject#evaluateOnlyOnce
+     *
+     * @type Boolean
+     * @defaultValue false
+     */
+    evaluateOnlyOnce?: boolean
 
     /**#@-*/
 }
 
 /* special functiongraph options */
-functiongraph: {
+export interface FunctiongraphOptions {
     /**#@+
      * @visprop
      */
@@ -4945,12 +4950,12 @@ functiongraph: {
 }
 
 /* special glider options */
-glider: {
+export interface GliderOptions {
     /**#@+
      * @visprop
      */
 
-    label: { }
+    label: object
     /**#@-*/
 }
 
@@ -5270,7 +5275,7 @@ export interface GridOptions extends CurveOptions {
     snapToGrid?: boolean
 
     strokeColor?: string
-    strokeWidth: number
+    strokeWidth?: number
     strokeOpacity: number
     dash?: number
 
@@ -5484,12 +5489,12 @@ export interface GridOptions extends CurveOptions {
     /**#@-*/
 }
 
-group: {
-    needsRegularUpdate: true
+export interface GroupOptions {
+    needsRegularUpdate: boolean
 }
 
 /* special html slider options */
-htmlslider: {
+export interface HtmlsliderOptions {
     /**#@+
      * @visprop
      */
@@ -5499,124 +5504,123 @@ htmlslider: {
     //  * These affect the DOM element input type="range".
     //  * The other attributes affect the DOM element div containing the range element.
     //  */
-    widthRange: 100,
-        widthOut: 34,
-            step: 0.01,
-
-                frozen: true
-    isLabel: false
-    strokeColor: '#000000',
-        display: 'html',
-            anchorX: 'left',
-                anchorY: 'middle',
-                    withLabel: false
+    widthRange?: number
+    widthOut?: number
+    step?: number
+    frozen?: boolean
+    isLabel?: boolean
+    strokeColor?: string
+    display?: string
+    anchorX?: string
+    anchorY?: string
+    withLabel?: boolean
 
     /**#@-*/
 }
 
 /* special image options */
-image: {
+export interface ImageOptions {
     /**#@+
      * @visprop
      */
 
-    imageString: null
-    fillOpacity: 1.0,
-        highlightFillOpacity: 0.6,
+    imageString?: null | string
+    fillOpacity?: number
+    highlightFillOpacity?: number
 
 
-            /**
-             * Defines the CSS class used by the image. CSS attributes defined in
-             * this class will overwrite the corresponding JSXGraph attributes, e.g.
-             * opacity.
-             * The default CSS class is defined in jsxgraph.css.
-             *
-             * @name Image#cssClass
-             *
-             * @see Image#highlightCssClass
-             * @type String
-             * @defaultValue 'JXGimage'
-             * @see Image#highlightCssClass
-             * @see Text#cssClass
-             * @see JXG.GeometryElement#cssClass
-             */
-            cssClass: 'JXGimage',
+    /**
+     * Defines the CSS class used by the image. CSS attributes defined in
+     * this class will overwrite the corresponding JSXGraph attributes, e.g.
+     * opacity.
+     * The default CSS class is defined in jsxgraph.css.
+     *
+     * @name Image#cssClass
+     *
+     * @see Image#highlightCssClass
+     * @type String
+     * @defaultValue 'JXGimage'
+     * @see Image#highlightCssClass
+     * @see Text#cssClass
+     * @see JXG.GeometryElement#cssClass
+     */
+    cssClass?: string
 
-                /**
-                 * Defines the CSS class used by the image when highlighted.
-                 * CSS attributes defined in this class will overwrite the
-                 * corresponding JSXGraph attributes, e.g. highlightFillOpacity.
-                 * The default CSS class is defined in jsxgraph.css.
-                 *
-                 * @name Image#highlightCssClass
-                 *
-                 * @see Image#cssClass
-                 * @type String
-                 * @defaultValue 'JXGimageHighlight'
-                 * @see Image#cssClass
-                 * @see Image#highlightCssClass
-                 * @see JXG.GeometryElement#highlightCssClass
-                 */
-                highlightCssClass: 'JXGimageHighlight',
+    /**
+     * Defines the CSS class used by the image when highlighted.
+     * CSS attributes defined in this class will overwrite the
+     * corresponding JSXGraph attributes, e.g. highlightFillOpacity.
+     * The default CSS class is defined in jsxgraph.css.
+     *
+     * @name Image#highlightCssClass
+     *
+     * @see Image#cssClass
+     * @type String
+     * @defaultValue 'JXGimageHighlight'
+     * @see Image#cssClass
+     * @see Image#highlightCssClass
+     * @see JXG.GeometryElement#highlightCssClass
+     */
+    highlightCssClass?: string
 
-                    /**
-                     * Image rotation in degrees.
-                     *
-                     * @name Image#rotate
-                     * @type Number
-                     * @defaultValue 0
-                     */
-                    rotate: 0,
+    /**
+     * Image rotation in degrees.
+     *
+     * @name Image#rotate
+     * @type Number
+     * @defaultValue 0
+     */
+    rotate?: number
 
-                        /**
-                         * Defines together with {@link Image#snapSizeY} the grid the image snaps on to.
-                         * The image will only snap on user coordinates which are
-                         * integer multiples to snapSizeX in x and snapSizeY in y direction.
-                         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-                         * of the default ticks of the default x axes of the board.
-                         *
-                         * @name Image#snapSizeX
-                         *
-                         * @see Point#snapToGrid
-                         * @see Image#snapSizeY
-                         * @see JXG.Board#defaultAxes
-                         * @type Number
-                         * @defaultValue 1
-                         */
-                        snapSizeX: 1,
+    /**
+     * Defines together with {@link Image#snapSizeY} the grid the image snaps on to.
+     * The image will only snap on user coordinates which are
+     * integer multiples to snapSizeX in x and snapSizeY in y direction.
+     * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+     * of the default ticks of the default x axes of the board.
+     *
+     * @name Image#snapSizeX
+     *
+     * @see Point#snapToGrid
+     * @see Image#snapSizeY
+     * @see JXG.Board#defaultAxes
+     * @type Number
+     * @defaultValue 1
+     */
+    snapSizeX?: number
 
-                            /**
-                             * Defines together with {@link Image#snapSizeX} the grid the image snaps on to.
-                             * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-                             * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-                             * of the default ticks of the default y axes of the board.
-                             *
-                             * @name Image#snapSizeY
-                             *
-                             * @see Point#snapToGrid
-                             * @see Image#snapSizeX
-                             * @see JXG.Board#defaultAxes
-                             * @type Number
-                             * @defaultValue 1
-                             */
-                            snapSizeY: 1,
+    /**
+     * Defines together with {@link Image#snapSizeX} the grid the image snaps on to.
+     * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+     * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+     * of the default ticks of the default y axes of the board.
+     *
+     * @name Image#snapSizeY
+     *
+     * @see Point#snapToGrid
+     * @see Image#snapSizeX
+     * @see JXG.Board#defaultAxes
+     * @type Number
+     * @defaultValue 1
+     */
+    snapSizeY?: number
 
-                                /**
-                                 * List of attractor elements. If the distance of the image is less than
-                                 * attractorDistance the image is made to glider of this element.
-                                 *
-                                 * @name Image#attractors
-                                 *
-                                 * @type Array
-                                 * @defaultValue empty
-                                 */
-                                attractors: []
+    /**
+     * List of attractor elements. If the distance of the image is less than
+     * attractorDistance the image is made to glider of this element.
+     *
+     * @name Image#attractors
+     *
+     * @type Array
+     * @defaultValue empty
+     */
+    attractors?: GeometryElement[]
 
     /**#@-*/
 }
 
 /* special implicitcurve options */
-implicitcurve: {
+export interface ImplicitcurveOptions {
     /**#@+
      * @visprop
      */
@@ -5629,57 +5633,57 @@ implicitcurve: {
      * @type {Number|Function}
      * @defaultValue 1
      */
-    margin: 1,
+    margin?: number
 
-        /**
-         * Horizontal resolution: distance (in pixel) between vertical lines to search for components of the implicit curve.
-         * A small number increases the running time. For large number components may be missed.
-         * Minimum value is 0.01.
-         *
-         * @name ImplicitCurve#resolution_outer
-         * @type {Number|Function}
-         * @defaultValue 5
-         */
-        resolution_outer: 5,
+    /**
+     * Horizontal resolution: distance (in pixel) between vertical lines to search for components of the implicit curve.
+     * A small number increases the running time. For large number components may be missed.
+     * Minimum value is 0.01.
+     *
+     * @name ImplicitCurve#resolution_outer
+     * @type {Number|Function}
+     * @defaultValue 5
+     */
+    resolution_outer?: number
 
-            /**
-             * Vertical resolution (in pixel) to search for components of the implicit curve.
-             * A small number increases the running time. For large number components may be missed.
-             * Minimum value is 0.01.
-             *
-             * @name ImplicitCurve#resolution_inner
-             * @type {Number|Function}
-             * @defaultValue 5
-             */
-            resolution_inner: 5,
+    /**
+     * Vertical resolution (in pixel) to search for components of the implicit curve.
+     * A small number increases the running time. For large number components may be missed.
+     * Minimum value is 0.01.
+     *
+     * @name ImplicitCurve#resolution_inner
+     * @type {Number|Function}
+     * @defaultValue 5
+     */
+    resolution_inner?: number
 
-                /**
-                 * Maximum iterations for one component of the implicit curve.
-                 *
-                 * @name ImplicitCurve#max_steps
-                 * @type {Number|Function}
-                 * @defaultValue 1024
-                 */
-                max_steps: 1024,
+    /**
+     * Maximum iterations for one component of the implicit curve.
+     *
+     * @name ImplicitCurve#max_steps
+     * @type {Number|Function}
+     * @defaultValue 1024
+     */
+    max_steps?: number
 
-                    /**
-                     * Angle &alpha;<sub>0</sub> between two successive tangents: determines the smoothness of
-                     * the curve.
-                     *
-                     * @name ImplicitCurve#alpha_0
-                     * @type {Number|Function}
-                     * @defaultValue 0.05
-                     */
-                    alpha_0: 0.05,
+    /**
+     * Angle &alpha;<sub>0</sub> between two successive tangents: determines the smoothness of
+     * the curve.
+     *
+     * @name ImplicitCurve#alpha_0
+     * @type {Number|Function}
+     * @defaultValue 0.05
+     */
+    alpha_0?: number
 
-                        /**
-                         * Tolerance to find starting points for the tracing phase of a component.
-                         *
-                         * @name ImplicitCurve#tol_0
-                         * @type {Number|Function}
-                         * @defaultValue JXG.Math.eps
-                         */
-                        tol_u0: 0.000001  // Mat.eps,
+    /**
+     * Tolerance to find starting points for the tracing phase of a component.
+     *
+     * @name ImplicitCurve#tol_0
+     * @type {Number|Function}
+     * @defaultValue JXG.Math.eps
+     */
+    tol_u0?: number  // Mat.eps,
 
     /**
      * Tolerance for the Newton steps.
@@ -5688,165 +5692,165 @@ implicitcurve: {
      * @type {Number|Function}
      * @defaultValue 1.0e-7
      */
-    tol_newton: 1.0e-7,
+    tol_newton?: number
 
-        /**
-         * Tolerance for cusp / bifurcation detection.
-         *
-         * @name ImplicitCurve#tol_cusp
-         * @type {Number|Function}
-         * @defaultValue 0.05
-         */
-        tol_cusp: 0.05,
+    /**
+     * Tolerance for cusp / bifurcation detection.
+     *
+     * @name ImplicitCurve#tol_cusp
+     * @type {Number|Function}
+     * @defaultValue 0.05
+     */
+    tol_cusp?: number
 
-            /**
-             * If two points are closer than this value, we bail out of the tracing phase for that
-             * component.
-             *
-             * @name ImplicitCurve#tol_progress
-             * @type {Number|Function}
-             * @defaultValue 0.0001
-             */
-            tol_progress: 0.0001,
+    /**
+     * If two points are closer than this value, we bail out of the tracing phase for that
+     * component.
+     *
+     * @name ImplicitCurve#tol_progress
+     * @type {Number|Function}
+     * @defaultValue 0.0001
+     */
+    tol_progress?: number
 
-                /**
-                 * Half of the box size (in user units) to search for existing line segments in the quadtree.
-                 *
-                 * @name ImplicitCurve#qdt_box
-                 * @type {Number|Function}
-                 * @defaultValue 0.2
-                 */
-                qdt_box: 0.2,
+    /**
+     * Half of the box size (in user units) to search for existing line segments in the quadtree.
+     *
+     * @name ImplicitCurve#qdt_box
+     * @type {Number|Function}
+     * @defaultValue 0.2
+     */
+    qdt_box?: number
 
-                    /**
-                     * Inverse of desired number of Newton steps.
-                     *
-                     * @name ImplicitCurve#kappa_0
-                     * @type {Number|Function}
-                     * @defaultValue 0.2
-                     */
-                    kappa_0: 0.2,
+    /**
+     * Inverse of desired number of Newton steps.
+     *
+     * @name ImplicitCurve#kappa_0
+     * @type {Number|Function}
+     * @defaultValue 0.2
+     */
+    kappa_0?: number
 
-                        /**
-                         * Allowed distance (in user units) of predictor point to curve.
-                         *
-                         * @name ImplicitCurve#delta_0
-                         * @type {Number|Function}
-                         * @defaultValue 0.05
-                         */
-                        delta_0: 0.05,
+    /**
+     * Allowed distance (in user units) of predictor point to curve.
+     *
+     * @name ImplicitCurve#delta_0
+     * @type {Number|Function}
+     * @defaultValue 0.05
+     */
+    delta_0?: number
 
-                            /**
-                             * Initial step width (in user units).
-                             *
-                             * @name ImplicitCurve#h_initial
-                             * @type {Number|Function}
-                             * @defaultValue 0.1
-                             */
-                            h_initial: 0.1,
+    /**
+     * Initial step width (in user units).
+     *
+     * @name ImplicitCurve#h_initial
+     * @type {Number|Function}
+     * @defaultValue 0.1
+     */
+    h_initial?: number
 
-                                /**
-                                 * If h is below this threshold (in user units), we bail out
-                                 * of the tracing phase of that component.
-                                 *
-                                 * @name ImplicitCurve#h_critical
-                                 * @type {Number|Function}
-                                 * @defaultValue 0.001
-                                 */
-                                h_critical: 0.001,
+    /**
+     * If h is below this threshold (in user units), we bail out
+     * of the tracing phase of that component.
+     *
+     * @name ImplicitCurve#h_critical
+     * @type {Number|Function}
+     * @defaultValue 0.001
+     */
+    h_critical?: number
 
-                                    /**
-                                     * Maximum step width (in user units).
-                                     *
-                                     * @name ImplicitCurve#h_max
-                                     * @type {Number|Function}
-                                     * @defaultValue 0.5
-                                     */
-                                    h_max: 0.5,
+    /**
+     * Maximum step width (in user units).
+     *
+     * @name ImplicitCurve#h_max
+     * @type {Number|Function}
+     * @defaultValue 0.5
+     */
+    h_max: number
 
-                                        /**
-                                         * Allowed distance (in user units multiplied by actual step width) to detect loop.
-                                         *
-                                         * @name ImplicitCurve#loop_dist
-                                         * @type {Number|Function}
-                                         * @defaultValue 0.09
-                                         */
-                                        loop_dist: 0.09,
+    /**
+     * Allowed distance (in user units multiplied by actual step width) to detect loop.
+     *
+     * @name ImplicitCurve#loop_dist
+     * @type {Number|Function}
+     * @defaultValue 0.09
+     */
+    loop_dist?: number,
 
-                                            /**
-                                             * Minimum acos of angle to detect loop.
-                                             *
-                                             * @name ImplicitCurve#loop_dir
-                                             * @type {Number|Function}
-                                             * @defaultValue 0.99
-                                             */
-                                            loop_dir: 0.99,
+    /**
+     * Minimum acos of angle to detect loop.
+     *
+     * @name ImplicitCurve#loop_dir
+     * @type {Number|Function}
+     * @defaultValue 0.99
+     */
+    loop_dir?: number
 
-                                                /**
-                                                 * Use Gosper's loop detector.
-                                                 *
-                                                 * @name ImplicitCurve#loop_detection
-                                                 * @type {Boolean|Function}
-                                                 * @defaultValue true
-                                                 */
-                                                loop_detection: true
+    /**
+     * Use Gosper's loop detector.
+     *
+     * @name ImplicitCurve#loop_detection
+     * @type {Boolean|Function}
+     * @defaultValue true
+     */
+    loop_detection: boolean
 
     /**#@-*/
 }
 
 /* special options for incircle of 3 points */
-incircle: {
+export interface IncircleOptions {
     /**#@+
      * @visprop
      */
 
-    fillColor: string,
-        highlightFillColor: string,
-            strokeColor: string
-    highlightStrokeColor: '#c3d9ff',
+    fillColor?: string,
+    highlightFillColor?: string,
+    strokeColor?: string
+    highlightStrokeColor?: string
 
-        /**
-         * Attributes of circle center.
-         *
-         * @type Point
-         * @name Incircle#center
-         */
-        center: {               // center point
-        visible ?: false
-        fixed: false
-        withLabel: false
-        fillColor ?: string
-        strokeColor ?: string
-        highlightFillColor: '#c3d9ff',
-            highlightStrokeColor: '#c3d9ff',
-                name: ''
+    /**
+     * Attributes of circle center.
+     *
+     * @type Point
+     * @name Incircle#center
+     */
+    center?: {               // center point
+        visible?: boolean
+        fixed?: boolean
+        withLabel?: boolean
+        fillColor?: string
+        strokeColor?: string
+        highlightFillColor?: string
+        highlightStrokeColor?: string
+        name?: string
     }
     /**#@-*/
 }
 
-inequality: {
+export interface InequalityOptions {
     /**#@+
      * @visprop
      */
 
-    fillColor ?: string
-    fillOpacity: 0.2,
-        strokeColor: string,
+    fillColor?: string
+    fillOpacity?: number
+    strokeColor?: string,
 
-            /**
-             * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
-             * greater (or equal) than.
-             *
-             * @type Boolean
-             * @defaultValue false
-             * @name Inequality#inverse
-             * @visprop
-             */
-            inverse: false
+    /**
+     * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
+     * greater (or equal) than.
+     *
+     * @type Boolean
+     * @defaultValue false
+     * @name Inequality#inverse
+     * @visprop
+     */
+    inverse?: boolean
     /**#@-*/
 }
 
-infobox: {
+export interface InfoboxOptions {
     /**#@+
      * @visprop
      */
@@ -5859,87 +5863,87 @@ infobox: {
      * @name JXG.Board.infobox#distanceX
      * @visprop
      */
-    distanceX: -20,
+    distanceX?: number
 
-        /**
-         * Vertical offset in pixel of the infobox text from its anchor point.
-         *
-         * @type Number
-         * @defaultValue 25
-         * @name JXG.Board.infobox#distanceY
-         * @visprop
-         */
-        distanceY: 25,
+    /**
+     * Vertical offset in pixel of the infobox text from its anchor point.
+     *
+     * @type Number
+     * @defaultValue 25
+     * @name JXG.Board.infobox#distanceY
+     * @visprop
+     */
+    distanceY?: number
 
-            /**
-             * Internationalization support for infobox text.
-             *
-             * @name JXG.Board.infobox#intl
-             * @type object
-             * @defaultValue <pre>{
-             *    enabled: 'inherit',
-             *    options: {}
-             * }</pre>
-             * @visprop
-             * @see JXG.Board#intl
-             * @see Text#intl
-             */
-            intl: {
-        enabled: 'inherit',
-            options: { }
+    /**
+     * Internationalization support for infobox text.
+     *
+     * @name JXG.Board.infobox#intl
+     * @type object
+     * @defaultValue <pre>{
+     *    enabled: 'inherit',
+     *    options: {}
+     * }</pre>
+     * @visprop
+     * @see JXG.Board#intl
+     * @see Text#intl
+     */
+    intl?: {
+        enabled?: 'inherit' | boolean
+        options?: object
     }
 
-    fontSize: 12,
-        isLabel: false
-    strokeColor: '#bbbbbb',
-        display: 'html',             // 'html' or 'internal'
-            anchorX: 'left',             //  'left', 'middle', or 'right': horizontal alignment
-                //  of the text.
-                anchorY: 'middle',           //  'top', 'middle', or 'bottom': vertical alignment
-                    //  of the text.
-                    cssClass: 'JXGinfobox',
-                        rotate: 0,                   // works for non-zero values only in combination
-                            // with display=='internal'
-                            visible ?: true
-    parse: false
-    transitionDuration: 0,
-        needsRegularUpdate: false
+    fontSize?: number
+    isLabel?: boolean
+    strokeColor?: '#bbbbbb',
+    display: 'html',             // 'html' or 'internal'
+    anchorX: 'left',             //  'left', 'middle', or 'right': horizontal alignment
+    //  of the text.
+    anchorY: 'middle',           //  'top', 'middle', or 'bottom': vertical alignment
+    //  of the text.
+    cssClass: 'JXGinfobox',
+    rotate?: number                   // works for non-zero values only in combination
+    // with display=='internal'
+    visible?: true
+    parse?: boolean
+    transitionDuration?: number
+    needsRegularUpdate?: boolean
     tabindex: null
     viewport: [0, 0, 0, 0],
 
-        ignoreForLabelAutoposition: true
+    ignoreForLabelAutoposition: true
     /**#@-*/
 }
 
 /* special options for integral */
-integral: {
+export interface IntegralOptions {
     /**#@+
      * @visprop
      */
 
-    axis: 'x',        // 'x' or 'y'
-        withLabel: true    // Show integral value as text
-    fixed: true
-    strokeWidth: 0,
-        strokeOpacity: 0,
-            fillColor ?: string
-    fillOpacity: 0.3,
-        highlightFillColor ?: string
-    highlightFillOpacity: 0.2,
+    axis?: string,        // 'x' or 'y'
+    withLabel?: boolean    // Show integral value as text
+    fixed?: boolean
+    strokeWidth?: number
+    strokeOpacity?: number
+    fillColor?: string
+    fillOpacity?: number
+    highlightFillColor?: string
+    highlightFillOpacity?: number
 
-        /**
-         * Attributes of the (left) starting point of the integral.
-         *
-         * @type Point
-         * @name Integral#curveLeft
-         * @see Integral#baseLeft
-         */
-        curveLeft: {    // Start point
-        visible ?: true
-        withLabel: false
-        color ?: string
-        fillOpacity: 0.8,
-            layer: 9
+    /**
+     * Attributes of the (left) starting point of the integral.
+     *
+     * @type Point
+     * @name Integral#curveLeft
+     * @see Integral#baseLeft
+     */
+    curveLeft: {    // Start point
+        visible?: boolean
+        withLabel?: boolean
+        color?: string
+        fillOpacity?: number
+        layer?: number
     }
 
     /**
@@ -5950,10 +5954,10 @@ integral: {
      * @see Integral#curveLeft
      */
     baseLeft: {    // Start point
-        visible ?: false
-        fixed: false
-        withLabel: false
-        name: ''
+        visible?: boolean
+        fixed?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -5964,11 +5968,11 @@ integral: {
      * @see Integral#baseRight
      */
     curveRight: {      // End point
-        visible ?: true
-        withLabel: false
-        color ?: string
-        fillOpacity: 0.8,
-            layer: 9
+        visible?: boolean
+        withLabel?: boolean
+        color?: string
+        fillOpacity?: number
+        layer: number
     }
 
     /**
@@ -5979,10 +5983,10 @@ integral: {
      * @see Integral#curveRight
      */
     baseRight: {      // End point
-        visible ?: false
-        fixed: false
-        withLabel: false
-        name: ''
+        visible?: boolean
+        fixed?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -5994,24 +5998,24 @@ integral: {
      *      fontSize: 20,
      *      digits: 4,
      *      intl: {
-     *          enabled: false
+     *          enabled?: boolean
      *          options: {}
      *      }
      *    }</pre>
      */
     label: {
-        fontSize: 20,
-            digits: 4,
-                intl: {
-            enabled: false
-            options: { }
+        fontSize?: number
+        digits: number
+        intl?: {
+            enabled?: boolean
+            options?: object
         }
     }
     /**#@-*/
 }
 
 /* special input options */
-input: {
+export interface InputOptions {
     /**#@+
      * @visprop
      */
@@ -6025,7 +6029,7 @@ input: {
      * @type Boolean
      * @defaultValue false
      */
-    disabled: false
+    disabled?: boolean
 
     /**
      * Control the attribute "maxlength" of the HTML input field.
@@ -6036,15 +6040,14 @@ input: {
      * @type Number
      * @defaultValue 524288 (as in HTML)
      */
-    maxlength: 524288,
-
-        display: 'html'
+    maxlength?: number
+    display?: string
 
     /**#@-*/
 }
 
 /* special intersection point options */
-intersection: {
+export interface IntersectionOptions {
     /**#@+
      * @visprop
      */
@@ -6059,7 +6062,7 @@ intersection: {
      * @type Boolean
      * @defaultValue true
      */
-    alwaysIntersect: true
+    alwaysIntersect?: boolean
 
     /**#@-*/
 }
@@ -6457,7 +6460,7 @@ export interface LegendOptions {
      * @defaultValue 5
      *
      */
-    strokeWidth: number
+    strokeWidth?: number
 
     /**
      * The element can be fixed and may not be dragged around. If true the legend will even stay at its position on zoom and
@@ -6474,7 +6477,7 @@ export interface LegendOptions {
 }
 
 /* special line options */
-line: {
+export interface LineOptions {
     /**#@+
      * @visprop
      */
@@ -6541,7 +6544,7 @@ line: {
      * @type Boolean | Object
      * @defaultValue false
      */
-    firstArrow: false
+    firstArrow?: boolean
 
     /**
      * Configure the arrow head at the position of its second point or the corresponding
@@ -6637,7 +6640,7 @@ line: {
      * @type Boolean | Object
      * @defaultValue false
      */
-    lastArrow: false
+    lastArrow?: boolean
 
     /**
      * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
@@ -6648,18 +6651,18 @@ line: {
      * @type Number
      * @defaultValue 0
      */
-    margin: 0,
+    margin?: number
 
-        /**
-         * If true line stretches infinitely in direction of its first point.
-         * Otherwise it ends at point1.
-         *
-         * @name Line#straightFirst
-         * @see Line#straightLast
-         * @type Boolean
-         * @defaultValue true
-         */
-        straightFirst: true
+    /**
+     * If true line stretches infinitely in direction of its first point.
+     * Otherwise it ends at point1.
+     *
+     * @name Line#straightFirst
+     * @see Line#straightLast
+     * @type Boolean
+     * @defaultValue true
+     */
+    straightFirst?: boolean
 
     /**
      * If true line stretches infinitely in direction of its second point.
@@ -6670,13 +6673,13 @@ line: {
      * @type Boolean
      * @defaultValue true
      */
-    straightLast: true
+    straightLast?: boolean
 
-    fillColor: string,           // Important for VML on IE
-        highlightFillColor: string,  // Important for VML on IE
-            strokeColor: string
-    highlightStrokecolor ?: '#c3d9ff',
-        withTicks: false
+    fillColor?: string,           // Important for VML on IE
+    highlightFillColor?: string,  // Important for VML on IE
+    strokeColor?: string
+    highlightStrokeColor?: string
+    withTicks?: boolean
 
     /**
      * Attributes for first defining point of the line.
@@ -6684,17 +6687,17 @@ line: {
      * @type Point
      * @name Line#point1
      */
-    point1: {                  // Default values for point1 if created by line
-        fillcolor ?: string
-        strokecolor ?: string
-        highlightFillcolor ?: '#c3d9ff',
-            highlightStrokecolor ?: '#c3d9ff',
-            layer: 9,
+    point1?: {                  // Default values for point1 if created by line
+        fillColor?: string
+        strokeColor?: string
+        highlightFillColor?: string
+        highlightStrokeColor?: string
+        layer?: number
 
-                visible: false
-        withLabel: false
-        fixed: false
-        name: ''
+        visible?: boolean
+        withLabel?: boolean
+        fixed?: boolean
+        name?: string
     }
 
     /**
@@ -6704,16 +6707,16 @@ line: {
      * @name Line#point2
      */
     point2: {                  // Default values for point2 if created by line
-        fillcolor ?: Color.palette.red
-        strokecolor ?: Color.palette.red
-        highlightFillcolor ?: '#c3d9ff',
-            highlightStrokecolor ?: '#c3d9ff',
-            layer: 9,
+        fillColor?: string
+        strokeColor?: string
+        highlightFillColor?: string
+        highlightStrokeColor?: string
+        layer?: number
 
-                visible ?: false
-        withLabel: false
-        fixed: false
-        name: ''
+        visible?: boolean
+        withLabel?: boolean
+        fixed?: boolean
+        name?: string
     }
 
     /**
@@ -6724,19 +6727,19 @@ line: {
      * @see Ticks
      */
     ticks: {
-        drawLabels: true
-        label: {
-            offset: [4, -15] // This seems to be a good offset for 12 point fonts
+        drawLabels?: boolean
+        label?: {
+            offset?: [number, number] // This seems to be a good offset for 12 point fonts
         }
-        drawZero: false
-        insertTicks: false
-        ticksDistance: 1,
-            minTicksDistance: 50,
-                minorHeight: 4,          // if <0: full width and height
-                    majorHeight: -1,         // if <0: full width and height
-                        minorTicks: 4,
-                            strokeOpacity: 0.3,
-                                visible ?: 'inherit'
+        drawZero?: boolean
+        insertTicks?: boolean
+        ticksDistance?: number
+        minTicksDistance?: number
+        minorHeight?: number          // if <0: full width and height
+        majorHeight?: number         // if <0: full width and height
+        minorTicks?: number
+        strokeOpacity?: number
+        visible?: 'inherit' | boolean
     }
 
     /**
@@ -6747,7 +6750,7 @@ line: {
      * @see Label
      */
     label: {
-        position: 'llft'
+        position?: string
     }
 
     /**
@@ -6760,7 +6763,7 @@ line: {
      * @name Line#snapToGrid
      * @defaultValue false
      */
-    snapToGrid: false
+    snapToGrid?: boolean
 
     /**
      * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
@@ -6775,33 +6778,33 @@ line: {
      * @name Line#snapSizeX
      * @defaultValue 1
      */
-    snapSizeX: 1,
+    snapSizeX?: number
 
-        /**
-         * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
-         * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-         * of the default ticks of the default y axes of the board.
-         *
-         * @see Point#snapToGrid
-         * @see Point#snapSizeX
-         * @see JXG.Board#defaultAxes
-         * @type Number
-         * @name Line#snapSizeY
-         * @defaultValue 1
-         */
-        snapSizeY: 1,
+    /**
+     * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
+     * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+     * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+     * of the default ticks of the default y axes of the board.
+     *
+     * @see Point#snapToGrid
+     * @see Point#snapSizeX
+     * @see JXG.Board#defaultAxes
+     * @type Number
+     * @name Line#snapSizeY
+     * @defaultValue 1
+     */
+    snapSizeY?: number
 
-            /**
-             * If set to true {@link Line#firstArrow} is set to true and the point is visible,
-             * the arrow head will just touch the circle line of the start point of the line.
-             *
-             * @see Line#firstArrow
-             * @type Boolean
-             * @name Line#touchFirstPoint
-             * @defaultValue false
-             */
-            touchFirstPoint: false
+    /**
+     * If set to true {@link Line#firstArrow} is set to true and the point is visible,
+     * the arrow head will just touch the circle line of the start point of the line.
+     *
+     * @see Line#firstArrow
+     * @type Boolean
+     * @name Line#touchFirstPoint
+     * @defaultValue false
+     */
+    touchFirstPoint?: boolean
 
     /**
      * If set to true {@link Line#lastArrow} is set to true and the point is visible,
@@ -6811,27 +6814,28 @@ line: {
      * @name Line#touchLastPoint
      * @defaultValue false
      */
-    touchLastPoint: false
+    touchLastPoint?: boolean
 
     /**#@-*/
 }
 
 /* special options for locus curves */
-locus: {
+export interface LocusOptions {
     /**#@+
      * @visprop
      */
 
-    translateToOrigin: false
-    translateTo10: false
-    stretch: false
-    toOrigin: null
-    to10: null
+    translateToOrigin?: boolean
+    translateTo10?: boolean
+    stretch?: boolean
+    toOrigin?: boolean | null
+    to10?: boolean | null
     /**#@-*/
 }
 
+
 /* special measurement options */
-measurement: {
+export interface MeasurementOptions {
     /**#@+
      * @visprop
      */
@@ -6878,7 +6882,7 @@ measurement: {
      * @type String
      * @defaultValue ''
      */
-    baseUnit: ''
+    baseUnit?: string
 
     /**
      * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
@@ -6937,7 +6941,7 @@ measurement: {
      * @type Object
      * @defaultValue {}
      */
-    units: { }
+    units?: object
 
     /**
      * Determines whether a prefix is displayed before the measurement value and unit.
@@ -6947,7 +6951,7 @@ measurement: {
      * @type Boolean
      * @defaultValue true
      */
-    showPrefix: true
+    showPrefix?: boolean
 
     /**
      * Determines whether a suffix is displayed after the measurement value and unit.
@@ -6957,7 +6961,7 @@ measurement: {
      * @type Boolean
      * @defaultValue true
      */
-    showSuffix: true
+    showSuffix?: boolean
 
     /**
      * String that is displayed before the measurement and its unit.
@@ -6967,7 +6971,7 @@ measurement: {
      * @type String
      * @defaultValue ''
      */
-    prefix: ''
+    prefix?: string
 
     /**
      * String that is displayed after the measurement and its unit.
@@ -6977,7 +6981,7 @@ measurement: {
      * @type String
      * @defaultValue ''
      */
-    suffix: ''
+    suffix?: string
 
     /**
      * Dimension of the measured data. This measurement can only be combined with a measurement of a suitable dimension.
@@ -6994,7 +6998,7 @@ measurement: {
      * @type Number|'coords'|'direction'
      * @defaultValue null
      */
-    dim: null
+    dim?: number | null   // TODO  coords?  direction?
 
     /**
      * Function to format coordinates. Does only have an effect, if {@link Measurement#dim} is set to 'coords'.
@@ -7040,7 +7044,7 @@ measurement: {
      * @param {Number} z c-coordinate
      * @returns String
      */
-    formatCoords: Function = (self, x, y, z: string) => (parseFloat(z) !== 1) ? 'Infinit coords' : '(' + x + ', ' + y + ')';
+    formatCoords?: Function
 
 
     /**
@@ -7091,14 +7095,14 @@ measurement: {
      * @param {Number} y c-coordinate
      * @returns String
      */
-    formatDirection: Function = (self, x, y) => '(' + x + ', ' + y + ')';
+    formatDirection?: Function
 
 
     /**#@-*/
 }
 
 /* special metapost spline options */
-metapostspline: {
+export interface MetapostsplineOptions {
     /**#@+
      * @visprop
      */
@@ -7115,7 +7119,7 @@ metapostspline: {
       * @type Boolean
       * @defaultValue true
       */
-    createPoints: true
+    createPoints?: boolean
 
     /**
      * If set to true the supplied coordinates are interpreted as
@@ -7129,7 +7133,7 @@ metapostspline: {
      * @type Boolean
      * @defaultValue true
      */
-    isArrayOfCoordinates: true
+    isArrayOfCoordinates?: boolean
 
     /**
      * Attributes for the points generated by Metapost spline in cases
@@ -7141,26 +7145,26 @@ metapostspline: {
      * @see Metapostspline#createPoints
      * @type Object
      */
-    points: {
-        strokeOpacity: 0.5
-        fillOpacity: 0.5
-        highlightStrokeOpacity: 1.0
-        highlightFillOpacity: 1.0
-        withLabel: false
-        name: ''
-        fixed: false
+    points?: {
+        strokeOpacity?: number
+        fillOpacity?: number
+        highlightStrokeOpacity?: number
+        highlightFillOpacity?: number
+        withLabel?: boolean
+        name?: string
+        fixed?: boolean
     }
 
     /**#@-*/
 }
 
 /* special mirrorelement options */
-mirrorelement: {
+export interface MirrorelementOptions {
     /**#@+
      * @visprop
      */
 
-    fixed: true
+    fixed?: boolean
 
     /**
      * Attributes of mirror point, i.e. the point along which the element is mirrored.
@@ -7168,7 +7172,7 @@ mirrorelement: {
      * @type Point
      * @name mirrorelement#point
      */
-    point: { }
+    point?: Point
 
     /**
      * Attributes of circle center, i.e. the center of the circle,
@@ -7177,7 +7181,7 @@ mirrorelement: {
      * @type Point
      * @name mirrorelement#center
      */
-    center: { }
+    center?: Point
 
     /**
      * Type of transformation. Possible values are 'Euclidean', 'projective'.
@@ -7189,13 +7193,13 @@ mirrorelement: {
      * @name mirrorelement#type
      * @defaultValue 'Euclidean'
      */
-    type: 'Euclidean'
+    type?: 'Euclidean' | ''
 
     /**#@-*/
 }
 
 /* special nonreflexangle options */
-nonreflexangle: {
+export interface NonreflexangleOptions {
     /**#@+
      * @visprop
      */
@@ -7205,22 +7209,22 @@ nonreflexangle: {
 
 // /* special options for Msector of 3 points */
 // msector: {
-//     strokecolor?: '#000000', // Msector line
-//     point: {               // Msector point
+//     strokeColor?:string // Msector line
+//     point?: {               // Msector point
 //         visible: false
-//         fixed: false
+//         fixed?: boolean
 //         withLabel: false
 //         name: ''
 //     }
 // }
 
 /* special options for normal lines */
-normal: {
+export interface NormalOptions {
     /**#@+
      * @visprop
      */
 
-    strokecolor ?: '#000000' //  normal line
+    strokeColor?: string //  normal line
 
     /**
      * Attributes of helper point of normal.
@@ -7228,17 +7232,17 @@ normal: {
      * @type Point
      * @name Normal#point
      */
-    point: {
-        visible ?: false
-        fixed: false
-        withLabel: false
-        name: ''
+    point?: {
+        visible?: boolean
+        fixed?: boolean
+        withLabel?: boolean
+        name?: string
     }
     /**#@-*/
 }
 
 /* special options for orthogonal projection points */
-orthogonalprojection: {
+export interface OrthogonalprojectionOptions {
     /**#@+
      * @visprop
      */
@@ -7246,7 +7250,7 @@ orthogonalprojection: {
 }
 
 /* special otherintersection point options */
-otherintersection: {
+export interface OtherintersectionOptions {
     /**#@+
      * @visprop
      */
@@ -7260,7 +7264,7 @@ otherintersection: {
      * @type Boolean
      * @defaultValue true
      */
-    alwaysIntersect: true
+    alwaysIntersect?: boolean
 
     /**
      * Minimum distance (in user coordinates) for points to be defined as different.
@@ -7271,18 +7275,18 @@ otherintersection: {
      * @type Number
      * @defaultValue 0.001
      */
-    precision: 0.001
+    precision?: number
 
     /**#@-*/
 }
 
 /* special options for parallel lines */
-parallel: {
+export interface ParallelOptions {
     /**#@+
      * @visprop
      */
 
-    strokecolor ?: '#000000' // Parallel line
+    strokeColor?: string // Parallel line
 
     /**
      * Attributes of helper point of normal.
@@ -7290,57 +7294,57 @@ parallel: {
      * @type Point
      * @name Parallel#point
      */
-    point: {
-        visible ?: false
-        fixed: false
-        withLabel: false
-        name: ''
+    point?: {
+        visible?: boolean
+        fixed?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     label: {
-        position: 'llft'
+        position?: string
     }
     /**#@-*/
 }
 
 /* special parallelogram options */
-parallelogram: {
-    parallelpoint: {
-        withLabel: false
-        name: ''
+export interface ParallelogramOptions {
+    parallelpoint?: {
+        withLabel?: boolean
+        name?: string
     }
 }
 
 /* special parallelpoint options */
-parallelpoint: {
+export interface ParallelpointOptions {
 }
 
 /* special perpendicular options */
-perpendicular: {
+export interface PerpendicularOptions {
     /**#@+
      * @visprop
      */
 
-    strokecolor ?: '#000000' // Perpendicular line
-    straightFirst: true
-    straightLast: true
+    strokeColor?: string // Perpendicular line
+    straightFirst?: boolean
+    straightLast?: boolean
     /**#@-*/
 }
 
 /* special perpendicular options */
-perpendicularsegment: {
+export interface PerpendicularsegmentOptions {
     /**#@+
      * @visprop
      */
 
-    strokecolor ?: '#000000' // Perpendicular segment
-    straightFirst: false
-    straightLast: false
-    point: {               // Perpendicular point
-        visible ?: false
-        fixed: true
-        withLabel: false
-        name: ''
+    strokeColor?: string // Perpendicular segment
+    straightFirst?: boolean
+    straightLast?: boolean
+    point?: {               // Perpendicular point
+        visible?: boolean
+        fixed?: boolean
+        withLabel?: boolean
+        name?: string
     }
     /**#@-*/
 }
@@ -7424,16 +7428,16 @@ export interface PointOptions {
     strokeColor?: string
     highlightFillColor?: string
     highlightStrokeColor?: string
-    // strokeOpacity: 1.0,
-    // fillOpacity: 1.0,
-    // highlightFillOpacity: 0.5,
-    // highlightStrokeOpacity: 0.5,
+    // strokeOpacity?: number,
+    // fillOpacity?: number,
+    // highlightFillOpacity?: number,
+    // highlightStrokeOpacity?: number,
 
     // fillColor: '#ff0000',
     // highlightFillColor: '#eeeeee',
-    // strokeWidth: 2,
+    // strokeWidth?: 2,
     // strokeColor: '#ff0000',
-    // highlightStrokeColor: '#c3d9ff',
+    // highlightStrokeColor: string
 
     /**
      * If true the point size changes on zoom events.
@@ -7640,7 +7644,7 @@ export interface PointOptions {
 }
 
 /* special polygon options */
-polygon: {
+export interface PolygonOptions {
     /**#@+
      * @visprop
      */
@@ -7653,14 +7657,14 @@ polygon: {
      * @type Boolean
      * @defaultValue false
      */
-    hasInnerPoints: false
+    hasInnerPoints?: boolean
 
-    fillcolor ?: Color.palette.yellow
-    highlightFillcolor ?: Color.palette.yellow
+    fillColor?: string
+    highlightFillColor?: string
     // fillColor: '#00ff00',
     // highlightFillColor: '#00ff00',
-    fillOpacity: 0.3
-    highlightFillOpacity: 0.2
+    fillOpacity?: number
+    highlightFillOpacity?: number
 
     /**
      * Is the polygon bordered by lines?
@@ -7669,7 +7673,7 @@ polygon: {
      * @name Polygon#withLines
      * @defaultValue true
      */
-    withLines: true
+    withLines?: boolean
 
     /**
      * Attributes for the polygon border lines.
@@ -7677,16 +7681,16 @@ polygon: {
      * @type Line
      * @name Polygon#borders
      */
-    borders: {
-        withLabel: false
-        strokeWidth: 1
-        highlightStrokeWidth: 1
+    borders?: {
+        withLabel?: boolean
+        strokeWidth?: number
+        highlightstrokeWidth?: number
         // Polygon layer + 1
-        layer: 5
-        label: {
-            position: 'top'
+        layer?: number
+        label?: {
+            position?: 'top'
         }
-        visible ?: 'inherit'
+        visible?: 'inherit'
     }
 
     /**
@@ -7700,7 +7704,7 @@ polygon: {
      * @name Polygon#highlightByStrokeWidth
      * @defaultValue false
      */
-    highlightByStrokeWidth: false
+    highlightbyStrokeWidth?: boolean
 
     /**
      * Attributes for the polygon vertices.
@@ -7709,13 +7713,13 @@ polygon: {
      * @name Polygon#vertices
      */
     vertices: {
-        layer: 9
-        withLabel: false
-        name: ''
-        strokecolor ?: Color.palette.red
-        fillcolor ?: Color.palette.red
-        fixed: false
-        visible ?: 'inherit'
+        layer?: number
+        withLabel?: boolean
+        name?: string
+        strokeColor?: string
+        fillColor?: string
+        fixed?: boolean
+        visible?: 'inherit' | boolean
     }
 
     /**
@@ -7725,7 +7729,7 @@ polygon: {
      * @name Polygon#label
      */
     label: {
-        offset: [0, 0]
+        offset: [number, number]
     }
 
     /**#@-*/
@@ -7733,13 +7737,13 @@ polygon: {
 
 /* special polygonal chain options
 */
-polygonalchain: {
+export interface PolygonalchainOptions {
     /**#@+
      * @visprop
      */
 
-    fillcolor ?: string
-    highlightFillcolor ?: string
+    fillColor?: string
+    highlightFillColor?: string
 
     /**#@-*/
 }
@@ -7748,7 +7752,7 @@ polygonalchain: {
 * Not yet implemented. But angle.setAngle(val) is implemented.
 
 */
-prescribedangle: {
+export interface PrescribedangleOptions {
     /**#@+
      * @visprop
      */
@@ -7760,22 +7764,23 @@ prescribedangle: {
      * @name Prescribedangle#anglePoint
      * @ignore
      */
-    anglePoint: {
-        size: 2
-        visible ?: false
-        withLabel: false
+
+    anglePoint?: {
+        size?: number
+        visible?: boolean
+        withLabel?: boolean
     }
 
     /**#@-*/
 }
 
 /* special reflection options */
-reflection: {
+export interface ReflectionOptions {
     /**#@+
      * @visprop
      */
 
-    fixed: true
+    fixed?: boolean
 
     /**
      * Attributes of circle center, i.e. the center of the circle,
@@ -7784,7 +7789,7 @@ reflection: {
      * @type center
      * @name Reflection#center
      */
-    center: { }
+    center?: object
 
     /**
      * Type of transformation. Possible values are 'Euclidean', 'projective'.
@@ -7796,13 +7801,13 @@ reflection: {
      * @name Reflection#type
      * @defaultValue 'Euclidean'
      */
-    type: 'Euclidean'
+    type?: 'Euclidean' | ''
 
     /**#@-*/
 }
 
 /* special reflexangle options */
-reflexangle: {
+export interface ReflexangleOptions {
     /**#@+
      * @visprop
      */
@@ -7811,7 +7816,7 @@ reflexangle: {
 }
 
 /* special regular polygon options */
-regularpolygon: {
+export interface RegularpolygonOptions {
     /**#@+
      * @visprop
      */
@@ -7824,12 +7829,11 @@ regularpolygon: {
      * @type Boolean
      * @defaultValue false
      */
-    hasInnerPoints: false
-    fillcolor ?: Color.palette.yellow
-    highlightFillcolor ?: Color.palette.yellow
-    fillOpacity: 0.3
-    highlightFillOpacity: 0.2
-
+    hasInnerPoints?: boolean
+    fillColor?: string
+    highlightFillColor?: string
+    fillOpacity?: number
+    highlightFillOpacity?: number
     /**
      * Is the polygon bordered by lines?
      *
@@ -7837,7 +7841,7 @@ regularpolygon: {
      * @name RegularPolygon#withLines
      * @defaultValue true
      */
-    withLines: true
+    withLines?: boolean
 
     /**
      * Attributes for the polygon border lines.
@@ -7845,14 +7849,14 @@ regularpolygon: {
      * @type Line
      * @name RegularPolygon#borders
      */
-    borders: {
-        withLabel: false
-        strokeWidth: 1
-        highlightStrokeWidth: 1
+    borders?: {
+        withLabel?: boolean
+        strokeWidth?: 1
+        highlightStrokeWidth?: 1
         // Polygon layer + 1
-        layer: 5
-        label: {
-            position: 'top'
+        layer?: number
+        label?: {
+            position?: 'top'
         }
     }
 
@@ -7863,11 +7867,11 @@ regularpolygon: {
      * @name RegularPolygon#vertices
      */
     vertices: {
-        layer: 9
-        withLabel: true
-        strokecolor ?: Color.palette.red
-        fillcolor ?: Color.palette.red
-        fixed: false
+        layer: number
+        withLabel?: boolean
+        strokeColor?: string
+        fillColor?: string
+        fixed?: boolean
     }
 
     /**
@@ -7884,33 +7888,31 @@ regularpolygon: {
 }
 
 /* special options for riemann sums */
-riemannsum: {
+export interface RiemannsumOptions {
     /**#@+
      * @visprop
      */
 
-    withLabel: false
-    fillOpacity: 0.3
-    fillcolor ?: Color.palette.yellow
-
-    /**#@-*/
+    withLabel?: boolean
+    fillOpacity?: number
+    fillColor?: string
 }
 
 /* special sector options */
-sector: {
+export interface SectorOptions {
     /**#@+
      * @visprop
      */
 
-    fillcolor ?: Color.palette.yellow
-    highlightFillcolor ?: Color.palette.yellow
+    fillColor?: string
+    highlightFillColor?: string
     // fillColor: '#00ff00',
     // highlightFillColor: '#00ff00',
 
-    fillOpacity: 0.3
-    highlightFillOpacity: 0.3
-    highlightOnSector: false
-    highlightStrokeWidth: 0
+    fillOpacity?: number
+    highlightFillOpacity?: number
+    highlightOnSector?: boolean
+    highlightstrokeWidth?: number
 
     /**
      * If true there is a fourth parent point, i.e. the parents are [center, p1, p2, p3].
@@ -7926,7 +7928,7 @@ sector: {
      * @defaultValue false
      * @private
      */
-    useDirection: false
+    useDirection?: boolean
 
     /**
      * Type of sector. Possible values are 'minor', 'major', and 'auto'.
@@ -7935,7 +7937,7 @@ sector: {
      * @name Sector#selection
      * @defaultValue 'auto'
      */
-    selection: 'auto'
+    selection?: 'auto'
 
     /**
      * Attributes for sub-element arc. It is only available, if the sector is defined by three points.
@@ -7945,27 +7947,27 @@ sector: {
      * @defaultValue '{visible:false}'
      */
     arc: {
-        visible ?: false
-        fillcolor ?: string
-        withLabel: false
-        name: ''
+        visible?: boolean
+        fillColor?: string
+        withLabel?: boolean
+        name?: string
 
-        center: {
-            visible ?: false
-            withLabel: false
-            name: ''
+        center?: {
+            visible?: boolean
+            withLabel?: boolean
+            name?: string
         }
 
-        radiusPoint: {
-            visible ?: false
-            withLabel: false
-            name: ''
+        radiusPoint?: {
+            visible?: boolean
+            withLabel?: boolean
+            name?: string
         }
 
-        anglePoint: {
-            visible ?: false
-            withLabel: false
-            name: ''
+        anglePoint?: {
+            visible?: boolean
+            withLabel?: boolean
+            name?: string
         }
     }
 
@@ -7975,9 +7977,9 @@ sector: {
      * @type Point
      * @name Sector#radiusPoint
      */
-    radiusPoint: {
-        visible ?: false
-        withLabel: false
+    radiusPoint?: {
+        visible?: boolean
+        withLabel?: boolean
     }
 
     /**
@@ -7986,9 +7988,9 @@ sector: {
      * @type Point
      * @name Sector#center
      */
-    center: {
-        visible ?: false
-        withLabel: false
+    center?: {
+        visible?: boolean
+        withLabel?: boolean
     }
 
     /**
@@ -7997,9 +7999,9 @@ sector: {
      * @type Point
      * @name Sector#anglePoint
      */
-    anglePoint: {
-        visible ?: false
-        withLabel: false
+    anglePoint?: {
+        visible?: boolean
+        withLabel?: boolean
     }
 
     /**
@@ -8008,28 +8010,28 @@ sector: {
      * @type Label
      * @name Sector#label
      */
-    label: {
-        offset: [0, 0]
-        anchorX: 'auto'
-        anchorY: 'auto'
+    label?: {
+        offset: [number, number]
+        anchorX: string
+        anchorY: string
     }
 
     /**#@-*/
 }
 
 /* special segment options */
-segment: {
+export interface SegmentOptions {
     /**#@+
      * @visprop
      */
 
     label: {
-        position: 'top'
+        position?: string
     }
     /**#@-*/
 }
 
-semicircle: {
+export interface SemicircleOptions {
     /**#@+
      * @visprop
      */
@@ -8040,22 +8042,22 @@ semicircle: {
      * @type Point
      * @name Semicircle#center
      */
-    center: {
-        visible ?: false
-        withLabel: false
-        fixed: false
-        fillcolor ?: Color.palette.red
-        strokecolor ?: Color.palette.red
-        highlightFillcolor ?: '#eeeeee'
-        highlightStrokecolor ?: Color.palette.red
-        name: ''
+    center?: {
+        visible?: boolean
+        withLabel?: boolean
+        fixed?: boolean
+        fillColor?: string
+        strokeColor?: string
+        highlightFillColor?: string
+        highlightStrokeColor?: string
+        name?: string
     }
 
     /**#@-*/
 }
 
 /* special slider options */
-slider: {
+export interface SliderOptions {
     /**#@+
      * @visprop
      */
@@ -8068,7 +8070,7 @@ slider: {
      * @name snapWidth
      * @type Number
      */
-    snapWidth: -1      // -1 = deactivated
+    snapWidth?: number      // -1 = deactivated
 
     /**
      * List of values to snap to. If the glider is within snapValueDistance
@@ -8120,7 +8122,7 @@ slider: {
      * </script><pre>
      *
      */
-    snapValues: []
+    snapValues?: number[]
 
     /**
      * If the difference between the slider value and one of the elements of snapValues is less
@@ -8132,7 +8134,7 @@ slider: {
      * @see Slider#snapValues
      * @defaultValue 0.0
      */
-    snapValueDistance: 0.0
+    snapValueDistance?: number
 
     /**
      * The precision of the slider value displayed in the optional text.
@@ -8145,7 +8147,7 @@ slider: {
      * @see Slider#digits
      * @defaultValue 2
      */
-    precision: 2
+    precision?: number
 
     /**
      * The number of digits of the slider value displayed in the optional text.
@@ -8155,7 +8157,7 @@ slider: {
      * @type Number
      * @defaultValue 2
      */
-    digits: 2
+    digits?: number
 
     /**
      * Internationalization support for slider labels.
@@ -8205,13 +8207,13 @@ slider: {
      * </script><pre>
      *
      */
-    intl: {
-        enabled: 'inherit'
-        options: { }
+    intl?: {
+        enabled?: 'inherit' | boolean
+        options?: object
     }
 
-    firstArrow: false
-    lastArrow: false
+    firstArrow?: boolean
+    lastArrow?: boolean
 
     /**
      * Show slider ticks.
@@ -8220,7 +8222,7 @@ slider: {
      * @name Slider#withTicks
      * @defaultValue true
      */
-    withTicks: true
+    withTicks?: boolean
 
     /**
      * Show slider label.
@@ -8229,7 +8231,7 @@ slider: {
      * @name Slider#withLabel
      * @defaultValue true
      */
-    withLabel: true
+    withLabel?: boolean
 
     /**
      * If not null this replaces the part "name = " in the slider label.
@@ -8241,7 +8243,7 @@ slider: {
      * @see JXG.Slider#unitLabel
      * @see JXG.Slider#postLabel
      */
-    suffixLabel: null
+    suffixLabel?: null
 
     /**
      * If not null this is appended to the value in the slider label.
@@ -8253,7 +8255,7 @@ slider: {
      * @see JXG.Slider#suffixLabel
      * @see JXG.Slider#postLabel
      */
-    unitLabel: `null`
+    unitLabel?: null        // TODO : this was `null` ?!?
 
     /**
      * If not null this is appended to the value and to unitLabel in the slider label.
@@ -8265,16 +8267,16 @@ slider: {
      * @see JXG.Slider#suffixLabel
      * @see JXG.Slider#unitLabel
      */
-    postLabel: null
+    postLabel?: null
 
-    layer: 9
-    showInfobox: false
-    name: ''
-    visible ?: true
-    strokecolor ?: '#000000'
-    highlightStrokecolor ?: '#888888'
-    fillcolor ?: '#ffffff'
-    highlightFillcolor ?: string
+    layer?: number
+    showInfobox?: boolean
+    name?: string
+    visible?: boolean
+    strokeColor?: string
+    highlightStrokeColor?: string
+    fillColor?: string
+    highlightFillColor?: string
 
     /**
      * Size of slider point.
@@ -8284,7 +8286,7 @@ slider: {
      * @defaultValue 6
      * @see Point#size
      */
-    size: 6
+    size?: number
 
     /**
      * Attributes for first (left) helper point defining the slider position.
@@ -8292,14 +8294,14 @@ slider: {
      * @type Point
      * @name Slider#point1
      */
-    point1: {
-        needsRegularUpdate: false
-        showInfobox: false
-        withLabel: false
-        visible ?: false
-        fixed: true
-        frozen: 'inherit'
-        name: ''
+    point1?: {
+        needsRegularUpdate?: boolean
+        showInfobox?: boolean
+        withLabel?: boolean
+        visible?: boolean
+        fixed?: boolean
+        frozen: 'inherit' | boolean
+        name?: string
     }
 
     /**
@@ -8308,14 +8310,14 @@ slider: {
      * @type Point
      * @name Slider#point2
      */
-    point2: {
-        needsRegularUpdate: false
-        showInfobox: false
-        withLabel: false
-        visible ?: false
-        fixed: true
-        frozen: 'inherit'
-        name: ''
+    point2?: {
+        needsRegularUpdate?: boolean
+        showInfobox?: boolean
+        withLabel?: boolean
+        visible?: boolean
+        fixed?: boolean
+        frozen: 'inherit' | boolean
+        name?: string
     }
 
     /**
@@ -8324,16 +8326,16 @@ slider: {
      * @type Line
      * @name Slider#baseline
      */
-    baseline: {
-        needsRegularUpdate: false
-        visible ?: 'inherit'
-        fixed: true
-        scalable: false
-        tabindex: null
-        name: ''
-        strokeWidth: 1
-        strokecolor ?: '#000000'
-        highlightStrokecolor ?: '#888888'
+    baseline?: {
+        needsRegularUpdate?: boolean
+        visible?: 'inherit' | boolean
+        fixed?: boolean
+        scalable?: boolean
+        tabindex?: number | null
+        name?: string
+        strokeWidth?: 1
+        strokeColor?: string
+        highlightStrokeColor?: string
     }
 
     /**
@@ -8342,32 +8344,32 @@ slider: {
      * @type Ticks
      * @name Slider#ticks
      */
-    ticks: {
-        needsRegularUpdate: false
-        fixed: true
+    ticks?: {
+        needsRegularUpdate?: boolean
+        fixed?: boolean
 
         // Label drawing
-        drawLabels: false
-        digits: 2
-        includeBoundaries: true
-        drawZero: true
-        label: {
-            offset: [-4, -14]
-            display: 'internal'
+        drawLabels?: boolean
+        digits?: number
+        includeBoundaries?: boolean
+        drawZero?: boolean
+        label?: {
+            offset?: [number, number]
+            display?: string
         }
 
-        minTicksDistance: 30
-        insertTicks: true
-        ticksDistance: 1     // Not necessary, since insertTicks = true
-        minorHeight: 4       // if <0: full width and height
-        majorHeight: 5        // if <0: full width and height
-        minorTicks: 0
-        strokeOpacity: 1
-        strokeWidth: 1
-        tickEndings: [0, 1]
-        majortickEndings: [0, 1]
-        strokecolor ?: '#000000'
-        visible ?: 'inherit'
+        minTicksDistance?: number
+        insertTicks?: boolean
+        ticksDistance?: 1     // Not necessary, since insertTicks = true
+        minorHeight?: 4       // if <0: full width and height
+        majorHeight?: 5        // if <0: full width and height
+        minorTicks?: 0
+        strokeOpacity?: 1
+        strokeWidth?: 1
+        tickEndings?: [number, number]
+        majortickEndings: [number, number]
+        strokeColor?: string
+        visible?: 'inherit' | boolean
     }
 
     /**
@@ -8377,13 +8379,13 @@ slider: {
      * @name Slider#highline
      */
     highline: {
-        strokeWidth: 3
-        visible ?: 'inherit'
-        fixed: true
+        strokeWidth?: 3
+        visible?: 'inherit'
+        fixed?: boolean
         tabindex: null
-        name: ''
-        strokecolor ?: '#000000'
-        highlightStrokecolor ?: '#888888'
+        name?: string
+        strokeColor?: string
+        highlightStrokeColor?: '#888888'
     }
 
     /**
@@ -8393,8 +8395,8 @@ slider: {
      * @name Slider#label
      */
     label: {
-        visible ?: 'inherit'
-        strokecolor ?: '#000000'
+        visible?: 'inherit'
+        strokeColor?: string
     }
 
     /**
@@ -8404,21 +8406,21 @@ slider: {
      * @name Slider#moveOnUp
      * @defaultValue true
      */
-    moveOnUp: true
+    moveOnUp?: boolean
 
     /**#@-*/
 }
 
 /* special vector field options */
-slopefield: {
+export interface SlopefieldOptions {
     /**#@+
      * @visprop
      */
 
-    strokeWidth: 0.5
-    highlightStrokeWidth: 0.5
-    highlightStrokecolor ?: Color.palette.blue
-    highlightStrokeOpacity: 0.8
+    strokeWidth?: number
+    highlightStrokeWidth?: number
+    highlightStrokeColor?: string
+    highlightStrokeOpacity?: number
 
     /**
      * Set length of the vectors in user coordinates. This in contrast to vector fields, where this attribute just scales the vector.
@@ -8428,7 +8430,7 @@ slopefield: {
      * @see Vectorfield.scale
      * @defaultValue 1
      */
-    scale: 1
+    scale?: number
 
     /**
      * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
@@ -8443,30 +8445,30 @@ slopefield: {
      * @type {Object}
      * @defaultValue <tt>{enabled: false size: 5, angle: Math.PI * 0.125}</tt>
      */
-    arrowhead: {
-        enabled: false
-        size: 5
-        angle: number = Math.PI * 0.125
+    arrowhead?: {
+        enabled?: boolean
+        size?: number
+        angle?: number
     }
 
     /**#@-*/
 }
 
 /* special options for slope triangle */
-slopetriangle: {
+export interface SlopetriangleOptions {
     /**#@+
      * @visprop
      */
 
-    fillcolor ?: Color.palette.red
-    fillOpacity: 0.4
-    highlightFillcolor ?: Color.palette.red
-    highlightFillOpacity: 0.3
+    fillColor?: string
+    fillOpacity?: number
+    highlightFillColor?: string
+    highlightFillOpacity?: number
 
-    borders: {
-        lastArrow: {
-            type: 1
-            size: 6
+    borders?: {
+        lastArrow?: {
+            type?: number  // TODO what ??
+            size?: number
         }
     }
 
@@ -8476,10 +8478,10 @@ slopetriangle: {
      * @type Point
      * @name Slopetriangle#glider
      */
-    glider: {
-        fixed: true
-        visible ?: false
-        withLabel: false
+    glider?: {
+        fixed?: boolean
+        visible?: boolean
+        withLabel?: boolean
     }
 
     /**
@@ -8488,10 +8490,10 @@ slopetriangle: {
      * @type Line
      * @name Slopetriangle#baseline
      */
-    baseline: {
-        visible ?: false
-        withLabel: false
-        name: ''
+    baseline?: {
+        visible?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -8500,24 +8502,15 @@ slopetriangle: {
      * @type Point
      * @name Slopetriangle#basepoint
      */
-    basepoint: {
-        visible ?: false
-        withLabel: false
-        name: ''
+    basepoint?: {
+        visible?: boolean
+        withLabel?: boolean
+        name?: string
     }
-
-    /**
-     * Attributes for the tangent.
-     * The tangent is constructed by slop triangle if the construction
-     * is based on a glider, solely.
-     *
-     * @type Line
-     * @name Slopetriangle#tangent
-     */
-    tangent: {
-        visible ?: false
-        withLabel: false
-        name: ''
+    tangent?: {
+        visible?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -8526,10 +8519,10 @@ slopetriangle: {
      * @type Point
      * @name Slopetriangle#toppoint
      */
-    toppoint: {
-        visible ?: false
-        withLabel: false
-        name: ''
+    toppoint?: {
+        visible?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -8538,30 +8531,30 @@ slopetriangle: {
      * @type Label
      * @name Slopetriangle#label
      */
-    label: {
-        visible ?: true
-        position: 'first'
+    label?: {
+        visible?: boolean
+        position: string  // TODO  what?
     }
     /**#@-*/
 }
 
 /* special options for smartlabel of angle */
-smartlabelangle: {
-    cssClass: 'smart-label-solid smart-label-angle'
-    highlightCssClass: 'smart-label-solid smart-label-angle'
-    anchorX: 'left'
-    anchorY: 'middle'
+export interface SmartlabelangleOptions {
+    cssClass?: string
+    highlightCssClass?: string
+    anchorX?: string
+    anchorY?: string
 
-    unit: ''
-    prefix: ''
-    suffix: ''
+    unit?: string
+    prefix?: string
+    suffix?: string
 
-    measure: 'deg'
-    useMathJax: true
+    measure?: string
+    useMathJax?: boolean
 }
 
 /* special options for smartlabel of circle */
-smartlabelcircle: {
+export interface SmartlabelcircleOptions {
     /**#@+
      * @visprop
      */
@@ -8590,7 +8583,7 @@ smartlabelcircle: {
      *  <li> ...</li>
      * </ul>
      */
-    cssClass: 'smart-label-solid smart-label-circle'
+    cssClass?: string
 
     /**
      * CSS classes for the smart label when highlighted.
@@ -8604,9 +8597,9 @@ smartlabelcircle: {
      *  <li> ...</li>
      * </ul>
      */
-    highlightCssClass: 'smart-label-solid smart-label-circle'
-    anchorX: 'middle'
-    useMathJax: true
+    highlightCssClass?: string
+    anchorX?: string
+    useMathJax?: boolean
 
     /**
      * Measurement unit appended to the output text. For areas, the unit is squared automatically.
@@ -8616,7 +8609,7 @@ smartlabelcircle: {
      * @name Smartlabel#unit
      * @defaultValue ''
      */
-    unit: ''
+    unit?: string
 
     /**
      * Prefix text for the smartlabel. Comes before the measurement value.
@@ -8625,7 +8618,7 @@ smartlabelcircle: {
      * @name Smartlabel#prefix
      * @defaultValue ''
      */
-    prefix: ''
+    prefix?: string
 
     /**
      * Suffix text for the smartlabel. Comes after unit.
@@ -8634,7 +8627,7 @@ smartlabelcircle: {
      * @name Smartlabel#suffix
      * @defaultValue ''
      */
-    suffix: ''
+    suffix?: string
 
     /**
      * Type of measurement.
@@ -8663,29 +8656,29 @@ smartlabelcircle: {
 }
 
 /* special options for smartlabel of line */
-smartlabelline: {
-    cssClass: 'smart-label-solid smart-label-line'
-    highlightCssClass: 'smart-label-solid smart-label-line'
-    anchorX: 'middle'
+export interface SmartlabellineOptions {
+    cssClass?: string
+    highlightCssClass?: string
+    anchorX?: string
 
-    useMathJax: true
+    useMathJax?: boolean
 
-    unit: ''
-    measure: 'length'
+    unit?: string
+    measure?: string
 }
 
 /* special options for smartlabel of point */
-smartlabelpoint: {
+export interface SmartlabelpointOptions {
     /**#@+
      * @visprop
      */
 
-    cssClass: 'smart-label-solid smart-label-point'
-    highlightCssClass: 'smart-label-solid smart-label-point'
-    anchorX: 'middle'
-    anchorY: 'top'
+    cssClass?: string
+    highlightCssClass?: string
+    anchorX?: string
+    anchorY?: string
 
-    useMathJax: true
+    useMathJax?: boolean
 
     /**
      * Display of point coordinates either as row vector or column vector.
@@ -8694,7 +8687,7 @@ smartlabelpoint: {
      * @name Smartlabel#dir
      * @defaultValue 'row'
      */
-    dir: 'row'
+    dir?: 'row' | 'column'
 
     /**
      * Supply a unit suffix.
@@ -8703,25 +8696,25 @@ smartlabelpoint: {
      * @name Smartlabel#unit
      * @defaultValue ''
      */
-    unit: ''
+    unit?: string
 
     /**#@-*/
 }
 
 /* special options for smartlabel of polygon */
-smartlabelpolygon: {
-    cssClass: 'smart-label-solid smart-label-polygon'
-    highlightCssClass: 'smart-label-solid smart-label-polygon'
-    anchorX: 'middle'
+export interface SmartlabelpolygonOptions extends SmartlabelpointOptions {
+    cssClass?: string
+    highlightCssClass?: string
+    anchorX?: string
 
-    useMathJax: true
+    useMathJax?: boolean
 
-    unit: ''
-    measure: 'area'
+    unit?: string
+    measure?: string
 }
 
 /* special options for step functions */
-stepfunction: {
+export interface StepfunctionOptions {
     /**#@+
      * @visprop
      */
@@ -8730,11 +8723,11 @@ stepfunction: {
 }
 
 /* special tangent options */
-tangent: {
+export interface TangentOptions {
 }
 
 /* special tangent options */
-tangentto: {
+export interface tangenttoOptions {
     /**#@+
      * @visprop
      */
@@ -8746,10 +8739,10 @@ tangentto: {
      * @memberOf TangentTo.prototype
      * @type JXG.Line
      */
-    polar: {
-        visible ?: false
-        strokeWidth: 1
-        dash ?: 3
+    polar?: {
+        visible?: boolean
+        strokeWidth?: number
+        dash?: number // TODO what?
     }
 
     /**
@@ -8759,22 +8752,22 @@ tangentto: {
      * @memberOf TangentTo.prototype
      * @type JXG.Point
      */
-    point: {
-        visible ?: false
+    point?: {
+        visible?: boolean
     }
 
     /**#@-*/
 }
 
 /* special tape measure options */
-tapemeasure: {
+export interface TapemeasureOptions {
     /**#@+
      * @visprop
      */
 
-    strokecolor ?: '#000000'
-    strokeWidth: 2
-    highlightStrokecolor ?: '#000000'
+    strokeColor?: string
+    strokeWidth?: 2
+    highlightStrokeColor?: string
 
     /**
      * Show tape measure ticks.
@@ -8783,7 +8776,7 @@ tapemeasure: {
      * @name Tapemeasure#withTicks
      * @defaultValue true
      */
-    withTicks: true
+    withTicks?: boolean
 
     /**
      * Show tape measure label.
@@ -8792,7 +8785,7 @@ tapemeasure: {
      * @name Tapemeasure#withLabel
      * @defaultValue true
      */
-    withLabel: true
+    withLabel?: boolean
 
     /**
      * Text rotation in degrees.
@@ -8801,7 +8794,7 @@ tapemeasure: {
      * @type Number
      * @defaultValue 0
      */
-    rotate: 0
+    rotate?: number
 
     /**
      * The precision of the tape measure value displayed in the optional text.
@@ -8814,7 +8807,7 @@ tapemeasure: {
      * @see Tapemeasure#digits
      * @defaultValue 2
      */
-    precision: 2
+    precision?: number
 
     /**
      * The precision of the tape measure value displayed in the optional text.
@@ -8823,7 +8816,7 @@ tapemeasure: {
      * @type Number
      * @defaultValue 2
      */
-    digits: 2
+    digits?: number
 
     /**
      * Attributes for first helper point defining the tape measure position.
@@ -8831,19 +8824,19 @@ tapemeasure: {
      * @type Point
      * @name Tapemeasure#point1
      */
-    point1: {
-        visible ?: true
-        strokecolor ?: '#000000'
-        fillcolor ?: '#ffffff'
-        fillOpacity: 0.0
-        highlightFillOpacity: 0.1
-        size: 6
-        snapToPoints: true
-        attractorUnit: 'screen'
-        attractorDistance: 20
-        showInfobox: false
-        withLabel: false
-        name: ''
+    point1?: {
+        visible?: boolean
+        strokeColor?: string
+        fillColor?: string
+        fillOpacity?: number
+        highlightFillOpacity?: number
+        size?: number
+        snapToPoints?: boolean
+        attractorUnit?: string
+        attractorDistance?: number
+        showInfobox?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -8853,18 +8846,18 @@ tapemeasure: {
      * @name Tapemeasure#point2
      */
     point2: {
-        visible ?: true
-        strokecolor ?: '#000000'
-        fillcolor ?: '#ffffff'
-        fillOpacity: 0.0
-        highlightFillOpacity: 0.1
-        size: 6
-        snapToPoints: true
-        attractorUnit: 'screen'
-        attractorDistance: 20
-        showInfobox: false
-        withLabel: false
-        name: ''
+        visible?: boolean
+        strokeColor?: string
+        fillColor?: string
+        fillOpacity?: number
+        highlightFillOpacity?: number
+        size?: number
+        snapToPoints?: boolean
+        attractorUnit?: string
+        attractorDistance?: number
+        showInfobox?: boolean
+        withLabel?: boolean
+        name?: string
     }
 
     /**
@@ -8873,24 +8866,24 @@ tapemeasure: {
      * @type Ticks
      * @name Tapemeasure#ticks
      */
-    ticks: {
-        drawLabels: false
-        drawZero: true
-        insertTicks: true
-        ticksDistance: 0.1 // Ignored since insertTicks=true
-        minorHeight: 8
-        majorHeight: 16
-        minorTicks: 4
-        tickEndings: [0, 1]
-        majorTickEndings: [0, 1]
-        strokeOpacity: 1
-        strokeWidth: 1
-        strokecolor ?: '#000000'
-        visible ?: 'inherit'
-        label: {
-            anchorY: 'top'
-            anchorX: 'middle'
-            offset: [0, -10]
+    ticks?: {
+        drawLabels?: boolean
+        drawZero?: boolean
+        insertTicks?: boolean
+        ticksDistance?: number // Ignored since insertTicks=true
+        minorHeight?: number
+        majorHeight?: number
+        minorTicks?: number
+        tickEndings?: [number, number]
+        majorTickEndings?: [number, number]
+        strokeOpacity?: number
+        strokeWidth?: number
+        strokeColor?: string
+        visible?: 'inherit' | boolean
+        label?: {
+            anchorY?: string
+            anchorX?: string
+            offset?: [number, number]
         }
     }
 
@@ -8900,14 +8893,14 @@ tapemeasure: {
      * @type Label
      * @name Tapemeasure#label
      */
-    label: {
-        position: 'top'
+    label?: {
+        position: string
     }
     /**#@-*/
 }
 
 /* special text options */
-export interface TextOptions extends GeometryElementOptions {
+export interface TextOptions /*extends GeometryElementOptions*/ {
 
     /**
      * The font size in pixels.
@@ -9134,7 +9127,7 @@ export interface TextOptions extends GeometryElementOptions {
      * @defaultValue false
      * @type Boolean
      */
-    isLabel?: false
+    isLabel?: boolean
 
     // TODO:  Did something go wrong here?   Do these belong in Text?
     strokeColor?: string
@@ -9785,12 +9778,12 @@ export interface TextOptions extends GeometryElementOptions {
 }
 
 /* special options for trace curves */
-tracecurve: {
+export interface TracecurveOptions {
     /**#@+
      * @visprop
      */
-    strokeColor: '#000000'
-    fillColor: string
+    strokeColor?: string
+    fillColor?: string
 
     /**
      * The number of evaluated data points.
@@ -9799,20 +9792,20 @@ tracecurve: {
      * @name numberPoints
      * @type Number
      */
-    numberPoints: 100
+    numberPoints?: number
 
     /**#@-*/
 }
 
-/* special turtle options */
-turtle: {
+// /* special turtle options */
+export interface TurtleOptions {
     /**#@+
      * @visprop
      */
 
-    strokeWidth: 1
-    fillColor: string
-    strokeColor: '#000000'
+    strokeWidth ?: number
+    fillColor?: string
+    strokeColor?: string
 
     /**
      * Attributes for the turtle arrow.
@@ -9820,25 +9813,25 @@ turtle: {
      * @type Curve
      * @name Turtle#arrow
      */
-    arrow: {
-        strokeWidth: 2
-        withLabel: false
-        strokeColor: Color.palette.red
-        lastArrow: true
+    arrow?: {
+        strokeWidth ?: number
+        withLabel ?: boolean
+        strokeColor?: string
+        lastArrow?: boolean
     }
     /**#@-*/
 }
 
 /* special vector field options */
-vectorfield: {
+export interface VectorfieldOptions {
     /**#@+
      * @visprop
      */
 
-    strokeWidth: 0.5
-    highlightStrokeWidth: 0.5
-    highlightStrokeColor: Color.palette.blue
-    highlightStrokeOpacity: 0.8
+    strokeWidth?: number
+    highlightStrokeWidth?: number
+    highlightStrokeColor?: string
+    highlightStrokeOpacity?: number
 
     /**
      * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
@@ -9848,7 +9841,7 @@ vectorfield: {
      * @see Slopefield.scale
      * @defaultValue 1
      */
-    scale: 1
+    scale?: number
 
     /**
      * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
@@ -9861,192 +9854,15 @@ vectorfield: {
      * @name arrowhead
      * @memberOf Vectorfield.prototype
      * @type {Object}
-     * @defaultValue <tt>{enabled: true size: 5, angle: Math.PI * 0.125}</tt>
+     * @defaultValue <tt>{enabled?: boolean size: 5, angle: Math.PI * 0.125}</tt>
      */
-    arrowhead: {
-        enabled: true
-        size: 5
-        angle: number = Math.PI * 0.125
+    arrowhead?: {
+        enabled?: boolean
+        size: number
+        angle: number
     }
 
     /**#@-*/
 }
 
-/**
- * Abbreviations of attributes. Setting the shortcut means setting abbreviated properties
- * to the same value.
- * It is used in {@link JXG.GeometryElement#setAttribute} and in
- * the constructor {@link JXG.GeometryElement}.
- * Attention: In Options.js abbreviations are not allowed.
- * @type Object
- * @name JXG.Options#shortcuts
- *
- */
-shortcuts: {
-    color: ['strokeColor', 'fillColor']
-    opacity: ['strokeOpacity', 'fillOpacity']
-    highlightColor: ['highlightStrokeColor', 'highlightFillColor']
-    highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity']
-    strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
-}
-
-
-/**
- * Holds all possible properties and the according validators for geometry elements.
- * A validator is either a function
- * which takes one parameter and returns true if the value is valid for the property,
- * or it is false if no validator is required.
- */
-Validator() {
-    var i
-    let validatePixel = function (v) { return (/^[0-9]+px$/).test(v); }
-    let validateDisplay = function (v) { return (v === 'html' || v === 'internal'); }
-    let validateColor = function (v) { return Type.isString(v); }       // for now this should do it...
-    let validatePointFace = function (v) { return Type.exists(this.normalizePointFace(v)); }
-    let validateNumber = function (v) { return Type.isNumber(v, true, false); }
-    let validateInteger = function (v) { return (Math.abs(v - Math.round(v)) < JSXMath.eps); }
-    let validateNotNegativeInteger = function (v) { return validateInteger(v) && v >= 0; }
-    let validatePositiveInteger = function (v) { return validateInteger(v) && v > 0; }
-    // validateScreenCoords = function (v) {
-    //     return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
-    // }
-    let validateRenderer = function (v) { return (v === 'vml' || v === 'svg' || v === 'canvas' || v === 'no'); }
-    let validatePositive = function (v) { return v > 0; }
-    let validateNotNegative = function (v) { return v >= 0; }
-
-    let v = {}
-    let validators = {
-        attractorDistance: validateNotNegative,
-        color: validateColor,
-        // defaultDistance: validateNumber,
-        display: validateDisplay,
-        doAdvancedPlot: false,
-        draft: false,
-        drawLabels: false,
-        drawZero: false,
-        face: validatePointFace,
-        factor: validateNumber,
-        fillColor: validateColor,
-        fillOpacity: validateNumber,
-        firstArrow: false,
-        fontSize: validateInteger,
-        dash: validateInteger,
-        gridX: validateNumber,
-        gridY: validateNumber,
-        // POI: Do we have to add something here?
-        hasGrid: false,
-        highlightFillColor: validateColor,
-        highlightFillOpacity: validateNumber,
-        highlightStrokeColor: validateColor,
-        highlightStrokeOpacity: validateNumber,
-        insertTicks: false,
-        //: validateScreenCoords,
-        lastArrow: false,
-        layer: validateNotNegativeInteger,
-        majorHeight: validateInteger,
-        minorHeight: validateInteger,
-        minorTicks: validateNotNegative,
-        minTicksDistance: validatePositiveInteger,
-        numberPointsHigh: validatePositiveInteger,
-        numberPointsLow: validatePositiveInteger,
-        opacity: validateNumber,
-        radius: validateNumber,
-        RDPsmoothing: false,
-        renderer: validateRenderer,
-        right: validatePixel,
-        showCopyright: false,
-        showInfobox: false,
-        showNavigation: false,
-        size: validateNotNegative, //validateInteger,
-        snapSizeX: validatePositive,
-        snapSizeY: validatePositive,
-        snapWidth: validateNumber,
-        snapToGrid: false,
-        snatchDistance: validateNotNegative,
-        straightFirst: false,
-        straightLast: false,
-        stretch: false,
-        strokeColor: validateColor,
-        strokeOpacity: validateNumber,
-        strokeWidth: validateNotNegative, //validateInteger,
-        takeFirst: false,
-        takeSizeFromFile: false,
-        to10: false,
-        toOrigin: false,
-        translateTo10: false,
-        translateToOrigin: false,
-        useASCIIMathML: false,
-        useDirection: false,
-        useMathJax: false,
-        withLabel: false,
-        withTicks: false,
-        zoom: false,
-    };
-
-    // this seems like a redundant step but it makes sure that
-    // all properties in the validator object have lower case names
-    // and the validator object is easier to read.
-    for (i in validators) {
-        if (validators.hasOwnProperty(i)) {
-            v[i.toLowerCase()] = validators[i];
-        }
-    }
-
-    return v;
-}
-
-/**
- * All point faces can be defined with more than one name, e.g. a cross faced point can be given
- * by face equal to 'cross' or equal to 'x'. This method maps all possible values to fixed ones to
- * simplify if- and switch-clauses regarding point faces. The translation table is as follows:
- * <table>
- * <tr><th>Input</th><th>Output</th></tr>
- * <tr><td>cross</td><td>x</td></tr>
- * <tr><td>circle</td><td>o</td></tr>
- * <tr><td>square, []</td><td>[]</td></tr>
- * <tr><td>plus</td><td>+</td></tr>
- * <tr><td>minus</td><td>-</td></tr>
- * <tr><td>divide</td><td>|</td></tr>
- * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
- * <tr><td>triangleup</td><td>^, a, A</td></tr>
- * <tr><td>triangledown</td><td>v</td></tr>
- * <tr><td>triangleleft</td><td>&lt;</td></tr>
- * <tr><td>triangleright</td><td>&gt;</td></tr>
- * </table>
- * @param {String} s A string which should determine a valid point face.
- * @returns {String} Returns a normalized string or undefined if the given string is not a valid
- * point face.
- */
-normalizePointFace(s) {
-    var map = {
-        cross: 'x',
-        x: 'x',
-        circle: 'o',
-        o: 'o',
-        square: '[]',
-        '[]': '[]',
-        plus: '+',
-        '+': '+',
-        divide: '|',
-        '|': '|',
-        minus: '-',
-        '-': '-',
-        diamond: '<>',
-        '<>': '<>',
-        diamond2: '<<>>',
-        '<<>>': '<<>>',
-        triangleup: '^',
-        A: '^',
-        a: '^',
-        '^': '^',
-        triangledown: 'v',
-        v: 'v',
-        triangleleft: '<',
-        '<': '<',
-        triangleright: '>',
-        '>': '>'
-    };
-
-    return map[s];
-};
 

@@ -33,8 +33,8 @@
 /*global JXG:true define: true*/
 /*jslint nomen: true plusplus: true*/
 
-import { JXG } from "./jxg.js";
-import { Board } from "./base/board.js";
+// import { JXG } from "./jxg.js";
+// import { Board } from "./base/board.js";
 import { JSXMath } from "./math/jsxmath.js";
 import { Color } from "./utils/color.js";
 import { Type } from "./utils/type.js";
@@ -42,18 +42,70 @@ import { Type } from "./utils/type.js";
 import {
     BoardOptions, GeometryElementOptions, GridOptions, LayerOptions,
     NavbarOptions, PointOptions, TextOptions, LegendOptions,
-    TickOptions, CurveOptions, PrecisionOptions,
+    TickOptions, CurveOptions, PrecisionOptions, ConicOptions,
     HatchOptions, AngleOptions, ArcOptions, ArrowOptions,
-    AxisOptions,
-    BisectorOptions,
-    BisectorlinesOptions,
-    BoxplotOptions,
+    AxisOptions, CircumcirclesectorOptions, BisectorOptions,
+    BisectorlinesOptions, InputOptions, LineOptions,
+    BoxplotOptions, MeasurementOptions, LabelOptions,
     CardinalsplineOptions,
     ChartOptions,
     CircleOptions,
     CircumcircleOptions,
     CircumcirclearcOptions,
+    CombOptions,
+    ForeignobjectOptions,
+    ImageOptions,
+    ImplicitcurveOptions,
+    IncircleOptions,
+    InequalityOptions,
+    IntegralOptions,
+    IntersectionOptions,
+    LocusOptions,
+    MetapostsplineOptions,
+    MirrorelementOptions,
+    NonreflexangleOptions,
+    NormalOptions,
+    OrthogonalprojectionOptions,
+    OtherintersectionOptions,
+    ParallelOptions,
+    ParallelogramOptions,
+    ParallelpointOptions,
+    PerpendicularOptions,
+    PerpendicularsegmentOptions,
+    PolygonOptions,
+    PolygonalchainOptions,
+    PrescribedangleOptions,
+    ReflectionOptions,
+    RegularpolygonOptions,
+    RiemannsumOptions,
+    SectorOptions,
+    SemicircleOptions,
+    SliderOptions,
+    SlopefieldOptions,
+    SlopetriangleOptions,
+    SmartlabelangleOptions,
+    SmartlabelcircleOptions,
+    JcOptions,
+    SmartlabelpointOptions,
+    tangenttoOptions,
+    TapemeasureOptions,
+    TracecurveOptions,
+    VectorfieldOptions,
+    HtmlsliderOptions,
+    GroupOptions,
+    TurtleOptions,
+    TangentOptions,
+    StepfunctionOptions,
+    SmartlabelpolygonOptions,
+    SegmentOptions,
+    ReflexangleOptions,
+    InfoboxOptions,
+    GliderOptions,
+    FunctiongraphOptions,
+    CheckboxOptions,
+    ButtonOptions,
 } from "./optionInterfaces.js"
+import { MeasureMemoryOptions } from "vm";
 
 /**
  * Options Namespace
@@ -96,13 +148,14 @@ export class Options {
         ticks: 2,
         grid: 1,
         image: 0,
-        trace: 0
+        trace: 0,
+        board: 0,
     }
 
 
-    static jc: {
-        enabled: true
-        compile: true
+    static jc: JcOptions = {
+        enabled: true,
+        compile: true,
     }
 
     /*
@@ -738,25 +791,9 @@ export class Options {
     }
 
     /* special button options */
-    button: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Control the attribute "disabled" of the HTML button.
-         *
-         * @name disabled
-         * @memberOf Button.prototype
-         *
-         * @type Boolean
-         * @default false
-         */
-        disabled: false
-
+    static button:ButtonOptions= {
+        disabled: false,
         display: 'html'
-
-        /**#@-*/
     }
 
     /* special cardinal spline options */
@@ -778,8 +815,8 @@ export class Options {
     static chart: ChartOptions = {
         chartStyle: 'line',
         colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
-        highlightcolors: null,
-        fillcolor: 'none',
+        highlightcolors: [],
+        fillColor: 'none',
         highlightonsector: false,
         highlightbysize: false,
 
@@ -790,36 +827,10 @@ export class Options {
     }
 
     /* special html slider options */
-    checkbox: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Control the attribute "disabled" of the HTML checkbox.
-         *
-         * @name disabled
-         * @memberOf Checkbox.prototype
-         *
-         * @type Boolean
-         * @default false
-         */
-        disabled: false
-
-        /**
-         * Control the attribute "checked" of the HTML checkbox.
-         *
-         * @name checked
-         * @memberOf Checkbox.prototype
-         *
-         * @type Boolean
-         * @default false
-         */
-        checked: false
-
+    static checkbox:CheckboxOptions = {
+        disabled: false,
+        checked: false,
         display: 'html'
-
-        /**#@-*/
     }
 
     /*special circle options */
@@ -882,30 +893,19 @@ export class Options {
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
-        useDirection: true
-
-        /**
-         * Attributes for center point.
-         *
-         * @type Point
-         * @name CircumcircleArc#center
-         */
+        useDirection: true,
         center: {
-            visible: false
-            withLabel: false
-            fixed: false
-            name: ''
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: '',
         }
         /**#@-*/
     }
 
     /* special options for circumcircle sector of 3 points */
-    circumcirclesector: {
-        /**#@+
-         * @visprop
-         */
-
-        useDirection: true
+    static circumcirclesector: CircumcirclesectorOptions = {
+        useDirection: true,
         fillColor: Color.palette.yellow,
         highlightFillColor: Color.palette.yellow,
         fillOpacity: 0.3,
@@ -920,158 +920,37 @@ export class Options {
          * @name Circle#point
          */
         point: {
-            visible: false
-            fixed: false
-            withLabel: false
-            name: ''
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            name: '',
         }
         /**#@-*/
     }
 
     /* special options for comb */
-    comb: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Frequency of comb elements.
-         *
-         * @type Number
-         * @name Comb#frequency
-         * @default 0.2
-         */
+    static comb: CombOptions = {
         frequency: 0.2,
-
-        /**
-         * Width of the comb.
-         *
-         * @type Number
-         * @name Comb#width
-         * @default 0.4
-         */
         width: 0.4,
-
-        /**
-         * Angle - given in radians - under which comb elements are positioned.
-         *
-         * @type Number
-         * @name Comb#angle
-         * @default Math.PI / 3 (i.e. &pi; /3  or 60^° degrees)
-         */
         angle: 1.04719755,    // Math.PI /3   // TS doesn't like Math (namespace) or computations here
-
-        /**
-         * Should the comb go right to left instead of left to right.
-         *
-         * @type Boolean
-         * @name Comb#reverse
-         * @default false
-         */
-        reverse: false
-
-        /**
-         * Attributes for first defining point of the comb.
-         *
-         * @type Point
-         * @name Comb#point1
-         */
-        point1: {
-            visible: false
-            withLabel: false
-            fixed: false
-            name: ''
-        }
-
-        /**
-         * Attributes for second defining point of the comb.
-         *
-         * @type Point
-         * @name Comb#point2
-         */
-        point2: {
-            visible: false
-            withLabel: false
-            fixed: false
-            name: ''
-        }
-
-        // /**
-        //  * Attributes for the curve displaying the comb.
-        //  *
-        //  * @type Curve
-        //  * @name Comb#curve
-        //  */
-        // curve: {
-        //     strokeWidth: 1,
-        //     strokeColor: '#0000ff',
-        //     fillColor: 'none'
-        // }
+        reverse: false,
+        point1: { visible: false, withLabel: false, fixed: false, name: '', },
+        point2: { visible: false, withLabel: false, fixed: false, name: '', },
         strokeWidth: 1,
         strokeColor: '#0000ff',
         fillColor: 'none'
     }
 
     /* special conic options */
-    conic: {
-        /**#@+
-         * @visprop
-         */
-
+    static conic: ConicOptions = {
         fillColor: 'none',
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
-
-        /**
-         * Attributes for foci points.
-         *
-         * @type Point
-         * @name Conic#foci
-         */
-        foci: {
-            // points
-            fixed: false
-            visible: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for center point.
-         *
-         * @type Point
-         * @name Conic#center
-         */
-        center: {
-            visible: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for five points defining the conic, if some of them are given as coordinates.
-         *
-         * @type Point
-         * @name Conic#point
-         */
-        point: {
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for parabola line in case the line is given by two
-         * points or coordinate pairs.
-         *
-         * @type Line
-         * @name Conic#line
-         */
-        line: {
-            visible: false
-        }
-
-        /**#@-*/
+        foci: { fixed: false, visible: false, withLabel: false, name: '', },
+        center: { visible: false, withLabel: false, name: '', },
+        point: { withLabel: false, name: '', },
+        line: { visible: false, },
     }
 
 
@@ -1098,47 +977,19 @@ export class Options {
         plotVersion: 2,
         recursionDepthHigh: 17,
         recursionDepthLow: 15
-
-        /**#@-*/
     }
 
     /* special foreignObject options */
-    foreignobject: {
-        /**#@+
-         * @visprop
-         */
-
-        fixed: true
-        visible: true
-        needsRegularUpdate: false
-
-        /**
-         * List of attractor elements. If the distance of the foreignobject is less than
-         * attractorDistance the foreignobject is made to glider of this element.
-         *
-         * @name ForeignObject#attractors
-         *
-         * @type Array
-         * @default empty
-         */
+    static foreignobject: ForeignobjectOptions = {
+        fixed: true,
+        visible: true,
+        needsRegularUpdate: false,
         attractors: [],
-
-        /**
-         * If set to true this object is only evaluated once and not re-evaluated on update.
-         * This is necessary if you want to have a board within a foreignObject of another board.
-         *
-         * @name ForeignObject#evaluateOnlyOnce
-         *
-         * @type Boolean
-         * @default false
-         */
         evaluateOnlyOnce: false
-
-        /**#@-*/
     }
 
     /* special functiongraph options */
-    functiongraph: {
+    static functiongraph:FunctiongraphOptions = {
         /**#@+
          * @visprop
          */
@@ -1148,7 +999,7 @@ export class Options {
     }
 
     /* special glider options */
-    glider: {
+    static glider:GliderOptions = {
         /**#@+
          * @visprop
          */
@@ -1157,413 +1008,91 @@ export class Options {
         /**#@-*/
     }
 
-    group: {
+    static group: GroupOptions = {
         needsRegularUpdate: true
     }
 
     /* special html slider options */
-    htmlslider: {
-        /**#@+
-         * @visprop
-         */
-
-        // /**
-        //  *
-        //  * These affect the DOM element input type="range".
-        //  * The other attributes affect the DOM element div containing the range element.
-        //  */
+    static htmlslider: HtmlsliderOptions = {
         widthRange: 100,
         widthOut: 34,
         step: 0.01,
-
-        frozen: true
-        isLabel: false
+        frozen: true,
+        isLabel: false,
         strokeColor: '#000000',
         display: 'html',
         anchorX: 'left',
         anchorY: 'middle',
-        withLabel: false
-
-        /**#@-*/
+        withLabel: false,
     }
 
-    /* special image options */
-    image: {
-        /**#@+
-         * @visprop
-         */
 
-        imageString: null
+    /* special image options */
+    static image: ImageOptions = {
+        imageString: null,
         fillOpacity: 1.0,
         highlightFillOpacity: 0.6,
-
-
-        /**
-         * Defines the CSS class used by the image. CSS attributes defined in
-         * this class will overwrite the corresponding JSXGraph attributes, e.g.
-         * opacity.
-         * The default CSS class is defined in jsxgraph.css.
-         *
-         * @name Image#cssClass
-         *
-         * @see Image#highlightCssClass
-         * @type String
-         * @default 'JXGimage'
-         * @see Image#highlightCssClass
-         * @see Text#cssClass
-         * @see JXG.GeometryElement#cssClass
-         */
         cssClass: 'JXGimage',
-
-        /**
-         * Defines the CSS class used by the image when highlighted.
-         * CSS attributes defined in this class will overwrite the
-         * corresponding JSXGraph attributes, e.g. highlightFillOpacity.
-         * The default CSS class is defined in jsxgraph.css.
-         *
-         * @name Image#highlightCssClass
-         *
-         * @see Image#cssClass
-         * @type String
-         * @default 'JXGimageHighlight'
-         * @see Image#cssClass
-         * @see Image#highlightCssClass
-         * @see JXG.GeometryElement#highlightCssClass
-         */
         highlightCssClass: 'JXGimageHighlight',
-
-        /**
-         * Image rotation in degrees.
-         *
-         * @name Image#rotate
-         * @type Number
-         * @default 0
-         */
         rotate: 0,
-
-        /**
-         * Defines together with {@link Image#snapSizeY} the grid the image snaps on to.
-         * The image will only snap on user coordinates which are
-         * integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-         * of the default ticks of the default x axes of the board.
-         *
-         * @name Image#snapSizeX
-         *
-         * @see Point#snapToGrid
-         * @see Image#snapSizeY
-         * @see JXG.Board#defaultAxes
-         * @type Number
-         * @default 1
-         */
         snapSizeX: 1,
-
-        /**
-         * Defines together with {@link Image#snapSizeX} the grid the image snaps on to.
-         * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-         * of the default ticks of the default y axes of the board.
-         *
-         * @name Image#snapSizeY
-         *
-         * @see Point#snapToGrid
-         * @see Image#snapSizeX
-         * @see JXG.Board#defaultAxes
-         * @type Number
-         * @default 1
-         */
         snapSizeY: 1,
-
-        /**
-         * List of attractor elements. If the distance of the image is less than
-         * attractorDistance the image is made to glider of this element.
-         *
-         * @name Image#attractors
-         *
-         * @type Array
-         * @default empty
-         */
         attractors: []
-
-        /**#@-*/
     }
 
     /* special implicitcurve options */
-    implicitcurve: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Defines the margin (in user coordinates) around the JSXGraph board in which the
-         * implicit curve is plotted.
-         *
-         * @name ImplicitCurve#margin
-         * @type {Number|Function}
-         * @default 1
-         */
+    static implicitcurve: ImplicitcurveOptions = {
         margin: 1,
-
-        /**
-         * Horizontal resolution: distance (in pixel) between vertical lines to search for components of the implicit curve.
-         * A small number increases the running time. For large number components may be missed.
-         * Minimum value is 0.01.
-         *
-         * @name ImplicitCurve#resolution_outer
-         * @type {Number|Function}
-         * @default 5
-         */
         resolution_outer: 5,
-
-        /**
-         * Vertical resolution (in pixel) to search for components of the implicit curve.
-         * A small number increases the running time. For large number components may be missed.
-         * Minimum value is 0.01.
-         *
-         * @name ImplicitCurve#resolution_inner
-         * @type {Number|Function}
-         * @default 5
-         */
         resolution_inner: 5,
-
-        /**
-         * Maximum iterations for one component of the implicit curve.
-         *
-         * @name ImplicitCurve#max_steps
-         * @type {Number|Function}
-         * @default 1024
-         */
         max_steps: 1024,
-
-        /**
-         * Angle &alpha;<sub>0</sub> between two successive tangents: determines the smoothness of
-         * the curve.
-         *
-         * @name ImplicitCurve#alpha_0
-         * @type {Number|Function}
-         * @default 0.05
-         */
         alpha_0: 0.05,
-
-        /**
-         * Tolerance to find starting points for the tracing phase of a component.
-         *
-         * @name ImplicitCurve#tol_0
-         * @type {Number|Function}
-         * @default JXG.Math.eps
-         */
-        tol_u0: 0.000001  // Mat.eps,
-
-        /**
-         * Tolerance for the Newton steps.
-         *
-         * @name ImplicitCurve#tol_newton
-         * @type {Number|Function}
-         * @default 1.0e-7
-         */
+        tol_u0: 0.000001,  // Mat.eps,
         tol_newton: 1.0e-7,
-
-        /**
-         * Tolerance for cusp / bifurcation detection.
-         *
-         * @name ImplicitCurve#tol_cusp
-         * @type {Number|Function}
-         * @default 0.05
-         */
         tol_cusp: 0.05,
-
-        /**
-         * If two points are closer than this value, we bail out of the tracing phase for that
-         * component.
-         *
-         * @name ImplicitCurve#tol_progress
-         * @type {Number|Function}
-         * @default 0.0001
-         */
         tol_progress: 0.0001,
-
-        /**
-         * Half of the box size (in user units) to search for existing line segments in the quadtree.
-         *
-         * @name ImplicitCurve#qdt_box
-         * @type {Number|Function}
-         * @default 0.2
-         */
         qdt_box: 0.2,
-
-        /**
-         * Inverse of desired number of Newton steps.
-         *
-         * @name ImplicitCurve#kappa_0
-         * @type {Number|Function}
-         * @default 0.2
-         */
         kappa_0: 0.2,
-
-        /**
-         * Allowed distance (in user units) of predictor point to curve.
-         *
-         * @name ImplicitCurve#delta_0
-         * @type {Number|Function}
-         * @default 0.05
-         */
         delta_0: 0.05,
-
-        /**
-         * Initial step width (in user units).
-         *
-         * @name ImplicitCurve#h_initial
-         * @type {Number|Function}
-         * @default 0.1
-         */
         h_initial: 0.1,
-
-        /**
-         * If h is below this threshold (in user units), we bail out
-         * of the tracing phase of that component.
-         *
-         * @name ImplicitCurve#h_critical
-         * @type {Number|Function}
-         * @default 0.001
-         */
         h_critical: 0.001,
-
-        /**
-         * Maximum step width (in user units).
-         *
-         * @name ImplicitCurve#h_max
-         * @type {Number|Function}
-         * @default 0.5
-         */
         h_max: 0.5,
-
-        /**
-         * Allowed distance (in user units multiplied by actual step width) to detect loop.
-         *
-         * @name ImplicitCurve#loop_dist
-         * @type {Number|Function}
-         * @default 0.09
-         */
         loop_dist: 0.09,
-
-        /**
-         * Minimum acos of angle to detect loop.
-         *
-         * @name ImplicitCurve#loop_dir
-         * @type {Number|Function}
-         * @default 0.99
-         */
         loop_dir: 0.99,
-
-        /**
-         * Use Gosper's loop detector.
-         *
-         * @name ImplicitCurve#loop_detection
-         * @type {Boolean|Function}
-         * @default true
-         */
         loop_detection: true
-
-        /**#@-*/
     }
 
     /* special options for incircle of 3 points */
-    incircle: {
-        /**#@+
-         * @visprop
-         */
-
+    static incircle: IncircleOptions = {
         fillColor: 'none',
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
-
-        /**
-         * Attributes of circle center.
-         *
-         * @type Point
-         * @name Incircle#center
-         */
         center: {               // center point
-            visible: false
-            fixed: false
-            withLabel: false
-            fillColor: Color.palette.red
-            strokeColor: Color.palette.red
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
             highlightFillColor: '#c3d9ff',
             highlightStrokeColor: '#c3d9ff',
             name: ''
         }
-        /**#@-*/
     }
 
-    inequality: {
-        /**#@+
-         * @visprop
-         */
-
-        fillColor: Color.palette.red
+    static inequality: InequalityOptions = {
+        fillColor: Color.palette.red,
         fillOpacity: 0.2,
         strokeColor: 'none',
-
-        /**
-         * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
-         * greater (or equal) than.
-         *
-         * @type Boolean
-         * @default false
-         * @name Inequality#inverse
-         * @visprop
-         */
         inverse: false
-        /**#@-*/
     }
 
-    infobox: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Horizontal offset in pixel of the infobox text from its anchor point.
-         *
-         * @type Number
-         * @default -20
-         * @name JXG.Board.infobox#distanceX
-         * @visprop
-         */
+    static infobox: InfoboxOptions ={
         distanceX: -20,
-
-        /**
-         * Vertical offset in pixel of the infobox text from its anchor point.
-         *
-         * @type Number
-         * @default 25
-         * @name JXG.Board.infobox#distanceY
-         * @visprop
-         */
         distanceY: 25,
-
-        /**
-         * Internationalization support for infobox text.
-         *
-         * @name JXG.Board.infobox#intl
-         * @type object
-         * @default <pre>{
-         *    enabled: 'inherit',
-         *    options: {}
-         * }</pre>
-         * @visprop
-         * @see JXG.Board#intl
-         * @see Text#intl
-         */
-        intl: {
-            enabled: 'inherit',
-            options: {}
-        }
-
+        intl: { enabled: 'inherit', options: {}, },
         fontSize: 12,
-        isLabel: false
+        isLabel: false,
         strokeColor: '#bbbbbb',
         display: 'html',             // 'html' or 'internal'
         anchorX: 'left',             //  'left', 'middle', or 'right': horizontal alignment
@@ -1573,11 +1102,11 @@ export class Options {
         cssClass: 'JXGinfobox',
         rotate: 0,                   // works for non-zero values only in combination
         // with display=='internal'
-        visible: true
-        parse: false
+        visible: true,
+        parse: false,
         transitionDuration: 0,
-        needsRegularUpdate: false
-        tabindex: null
+        needsRegularUpdate: false,
+        tabindex: null,
         viewport: [0, 0, 0, 0],
 
         ignoreForLabelAutoposition: true
@@ -1585,415 +1114,107 @@ export class Options {
     }
 
     /* special options for integral */
-    integral: {
-        /**#@+
-         * @visprop
-         */
-
+    static integral: IntegralOptions = {
         axis: 'x',        // 'x' or 'y'
-        withLabel: true    // Show integral value as text
-        fixed: true
+        withLabel: true,    // Show integral value as text
+        fixed: true,
         strokeWidth: 0,
         strokeOpacity: 0,
-        fillColor: Color.palette.red
+        fillColor: Color.palette.red,
         fillOpacity: 0.3,
-        highlightFillColor: Color.palette.red
+        highlightFillColor: Color.palette.red,
         highlightFillOpacity: 0.2,
-
-        /**
-         * Attributes of the (left) starting point of the integral.
-         *
-         * @type Point
-         * @name Integral#curveLeft
-         * @see Integral#baseLeft
-         */
         curveLeft: {    // Start point
-            visible: true
-            withLabel: false
-            color: Color.palette.red
+            visible: true,
+            withLabel: false,
+            color: Color.palette.red,
             fillOpacity: 0.8,
-            layer: 9
-        }
-
-        /**
-         * Attributes of the (left) base point of the integral.
-         *
-         * @type Point
-         * @name Integral#baseLeft
-         * @see Integral#curveLeft
-         */
+            layer: 9,
+        },
         baseLeft: {    // Start point
-            visible: false
-            fixed: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes of the (right) end point of the integral.
-         *
-         * @type Point
-         * @name Integral#curveRight
-         * @see Integral#baseRight
-         */
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            name: '',
+        },
         curveRight: {      // End point
-            visible: true
-            withLabel: false
-            color: Color.palette.red
+            visible: true,
+            withLabel: false,
+            color: Color.palette.red,
             fillOpacity: 0.8,
-            layer: 9
-        }
-
-        /**
-         * Attributes of the (right) base point of the integral.
-         *
-         * @type Point
-         * @name Integral#baseRight
-         * @see Integral#curveRight
-         */
+            layer: 9,
+        },
         baseRight: {      // End point
-            visible: false
-            fixed: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for integral label.
-         *
-         * @type Label
-         * @name Integral#label
-         * @default <pre>{
-         *      fontSize: 20,
-         *      digits: 4,
-         *      intl: {
-         *          enabled: false
-         *          options: {}
-         *      }
-         *    }</pre>
-         */
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            name: '',
+        },
         label: {
             fontSize: 20,
             digits: 4,
             intl: {
-                enabled: false
-                options: {}
-            }
-        }
-        /**#@-*/
+                enabled: false,
+                options: {},
+            },
+        },
     }
 
+
+
     /* special input options */
-    input: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Control the attribute "disabled" of the HTML input field.
-         *
-         * @name disabled
-         * @memberOf Input.prototype
-         *
-         * @type Boolean
-         * @default false
-         */
-        disabled: false
-
-        /**
-         * Control the attribute "maxlength" of the HTML input field.
-         *
-         * @name maxlength
-         * @memberOf Input.prototype
-         *
-         * @type Number
-         * @default 524288 (as in HTML)
-         */
+    static input: InputOptions = {
+        disabled: false,
         maxlength: 524288,
-
-        display: 'html'
-
-        /**#@-*/
+        display: 'html',
     }
 
     /* special intersection point options */
-    intersection: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Used in {@link JXG.Intersection}.
-         * This flag sets the behaviour of intersection points of e.g.
-         * two segments. If true the intersection is treated as intersection of lines. If false
-         * the intersection point exists if the segments intersect setwise.
-         *
-         * @name Intersection.alwaysIntersect
-         * @type Boolean
-         * @default true
-         */
+    static intersection: IntersectionOptions = {
         alwaysIntersect: true
-
-        /**#@-*/
     }
 
     /* special line options */
-    line: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Configure the arrow head at the position of its first point or the corresponding
-         * intersection with the canvas border
-         *
-         * The attribute firstArrow can be a Boolean or an object with the following sub-attributes:
-         * <pre>
-         * {
-         *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
-         *      size: 6, // size of the arrow head. Default value is 6.
-         *               // This value is multiplied with the strokeWidth of the line
-         *               // Exception: for type=7 size is ignored
-         *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value
-         * }
-         * </pre>
-         * type=7 is the default for curves if firstArrow: true
-         * <p>
-         * An arrow head can be turned off with line.setAttribute({firstArrow: false}).
-         *
-         * @example
-         *     board.options.line.lastArrow = false;
-         *     board.options.line.firstArrow = {size: 10, highlightSize: 10};
-         *     board.options.line.point1 = {visible: false withLabel: true label: {visible: true anchorX: 'right'}};
-         *     board.options.line.strokeWidth = 4;
-         *     board.options.line.highlightStrokeWidth = 4;
-         *
-         *     board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1} point1: {name: 'type:1'}});
-         *     board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2} point1: {name: 'type:2'}});
-         *     board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3} point1: {name: 'type:3'}});
-         *     board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4} point1: {name: 'type:4'}});
-         *     board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5} point1: {name: 'type:5'}});
-         *     board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6} point1: {name: 'type:6'}});
-         *     board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7} point1: {name: 'type:7'}});
-         *
-         * </pre><div id="JXGc94a93da-c942-4204-8bb6-b39726cbb09b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGc94a93da-c942-4204-8bb6-b39726cbb09b',
-         *             {boundingbox: [-6, 6, 4,-4], axis: false showcopyright: false shownavigation: false});
-         *         board.options.line.lastArrow = false;
-         *         board.options.line.firstArrow = {size: 10, highlightSize: 10};
-         *         board.options.line.point1 = {visible: false withLabel: true label: {visible: true anchorX: 'right'}};
-         *         board.options.line.strokeWidth = 4;
-         *         board.options.line.highlightStrokeWidth = 4;
-         *
-         *         board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1} point1: {name: 'type:1'}});
-         *         board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2} point1: {name: 'type:2'}});
-         *         board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3} point1: {name: 'type:3'}});
-         *         board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4} point1: {name: 'type:4'}});
-         *         board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5} point1: {name: 'type:5'}});
-         *         board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6} point1: {name: 'type:6'}});
-         *         board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7} point1: {name: 'type:7'}});
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @name Line#firstArrow
-         * @see Line#lastArrow
-         * @see Line#touchFirstPoint
-         * @type Boolean | Object
-         * @default false
-         */
-        firstArrow: false
-
-        /**
-         * Configure the arrow head at the position of its second point or the corresponding
-         * intersection with the canvas border.
-         *
-         * The attribute lastArrow can be a Boolean or an object with the following sub-attributes:
-         * <pre>
-         * {
-         *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
-         *      size: 6, // size of the arrow head. Default value is 6.
-         *               // This value is multiplied with the strokeWidth of the line.
-         *               // Exception: for type=7 size is ignored
-         *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value is 6.
-         * }
-         * </pre>
-         * type=7 is the default for curves if lastArrow: true
-         * <p>
-         * An arrow head can be turned off with line.setAttribute({lastArrow: false}).
-         *
-         * @example
-         *     var p1 = board.create('point', [-5, 2], {size:1});
-         *     var p2 = board.create('point', [5, 2], {size:10});
-         *     var li = board.create('segment', ['A','B'],
-         *         {name:'seg',
-         *          strokeColor:'#000000',
-         *          strokeWidth:1,
-         *          highlightStrokeWidth: 5,
-         *          lastArrow: {type: 2, size: 8, highlightSize: 6}
-         *          touchLastPoint: true
-         *          firstArrow: {type: 3, size: 8}
-         *         });
-         *
-         * </pre><div id="JXG184e915c-c2ef-11e8-bece-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG184e915c-c2ef-11e8-bece-04d3b0c2aad3',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *         var p1 = board.create('point', [-5, 2], {size:1});
-         *         var p2 = board.create('point', [5, 2], {size:10});
-         *         var li = board.create('segment', ['A','B'],
-         *             {name:'seg',
-         *              strokeColor:'#000000',
-         *              strokeWidth:1,
-         *              highlightStrokeWidth: 5,
-         *              lastArrow: {type: 2, size: 8, highlightSize: 6}
-         *              touchLastPoint: true
-         *              firstArrow: {type: 3, size: 8}
-         *             });
-         *     })();
-         *
-         * </script>
-         *
-         * @example
-         *     board.options.line.strokeWidth = 4;
-         *     board.options.line.highlightStrokeWidth = 4;
-         *     board.options.line.firstArrow = false;
-         *     board.options.line.lastArrow = {size: 10, highlightSize: 10};
-         *     board.options.line.point2 = {visible: false withLabel: true label: {visible: true}};
-         *
-         *     board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1} point2: {name: 'type:1'}});
-         *     board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2} point2: {name: 'type:2'}});
-         *     board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3} point2: {name: 'type:3'}});
-         *     board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4} point2: {name: 'type:4'}});
-         *     board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5} point2: {name: 'type:5'}});
-         *     board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6} point2: {name: 'type:6'}});
-         *     board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7} point2: {name: 'type:7'}});
-         *
-         * </pre><div id="JXGca206b1c-e319-4899-8b90-778f53fd926d" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGca206b1c-e319-4899-8b90-778f53fd926d',
-         *             {boundingbox: [-6, 6, 6,-4], axis: false showcopyright: false shownavigation: false});
-         *         board.options.line.strokeWidth = 4;
-         *         board.options.line.highlightStrokeWidth = 4;
-         *         board.options.line.firstArrow = false;
-         *         board.options.line.lastArrow = {size: 10, highlightSize: 10};
-         *         board.options.line.point2 = {visible: false withLabel: true label: {visible: true}};
-         *
-         *         board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1} point2: {name: 'type:1'}});
-         *         board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2} point2: {name: 'type:2'}});
-         *         board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3} point2: {name: 'type:3'}});
-         *         board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4} point2: {name: 'type:4'}});
-         *         board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5} point2: {name: 'type:5'}});
-         *         board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6} point2: {name: 'type:6'}});
-         *         board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7} point2: {name: 'type:7'}});
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @name Line#lastArrow
-         * @see Line#firstArrow
-         * @see Line#touchLastPoint
-         * @type Boolean | Object
-         * @default false
-         */
-        lastArrow: false
-
-        /**
-         * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-         * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-         * ends outside of the canvas (which is invisible).
-         *
-         * @name Line#margin
-         * @type Number
-         * @default 0
-         */
+    static line: LineOptions = {
+        firstArrow: false,
+        lastArrow: false,
         margin: 0,
-
-        /**
-         * If true line stretches infinitely in direction of its first point.
-         * Otherwise it ends at point1.
-         *
-         * @name Line#straightFirst
-         * @see Line#straightLast
-         * @type Boolean
-         * @default true
-         */
-        straightFirst: true
-
-        /**
-         * If true line stretches infinitely in direction of its second point.
-         * Otherwise it ends at point2.
-         *
-         * @name Line#straightLast
-         * @see Line#straightFirst
-         * @type Boolean
-         * @default true
-         */
-        straightLast: true
-
+        straightFirst: true,
+        straightLast: true,
         fillColor: 'none',           // Important for VML on IE
         highlightFillColor: 'none',  // Important for VML on IE
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
-        withTicks: false
-
-        /**
-         * Attributes for first defining point of the line.
-         *
-         * @type Point
-         * @name Line#point1
-         */
+        withTicks: false,
         point1: {                  // Default values for point1 if created by line
-            fillColor: Color.palette.red
-            strokeColor: Color.palette.red
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
             highlightFillColor: '#c3d9ff',
             highlightStrokeColor: '#c3d9ff',
             layer: 9,
-
-            visible: false
-            withLabel: false
-            fixed: false
-            name: ''
-        }
-
-        /**
-         * Attributes for second defining point of the line.
-         *
-         * @type Point
-         * @name Line#point2
-         */
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: '',
+        },
         point2: {                  // Default values for point2 if created by line
-            fillColor: Color.palette.red
-            strokeColor: Color.palette.red
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
             highlightFillColor: '#c3d9ff',
             highlightStrokeColor: '#c3d9ff',
             layer: 9,
-
-            visible: false
-            withLabel: false
-            fixed: false
-            name: ''
-        }
-
-        /**
-         * Attributes for ticks of the line.
-         *
-         * @name Line#ticks
-         * @type Object
-         * @see Ticks
-         */
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: '',
+        },
         ticks: {
-            drawLabels: true
+            drawLabels: true,
             label: {
                 offset: [4, -15] // This seems to be a good offset for 12 point fonts
-            }
-            drawZero: false
-            insertTicks: false
+            },
+            drawZero: false,
+            insertTicks: false,
             ticksDistance: 1,
             minTicksDistance: 50,
             minorHeight: 4,          // if <0: full width and height
@@ -2001,470 +1222,66 @@ export class Options {
             minorTicks: 4,
             strokeOpacity: 0.3,
             visible: 'inherit'
-        }
-
-        /**
-         * Attributes for the line label.
-         *
-         * @type Object
-         * @name Line#label
-         * @see Label
-         */
+        },
         label: {
-            position: 'llft'
-        }
-
-        /**
-         * If set to true the point will snap to a grid defined by
-         * {@link Point#snapSizeX} and {@link Point#snapSizeY}.
-         *
-         * @see Point#snapSizeX
-         * @see Point#snapSizeY
-         * @type Boolean
-         * @name Line#snapToGrid
-         * @default false
-         */
-        snapToGrid: false
-
-        /**
-         * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
-         * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-         * of the default ticks of the default x axes of the board.
-         *
-         * @see Point#snapToGrid
-         * @see Point#snapSizeY
-         * @see JXG.Board#defaultAxes
-         * @type Number
-         * @name Line#snapSizeX
-         * @default 1
-         */
+            position: 'llft',
+        },
+        snapToGrid: false,
         snapSizeX: 1,
-
-        /**
-         * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
-         * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-         * of the default ticks of the default y axes of the board.
-         *
-         * @see Point#snapToGrid
-         * @see Point#snapSizeX
-         * @see JXG.Board#defaultAxes
-         * @type Number
-         * @name Line#snapSizeY
-         * @default 1
-         */
         snapSizeY: 1,
-
-        /**
-         * If set to true {@link Line#firstArrow} is set to true and the point is visible,
-         * the arrow head will just touch the circle line of the start point of the line.
-         *
-         * @see Line#firstArrow
-         * @type Boolean
-         * @name Line#touchFirstPoint
-         * @default false
-         */
-        touchFirstPoint: false
-
-        /**
-         * If set to true {@link Line#lastArrow} is set to true and the point is visible,
-         * the arrow head will just touch the circle line of the start point of the line.
-         * @see Line#firstArrow
-         * @type Boolean
-         * @name Line#touchLastPoint
-         * @default false
-         */
-        touchLastPoint: false
-
-        /**#@-*/
+        touchFirstPoint: false,
+        touchLastPoint: false,
     }
 
     /* special options for locus curves */
-    locus: {
-        /**#@+
-         * @visprop
-         */
-
-        translateToOrigin: false
-        translateTo10: false
-        stretch: false
-        toOrigin: null
-        to10: null
-        /**#@-*/
+    static locus: LocusOptions = {
+        translateToOrigin: false,
+        translateTo10: false,
+        stretch: false,
+        toOrigin: null,
+        to10: null,
     }
 
+
     /* special measurement options */
-    measurement: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * This specifies the unit of measurement in dimension 1 (e.g. length).
-         * A power is automatically added to the string.
-         * If you want to use different units for each dimension, see {@link Measurement#units}.
-         *
-         * @example
-         * var p1 = board.create("point", [0,1]),
-         *     p2 = board.create("point", [3,1]),
-         *     c = board.create("circle", [p1, p2]);
-         *
-         * board.create("measurement", [-2, -3, ["Perimeter", c]], {
-         *     baseUnit: " m"
-         * });
-         * board.create("measurement", [1, -3, ["Area", c]], {
-         *     baseUnit: " m"
-         * });
-         *
-         * </pre><div id="JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false grid: false showcopyright: false shownavigation: false});
-         *
-         *     var p1 = board.create("point", [0,1]),
-         *         p2 = board.create("point", [3,1]),
-         *         c = board.create("circle", [p1, p2]);
-         *
-         *     board.create("measurement", [-2, -3, ["Perimeter", c]], {
-         *         baseUnit: " m"
-         *     });
-         *     board.create("measurement", [1, -3, ["Area", c]], {
-         *         baseUnit: " m"
-         *     });
-         *
-         *     })();
-         * </script><pre>
-         *
-         * @see Measurement#units
-         * @name Measurement#baseUnit
-         * @type String
-         * @default ''
-         */
-        baseUnit: ''
-
-        /**
-         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
-         * and assigns a string to each dimension.
-         * If a dimension has no specification, {@link Measurement#baseUnit} is used.
-         *
-         * @example
-         * var p1 = board.create("point", [0,1]),
-         *     p2 = board.create("point", [3,1]),
-         *     c = board.create("circle", [p1, p2]);
-         *
-         * board.create("measurement", [-3, -3, ["Perimeter", c]], {
-         *     baseUnit: " m",
-         *     units: {
-         *          1: " length unit",
-         *       2: " area unit"
-         *     }
-         * });
-         * board.create("measurement", [1, -3, ["Area", c]], {
-         *     baseUnit: " m",
-         *     units: {
-         *          dim1: " length unit",
-         *       dim2: " area unit"
-         *     }
-         * });
-         *
-         * </pre><div id="JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false grid: false showcopyright: false shownavigation: false});
-         *     var p1 = board.create("point", [0,1]),
-         *         p2 = board.create("point", [3,1]),
-         *         c = board.create("circle", [p1, p2]);
-         *
-         *     board.create("measurement", [-3, -3, ["Perimeter", c]], {
-         *         baseUnit: " m",
-         *         units: {
-         *          1: " length unit",
-         *           2: " area unit"
-         *         }
-         *     });
-         *     board.create("measurement", [1, -3, ["Area", c]], {
-         *         baseUnit: " m",
-         *         units: {
-         *          dim1: " length unit",
-         *           dim2: " area unit"
-         *         }
-         *     });
-         *
-         *     })();
-         * </script><pre>
-         *
-         * @see Measurement#baseUnit
-         * @name Measurement#units
-         * @type Object
-         * @default {}
-         */
-        units: {}
-
-        /**
-         * Determines whether a prefix is displayed before the measurement value and unit.
-         *
-         * @see Measurement#prefix
-         * @name Measurement#showPrefix
-         * @type Boolean
-         * @default true
-         */
-        showPrefix: true
-
-        /**
-         * Determines whether a suffix is displayed after the measurement value and unit.
-         *
-         * @see Measurement#suffix
-         * @name Measurement#showSuffix
-         * @type Boolean
-         * @default true
-         */
-        showSuffix: true
-
-        /**
-         * String that is displayed before the measurement and its unit.
-         *
-         * @see Measurement#showPrefix
-         * @name Measurement#prefix
-         * @type String
-         * @default ''
-         */
-        prefix: ''
-
-        /**
-         * String that is displayed after the measurement and its unit.
-         *
-         * @see Measurement#showSuffix
-         * @name Measurement#suffix
-         * @type String
-         * @default ''
-         */
-        suffix: ''
-
-        /**
-         * Dimension of the measured data. This measurement can only be combined with a measurement of a suitable dimension.
-         * Overwrites the dimension returned by the Dimension() method.
-         * Normally, the default value null is used here to automatically determine the dimension.
-         *
-         * However, if the coordinates or a direction vector are measured the value is usually returned as an array.
-         * To tell the measurement that the function {@link Measurement#formatCoords} or {@link Measurement#formatDirection} should be used
-         * to display the array properly, 'coords' or 'direction' must be specified here.
-         *
-         * @see Measurement#formatCoords
-         * @see Measurement#formatDirection
-         * @name Measurement#dim
-         * @type Number|'coords'|'direction'
-         * @default null
-         */
-        dim: null
-
-        /**
-         * Function to format coordinates. Does only have an effect, if {@link Measurement#dim} is set to 'coords'.
-         *
-         * @example
-         * var p = board.create("point", [-2, 0]);
-         *
-         * board.create("measurement", [0, -3, ["Coords", p]], {
-         *     dim: 'coords',
-         *     formatCoords: function (_,x,y,z) {
-         *         if (parseFloat(z) !== 1)
-         *             return 'Infinit coords';
-         *         else
-         *             return '(' + x + ' | ' + y + ')';
-         *     }
-         * });
-         *
-         * </pre><div id="JXGa0606ad6-971b-47d4-9a72-ca7df65890f5" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGa0606ad6-971b-47d4-9a72-ca7df65890f5',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *     var p = board.create("point", [-2, 0]);
-         *
-         *     board.create("measurement", [0, -3, ["Coords", p]], {
-         *         dim: 'coords',
-         *         formatCoords: function (_,x,y,z) {
-         *             if (parseFloat(z) !== 1)
-         *                 return 'Infinit coords';
-         *             else
-         *                 return '(' + x + ' | ' + y + ')';
-         *         }
-         *     });
-         *     })();
-         * </script><pre>
-         *
-         * @see Measurement#dim
-         * @name Measurement#formatCoords
-         * @type Function
-         * @param {Measurement} self Pointer to the measurement object itself
-         * @param {Number} x c-coordinate
-         * @param {Number} y c-coordinate
-         * @param {Number} z c-coordinate
-         * @returns String
-         */
-        formatCoords: Function = (self, x, y, z: string) => (parseFloat(z) !== 1)?'Infinit coords': '(' + x + ', ' + y + ')';
-
-
-        /**
-         * Function to format direction vector. Does only have an effect, if {@link Measurement#dim} is set to 'direction'.
-         *
-         * @example
-         * var p1 = board.create("point", [0,1]),
-         *     p2 = board.create("point", [3,1]),
-         *     s = board.create("segment", [p1, p2]);
-         *
-         * board.create("measurement", [0, -2, ["Direction", s]], {
-         *     dim: 'direction',
-         *     formatDirection: function (self,x,y) {
-         *        return '\\[\\frac{' + x + '}{' + y + '} = ' +
-         *            (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
-         *            '\\]';
-         *     }
-         *     useMathJax: true
-         * });
-         *
-         * </pre><div id="JXG57435de0-16f2-42be-94d8-3d2b31caefcd" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG57435de0-16f2-42be-94d8-3d2b31caefcd',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false grid: false showcopyright: false shownavigation: false});
-         *     var p1 = board.create("point", [0,1]),
-         *         p2 = board.create("point", [3,1]),
-         *         s = board.create("segment", [p1, p2]);
-         *
-         *     board.create("measurement", [0, -2, ["Direction", s]], {
-         *         dim: 'direction',
-         *         formatDirection: function (self,x,y) {
-         *            return '\\[\\frac{' + x + '}{' + y + '} = ' +
-         *                (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
-         *                '\\]';
-         *         }
-         *         useMathJax: true
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @name Measurement#formatDirection
-         * @type Function
-         * @param {Measurement} self Pointer to the measurement object itself
-         * @param {Number} x c-coordinate
-         * @param {Number} y c-coordinate
-         * @returns String
-         */
-        formatDirection: Function = (self, x, y) => '(' + x + ', ' + y + ')';
-
-
-        /**#@-*/
+    static measurement: MeasurementOptions = {
+        baseUnit: '',
+        units: {},
+        showPrefix: true,
+        showSuffix: true,
+        prefix: '',
+        suffix: '',
+        dim: null,
+        formatCoords: (self, x, y, z: string) => (parseFloat(z) !== 1) ? 'Infinit coords' : '(' + x + ', ' + y + ')',
+        formatDirection: (self, x, y) => '(' + x + ', ' + y + ')'
     }
 
     /* special metapost spline options */
-    metapostspline: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-          * Controls if the data points of the cardinal spline when given as
-          * arrays should be converted into {@link JXG.Points}.
-          *
-          * @name createPoints
-          * @memberOf Metapostspline.prototype
-          *
-          * @see Metapostspline#points
-          *
-          * @type Boolean
-          * @default true
-          */
-        createPoints: true
-
-        /**
-         * If set to true the supplied coordinates are interpreted as
-         * [[x_0, y_0], [x_1, y_1], p, ...].
-         * Otherwise, if the data consists of two arrays of equal length,
-         * it is interpreted as
-         * [[x_o x_1, ..., x_n], [y_0, y_1, ..., y_n]]
-         *
-         * @name isArrayOfCoordinates
-         * @memberOf Metapostspline.prototype
-         * @type Boolean
-         * @default true
-         */
-        isArrayOfCoordinates: true
-
-        /**
-         * Attributes for the points generated by Metapost spline in cases
-         * {@link createPoints} is set to true
-         *
-         * @name points
-         * @memberOf Metapostspline.prototype
-         *
-         * @see Metapostspline#createPoints
-         * @type Object
-         */
+    static metapostspline: MetapostsplineOptions = {
+        createPoints: true,
+        isArrayOfCoordinates: true,
         points: {
-            strokeOpacity: 0.5
-            fillOpacity: 0.5
-            highlightStrokeOpacity: 1.0
-            highlightFillOpacity: 1.0
-            withLabel: false
-            name: ''
-            fixed: false
+            strokeOpacity: 0.5,
+            fillOpacity: 0.5,
+            highlightStrokeOpacity: 1.0,
+            highlightFillOpacity: 1.0,
+            withLabel: false,
+            name: '',
+            fixed: false,
         }
-
-        /**#@-*/
     }
 
     /* special mirrorelement options */
-    mirrorelement: {
-        /**#@+
-         * @visprop
-         */
-
-        fixed: true
-
-        /**
-         * Attributes of mirror point, i.e. the point along which the element is mirrored.
-         *
-         * @type Point
-         * @name mirrorelement#point
-         */
-        point: {}
-
-        /**
-         * Attributes of circle center, i.e. the center of the circle,
-         * if a circle is the mirror element and the transformation type is 'Euclidean'
-         *
-         * @type Point
-         * @name mirrorelement#center
-         */
-        center: {}
-
-        /**
-         * Type of transformation. Possible values are 'Euclidean', 'projective'.
-         *
-         * If the value is 'Euclidean', the mirror element of a circle is again a circle,
-         * otherwise it is a conic section.
-         *
-         * @type String
-         * @name mirrorelement#type
-         * @default 'Euclidean'
-         */
+    static mirrorelement: MirrorelementOptions = {
+        fixed: true,
+        point: {},
+        center: {},
         type: 'Euclidean'
 
-        /**#@-*/
     }
 
     /* special nonreflexangle options */
-    nonreflexangle: {
-        /**#@+
-         * @visprop
-         */
-
-        /**#@-*/
+    static nonreflexangle: NonreflexangleOptions = {
     }
 
     // /* special options for Msector of 3 points */
@@ -2479,300 +1296,130 @@ export class Options {
     // }
 
     /* special options for normal lines */
-    normal: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeColor: '#000000' //  normal line
-
-        /**
-         * Attributes of helper point of normal.
-         *
-         * @type Point
-         * @name Normal#point
-         */
+    static normal: NormalOptions = {
+        strokeColor: '#000000', //  normal line
         point: {
-            visible: false
-            fixed: false
-            withLabel: false
-            name: ''
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            name: '',
         }
-        /**#@-*/
     }
 
     /* special options for orthogonal projection points */
-    orthogonalprojection: {
-        /**#@+
-         * @visprop
-         */
-        /**#@-*/
+    static orthogonalprojection: OrthogonalprojectionOptions = {
     }
 
     /* special otherintersection point options */
-    otherintersection: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * This flag sets the behavior of other intersection points of e.g.
-         * a circle and a segment. If true the intersection is treated as intersection with a line. If false
-         * the intersection point exists if the segment intersects setwise.
-         *
-         * @name Otherintersection.alwaysIntersect
-         * @type Boolean
-         * @default true
-         */
-        alwaysIntersect: true
-
-        /**
-         * Minimum distance (in user coordinates) for points to be defined as different.
-         * For implicit curves and other non approximate curves this number might have to be
-         * increased.
-         *
-         * @name Otherintersection.precision
-         * @type Number
-         * @default 0.001
-         */
+    static otherintersection: OtherintersectionOptions = {
+        alwaysIntersect: true,
         precision: 0.001
-
-        /**#@-*/
     }
 
     /* special options for parallel lines */
-    parallel: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeColor: '#000000' // Parallel line
-
-        /**
-         * Attributes of helper point of normal.
-         *
-         * @type Point
-         * @name Parallel#point
-         */
+    static parallel: ParallelOptions = {
+        strokeColor: '#000000', // Parallel line
         point: {
-            visible: false
-            fixed: false
-            withLabel: false
-            name: ''
-        }
-
-        label: {
-            position: 'llft'
-        }
-        /**#@-*/
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            name: '',
+        },
+        label: { position: 'llft', },
     }
 
     /* special parallelogram options */
-    parallelogram: {
+    static parallelogram: ParallelogramOptions = {
         parallelpoint: {
-            withLabel: false
-            name: ''
-        }
+            withLabel: false,
+            name: '',
+        },
     }
 
     /* special parallelpoint options */
-    parallelpoint: {
+    static parallelpoint: ParallelpointOptions = {
     }
 
     /* special perpendicular options */
-    perpendicular: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeColor: '#000000' // Perpendicular line
-        straightFirst: true
-        straightLast: true
-        /**#@-*/
+    static perpendicular: PerpendicularOptions = {
+        strokeColor: '#000000', // Perpendicular line
+        straightFirst: true,
+        straightLast: true,
     }
 
     /* special perpendicular options */
-    perpendicularsegment: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeColor: '#000000' // Perpendicular segment
-        straightFirst: false
-        straightLast: false
+    static perpendicularsegment: PerpendicularsegmentOptions = {
+        strokeColor: '#000000', // Perpendicular segment
+        straightFirst: false,
+        straightLast: false,
         point: {               // Perpendicular point
-            visible: false
-            fixed: true
-            withLabel: false
-            name: ''
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: '',
         }
-        /**#@-*/
     }
 
     /* special polygon options */
-    polygon: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
-         *
-         * @see JXG.GeometryElement#hasPoint
-         * @name Polygon#hasInnerPoints
-         * @type Boolean
-         * @default false
-         */
-        hasInnerPoints: false
-
-        fillColor: Color.palette.yellow
-        highlightFillColor: Color.palette.yellow
-        // fillColor: '#00ff00',
-        // highlightFillColor: '#00ff00',
-        fillOpacity: 0.3
-        highlightFillOpacity: 0.2
-
-        /**
-         * Is the polygon bordered by lines?
-         *
-         * @type Boolean
-         * @name Polygon#withLines
-         * @default true
-         */
-        withLines: true
-
-        /**
-         * Attributes for the polygon border lines.
-         *
-         * @type Line
-         * @name Polygon#borders
-         */
+    static polygon: PolygonOptions = {
+        hasInnerPoints: false,
+        fillColor: Color.palette.yellow,
+        highlightFillColor: Color.palette.yellow,
+        fillOpacity: 0.3,
+        highlightFillOpacity: 0.2,
+        withLines: true,
         borders: {
-            withLabel: false
-            strokeWidth: 1
-            highlightStrokeWidth: 1
+            withLabel: false,
+            strokeWidth: 1,
+            highlightstrokeWidth: 1,
             // Polygon layer + 1
-            layer: 5
-            label: {
-                position: 'top'
-            }
-            visible: 'inherit'
-        }
-
-        /**
-         * By default, the strokewidths of the borders of a polygon are not changed during highlighting (only strokeColor and strokeOpacity are changed
-         * to highlightStrokeColor, and highlightStrokeOpacity).
-         * However, strokewidth is changed to highlightStrokewidth if an individual border gets the focus.
-         * <p>
-         * With this attribute set to true also the borders change strokeWidth if the polygon itself gets the focus.
-         *
-         * @type Boolean
-         * @name Polygon#highlightByStrokeWidth
-         * @default false
-         */
-        highlightByStrokeWidth: false
-
-        /**
-         * Attributes for the polygon vertices.
-         *
-         * @type Point
-         * @name Polygon#vertices
-         */
+            layer: 5,
+            label: { position: 'top', },
+            visible: 'inherit',
+        },
+        highlightbyStrokeWidth: false,
         vertices: {
-            layer: 9
-            withLabel: false
-            name: ''
-            strokeColor: Color.palette.red
-            fillColor: Color.palette.red
-            fixed: false
-            visible: 'inherit'
-        }
-
-        /**
-         * Attributes for the polygon label.
-         *
-         * @type Label
-         * @name Polygon#label
-         */
+            layer: 9,
+            withLabel: false,
+            name: '',
+            strokeColor: Color.palette.red,
+            fillColor: Color.palette.red,
+            fixed: false,
+            visible: 'inherit',
+        },
         label: {
             offset: [0, 0]
         }
-
-        /**#@-*/
     }
 
     /* special polygonal chain options
     */
-    polygonalchain: {
-        /**#@+
-         * @visprop
-         */
-
-        fillColor: 'none'
-        highlightFillColor: 'none'
-
-        /**#@-*/
+    static polygonalchain: PolygonalchainOptions = {
+        fillColor: 'none',
+        highlightFillColor: 'none',
     }
 
     /* special prescribed angle options
     * Not yet implemented. But angle.setAngle(val) is implemented.
 
     */
-    prescribedangle: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Attributes for the helper point of the prescribed angle.
-         *
-         * @type Point
-         * @name Prescribedangle#anglePoint
-         * @ignore
-         */
+    static prescribedangle: PrescribedangleOptions = {
         anglePoint: {
-            size: 2
-            visible: false
-            withLabel: false
+            size: 2,
+            visible: false,
+            withLabel: false,
         }
-
-        /**#@-*/
     }
 
     /* special reflection options */
-    reflection: {
-        /**#@+
-         * @visprop
-         */
-
-        fixed: true
-
-        /**
-         * Attributes of circle center, i.e. the center of the circle,
-         * if a circle is the mirror element and the transformation type is 'Euclidean'
-         *
-         * @type center
-         * @name Reflection#center
-         */
-        center: {}
-
-        /**
-         * Type of transformation. Possible values are 'Euclidean', 'projective'.
-         *
-         * If the value is 'Euclidean', the reflected element of a circle is again a circle,
-         * otherwise it is a conic section.
-         *
-         * @type String
-         * @name Reflection#type
-         * @default 'Euclidean'
-         */
+    static reflection: ReflectionOptions = {
+        fixed: true,
+        center: {},
         type: 'Euclidean'
-
-        /**#@-*/
     }
 
     /* special reflexangle options */
-    reflexangle: {
+    static reflexangle:ReflexangleOptions = {
         /**#@+
          * @visprop
          */
@@ -2781,214 +1428,79 @@ export class Options {
     }
 
     /* special regular polygon options */
-    regularpolygon: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
-         * @see JXG.GeometryElement#hasPoint
-         *
-         * @name RegularPolygon#hasInnerPoints
-         * @type Boolean
-         * @default false
-         */
-        hasInnerPoints: false
-        fillColor: Color.palette.yellow
-        highlightFillColor: Color.palette.yellow
-        fillOpacity: 0.3
-        highlightFillOpacity: 0.2
-
-        /**
-         * Is the polygon bordered by lines?
-         *
-         * @type Boolean
-         * @name RegularPolygon#withLines
-         * @default true
-         */
-        withLines: true
-
-        /**
-         * Attributes for the polygon border lines.
-         *
-         * @type Line
-         * @name RegularPolygon#borders
-         */
+    static regularpolygon: RegularpolygonOptions = {
+        hasInnerPoints: false,
+        fillColor: Color.palette.yellow,
+        highlightFillColor: Color.palette.yellow,
+        fillOpacity: 0.3,
+        highlightFillOpacity: 0.2,
+        withLines: true,
         borders: {
-            withLabel: false
-            strokeWidth: 1
-            highlightStrokeWidth: 1
+            withLabel: false,
+            strokeWidth: 1,
+            highlightStrokeWidth: 1,
             // Polygon layer + 1
-            layer: 5
+            layer: 5,
             label: {
-                position: 'top'
+                position: 'top',
             }
-        }
-
-        /**
-         * Attributes for the polygon vertices.
-         *
-         * @type Point
-         * @name RegularPolygon#vertices
-         */
+        },
         vertices: {
-            layer: 9
-            withLabel: true
-            strokeColor: Color.palette.red
-            fillColor: Color.palette.red
-            fixed: false
-        }
-
-        /**
-         * Attributes for the polygon label.
-         *
-         * @type Label
-         * @name RegularPolygon#label
-         */
+            layer: 9,
+            withLabel: true,
+            strokeColor: Color.palette.red,
+            fillColor: Color.palette.red,
+            fixed: false,
+        },
         label: {
             offset: [0, 0]
         }
-
-        /**#@-*/
     }
 
     /* special options for riemann sums */
-    riemannsum: {
+    static riemannsum: RiemannsumOptions = {
         /**#@+
          * @visprop
          */
 
-        withLabel: false
-        fillOpacity: 0.3
+        withLabel: false,
+        fillOpacity: 0.3,
         fillColor: Color.palette.yellow
 
         /**#@-*/
     }
 
     /* special sector options */
-    sector: {
-        /**#@+
-         * @visprop
-         */
-
-        fillColor: Color.palette.yellow
-        highlightFillColor: Color.palette.yellow
-        // fillColor: '#00ff00',
-        // highlightFillColor: '#00ff00',
-
-        fillOpacity: 0.3
-        highlightFillOpacity: 0.3
-        highlightOnSector: false
-        highlightStrokeWidth: 0
-
-        /**
-         * If true there is a fourth parent point, i.e. the parents are [center, p1, p2, p3].
-         * p1 is still the radius point, p2 the angle point. The sector will be that part of the
-         * the circle with center 'center' which starts at p1, ends at the ray between center
-         * and p2, and passes p3.
-         * <p>
-         * This attribute is immutable (by purpose).
-         * This attribute is necessary for circumCircleSectors
-         *
-         * @type Boolean
-         * @name Arc#useDirection
-         * @default false
-         * @private
-         */
-        useDirection: false
-
-        /**
-         * Type of sector. Possible values are 'minor', 'major', and 'auto'.
-         *
-         * @type String
-         * @name Sector#selection
-         * @default 'auto'
-         */
-        selection: 'auto'
-
-        /**
-         * Attributes for sub-element arc. It is only available, if the sector is defined by three points.
-         *
-         * @type Arc
-         * @name Sector#arc
-         * @default '{visible:false}'
-         */
+    static sector: SectorOptions = {
+        fillColor: Color.palette.yellow,
+        highlightFillColor: Color.palette.yellow,
+        fillOpacity: 0.3,
+        highlightFillOpacity: 0.3,
+        highlightOnSector: false,
+        highlightstrokeWidth: 0,
+        useDirection: false,
+        selection: 'auto',
         arc: {
-            visible: false
-            fillColor: 'none'
-            withLabel: false
-            name: ''
-
-            center: {
-                visible: false
-                withLabel: false
-                name: ''
-            }
-
-            radiusPoint: {
-                visible: false
-                withLabel: false
-                name: ''
-            }
-
-            anglePoint: {
-                visible: false
-                withLabel: false
-                name: ''
-            }
-        }
-
-        /**
-         * Attributes for helper point radiuspoint in case it is provided by coordinates.
-         *
-         * @type Point
-         * @name Sector#radiusPoint
-         */
-        radiusPoint: {
-            visible: false
-            withLabel: false
-        }
-
-        /**
-         * Attributes for helper point center in case it is provided by coordinates.
-         *
-         * @type Point
-         * @name Sector#center
-         */
-        center: {
-            visible: false
-            withLabel: false
-        }
-
-        /**
-         * Attributes for helper point anglepoint in case it is provided by coordinates.
-         *
-         * @type Point
-         * @name Sector#anglePoint
-         */
-        anglePoint: {
-            visible: false
-            withLabel: false
-        }
-
-        /**
-         * Attributes for the sector label.
-         *
-         * @type Label
-         * @name Sector#label
-         */
+            visible: false,
+            fillColor: 'none',
+            withLabel: false,
+            name: '',
+            center: { visible: false, withLabel: false, name: '', },
+            radiusPoint: { visible: false, withLabel: false, name: '', },
+            anglePoint: { visible: false, withLabel: false, name: '', },
+        },
+        radiusPoint: { visible: false, withLabel: false, },
+        center: { visible: false, withLabel: false, },
+        anglePoint: { visible: false, withLabel: false, },
         label: {
-            offset: [0, 0]
-            anchorX: 'auto'
-            anchorY: 'auto'
+            offset: [0, 0],
+            anchorX: 'auto',
+            anchorY: 'auto',
         }
-
-        /**#@-*/
     }
 
     /* special segment options */
-    segment: {
+    static segment:SegmentOptions = {
         /**#@+
          * @visprop
          */
@@ -2999,312 +1511,59 @@ export class Options {
         /**#@-*/
     }
 
-    semicircle: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Attributes for center point of the semicircle.
-         *
-         * @type Point
-         * @name Semicircle#center
-         */
+    static semicircle: SemicircleOptions = {
         center: {
-            visible: false
-            withLabel: false
-            fixed: false
-            fillColor: Color.palette.red
-            strokeColor: Color.palette.red
-            highlightFillColor: '#eeeeee'
-            highlightStrokeColor: Color.palette.red
-            name: ''
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
+            highlightFillColor: '#eeeeee',
+            highlightStrokeColor: Color.palette.red,
+            name: '',
         }
-
-        /**#@-*/
     }
 
     /* special slider options */
-    slider: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * The slider only returns integer multiples of this value, e.g. for discrete values set this property to <tt>1</tt>. For
-         * continuous results set this to <tt>-1</tt>.
-         *
-         * @memberOf Slider.prototype
-         * @name snapWidth
-         * @type Number
-         */
-        snapWidth: -1      // -1 = deactivated
-
-        /**
-         * List of values to snap to. If the glider is within snapValueDistance
-         * (in user coordinate units) of one of these points,
-         * then the glider snaps to that point.
-         *
-         * @memberOf Slider.prototype
-         * @name snapValues
-         * @type Array
-         * @see Slider#snapValueDistance
-         * @default empty
-         *
-         * @example
-         *         var n = board.create('slider', [[-2, 3], [4, 3], [1, 5, 100]], {
-         *             name: 'n',
-         *             snapWidth: 1,
-         *             snapValues: [1, 22, 77, 100],
-         *             snapValueDistance: 5
-         *         });
-         *
-         *         var k = board.create('slider', [[-2, -1], [4, -1], [-4, 0, 4]], {
-         *             name: 'k',
-         *             snapWidth: 0.1,
-         *             snapValues: [-3, -1, 1, 3],
-         *             snapValueDistance: 0.4
-         *         });
-         *
-         * </pre><div id="JXG9be68014-4e14-479a-82b4-e92d9b8f6eef" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG9be68014-4e14-479a-82b4-e92d9b8f6eef',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *             var n = board.create('slider', [[-2, 3], [4, 3], [1, 5, 100]], {
-         *                 name: 'n',
-         *                 snapWidth: 1,
-         *                 snapValues: [1, 22, 77, 100],
-         *                 snapValueDistance: 5
-         *             });
-         *
-         *             var k = board.create('slider', [[-2, -1], [4, -1], [-4, 0, 4]], {
-         *                 name: 'k',
-         *                 snapWidth: 0.1,
-         *                 snapValues: [-3, -1, 1, 3],
-         *                 snapValueDistance: 0.4
-         *             });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        snapValues: []
-
-        /**
-         * If the difference between the slider value and one of the elements of snapValues is less
-         * than this number (in user coordinate units), the slider will snap to that value.
-         *
-         * @memberOf Slider.prototype
-         * @name snapValueDistance
-         * @type Number
-         * @see Slider#snapValues
-         * @default 0.0
-         */
-        snapValueDistance: 0.0
-
-        /**
-         * The precision of the slider value displayed in the optional text.
-         * Replaced by the attribute "digits".
-         *
-         * @memberOf Slider.prototype
-         * @name precision
-         * @type Number
-         * @deprecated
-         * @see Slider#digits
-         * @default 2
-         */
-        precision: 2
-
-        /**
-         * The number of digits of the slider value displayed in the optional text.
-         *
-         * @memberOf Slider.prototype
-         * @name digits
-         * @type Number
-         * @default 2
-         */
-        digits: 2
-
-        /**
-         * Internationalization support for slider labels.
-         *
-         * @name intl
-         * @memberOf Slider.prototype
-         * @type object
-         * @default <pre>{
-         *    enabled: 'inherit',
-         *    options: {}
-         * }</pre>
-         * @see JXG.Board#intl
-         * @see Text#intl
-         *
-         * @example
-         * var s = board.create('slider', [[-2, 3], [2, 3], [0, 1, 360]], {
-         *     name: '&alpha;',
-         *     snapWidth: 1,
-         *     intl: {
-         *         enabled: true
-         *         options: {
-         *             style: 'unit',
-         *             unit: 'degree',
-         *         }
-         *     }
-         * });
-         *
-         * </pre><div id="JXGb49a9779-c0c8-419d-9173-c67232cfd65c" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGb49a9779-c0c8-419d-9173-c67232cfd65c',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *     var s = board.create('slider', [[-2, 3], [2, 3], [0, 1, 360]], {
-         *         name: '&alpha;',
-         *         snapWidth: 1,
-         *         intl: {
-         *             enabled: true
-         *             options: {
-         *                 style: 'unit',
-         *                 unit: 'degree',
-         *             }
-         *         }
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
+    static slider: SliderOptions = {
+        snapWidth: -1,   // -1 = deactivated
+        snapValues: [],
+        snapValueDistance: 0.0,
+        precision: 2,
+        digits: 2,
         intl: {
-            enabled: 'inherit'
-            options: {}
-        }
-
-        firstArrow: false
-        lastArrow: false
-
-        /**
-         * Show slider ticks.
-         *
-         * @type Boolean
-         * @name Slider#withTicks
-         * @default true
-         */
-        withTicks: true
-
-        /**
-         * Show slider label.
-         *
-         * @type Boolean
-         * @name Slider#withLabel
-         * @default true
-         */
-        withLabel: true
-
-        /**
-         * If not null this replaces the part "name = " in the slider label.
-         * Possible types: string, number or function.
-         * @type String
-         * @name suffixLabel
-         * @memberOf Slider.prototype
-         * @default null
-         * @see JXG.Slider#unitLabel
-         * @see JXG.Slider#postLabel
-         */
-        suffixLabel: null
-
-        /**
-         * If not null this is appended to the value in the slider label.
-         * Possible types: string, number or function.
-         * @type String
-         * @name unitLabel
-         * @memberOf Slider.prototype
-         * @default null
-         * @see JXG.Slider#suffixLabel
-         * @see JXG.Slider#postLabel
-         */
-        unitLabel: `null`
-
-        /**
-         * If not null this is appended to the value and to unitLabel in the slider label.
-         * Possible types: string, number or function.
-         * @type String
-         * @name postLabel
-         * @memberOf Slider.prototype
-         * @default null
-         * @see JXG.Slider#suffixLabel
-         * @see JXG.Slider#unitLabel
-         */
-        postLabel: null
-
-        layer: 9
-        showInfobox: false
-        name: ''
-        visible: true
-        strokeColor: '#000000'
-        highlightStrokeColor: '#888888'
-        fillColor: '#ffffff'
-        highlightFillColor: 'none'
-
-        /**
-         * Size of slider point.
-         *
-         * @type Number
-         * @name Slider#size
-         * @default 6
-         * @see Point#size
-         */
-        size: 6
-
-        /**
-         * Attributes for first (left) helper point defining the slider position.
-         *
-         * @type Point
-         * @name Slider#point1
-         */
-        point1: {
-            needsRegularUpdate: false
-            showInfobox: false
-            withLabel: false
-            visible: false
-            fixed: true
-            frozen: 'inherit'
-            name: ''
-        }
-
-        /**
-         * Attributes for second (right) helper point defining the slider position.
-         *
-         * @type Point
-         * @name Slider#point2
-         */
-        point2: {
-            needsRegularUpdate: false
-            showInfobox: false
-            withLabel: false
-            visible: false
-            fixed: true
-            frozen: 'inherit'
-            name: ''
-        }
-
-        /**
-         * Attributes for the base line of the slider.
-         *
-         * @type Line
-         * @name Slider#baseline
-         */
+            enabled: 'inherit',
+            options: {},
+        },
+        firstArrow: false,
+        lastArrow: false,
+        withTicks: true,
+        withLabel: true,
+        suffixLabel: null,
+        unitLabel: null,
+        postLabel: null,
+        layer: 9,
+        showInfobox: false,
+        name: '',
+        visible: true,
+        strokeColor: '#000000',
+        highlightStrokeColor: '#888888',
+        fillColor: '#ffffff',
+        highlightFillColor: 'none',
+        size: 6,
+        point1: { needsRegularUpdate: false, showInfobox: false, withLabel: false, visible: false, fixed: true, frozen: 'inherit', name: '', },
+        point2: { needsRegularUpdate: false, showInfobox: false, withLabel: false, visible: false, fixed: true, frozen: 'inherit', name: '', },
         baseline: {
-            needsRegularUpdate: false
-            visible: 'inherit'
-            fixed: true
-            scalable: false
-            tabindex: null
-            name: ''
-            strokeWidth: 1
-            strokeColor: '#000000'
-            highlightStrokeColor: '#888888'
-        }
+            needsRegularUpdate: false,
+            visible: 'inherit',
+            fixed: true,
+            scalable: false,
+            tabindex: null,
+            name: '',
+            strokeWidth: 1,
+            strokeColor: '#000000',
+            highlightStrokeColor: '#888888',
+        },
 
         /**
          * Attributes for the ticks of the base line of the slider.
@@ -3313,82 +1572,54 @@ export class Options {
          * @name Slider#ticks
          */
         ticks: {
-            needsRegularUpdate: false
-            fixed: true
+            needsRegularUpdate: false,
+            fixed: true,
 
             // Label drawing
-            drawLabels: false
-            digits: 2
-            includeBoundaries: true
-            drawZero: true
+            drawLabels: false,
+            digits: 2,
+            includeBoundaries: true,
+            drawZero: true,
             label: {
-                offset: [-4, -14]
-                display: 'internal'
-            }
+                offset: [-4, -14],
+                display: 'internal',
+            },
 
-            minTicksDistance: 30
-            insertTicks: true
-            ticksDistance: 1     // Not necessary, since insertTicks = true
-            minorHeight: 4       // if <0: full width and height
-            majorHeight: 5        // if <0: full width and height
-            minorTicks: 0
-            strokeOpacity: 1
-            strokeWidth: 1
-            tickEndings: [0, 1]
-            majortickEndings: [0, 1]
-            strokeColor: '#000000'
-            visible: 'inherit'
-        }
-
-        /**
-         * Attributes for the highlighting line of the slider.
-         *
-         * @type Line
-         * @name Slider#highline
-         */
+            minTicksDistance: 30,
+            insertTicks: true,
+            ticksDistance: 1,     // Not necessary, since insertTicks = true
+            minorHeight: 4,       // if <0: full width and height
+            majorHeight: 5,        // if <0: full width and height
+            minorTicks: 0,
+            strokeOpacity: 1,
+            strokeWidth: 1,
+            tickEndings: [0, 1],
+            majortickEndings: [0, 1],
+            strokeColor: '#000000',
+            visible: 'inherit',
+        },
         highline: {
-            strokeWidth: 3
-            visible: 'inherit'
-            fixed: true
-            tabindex: null
-            name: ''
-            strokeColor: '#000000'
-            highlightStrokeColor: '#888888'
-        }
-
-        /**
-         * Attributes for the slider label.
-         *
-         * @type Label
-         * @name Slider#label
-         */
+            strokeWidth: 3,
+            visible: 'inherit',
+            fixed: true,
+            tabindex: null,
+            name: '',
+            strokeColor: '#000000',
+            highlightStrokeColor: '#888888',
+        },
         label: {
-            visible: 'inherit'
-            strokeColor: '#000000'
-        }
-
-        /**
-         * If true 'up' events on the baseline will trigger slider moves.
-         *
-         * @type Boolean
-         * @name Slider#moveOnUp
-         * @default true
-         */
-        moveOnUp: true
-
-        /**#@-*/
+            visible: 'inherit',
+            strokeColor: '#000000',
+        },
+        moveOnUp: true,
     }
 
     /* special vector field options */
-    slopefield: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeWidth: 0.5
-        highlightStrokeWidth: 0.5
-        highlightStrokeColor: Color.palette.blue
-        highlightStrokeOpacity: 0.8
+    static slopefield: SlopefieldOptions = {
+        strokeWidth: 0.5,
+        highlightStrokeWidth: 0.5,
+        highlightStrokeColor: Color.palette.blue,
+        highlightStrokeOpacity: 0.8,
 
         /**
          * Set length of the vectors in user coordinates. This in contrast to vector fields, where this attribute just scales the vector.
@@ -3398,300 +1629,101 @@ export class Options {
          * @see Vectorfield.scale
          * @default 1
          */
-        scale: 1
-
-        /**
-         * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
-         * Fields are:
-         * <ul>
-         *  <li> enabled: Boolean
-         *  <li> size: length of the arrow head legs (in pixel)
-         *  <li> angle: angle of the arrow head legs In radians.
-         * </ul>
-         * @name arrowhead
-         * @memberOf Slopefield.prototype
-         * @type {Object}
-         * @default <tt>{enabled: false size: 5, angle: Math.PI * 0.125}</tt>
-         */
+        scale: 1,
         arrowhead: {
-            enabled: false
-            size: 5
-            angle: number = Math.PI * 0.125
+            enabled: false,
+            size: 5,
+            angle: Math.PI * 0.125,
         }
-
-        /**#@-*/
     }
 
     /* special options for slope triangle */
-    slopetriangle: {
-        /**#@+
-         * @visprop
-         */
-
-        fillColor: Color.palette.red
-        fillOpacity: 0.4
-        highlightFillColor: Color.palette.red
-        highlightFillOpacity: 0.3
-
+    static slopetriangle: SlopetriangleOptions = {
+        fillColor: Color.palette.red,
+        fillOpacity: 0.4,
+        highlightFillColor: Color.palette.red,
+        highlightFillOpacity: 0.3,
         borders: {
             lastArrow: {
-                type: 1
-                size: 6
-            }
-        }
-
-        /**
-         * Attributes for the gliding helper point.
-         *
-         * @type Point
-         * @name Slopetriangle#glider
-         */
-        glider: {
-            fixed: true
-            visible: false
-            withLabel: false
-        }
-
-        /**
-         * Attributes for the base line.
-         *
-         * @type Line
-         * @name Slopetriangle#baseline
-         */
-        baseline: {
-            visible: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for the base point.
-         *
-         * @type Point
-         * @name Slopetriangle#basepoint
-         */
-        basepoint: {
-            visible: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for the tangent.
-         * The tangent is constructed by slop triangle if the construction
-         * is based on a glider, solely.
-         *
-         * @type Line
-         * @name Slopetriangle#tangent
-         */
-        tangent: {
-            visible: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for the top point.
-         *
-         * @type Point
-         * @name Slopetriangle#toppoint
-         */
-        toppoint: {
-            visible: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for the slope triangle label.
-         *
-         * @type Label
-         * @name Slopetriangle#label
-         */
+                type: 1,
+                size: 6,
+            },
+        },
+        glider: { fixed: true, visible: false, withLabel: false, },
+        baseline: { visible: false, withLabel: false, name: '', },
+        basepoint: { visible: false, withLabel: false, name: '', },
+        tangent: { visible: false, withLabel: false, name: '', },
+        toppoint: { visible: false, withLabel: false, name: '', },
         label: {
-            visible: true
-            position: 'first'
+            visible: true,
+            position: 'first',
         }
-        /**#@-*/
     }
 
     /* special options for smartlabel of angle */
-    smartlabelangle: {
-        cssClass: 'smart-label-solid smart-label-angle'
-        highlightCssClass: 'smart-label-solid smart-label-angle'
-        anchorX: 'left'
-        anchorY: 'middle'
-
-        unit: ''
-        prefix: ''
-        suffix: ''
-
-        measure: 'deg'
-        useMathJax: true
+    static smartlabelangle: SmartlabelangleOptions = {
+        cssClass: 'smart-label-solid smart-label-angle',
+        highlightCssClass: 'smart-label-solid smart-label-angle',
+        anchorX: 'left',
+        anchorY: 'middle',
+        unit: '',
+        prefix: '',
+        suffix: '',
+        measure: 'deg',
+        useMathJax: true,
     }
 
     /* special options for smartlabel of circle */
-    smartlabelcircle: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * CSS classes for the smart label. Available classes are:
-         * <ul>
-         * <li> 'smart-label-solid'
-         * <li> 'smart-label-outline'
-         * <li> 'smart-label-pure'
-         * </ul>
-         *
-         * By default, an additional class is given specific for the element type.
-         * Available classes are 'smart-label-angle', 'smart-label-circle',
-         * 'smart-label-line', 'smart-label-point', 'smart-label-polygon'.
-         *
-         * @example
-         *  cssClass: 'smart-label-solid smart-label-point'
-         *
-         * @type String
-         * @name Smartlabel#cssClass
-         * @see Smartlabel#highlightCssClass
-         * @default <ul>
-         *  <li> 'smart-label-solid smart-label-circle' for circles</li>
-         *  <li> 'smart-label-solid smart-label-point' for points</li>
-         *  <li> ...</li>
-         * </ul>
-         */
-        cssClass: 'smart-label-solid smart-label-circle'
-
-        /**
-         * CSS classes for the smart label when highlighted.
-         *
-         * @type String
-         * @name Smartlabel#highlightCssClass
-         * @see Smartlabel#cssClass
-         * @default <ul>
-         *  <li> 'smart-label-solid smart-label-circle' for circles</li>
-         *  <li> 'smart-label-solid smart-label-point' for points</li>
-         *  <li> ...</li>
-         * </ul>
-         */
-        highlightCssClass: 'smart-label-solid smart-label-circle'
-        anchorX: 'middle'
-        useMathJax: true
-
-        /**
-         * Measurement unit appended to the output text. For areas, the unit is squared automatically.
-         * Comes directly after the measurement value.
-         *
-         * @type {String|Function}
-         * @name Smartlabel#unit
-         * @default ''
-         */
-        unit: ''
-
-        /**
-         * Prefix text for the smartlabel. Comes before the measurement value.
-         *
-         * @type {String|Function}
-         * @name Smartlabel#prefix
-         * @default ''
-         */
-        prefix: ''
-
-        /**
-         * Suffix text for the smartlabel. Comes after unit.
-         *
-         * @type {String|Function}
-         * @name Smartlabel#suffix
-         * @default ''
-         */
-        suffix: ''
-
-        /**
-         * Type of measurement.
-         * Available values are:
-         *  <ul>
-         *  <li> 'deg', 'rad' for angles</li>
-         *  <li> 'area', 'perimeter', 'radius' for circles</li>
-         *  <li> 'length', 'slope' for lines</li>
-         *  <li> 'area', 'perimeter' for polygons</li>
-         * </ul>
-         * Dependent on this value, i.e. the type of measurement, the label is
-         * positioned differently on the object.
-         *
-         * @type String
-         * @name Smartlabel#measure
-         * @default <ul>
-         *   <li> 'radius' for circles</li>
-         *   <li> 'length' for lines</li>
-         *   <li> 'area' for polygons</li>
-         *   <li> 'deg' for angles</li>
-         * </ul>
-         */
+    static smartlabelcircle: SmartlabelcircleOptions = {
+        cssClass: 'smart-label-solid smart-label-circle',
+        highlightCssClass: 'smart-label-solid smart-label-circle',
+        anchorX: 'middle',
+        useMathJax: true,
+        unit: '',
+        prefix: '',
+        suffix: '',
         measure: 'radius'
-
-        /**#@-*/
     }
 
     /* special options for smartlabel of line */
-    smartlabelline: {
-        cssClass: 'smart-label-solid smart-label-line'
-        highlightCssClass: 'smart-label-solid smart-label-line'
-        anchorX: 'middle'
-
-        useMathJax: true
-
-        unit: ''
-        measure: 'length'
+    static smartlabelline: SmartlabelangleOptions = {
+        cssClass: 'smart-label-solid smart-label-line',
+        highlightCssClass: 'smart-label-solid smart-label-line',
+        anchorX: 'middle',
+        useMathJax: true,
+        unit: '',
+        measure: 'length',
     }
 
     /* special options for smartlabel of point */
-    smartlabelpoint: {
-        /**#@+
-         * @visprop
-         */
+    static smartlabelpoint: SmartlabelpointOptions = {
+        cssClass: 'smart-label-solid smart-label-point',
+        highlightCssClass: 'smart-label-solid smart-label-point',
+        anchorX: 'middle',
+        anchorY: 'top',
 
-        cssClass: 'smart-label-solid smart-label-point'
-        highlightCssClass: 'smart-label-solid smart-label-point'
-        anchorX: 'middle'
-        anchorY: 'top'
+        useMathJax: true,
+        dir: 'row',
 
-        useMathJax: true
-
-        /**
-         * Display of point coordinates either as row vector or column vector.
-         * Available values are 'row' or 'column'.
-         * @type String
-         * @name Smartlabel#dir
-         * @default 'row'
-         */
-        dir: 'row'
-
-        /**
-         * Supply a unit suffix.
-         *
-         * @type String
-         * @name Smartlabel#unit
-         * @default ''
-         */
         unit: ''
 
         /**#@-*/
     }
 
     /* special options for smartlabel of polygon */
-    smartlabelpolygon: {
-        cssClass: 'smart-label-solid smart-label-polygon'
-        highlightCssClass: 'smart-label-solid smart-label-polygon'
-        anchorX: 'middle'
+    static smartlabelpolygon: SmartlabelpolygonOptions= {
+        cssClass: 'smart-label-solid smart-label-polygon',
+        highlightCssClass: 'smart-label-solid smart-label-polygon',
+        anchorX: 'middle',
 
-        useMathJax: true
+        useMathJax: true,
 
-        unit: ''
-        measure: 'area'
+        unit: '',
+        measure: 'area',
     }
 
     /* special options for step functions */
-    stepfunction: {
+    static stepfunction:StepfunctionOptions = {
         /**#@+
          * @visprop
          */
@@ -3700,100 +1732,32 @@ export class Options {
     }
 
     /* special tangent options */
-    tangent: {
+    static tangent:TangentOptions = {
     }
 
     /* special tangent options */
-    tangentto: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Attributes for the polar line of the tangentto construction.
-         *
-         * @name polar
-         * @memberOf TangentTo.prototype
-         * @type JXG.Line
-         */
+    static tangentto: tangenttoOptions = {
         polar: {
-            visible: false
-            strokeWidth: 1
-            dash: 3
-        }
-
-        /**
-         * Attributes for the intersection point of the conic/circle with the polar line of the tangentto construction.
-         *
-         * @name point
-         * @memberOf TangentTo.prototype
-         * @type JXG.Point
-         */
+            visible: false,
+            strokeWidth: 1,
+            dash: 3,
+        },
         point: {
-            visible: false
-        }
+            visible: false,
+        },
 
-        /**#@-*/
     }
 
     /* special tape measure options */
-    tapemeasure: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeColor: '#000000'
-        strokeWidth: 2
-        highlightStrokeColor: '#000000'
-
-        /**
-         * Show tape measure ticks.
-         *
-         * @type Boolean
-         * @name Tapemeasure#withTicks
-         * @default true
-         */
-        withTicks: true
-
-        /**
-         * Show tape measure label.
-         *
-         * @type Boolean
-         * @name Tapemeasure#withLabel
-         * @default true
-         */
-        withLabel: true
-
-        /**
-         * Text rotation in degrees.
-         *
-         * @name Tapemeasure#rotate
-         * @type Number
-         * @default 0
-         */
-        rotate: 0
-
-        /**
-         * The precision of the tape measure value displayed in the optional text.
-         * Replaced by the attribute digits
-         *
-         * @memberOf Tapemeasure.prototype
-         * @name precision
-         * @type Number
-         * @deprecated
-         * @see Tapemeasure#digits
-         * @default 2
-         */
-        precision: 2
-
-        /**
-         * The precision of the tape measure value displayed in the optional text.
-         * @memberOf Tapemeasure.prototype
-         * @name digits
-         * @type Number
-         * @default 2
-         */
-        digits: 2
+    static tapemeasure: TapemeasureOptions = {
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        highlightStrokeColor: '#000000',
+        withTicks: true,
+        withLabel: true,
+        rotate: 0,
+        precision: 2,
+        digits: 2,
 
         /**
          * Attributes for first helper point defining the tape measure position.
@@ -3802,1044 +1766,91 @@ export class Options {
          * @name Tapemeasure#point1
          */
         point1: {
-            visible: true
-            strokeColor: '#000000'
-            fillColor: '#ffffff'
-            fillOpacity: 0.0
-            highlightFillOpacity: 0.1
-            size: 6
-            snapToPoints: true
-            attractorUnit: 'screen'
-            attractorDistance: 20
-            showInfobox: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for second helper point defining the tape measure position.
-         *
-         * @type Point
-         * @name Tapemeasure#point2
-         */
+            visible: true,
+            strokeColor: '#000000',
+            fillColor: '#ffffff',
+            fillOpacity: 0.0,
+            highlightFillOpacity: 0.1,
+            size: 6,
+            snapToPoints: true,
+            attractorUnit: 'screen',
+            attractorDistance: 20,
+            showInfobox: false,
+            withLabel: false,
+            name: '',
+        },
         point2: {
-            visible: true
-            strokeColor: '#000000'
-            fillColor: '#ffffff'
-            fillOpacity: 0.0
-            highlightFillOpacity: 0.1
-            size: 6
-            snapToPoints: true
-            attractorUnit: 'screen'
-            attractorDistance: 20
-            showInfobox: false
-            withLabel: false
-            name: ''
-        }
-
-        /**
-         * Attributes for the ticks of the tape measure.
-         *
-         * @type Ticks
-         * @name Tapemeasure#ticks
-         */
+            visible: true,
+            strokeColor: '#000000',
+            fillColor: '#ffffff',
+            fillOpacity: 0.0,
+            highlightFillOpacity: 0.1,
+            size: 6,
+            snapToPoints: true,
+            attractorUnit: 'screen',
+            attractorDistance: 20,
+            showInfobox: false,
+            withLabel: false,
+            name: '',
+        },
         ticks: {
-            drawLabels: false
-            drawZero: true
-            insertTicks: true
-            ticksDistance: 0.1 // Ignored since insertTicks=true
-            minorHeight: 8
-            majorHeight: 16
-            minorTicks: 4
-            tickEndings: [0, 1]
-            majorTickEndings: [0, 1]
-            strokeOpacity: 1
-            strokeWidth: 1
-            strokeColor: '#000000'
-            visible: 'inherit'
+            drawLabels: false,
+            drawZero: true,
+            insertTicks: true,
+            ticksDistance: 0.1, // Ignored since insertTicks=true
+            minorHeight: 8,
+            majorHeight: 16,
+            minorTicks: 4,
+            tickEndings: [0, 1],
+            majorTickEndings: [0, 1],
+            strokeOpacity: 1,
+            strokeWidth: 1,
+            strokeColor: '#000000',
+            visible: 'inherit',
             label: {
-                anchorY: 'top'
-                anchorX: 'middle'
-                offset: [0, -10]
-            }
-        }
-
-        /**
-         * Attributes for the tape measure label.
-         *
-         * @type Label
-         * @name Tapemeasure#label
-         */
+                anchorY: 'top',
+                anchorX: 'middle',
+                offset: [0, -10],
+            },
+        },
         label: {
-            position: 'top'
+            position: 'top',
         }
-        /**#@-*/
     }
 
-    /* special text options */
-    text: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * The font size in pixels.
-         *
-         * @name fontSize
-         * @memberOf Text.prototype
-         * @default 12
-         * @type Number
-         * @see Text#fontUnit
-         */
-        fontSize: 12
-
-        /**
-         * CSS unit for the font size of a text element. Usually, this will be the default value 'px' but
-         * for responsive application, also 'vw', 'vh', vmax', 'vmin' or 'rem' might be useful.
-         *
-         * @name fontUnit
-         * @memberOf Text.prototype
-         * @default 'px'
-         * @type String
-         * @see Text#fontSize
-         *
-         * @example
-         * var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
-         *
-         * </pre><div id="JXG2da7e972-ac62-416b-a94b-32559c9ec9f9" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG2da7e972-ac62-416b-a94b-32559c9ec9f9',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *     var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        fontUnit: 'px'
-
-        /**
-         * If the text content is solely a number and
-         * this attribute is true (default) then the number is either formatted
-         * according to the number of digits
-         * given by the attribute 'digits' or converted into a fraction if 'toFraction'
-         * is true.
-         * <p>
-         * Otherwise, display the raw number.
-         *
-         * @name formatNumber
-         * @memberOf Text.prototype
-         * @default false
-         * @type Boolean
-         *
-         */
-        formatNumber: false
-
-        /**
-         * Used to round texts given by a number.
-         *
-         * @name digits
-         * @memberOf Text.prototype
-         * @default 2
-         * @type Number
-         */
-        digits: 2
-
-        /**
-         * Internationalization support for texts consisting of a number only.
-         * <p>
-         * Setting the local overwrites the board-wide locale set in the board attributes.
-         * The JSXGraph attribute digits is overruled by the
-         * Intl attributes "minimumFractionDigits" and "maximumFractionDigits".
-         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat</a>
-         * for more information about possible options.
-         * <p>
-         * See below for an example where the text is composed from a string and a locale formatted number.
-         *
-         * @name intl
-         * @memberOf Text.prototype
-         * @type object
-         * @default <pre>{
-         *    enabled: 'inherit',
-         *    options: {
-         *      minimumFractionDigits: 0,
-         *      maximumFractionDigits: 2
-         *    }
-         * }</pre>
-         * @see JXG.Board#intl
-         *
-         * @example
-         * var t = board.create('text', [1, 2, -Math.PI*100], {
-         *         digits: 2,
-         *         intl: {
-         *                 enabled: true
-         *                 options: {
-         *                     style: 'unit',
-         *                     unit: 'celsius'
-         *                 }
-         *             }
-         *     });
-         *
-         * </pre><div id="JXGb7162923-1beb-4e56-8817-19aa66e226d1" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGb7162923-1beb-4e56-8817-19aa66e226d1',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *     var t = board.create('text', [1, 2, -Math.PI*100], {
-         *             digits: 2,
-         *             intl: {
-         *                     enabled: true
-         *                     options: {
-         *                         style: 'unit',
-         *                         unit: 'celsius'
-         *                     }
-         *                 }
-         *         });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         *
-         * @example
-         * var t = board.create('text', [0.05, -0.2, ''], {
-         *     intl: {
-         *         enabled: true
-         *         locale: 'it-IT',
-         *         options: {
-         *             style: 'unit',
-         *             unit: 'kilometer-per-hour',
-         *             unitDisplay: 'narrow',
-         *             maximumFractionDigits: 2
-         *         }
-         *     }
-         * });
-         *
-         * // Set dynamic text consisting of text and number.
-         * t.setText(function() {
-         *     var txt = 'Speed: ',
-         *         number = t.X();
-         *
-         *     // Add formatted number to variable txt
-         *     // with fallback if locale is not supported.
-         *     if (t.useLocale()) {
-         *         txt += t.formatNumberLocale(number);
-         *     } else {
-         *         txt += JXG.toFixed(number, 2);
-         *     }
-         *     return txt;
-         * });
-         *
-         * </pre><div id="JXG560aeb1c-55fb-45da-8ad5-d3ad26216056" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG560aeb1c-55fb-45da-8ad5-d3ad26216056',
-         *             {boundingbox: [-0.5, 0.5, 0.5, -0.5], axis: true showcopyright: false shownavigation: false});
-         *     var t = board.create('text', [0.3, -0.3, ''], {
-         *         intl: {
-         *             enabled: true
-         *             locale: 'it-IT',
-         *             options: {
-         *                 style: 'unit',
-         *                 unit: 'kilometer-per-hour',
-         *                 unitDisplay: 'narrow',
-         *                 maximumFractionDigits: 2
-         *             }
-         *         }
-         *     });
-         *
-         *     // Set dynamic text consisting of text and number.
-         *     t.setText(function() {
-         *         var txt = 'Speed: ',
-         *             number = t.X();
-         *
-         *         // Add formatted number to variable txt
-         *         if (t.useLocale()) {
-         *             txt += t.formatNumberLocale(number);
-         *         } else {
-         *             txt += JXG.toFixed(number, 2);
-         *         }
-         *         return txt;
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        intl: {
-            enabled: 'inherit'
-            options: {
-                minimumFractionDigits: 0
-                maximumFractionDigits: 2
-            }
-        }
-
-        /**
-         * If set to true the text is parsed and evaluated.
-         * For labels parse==true results in converting names of the form k_a to subscripts.
-         * If the text is given by string and parse==true the string is parsed as
-         * JessieCode expression.
-         *
-         * @name parse
-         * @memberOf Text.prototype
-         * @default true
-         * @type Boolean
-         */
-        parse: true
-
-        /**
-         * If set to true and caja's sanitizeHTML function can be found it
-         * will be used to sanitize text output.
-         *
-         * @name useCaja
-         * @deprecated
-         * @memberOf Text.prototype
-         * @default false
-         * @type Boolean
-         */
-        useCaja: false
-
-        /**
-         * If enabled, the text will be handled as label. Intended for internal use.
-         *
-         * @name isLabel
-         * @memberOf Text.prototype
-         * @default false
-         * @type Boolean
-         */
-        isLabel: false
-
-        strokeColor: '#000000'
-        highlightStrokeColor: '#000000'
-        highlightStrokeOpacity: 0.666666
-
-        /**
-         * Default CSS properties of the HTML text element.
-         * <p>
-         * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property than any
-         * CSS class.
-         * <p>
-         * If a property which is set here should be overruled by a CSS class
-         * then this property should be removed here.
-         * <p>
-         * The reason, why this attribute should be kept to its default value at all,
-         * is that screen dumps of SVG boards with <tt>board.renderer.dumpToCanvas()</tt>
-         * will ignore the font-family if it is set in a CSS class.
-         * It has to be set explicitly as style attribute.
-         * <p>
-         * In summary, the order of priorities (specificity) from high to low is
-         * <ol>
-         *  <li> JXG.Options.text.cssStyle
-         *  <li> JXG.Options.text.cssDefaultStyle
-         *  <li> JXG.Options.text.cssClass
-         * </ol>
-         * @example
-         * If all texts should get its font-family from the default CSS class
-         * before initializing the board
-         * <pre>
-         *   JXG.Options.text.cssDefaultStyle = '';
-         *   JXG.Options.text.highlightCssDefaultStyle = '';
-         * </pre>
-         * should be called.
-         *
-         * @name cssDefaultStyle
-         * @memberOf Text.prototype
-         * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
-         * @type String
-         * @see Text#highlightCssDefaultStyle
-         * @see Text#cssStyle
-         * @see Text#highlightCssStyle
-         */
-        cssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;'
-
-        /**
-         * Default CSS properties of the HTML text element in case of highlighting.
-         * <p>
-         * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property than any
-         * CSS class.
-         * @example
-         * If all texts should get its font-family from the default CSS class
-         * before initializing the board
-         * <pre>
-         *   JXG.Options.text.cssDefaultStyle = '';
-         *   JXG.Options.text.highlightCssDefaultStyle = '';
-         * </pre>
-         * should be called.
-         *
-         * @name highlightCssDefaultStyle
-         * @memberOf Text.prototype
-         * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
-         * @type String
-         * @see Text#cssDefaultStyle
-         * @see Text#cssStyle
-         * @see Text#highlightCssStyle
-        */
-        highlightCssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;'
-
-        /**
-         * CSS properties of the HTML text element.
-         * <p>
-         * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property (specificity) han any
-         * CSS class.
-         *
-         * @name cssStyle
-         * @memberOf Text.prototype
-         * @default  ''
-         * @type String
-         * @see Text#cssDefaultStyle
-         * @see Text#highlightCssDefaultStyle
-         * @see Text#highlightCssStyle
-        */
-        cssStyle: ''
-
-        /**
-         * CSS properties of the HTML text element in case of highlighting.
-         * <p>
-         * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property (specificity) than any
-         * CSS class.
-         *
-         * @name highlightCssStyle
-         * @memberOf Text.prototype
-         * @default  ''
-         * @type String
-         * @see Text#cssDefaultStyle
-         * @see Text#highlightCssDefaultStyle
-         * @see Text#cssStyle
-        */
-        highlightCssStyle: ''
-
-        transitionProperties: ['color', 'opacity']
-
-        /**
-         * If true the input will be given to ASCIIMathML before rendering.
-         *
-         * @name useASCIIMathML
-         * @memberOf Text.prototype
-         * @default false
-         * @type Boolean
-         */
-        useASCIIMathML: false
-
-        /**
-         * If true MathJax will be used to render the input string.
-         * Supports MathJax 2 as well as Mathjax 3.
-         * It is recommended to use this option together with the option
-         * "parse: false". Otherwise, 4 backslashes (e.g. \\\\alpha) are needed
-         * instead of two (e.g. \\alpha).
-         *
-         * @name useMathJax
-         * @memberOf Text.prototype
-         * @default false
-         * @type Boolean
-         * @see Text#parse
-         *
-         * @example
-         *  // Before loading MathJax, it has to be configured something like this:
-         * window.MathJax = {
-         *   tex: {
-         *     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-         *     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-         *     packages: ['base', 'ams']
-         *   }
-         *   options: {
-         *     ignoreHtmlClass: 'tex2jax_ignore',
-         *     processHtmlClass: 'tex2jax_process'
-         *   }
-         * };
-         *
-         * // Display style
-         * board.create('text',[ 2,2,  function(){return '$$X=\\frac{2}{x}$$'}], {
-         *     fontSize: 15, color:'green', useMathJax: true});
-         *
-         * // Inline style
-         * board.create('text',[-2,2,  function(){return '$X_A=\\frac{2}{x}$'}], {
-         *     fontSize: 15, color:'green', useMathJax: true});
-         *
-         * var A = board.create('point', [-2, 0]);
-         * var B = board.create('point', [1, 0]);
-         * var C = board.create('point', [0, 1]);
-         *
-         * var graph = board.create('ellipse', [A, B, C], {
-         *         fixed: true
-         *         withLabel: true
-         *         strokeColor: 'black',
-         *         strokeWidth: 2,
-         *         fillColor: '#cccccc',
-         *         fillOpacity: 0.3,
-         *         highlightStrokeColor: 'red',
-         *         highlightStrokeWidth: 3,
-         *         name: '$1=\\frac{(x-h)^2}{a^2}+\\frac{(y-k)^2}{b^2}$',
-         *         label: {useMathJax: true}
-         *     });
-         *
-         * var nvect1 = board.create('text', [-4, -3, '\\[\\overrightarrow{V}\\]'],
-         * {
-         *   fontSize: 24, parse: false
-         * });
-         * var nvect1 = board.create('text', [-2, -4, function() {return '$\\overrightarrow{G}$';}],
-         * {
-         *   fontSize: 24, useMathJax: true
-         * });
-         *
-         * </pre>
-         * <script>
-         * window.MathJax = {
-         *   tex: {
-         *     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-         *     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-         *     packages: ['base', 'ams']
-         *   }
-         *   options: {
-         *     ignoreHtmlClass: 'tex2jax_ignore',
-         *     processHtmlClass: 'tex2jax_process'
-         *   }
-         * };
-         * </script>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
-         * <div id="JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9" class="jxgbox" style="width: 400px; height: 400px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9',
-         *             {boundingbox: [-5, 5, 5, -5], axis: true showcopyright: false shownavigation: false});
-         *     // Display style
-         *     board.create('text',[ 2,2,  function(){return '$$X=\\frac{2}{x}$$'}], {
-         *         fontSize: 15, color:'green', useMathJax: true});
-         *
-         *     // Inline style
-         *     board.create('text',[-2,2,  function(){return '$X_A=\\frac{2}{x}$'}], {
-         *         fontSize: 15, color:'green', useMathJax: true});
-         *
-         *     var A = board.create('point', [-2, 0]);
-         *     var B = board.create('point', [1, 0]);
-         *     var C = board.create('point', [0, 1]);
-         *
-         *     var graph = board.create('ellipse', [A, B, C], {
-         *             fixed: true
-         *             withLabel: true
-         *             strokeColor: 'black',
-         *             strokeWidth: 2,
-         *             fillColor: '#cccccc',
-         *             fillOpacity: 0.3,
-         *             highlightStrokeColor: 'red',
-         *             highlightStrokeWidth: 3,
-         *             name: '$1=\\frac{(x-h)^2}{a^2}+\\frac{(y-k)^2}{b^2}$',
-         *             label: {useMathJax: true}
-         *         });
-         *
-         *     var nvect1 = board.create('text', [-4, -3, '\\[\\overrightarrow{V}\\]'],
-         *     {
-         *       fontSize: 24, parse: false
-         *     });
-         *     var nvect1 = board.create('text', [-2, -4, function() {return '$\\overrightarrow{G}$';}],
-         *     {
-         *       fontSize: 24, useMathJax: true
-         *     });
-         *     })();
-         *
-         * </script><pre>
-         *
-         *
-         * @example
-         * // Load MathJax:
-         * // &lt;script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"&lt;&lt;/script&gt;
-         *
-         * // function and its derivative
-         * var f1 = function(x) { return x * x * x; }
-         * graph1 = board.create('functiongraph', [f1, -0.1, 1.1]),
-         *
-         * A = board.create('glider', [0.5, f1(0.5), graph1], {
-         *             name: 'f(x)',
-         *             color: 'black',
-         *             face:'x',
-         *             fixed: true
-         *             size: 3,
-         *             label: {offset: [-30, 10], fontSize: 15}
-         *         }),
-         * B = board.create('glider', [0.7, f1(0.7), graph1], {
-         *             name: 'f(x+&Delta;x)',
-         *             size: 3,
-         *             label: {offset: [-60, 10], fontSize: 15}
-         *         }),
-         *
-         * secant_line = board.create('line', [A,B],{dash: 1, color: 'green'}),
-         * a_h_segment = board.create('segment', [A, [
-         *                     function(){ return B.X() > A.X() ? B.X() : A.X()}
-         *                     function(){ return B.X() > A.X() ? A.Y() : B.Y()}
-         *                 ]],{ name: '&Delta;x', dash: 1, color: 'black'});
-         *
-         * b_v_segment = board.create('segment', [B, [
-         *                     function(){ return B.X() > A.X() ? B.X() : A.X()}
-         *                     function(){ return B.X() > A.X() ? A.Y() : B.Y()}
-         *                 ]],{ name: '&Delta;y', dash: 1, color: 'black'}),
-         *
-         * ma = board.create('midpoint', [a_h_segment.point1, a_h_segment.point2
-         *     ], {visible: false});
-         *
-         * board.create('text', [0, 0, function() {return '\\[\\Delta_x='+(B.X()-A.X()).toFixed(4)+'\\]'}], {
-         *     anchor: ma, useMathJax: true fixed: true color: 'green', anchorY: 'top'
-         * });
-         *
-         * mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
-         * board.create('text', [0, 0, function() {return '\\[\\Delta_y='+(B.Y()-A.Y()).toFixed(4)+'\\]'}], {
-         *     anchor: mb, useMathJax: true fixed: true color: 'green'
-         * });
-         *
-         * dval = board.create('text',[0.1, 0.8,
-         *     function(){
-         *         return '\\[\\frac{\\Delta_y}{\\Delta_x}=\\frac{' + ((B.Y()-A.Y()).toFixed(4)) + '}{' + ((B.X()-A.X()).toFixed(4)) +
-         *             '}=' + (((B.Y()-A.Y()).toFixed(4))/((B.X()-A.X()).toFixed(4))).toFixed(4) + '\\]';
-         *     }],{fontSize: 15, useMathJax: true});
-         *
-         * </pre>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
-         * <div id="JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621" class="jxgbox" style="width: 400px; height: 400px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621',
-         *             {boundingbox: [-0.1, 1.1, 1.1, -0.1], axis: true showcopyright: false shownavigation: false});
-         *     // function and its derivative
-         *     var f1 = function(x) { return x * x * x; }
-         *     graph1 = board.create('functiongraph', [f1, -0.1, 1.1]),
-         *
-         *     A = board.create('glider', [0.5, f1(0.5), graph1], {
-         *                 name: 'f(x)',
-         *                 color: 'black',
-         *                 face:'x',
-         *                 fixed: true
-         *                 size: 3,
-         *                 label: {offset: [-30, 10], fontSize: 15}
-         *             }),
-         *     B = board.create('glider', [0.7, f1(0.7), graph1], {
-         *                 name: 'f(x+&Delta;x)',
-         *                 size: 3,
-         *                 label: {offset: [-60, 10], fontSize: 15}
-         *             }),
-         *
-         *     secant_line = board.create('line', [A,B],{dash: 1, color: 'green'}),
-         *     a_h_segment = board.create('segment', [A, [
-         *                         function(){ return B.X() > A.X() ? B.X() : A.X()}
-         *                         function(){ return B.X() > A.X() ? A.Y() : B.Y()}
-         *                     ]],{ name: '&Delta;x', dash: 1, color: 'black'});
-         *
-         *     b_v_segment = board.create('segment', [B, [
-         *                         function(){ return B.X() > A.X() ? B.X() : A.X()}
-         *                         function(){ return B.X() > A.X() ? A.Y() : B.Y()}
-         *                     ]],{ name: '&Delta;y', dash: 1, color: 'black'}),
-         *
-         *     ma = board.create('midpoint', [a_h_segment.point1, a_h_segment.point2
-         *         ], {visible: false});
-         *
-         *     board.create('text', [0, 0, function() {return '\\[\\Delta_x='+(B.X()-A.X()).toFixed(4)+'\\]'}], {
-         *         anchor: ma, useMathJax: true fixed: true color: 'green', anchorY: 'top'
-         *     });
-         *
-         *     mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
-         *     board.create('text', [0, 0, function() {return '\\[\\Delta_y='+(B.Y()-A.Y()).toFixed(4)+'\\]'}], {
-         *         anchor: mb, useMathJax: true fixed: true color: 'green'
-         *     });
-         *
-         *     dval = board.create('text',[0.1, 0.8,
-         *         function(){
-         *             return '\\[\\frac{\\Delta_y}{\\Delta_x}=\\frac{' + ((B.Y()-A.Y()).toFixed(4)) + '}{' + ((B.X()-A.X()).toFixed(4)) +
-         *                 '}=' + (((B.Y()-A.Y()).toFixed(4))/((B.X()-A.X()).toFixed(4))).toFixed(4) + '\\]';
-         *         }],{fontSize: 15, useMathJax: true});
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-         * board.options.text.useMathjax = true;
-         *
-         * a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
-         *     suffixlabel:'\\(t_1=\\)',
-         *     unitLabel: ' \\(\\text{ ms}\\)',
-         *     snapWidth:0.01}),
-         *
-         * func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
-         * text1 = board.create('text', [5, 1, function(){
-         *             return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
-         *         }], {fontSize: 15, fixed:true strokeColor:'red', anchorY: 'top', parse: false});
-         *
-         * </pre><div id="JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6',
-         *             {boundingbox: [-1, 10, 11, -2], axis: true showcopyright: false shownavigation: false});
-         *     board.options.text.useMathjax = true;
-         *
-         *     a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
-         *         suffixlabel:'\\(t_1=\\)',
-         *         unitLabel: ' \\(\\text{ ms}\\)',
-         *         snapWidth:0.01}),
-         *
-         *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
-         *     text1 = board.create('text', [5, 1, function(){
-         *                 return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
-         *             }], {fontSize: 15, fixed:true strokeColor:'red', anchorY: 'top', parse: false});
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        useMathJax: false
-
-        /**
-         *
-         * If true KaTeX will be used to render the input string.
-         * For this feature, katex.min.js and katex.min.css have to be included.
-         * <p>
-         * The example below does not work, because there is a conflict with
-         * the MathJax library which is used below.
-         * </p>
-         *
-         * @name useKatex
-         * @memberOf Text.prototype
-         * @default false
-         * @type Boolean
-         *
-         *
-         * @example
-         * JXG.Options.text.useKatex = true;
-         *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-2, 5, 8, -5], axis:true
-         * });
-         *
-         * var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
-         *     suffixlabel:'t_1=',
-         *     unitLabel: ' \\text{ ms}',
-         *     snapWidth:0.01});
-         *
-         * func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
-         * text1 = board.create('text', [5, 1, function(){
-         *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
-         *         }], {fontSize: 15, fixed:true strokeColor:'red', anchorY: 'top'});
-         *
-         * </pre>
-         * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
-         * <script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>
-         * <div id="JXG497f065c-cfc1-44c3-ba21-5fa581668869" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG497f065c-cfc1-44c3-ba21-5fa581668869',
-         *             {boundingbox: [-2, 5, 8, -5], axis: true showcopyright: false shownavigation: false});
-         *     board.options.useKatex = true;
-         *     var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
-         *         suffixlabel:'t_1=',
-         *         unitLabel: ' \\text{ ms}',
-         *         snapWidth:0.01});
-         *
-         *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
-         *     text1 = board.create('text', [5, 1, function(){
-         *                 return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
-         *             }], {fontSize: 15, fixed:true strokeColor:'red', anchorY: 'top'});
-         *
-         *     })();
-         *
-         * </script><pre>
-         */
-        useKatex: false
-
-        /**
-         * Object or function returning an object that contains macros for KaTeX.
-         *
-         * @name katexMacros
-         * @memberOf Text.prototype
-         * @default <tt>{}</tt>
-         * @type Object
-         *
-         * @example
-         * // to globally apply macros to all text elements use:
-         * JXG.Options.text.katexMacros = {'\\jxg': 'JSXGraph is awesome'};
-         *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-2, 5, 8, -5], axis:true
-         * });
-         *
-         * // This macro only get applied to the p ('text') element
-         * var p = board.create('text', [1, 0, '\\jsg \\sR '], { katexMacros: {'\\sR':'\\mathbb{R}'} });
-         */
-        katexMacros: {}
-
-        /**
-         * Display number as integer + nominator / denominator. Works together
-         * with MathJax, KaTex or as plain text.
-         * @name toFraction
-         * @memberOf Text.prototype
-         * @type Boolean
-         * @default false
-         * @see JXG#toFraction
-         *
-         * @example
-         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true useMathjax: true });
-         *  board.create('text', [2, -2, 2 / 19], { toFraction: true useMathjax: false });
-         *
-         * </pre><div id="JXGc10fe0b6-15ac-42b6-890f-2593b427d493" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGc10fe0b6-15ac-42b6-890f-2593b427d493',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true showcopyright: false shownavigation: false});
-         *             board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true useMathjax: true });
-         *             board.create('text', [2, -2, 2 / 19], { toFraction: true useMathjax: false });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        toFraction: false
-
-        /**
-         * Determines the rendering method of the text. Possible values
-         * include <tt>'html'</tt> and <tt>'internal</tt>.
-         *
-         * @name display
-         * @memberOf Text.prototype
-         * @default 'html'
-         * @type String
-         */
-        display: 'html'
-
-        /**
-         * Anchor element {@link Point} {@link Text} or {@link Image} of the text.
-         * If it exists, the coordinates of the text are relative
-         * to this anchor element. In this case, only numbers are possible coordinates,
-         * functions are not supported.
-         *
-         * @name anchor
-         * @memberOf Text.prototype
-         * @default null
-         * @type Object
-         */
-        anchor: null
-
-        /**
-         * The horizontal alignment of the text. Possible values include <tt>'auto'</tt>, <tt>'left'</tt>,
-         * <tt>'middle'</tt>, and <tt>'right'</tt>.
-         *
-         * @name anchorX
-         * @memberOf Text.prototype
-         * @default 'left'
-         * @type String
-         */
-        anchorX: 'left'
-
-        /**
-         * The vertical alignment of the text. Possible values include <tt>'auto</tt>, <tt>'top'</tt>, <tt>'middle'</tt>, and
-         * <tt>'bottom'</tt>.
-         * For MathJax or KaTeX, 'top' is recommended.
-         *
-         * @name anchorY
-         * @memberOf Text.prototype
-         * @default 'middle'
-         * @type String
-         */
-        anchorY: 'middle'
-
-        /**
-         * Apply CSS classes to the text in non-highlighted view. It is possible to supply one or more
-         * CSS classes separated by blanks.
-         *
-         * @name cssClass
-         * @memberOf Text.prototype
-         * @type String
-         * @default 'JXGtext'
-         * @see Text#highlightCssClass
-         * @see Image#cssClass
-         * @see JXG.GeometryElement#cssClass
-         */
-        cssClass: 'JXGtext'
-
-        /**
-         * Apply CSS classes to the text in highlighted view. It is possible to supply one or more
-         * CSS classes separated by blanks.
-         *
-         * @name highlightCssClass
-         * @memberOf Text.prototype
-         * @type String
-         * @default 'JXGtext'
-         * @see Text#cssClass
-         * @see Image#highlightCssClass
-         * @see JXG.GeometryElement#highlightCssClass
-         */
-        highlightCssClass: 'JXGtext'
-
-        /**
-         * Sensitive area for dragging the text.
-         * Possible values are 'all', or something else.
-         * If set to 'small', a sensitivity margin at the right and left border is taken.
-         * This may be extended to left, right, ... in the future.
-         *
-         * @name Text#dragArea
-         * @type String
-         * @default 'all'
-         */
-        dragArea: 'all'
-
-        withLabel: false
-
-        /**
-         * Text rotation in degrees.
-         * Works for non-zero values only in combination with display=='internal'.
-         *
-         * @name Text#rotate
-         * @type Number
-         * @default 0
-         */
-        rotate: 0
-
-        /**
-         * @name Text#visible
-         * @type Boolean
-         * @default true
-         */
-        visible: true
-
-        /**
-         * Defines together with {@link Text#snapSizeY} the grid the text snaps on to.
-         * The text will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-         * of the default ticks of the default x axes of the board.
-         *
-         * @name snapSizeX
-         * @memberOf Text.prototype
-         *
-         * @see Point#snapToGrid
-         * @see Text#snapSizeY
-         * @see JXG.Board#defaultAxes
-         * @type Number
-         * @default 1
-         */
-        snapSizeX: 1
-
-        /**
-         * Defines together with {@link Text#snapSizeX} the grid the text snaps on to.
-         * The text will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
-         * of the default ticks of the default y axes of the board.
-         *
-         * @name snapSizeY
-         * @memberOf Text.prototype
-         *
-         * @see Point#snapToGrid
-         * @see Text#snapSizeX
-         * @see JXG.Board#defaultAxes
-         * @type Number
-         * @default 1
-         */
-        snapSizeY: 1
-
-        /**
-         * List of attractor elements. If the distance of the text is less than
-         * attractorDistance the text is made to glider of this element.
-         *
-         * @name attractors
-         * @memberOf Text.prototype
-         * @type Array
-         * @default empty
-         */
-        attractors: []
-
-        /**#@-*/
-    }
 
     /* special options for trace curves */
-    tracecurve: {
-        /**#@+
-         * @visprop
-         */
-        strokeColor: '#000000'
-        fillColor: 'none'
-
-        /**
-         * The number of evaluated data points.
-         * @memberOf Tracecurve.prototype
-         * @default 100
-         * @name numberPoints
-         * @type Number
-         */
-        numberPoints: 100
-
-        /**#@-*/
+    static tracecurve: TracecurveOptions = {
+        strokeColor: '#000000',
+        fillColor: 'none',
+        numberPoints: 100,
     }
 
     /* special turtle options */
-    turtle: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeWidth: 1
-        fillColor: 'none'
-        strokeColor: '#000000'
-
-        /**
-         * Attributes for the turtle arrow.
-         *
-         * @type Curve
-         * @name Turtle#arrow
-         */
+    static turtle:TurtleOptions = {
+        strokeWidth: 1,
+        fillColor: 'none',
+        strokeColor: '#000000',
         arrow: {
-            strokeWidth: 2
-            withLabel: false
-            strokeColor: Color.palette.red
-            lastArrow: true
+            strokeWidth: 2,
+            withLabel: false,
+            strokeColor: Color.palette.red,
+            lastArrow: true,
         }
-        /**#@-*/
     }
 
     /* special vector field options */
-    vectorfield: {
-        /**#@+
-         * @visprop
-         */
-
-        strokeWidth: 0.5
-        highlightStrokeWidth: 0.5
-        highlightStrokeColor: Color.palette.blue
-        highlightStrokeOpacity: 0.8
-
-        /**
-         * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
-         * @name scale
-         * @memberOf Vectorfield.prototype
-         * @type {Number|Function}
-         * @see Slopefield.scale
-         * @default 1
-         */
-        scale: 1
-
-        /**
-         * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
-         * Fields are:
-         * <ul>
-         *  <li> enabled: Boolean
-         *  <li> size: length of the arrow head legs (in pixel)
-         *  <li> angle: angle of the arrow head legs In radians.
-         * </ul>
-         * @name arrowhead
-         * @memberOf Vectorfield.prototype
-         * @type {Object}
-         * @default <tt>{enabled: true size: 5, angle: Math.PI * 0.125}</tt>
-         */
+    static vectorfield: VectorfieldOptions = {
+        strokeWidth: 0.5,
+        highlightStrokeWidth: 0.5,
+        highlightStrokeColor: Color.palette.blue,
+        highlightStrokeOpacity: 0.8,
+        scale: 1,
         arrowhead: {
-            enabled: true
-            size: 5
-            angle: number = Math.PI * 0.125
+            enabled: true,
+            size: 5,
+            angle: Math.PI * 0.125
         }
-
-        /**#@-*/
     }
 
     /**
@@ -4852,12 +1863,12 @@ export class Options {
      * @name JXG.Options#shortcuts
      *
      */
-    shortcuts: {
-        color: ['strokeColor', 'fillColor']
-        opacity: ['strokeOpacity', 'fillOpacity']
-        highlightColor: ['highlightStrokeColor', 'highlightFillColor']
-        highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity']
-        strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
+    static shortcuts = {
+        color: ['strokeColor', 'fillColor'],
+        opacity: ['strokeOpacity', 'fillOpacity'],
+        highlightColor: ['highlightStrokeColor', 'highlightFillColor'],
+        highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity'],
+        strokeWidth: ['strokeWidth', 'highlightStrokeWidth'],
     }
 
 
@@ -4872,7 +1883,7 @@ export class Options {
         let validatePixel = function (v) { return (/^[0-9]+px$/).test(v); }
         let validateDisplay = function (v) { return (v === 'html' || v === 'internal'); }
         let validateColor = function (v) { return Type.isString(v); }       // for now this should do it...
-        let validatePointFace = function (v) { return Type.exists(this.normalizePointFace(v)); }
+        let validatePointFace =  (v)=> { return Type.exists(this.normalizePointFace(v)); }
         let validateNumber = function (v) { return Type.isNumber(v, true, false); }
         let validateInteger = function (v) { return (Math.abs(v - Math.round(v)) < JSXMath.eps); }
         let validateNotNegativeInteger = function (v) { return validateInteger(v) && v >= 0; }
@@ -5046,9 +2057,9 @@ export class Options {
 
        copyProps = function (p, o) {
            p.visProp.fillcolor = o.fillColor;
-           p.visProp.highlightfillcolor = o.highlightFillColor;
+           p.visProp.highlightFillColor = o.highlightFillColor;
            p.visProp.strokecolor = o.strokeColor;
-           p.visProp.highlightstrokecolor = o.highlightStrokeColor;
+           p.visProp.highlightStrokeColor = o.highlightStrokeColor;
        };
 
        for (el in board.objects) {
@@ -5079,9 +2090,9 @@ export class Options {
                    copyProps(p, o.curve);
                } else if (p.type === Const.OBJECT_TYPE_SECTOR) {
                    p.arc.visProp.fillcolor = o.sector.fillColor;
-                   p.arc.visProp.highlightfillcolor = o.sector.highlightFillColor;
+                   p.arc.visProp.highlightFillColor = o.sector.highlightFillColor;
                    p.arc.visProp.fillopacity = o.sector.fillOpacity;
-                   p.arc.visProp.highlightfillopacity = o.sector.highlightFillOpacity;
+                   p.arc.visProp.highlightFillOpacity = o.sector.highlightFillOpacity;
                }
            }
        }

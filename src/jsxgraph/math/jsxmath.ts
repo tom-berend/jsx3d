@@ -51,8 +51,10 @@
  * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
  * for namespaces like JXG.Math.Numerics, JXG.Math.Plot, JXG.Math.Statistics, JXG.Math.Clip etc.
  */
-import { JXG } from "../jxg.js";
+// import { JXG } from "../jxg.js";
 import { Type } from "../utils/type.js";
+import { Env } from "../utils/env.js"
+import { ProbFuncs } from "./probfuncs.js"
 
 
 
@@ -424,8 +426,8 @@ export class JSXMath {
             ma, swp,
             n = Ain.length,
             A: number[][] = [],
-            p = [],
-            hv = [];
+            p:number[]= [],
+            hv:number[] = [];
 
         for (i = 0; i < n; i++) {
             A[i] = [];
@@ -449,7 +451,7 @@ export class JSXMath {
 
             // Singular matrix
             if (ma <= eps) {
-                JXG.warn('JXG.Math.inverse: singular matrix');
+                Env.warn('JXG.Math.inverse: singular matrix');
                 return [];
             }
 
@@ -532,7 +534,7 @@ export class JSXMath {
         var i,
             s = 0;
 
-        if (n === undef || !Type.isNumber(n)) {
+        if (n === undefined || !Type.isNumber(n)) {
             n = a.length;
         }
 
@@ -591,7 +593,7 @@ export class JSXMath {
     static axpy(a, x, y) {
         var i,
             le = x.length,
-            p = [];
+            p: number[] = [];
         for (i = 0; i < le; i++) {
             p[i] = a * x[i] + y[i];
         }
@@ -610,7 +612,7 @@ export class JSXMath {
             return NaN;
         }
 
-        n = this.floor(n);
+        n = Math.floor(n);
 
         if (n === 0 || n === 1) {
             return 1;
@@ -763,12 +765,10 @@ export class JSXMath {
      * @param  {Number} x Radicand
      * @returns {Number} Cube root of x.
      */
-    static cbrt(x) {
-        Math.cbrt ||
-            function (x) {
-                return this.nthroot(x, 3);
-            }
+    static cbrt(x: number) {
+        return Math.cbrt(x) //|| (x)=> { this.nthroot(x, 3) };
     }
+
     /**
      * Compute base to the power of exponent.
      * @param {Number} base
@@ -974,40 +974,42 @@ export class JSXMath {
      * @param  [max] If set, it will be returned the minimum of value and max.
      * @returns Fitted value.
      */
-    static roundToStep(value: number, step?: number, min?: number, max?: number): number {
+    static roundToStep(value: number, step: number = 1, min?: number, max?: number): number {
         var n = value,
             tmp, minOr0;
 
         // for performance
-        if (!step && !min && !max) {
+        if (step == 1 && !min && !max) {    // step is never false,check for ==1 instead
             return n;
         }
 
-        if (!max) {
-            n = Math.min(n, max);
-        }
-        if (!min) {
-            n = Math.max(n, min);
-        }
+        // TODO: what is this?
+        // if (!max) {
+        //     n = Math.min(n, max);
+        // }
+        // if (!min) {
+        //     n = Math.max(n, min);
+        // }
 
         minOr0 = min || 0;
 
-        if (!step) {
-            tmp = (n - minOr0) / step;
-            if (Number.isInteger(tmp)) {
-                return n;
-            }
-
-            tmp = Math.round(tmp);
-            n = minOr0 + tmp * step;
+        //        if (!step) {
+        tmp = (n - minOr0) / step;
+        if (Number.isInteger(tmp)) {
+            return n;
         }
 
-        if (!max) {
-            n = Math.min(n, max);
-        }
-        if (!min) {
-            n = Math.max(n, min);
-        }
+        tmp = Math.round(tmp);
+        n = minOr0 + tmp * step;
+        // }
+
+        // TODO what is this?
+        // if (!max) {
+        //     n = Math.min(n, max);
+        // }
+        // if (!min) {
+        //     n = Math.max(n, min);
+        // }
 
         return n;
     }
@@ -1020,7 +1022,7 @@ export class JSXMath {
      * @returns {Number}
      */
     static erf(x) {
-        return this.ProbFuncs.erf(x);
+        return ProbFuncs.erf(x);
     }
 
     /**
@@ -1032,7 +1034,7 @@ export class JSXMath {
      * @returns {Number}
      */
     static erfc(x) {
-        return this.ProbFuncs.erfc(x);
+        return ProbFuncs.erfc(x);
     }
 
     /**
@@ -1044,7 +1046,7 @@ export class JSXMath {
      * @returns {Number}
      */
     static erfi(x) {
-        return this.ProbFuncs.erfi(x);
+        return ProbFuncs.erfi(x);
     }
 
     /**
@@ -1055,7 +1057,7 @@ export class JSXMath {
      * @returns {Number}
      */
     static ndtr(x) {
-        return this.ProbFuncs.ndtr(x);
+        return ProbFuncs.ndtr(x);
     }
 
     /**
@@ -1067,7 +1069,7 @@ export class JSXMath {
      * @returns {Number}
      */
     static ndtri(x) {
-        return this.ProbFuncs.ndtri(x);
+        return ProbFuncs.ndtri(x);
     }
 
     /**
@@ -1405,7 +1407,7 @@ export class JSXMath {
      */
     static Vieta(x: number[]): number[] {
         var n = x.length,
-            s = [],
+            s: number[] = [],
             m,
             k,
             y;

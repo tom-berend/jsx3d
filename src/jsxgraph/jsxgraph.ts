@@ -148,7 +148,7 @@ export class JSXGraph {
      */
     static _setAttributes(attributes, options) {
         // merge attributes
-        var attr = Type.copyAttributes(attributes, options, 'board'),
+        let attr = Type.copyAttributes(attributes, options, 'board'),
             // These attributes - which are objects - have to be copied separately.
             list = [
                 'drag',

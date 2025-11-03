@@ -31,8 +31,7 @@
 /*jslint nomen: true, plusplus: true*/
 /*eslint no-loss-of-precision: off */
 
- import {JSXMath}  from "./jsxmath.js";
-import {Type} from "../utils/type.js";
+import { Type } from "../utils/type.js";
 
 /**
  * Probability functions, e.g. error function,
@@ -47,47 +46,47 @@ import {Type} from "../utils/type.js";
  * @exports Mat.ProbFuncs as JXG.Math.ProbFuncs
  * @namespace
  */
-Mat.ProbFuncs = {
-    MAXNUM: 1.701411834604692317316873e38, // 2**127
-    SQRTH: 7.07106781186547524401e-1, // sqrt(2)/2
-    SQRT2: 1.4142135623730950488, // sqrt(2)
-    MAXLOG: 7.08396418532264106224e2, // log 2**1022
+export class ProbFuncs {
+    static MAXNUM = 1.701411834604692317316873e38 // 2**127
+    static SQRTH = 7.07106781186547524401e-1 // sqrt(2)/2
+    static SQRT2 = 1.4142135623730950488 // sqrt(2)
+    static MAXLOG = 7.08396418532264106224e2 // log 2**1022
 
-    P: [
+    static P = [
         2.46196981473530512524e-10, 5.64189564831068821977e-1, 7.46321056442269912687,
         4.86371970985681366614e1, 1.96520832956077098242e2, 5.26445194995477358631e2,
         9.3452852717195760754e2, 1.02755188689515710272e3, 5.57535335369399327526e2
-    ],
+    ]
 
-    Q: [
+    static Q = [
         1.32281951154744992508e1, 8.67072140885989742329e1, 3.54937778887819891062e2,
         9.75708501743205489753e2, 1.82390916687909736289e3, 2.24633760818710981792e3,
         1.65666309194161350182e3, 5.57535340817727675546e2
-    ],
+    ]
 
-    R: [
+    static R = [
         5.64189583547755073984e-1, 1.27536670759978104416, 5.01905042251180477414,
         6.16021097993053585195, 7.4097426995044893916, 2.9788666537210024067
-    ],
+    ]
 
-    S: [
+    static S = [
         2.2605286322011727659, 9.39603524938001434673, 1.20489539808096656605e1,
         1.70814450747565897222e1, 9.60896809063285878198, 3.3690764510008151605
-    ],
+    ]
 
-    T: [
+    static T = [
         9.60497373987051638749, 9.00260197203842689217e1, 2.23200534594684319226e3,
         7.00332514112805075473e3, 5.55923013010394962768e4
-    ],
+    ]
 
-    U: [
+    static U = [
         3.35617141647503099647e1, 5.21357949780152679795e2, 4.59432382970980127987e3,
         2.26290000613890934246e4, 4.92673942608635921086e4
-    ],
+    ]
 
     // UTHRESH: 37.519379347,
-    M: 128.0,
-    MINV: 0.0078125,
+    static M = 128.0
+    static MINV = 0.0078125
 
     /**
      *
@@ -122,7 +121,7 @@ Mat.ProbFuncs = {
      * @param  {Number} sign (int)
      * @returns {Number}
      */
-    expx2: function (x, sign) {
+    static expx2(x, sign) {
         // double x;
         // int sign;
         var u, u1, m, f;
@@ -154,7 +153,7 @@ Mat.ProbFuncs = {
         // u is exact, u1 is small.
         u = Math.exp(u) * Math.exp(u1);
         return u;
-    },
+    }
 
     /**
      *
@@ -199,7 +198,7 @@ Mat.ProbFuncs = {
      * @param  {Number} N
      * @returns {Number}
      */
-    polevl: function (x, coef, N) {
+    static polevl(x, coef, N) {
         var ans, i;
 
         if (Type.exists(coef.reduce)) {
@@ -212,7 +211,7 @@ Mat.ProbFuncs = {
             ans = ans * x + coef[i];
         }
         return ans;
-    },
+    }
 
     /**
      * Evaluate polynomial when coefficient of x is 1.0.
@@ -224,7 +223,7 @@ Mat.ProbFuncs = {
      * @param  {Number} N
      * @returns {Number}
      */
-    p1evl: function (x, coef, N) {
+    static p1evl(x, coef, N) {
         var ans, i;
 
         if (Type.exists(coef.reduce)) {
@@ -237,7 +236,7 @@ Mat.ProbFuncs = {
             ans = ans * x + coef[i];
         }
         return ans;
-    },
+    }
 
     /**
      *
@@ -282,7 +281,7 @@ Mat.ProbFuncs = {
      * @param  {Number} a
      * @returns {Number}
      */
-    ndtr: function (a) {
+    static ndtr(a) {
         // a: double, return double
         var x, y, z;
 
@@ -301,20 +300,20 @@ Mat.ProbFuncs = {
             }
         }
         return y;
-    },
+    }
 
     /**
      * @private
      * @param  {Number} a
      * @returns {Number}
      */
-    _underflow: function (a) {
+    static _underflow(a) {
         console.log("erfc", "UNDERFLOW");
         if (a < 0) {
             return 2.0;
         }
         return 0.0;
-    },
+    }
 
     /**
      *
@@ -364,7 +363,7 @@ Mat.ProbFuncs = {
      * @param  {Number} a
      * @returns {Number}
      */
-    erfc: function (a) {
+    static erfc(a) {
         var p, q, x, y, z;
 
         if (a < 0.0) {
@@ -384,11 +383,11 @@ Mat.ProbFuncs = {
         z = this.expx2(a, -1); // Compute z = exp(z).
 
         if (x < 8.0) {
-            p = this.polevl(x, this.P, 8);
-            q = this.p1evl(x, this.Q, 8);
+            p = ProbFuncs.polevl(x, ProbFuncs.P, 8);
+            q = ProbFuncs.p1evl(x, ProbFuncs.Q, 8);
         } else {
-            p = this.polevl(x, this.R, 5);
-            q = this.p1evl(x, this.S, 6);
+            p = ProbFuncs.polevl(x, this.R, 5);
+            q = ProbFuncs.p1evl(x, this.S, 6);
         }
 
         y = (z * p) / q;
@@ -402,7 +401,7 @@ Mat.ProbFuncs = {
         }
 
         return y;
-    },
+    }
 
     /**
      * Exponentially scaled erfc function
@@ -414,18 +413,18 @@ Mat.ProbFuncs = {
      * @param {Number} x
      * @returns {Number}
      */
-    erfce: function (x) {
+    static erfce(x) {
         var p, q;
 
         if (x < 8.0) {
-            p = this.polevl(x, this.P, 8);
-            q = this.p1evl(x, this.Q, 8);
+            p = ProbFuncs.polevl(x, ProbFuncs.P, 8);
+            q = ProbFuncs.p1evl(x, ProbFuncs.Q, 8);
         } else {
-            p = this.polevl(x, this.R, 5);
-            q = this.p1evl(x, this.S, 6);
+            p = ProbFuncs.polevl(x, this.R, 5);
+            q = ProbFuncs.p1evl(x, this.S, 6);
         }
         return p / q;
-    },
+    }
 
     /**
      *	Error function
@@ -464,58 +463,58 @@ Mat.ProbFuncs = {
      * @param  {Number} x
      * @returns {Number}
      */
-    erf: function (x) {
+    static erf(x) {
         var y, z;
 
         if (Math.abs(x) > 1.0) {
-            return 1.0 - this.erfc(x);
+            return 1.0 - ProbFuncs.erfc(x);
         }
         z = x * x;
-        y = (x * this.polevl(z, this.T, 4)) / this.p1evl(z, this.U, 5);
+        y = (x * ProbFuncs.polevl(z, this.T, 4)) / ProbFuncs.p1evl(z, this.U, 5);
         return y;
-    },
+    }
 
-    s2pi: 2.50662827463100050242, // sqrt(2pi)
+    static s2pi = 2.50662827463100050242 // sqrt(2pi)
 
     // approximation for 0 <= |y - 0.5| <= 3/8 */
-    P0: [
+    static P0 = [
         -5.99633501014107895267e1, 9.80010754185999661536e1, -5.66762857469070293439e1,
         1.39312609387279679503e1, -1.23916583867381258016
-    ],
+    ]
 
-    Q0: [
+    static Q0 = [
         1.95448858338141759834, 4.67627912898881538453, 8.63602421390890590575e1,
         -2.25462687854119370527e2, 2.00260212380060660359e2, -8.20372256168333339912e1,
         1.59056225126211695515e1, -1.18331621121330003142
-    ],
+    ]
 
     //  Approximation for interval z = sqrt(-2 log y ) between 2 and 8
     //  i.e., y between exp(-2) = .135 and exp(-32) = 1.27e-14.
-    P1: [
+    static P1 = [
         4.05544892305962419923, 3.15251094599893866154e1, 5.71628192246421288162e1,
         4.408050738932008347e1, 1.46849561928858024014e1, 2.18663306850790267539,
         -1.40256079171354495875e-1, -3.50424626827848203418e-2, -8.57456785154685413611e-4
-    ],
+    ]
 
-    Q1: [
+    static Q1 = [
         1.57799883256466749731e1, 4.53907635128879210584e1, 4.1317203825467203044e1,
         1.50425385692907503408e1, 2.50464946208309415979, -1.42182922854787788574e-1,
         -3.80806407691578277194e-2, -9.33259480895457427372e-4
-    ],
+    ]
 
     // Approximation for interval z = sqrt(-2 log y ) between 8 and 64
     // i.e., y between exp(-32) = 1.27e-14 and exp(-2048) = 3.67e-890.
-    P2: [
+    static P2 = [
         3.2377489177694603597, 6.91522889068984211695, 3.93881025292474443415,
         1.33303460815807542389, 2.01485389549179081538e-1, 1.23716634817820021358e-2,
         3.01581553508235416007e-4, 2.65806974686737550832e-6, 6.2397453918498329373e-9
-    ],
+    ]
 
-    Q2: [
+    static Q2 = [
         6.02427039364742014255, 3.67983563856160859403, 1.37702099489081330271,
         2.1623699359449663589e-1, 1.34204006088543189037e-2, 3.28014464682127739104e-4,
         2.89247864745380683936e-6, 6.79019408009981274425e-9
-    ],
+    ]
 
     /**
      *
@@ -561,7 +560,7 @@ Mat.ProbFuncs = {
      * @param  {Number} y0
      * @returns {Number}
      */
-    ndtri: function (y0) {
+    static ndtri(y0) {
         var x, y, z, y2, x0, x1, code;
 
         if (y0 <= 0.0) {
@@ -584,8 +583,8 @@ Mat.ProbFuncs = {
         if (y > 0.13533528323661269189) {
             y = y - 0.5;
             y2 = y * y;
-            x = y + y * ((y2 * this.polevl(y2, this.P0, 4)) / this.p1evl(y2, this.Q0, 8));
-            x = x * this.s2pi;
+            x = y + y * ((y2 * ProbFuncs.polevl(y2, ProbFuncs.P0, 4)) / ProbFuncs.p1evl(y2, ProbFuncs.Q0, 8));
+            x = x * ProbFuncs.s2pi;
             return x;
         }
 
@@ -595,16 +594,16 @@ Mat.ProbFuncs = {
         z = 1.0 / x;
         if (x < 8.0) {
             // y > exp(-32) = 1.2664165549e-14
-            x1 = (z * this.polevl(z, this.P1, 8)) / this.p1evl(z, this.Q1, 8);
+            x1 = (z * ProbFuncs.polevl(z, ProbFuncs.P1, 8)) / ProbFuncs.p1evl(z, ProbFuncs.Q1, 8);
         } else {
-            x1 = (z * this.polevl(z, this.P2, 8)) / this.p1evl(z, this.Q2, 8);
+            x1 = (z * ProbFuncs.polevl(z, ProbFuncs.P2, 8)) / ProbFuncs.p1evl(z, ProbFuncs.Q2, 8);
         }
         x = x0 - x1;
         if (code !== 0) {
             x = -x;
         }
         return x;
-    },
+    }
 
     /**
      * Inverse of error function erf.
@@ -612,9 +611,8 @@ Mat.ProbFuncs = {
      * @param  {Number} x
      * @returns {Number}
      */
-    erfi: function (x) {
-        return this.ndtri((x + 1) * 0.5) * this.SQRTH;
+    static erfi(x) {
+        return this.ndtri((x + 1) * 0.5) * ProbFuncs.SQRTH;
     }
 };
 
-export default Mat.ProbFuncs;

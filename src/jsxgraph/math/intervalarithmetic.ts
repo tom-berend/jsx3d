@@ -1669,12 +1669,12 @@ export class Interval {
      * @ignore
      * @private
      */
-    enable() {
-        this.prev(v) {
+    enable(v) {
+        this.prev = (v) => {
             return this._prev(v);
         };
 
-        this.next(v) {
+        this.next = (v) => {
             return this._next(v);
         };
     }
@@ -1682,8 +1682,8 @@ export class Interval {
     /*
      * nextafter
      */
-    const SMALLEST_DENORM = Math.pow(2, -1074)
-    const UINT_MAX = -1 >>> 0
+    static SMALLEST_DENORM = Math.pow(2, -1074)
+    static UINT_MAX = -1 >>> 0
 
     nextafter(x, y) {
         var lo, hi;

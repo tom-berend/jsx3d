@@ -13,19 +13,15 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-const uuidCharsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+const uuidCharsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 const uuidChars = uuidCharsStr.split("");
 
 export class UUID {
 
-    // constants
-    static uuidCharsStr: string
-    static: string[]
-
     static genUUID(prefix: string) {
         var r,
             i,
-            uuid = [],
+            uuid: string[] = [],
             rnd = 0;
 
 

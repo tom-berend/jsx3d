@@ -1,3 +1,9 @@
+// TODO: this needs to be replace with real types
+export interface LooseObject {
+    [key: string]: any
+}
+
+
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -54,11 +60,12 @@
 */
 
 
-
 // TS has strong types - get rid of whatever we can
 
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
-import { JSXMath } from '../math/jsxmath.js';
+// import { Coords } from '../base/coords.js';
+// import { GeometryElement } from '../base/element.js';
+// import { JSXMath } from '../math/jsxmath.js';
 import { Options } from '../options.js';
 // import { HtmlSanitizer } from './htmlsanitizer.js';
 
@@ -399,37 +406,37 @@ export class Type {
         return str;
     }
 
-    /**
-     * Convert a String, a number or a function into a function. This method is used in Transformation.js
-     * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
-     * by a JessieCode string, thus it must be a valid reference only in case one of the param
-     * values is of type string.
-     * @param {Array} param An array containing strings, numbers, or functions.
-     * @param {Number} n Length of <tt>param</tt>.
-     * @returns {Function} A function taking one parameter k which specifies the index of the param element
-     * to evaluate.
-     */
-    static createEvalFunction(board, param, n) {
-        var f: Function[] = [],
-            func,
-            i,
-            e,
-            deps = {};
+    // /**
+    //  * Convert a String, a number or a function into a function. This method is used in Transformation.js
+    //  * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
+    //  * by a JessieCode string, thus it must be a valid reference only in case one of the param
+    //  * values is of type string.
+    //  * @param {Array} param An array containing strings, numbers, or functions.
+    //  * @param {Number} n Length of <tt>param</tt>.
+    //  * @returns {Function} A function taking one parameter k which specifies the index of the param element
+    //  * to evaluate.
+    //  */
+    // static createEvalFunction(board, param, n) {
+    //     var f: Function[] = [],
+    //         func,
+    //         i,
+    //         e,
+    //         deps = {};
 
-        for (i = 0; i < n; i++) {
-            f[i] = this.createFunction(param[i], board);
-            for (e in f[i]["deps"]) {
-                deps[e] = f[i]["deps"]   // was f[i].deps;
-            }
-        }
+    //     for (i = 0; i < n; i++) {
+    //         f[i] = this.createFunction(param[i], board);
+    //         for (e in f[i]["deps"]) {
+    //             deps[e] = f[i]["deps"]   // was f[i].deps;
+    //         }
+    //     }
 
-        func = function (k) {
-            return f[k]();
-        };
-        func.deps = deps;
+    //     func = function (k) {
+    //         return f[k]();
+    //     };
+    //     func.deps = deps;
 
-        return func;
-    }
+    //     return func;
+    // }
 
     /**
      * Convert a String, number or function into a function.
@@ -444,41 +451,41 @@ export class Type {
      * @returns {Function} A function evaluating the value given by term or null if term is not of type string,
      * function or number.
      */
-    static createFunction(term, board, variableName?, evalGeonext?): Function {
-        var f = null;
+    // static createFunction(term, board, variableName?, evalGeonext?): function {
+    //     let f = ()=>{}      // default empty function
 
-        // if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
-        if (this.isString(term)) {
-            // Convert GEONExT syntax into  JavaScript syntax
-            //newTerm = JXG.GeonextParser.geonext2JS(term, board);
-            //return new Function(variableName,'return ' + newTerm + ';');
-            //term = JXG.GeonextParser.replaceNameById(term, board);
-            //term = JXG.GeonextParser.geonext2JS(term, board);
+    //     // if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
+    //     if (this.isString(term)) {
+    //         // Convert GEONExT syntax into  JavaScript syntax
+    //         //newTerm = JXG.GeonextParser.geonext2JS(term, board);
+    //         //return new Function(variableName,'return ' + newTerm + ';');
+    //         //term = JXG.GeonextParser.replaceNameById(term, board);
+    //         //term = JXG.GeonextParser.geonext2JS(term, board);
 
-            f = board.jc.snippet(term, true, variableName, false);
-        } else if (this.isFunction(term)) {
-            f = term;
-            if (f)
-                f.deps = this.isObject(term.deps) ? term.deps : {};
-        } else if (this.isNumber(term) || this.isArray(term)) {
-            /** @ignore */
-            f = function () {
-                return term;
-            };
-            f.deps = {};
-            // } else if (this.isString(term)) {
-            //     // In case of string function like fontsize
-            //     /** @ignore */
-            //     f = function () { return term; };
-            //     f.deps = {};
-        }
+    //         f = board.jc.snippet(term, true, variableName, false);
+    //     } else if (this.isFunction(term)) {
+    //         f = term;
+    //         if (f)
+    //             f.deps = this.isObject(term.deps) ? term.deps : {};
+    //     } else if (this.isNumber(term) || this.isArray(term)) {
+    //         /** @ignore */
+    //         f = function () {
+    //             return term;
+    //         };
+    //         f.deps = {};
+    //         // } else if (this.isString(term)) {
+    //         //     // In case of string function like fontsize
+    //         //     /** @ignore */
+    //         //     f = function () { return term; };
+    //         //     f.deps = {};
+    //     }
 
-        if (f !== null) {
-            f.origin = term;
-        }
+    //     if (f !== null) {
+    //         f.origin = term;
+    //     }
 
-        return f;
-    }
+    //     return f;
+    // }
 
     /**
      *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
@@ -501,145 +508,145 @@ export class Type {
      * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
      * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
      */
-    static providePoints(board, parents, attributes, attrClass, attrArray) {
-        var i,
-            j,
-            len,
-            lenAttr = 0,
-            points = [],
-            attr,
-            val;
+    // static providePoints(board, parents, attributes, attrClass, attrArray) {
+    //     var i,
+    //         j,
+    //         len,
+    //         lenAttr = 0,
+    //         points = [],
+    //         attr,
+    //         val;
 
-        if (!this.isArray(parents)) {
-            parents = [parents];
-        }
-        len = parents.length;
-        if (this.exists(attrArray)) {
-            lenAttr = attrArray.length;
-        }
-        if (lenAttr === 0) {
-            attr = this.copyAttributes(attributes, board.options, attrClass);
-        }
+    //     if (!this.isArray(parents)) {
+    //         parents = [parents];
+    //     }
+    //     len = parents.length;
+    //     if (this.exists(attrArray)) {
+    //         lenAttr = attrArray.length;
+    //     }
+    //     if (lenAttr === 0) {
+    //         attr = this.copyAttributes(attributes, board.options, attrClass);
+    //     }
 
-        for (i = 0; i < len; ++i) {
-            if (lenAttr > 0) {
-                j = Math.min(i, lenAttr - 1);
-                attr = this.copyAttributes(
-                    attributes,
-                    board.options,
-                    attrClass,
-                    attrArray[j].toLowerCase(),
-                );
-            }
-            if (this.isArray(parents[i]) && parents[i].length > 1) {
-                points.push(board.create('point', parents[i], attr));
-                points[points.length - 1]._is_new = true;
-            } else if (this.isFunction(parents[i])) {
-                val = parents[i]();
-                if (this.isArray(val) && val.length > 1) {
-                    points.push(board.create('point', [parents[i]], attr));
-                    points[points.length - 1]._is_new = true;
-                }
-            } else {
-                points.push(board.select(parents[i]));
-            }
+    //     for (i = 0; i < len; ++i) {
+    //         if (lenAttr > 0) {
+    //             j = Math.min(i, lenAttr - 1);
+    //             attr = this.copyAttributes(
+    //                 attributes,
+    //                 board.options,
+    //                 attrClass,
+    //                 attrArray[j].toLowerCase(),
+    //             );
+    //         }
+    //         if (this.isArray(parents[i]) && parents[i].length > 1) {
+    //             points.push(board.create('point', parents[i], attr));
+    //             points[points.length - 1]._is_new = true;
+    //         } else if (this.isFunction(parents[i])) {
+    //             val = parents[i]();
+    //             if (this.isArray(val) && val.length > 1) {
+    //                 points.push(board.create('point', [parents[i]], attr));
+    //                 points[points.length - 1]._is_new = true;
+    //             }
+    //         } else {
+    //             points.push(board.select(parents[i]));
+    //         }
 
-            if (!this.isPoint(points[i])) {
-                return false;
-            }
-        }
+    //         if (!this.isPoint(points[i])) {
+    //             return false;
+    //         }
+    //     }
 
-        return points;
-    }
+    //     return points;
+    // }
 
-    /**
-     *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
-     *  function returning coordinate arrays
-     *  free points with these coordinates are created.
-     *
-     * @param {JXG.View3D} view View3D object
-     * @param {Array} parents Array containing parent elements for a new object. This array may contain
-     *    <ul>
-     *      <li> {@link JXG.Point3D} objects
-     *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
-     *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
-     *      <li> Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
-     *      <li> Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
-     *           [function(){ return 2; } function(){ return 3; } function(){ return 1; }]
-     *      <li> Function returning coordinates, e.g. function() { return [2, 3, 1]; }
-     *    </ul>
-     *  In the last three cases a new 3D point will be created.
-     * @param {String} attrClass Main attribute class of newly created 3D points, see {@link JXG#copyAttributes}
-     * @param {Array} attrArray List of subtype attributes for the newly created 3D points. The list of subtypes is mapped to the list of new 3D points.
-     * @returns {Array} List of newly created {@link JXG.Point3D} elements or false if not all returned elements are 3D points.
-     */
-    static providePoints3D(view, parents, attributes, attrClass, attrArray) {
-        var i,
-            j,
-            len,
-            lenAttr = 0,
-            points = [],
-            attr,
-            val;
+    // /**
+    //  *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
+    //  *  function returning coordinate arrays
+    //  *  free points with these coordinates are created.
+    //  *
+    //  * @param {JXG.View3D} view View3D object
+    //  * @param {Array} parents Array containing parent elements for a new object. This array may contain
+    //  *    <ul>
+    //  *      <li> {@link JXG.Point3D} objects
+    //  *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
+    //  *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
+    //  *      <li> Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
+    //  *      <li> Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
+    //  *           [function(){ return 2; } function(){ return 3; } function(){ return 1; }]
+    //  *      <li> Function returning coordinates, e.g. function() { return [2, 3, 1]; }
+    //  *    </ul>
+    //  *  In the last three cases a new 3D point will be created.
+    //  * @param {String} attrClass Main attribute class of newly created 3D points, see {@link JXG#copyAttributes}
+    //  * @param {Array} attrArray List of subtype attributes for the newly created 3D points. The list of subtypes is mapped to the list of new 3D points.
+    //  * @returns {Array} List of newly created {@link JXG.Point3D} elements or false if not all returned elements are 3D points.
+    //  */
+    // static providePoints3D(view, parents, attributes, attrClass, attrArray) {
+    //     var i,
+    //         j,
+    //         len,
+    //         lenAttr = 0,
+    //         points = [],
+    //         attr,
+    //         val;
 
-        if (!this.isArray(parents)) {
-            parents = [parents];
-        }
-        len = parents.length;
-        if (this.exists(attrArray)) {
-            lenAttr = attrArray.length;
-        }
-        if (lenAttr === 0) {
-            attr = this.copyAttributes(attributes, view.board.options, attrClass);
-        }
+    //     if (!this.isArray(parents)) {
+    //         parents = [parents];
+    //     }
+    //     len = parents.length;
+    //     if (this.exists(attrArray)) {
+    //         lenAttr = attrArray.length;
+    //     }
+    //     if (lenAttr === 0) {
+    //         attr = this.copyAttributes(attributes, view.board.options, attrClass);
+    //     }
 
-        for (i = 0; i < len; ++i) {
-            if (lenAttr > 0) {
-                j = Math.min(i, lenAttr - 1);
-                attr = this.copyAttributes(
-                    attributes,
-                    view.board.options,
-                    attrClass,
-                    attrArray[j],
-                );
-            }
+    //     for (i = 0; i < len; ++i) {
+    //         if (lenAttr > 0) {
+    //             j = Math.min(i, lenAttr - 1);
+    //             attr = this.copyAttributes(
+    //                 attributes,
+    //                 view.board.options,
+    //                 attrClass,
+    //                 attrArray[j],
+    //             );
+    //         }
 
-            if (
-                this.isArray(parents[i]) &&
-                parents[i].length > 0 &&
-                parents[i].every((x) => this.isArray(x) && this.isNumber(x[0]))
-            ) {
-                // Testing for array-of-arrays-of-numbers, like [[1,2,3],[2,3,4]]
-                for (j = 0; j < parents[i].length; j++) {
-                    points.push(view.create('point3d', parents[i][j], attr));
-                    points[points.length - 1]._is_new = true;
-                }
-            } else if (
-                this.isArray(parents[i]) &&
-                parents[i].every((x) => this.isNumber(x) || this.isFunction(x))
-            ) {
-                // Single array [1,2,3]
-                points.push(view.create('point3d', parents[i], attr));
-                points[points.length - 1]._is_new = true;
-            } else if (this.isPoint3D(parents[i])) {
-                points.push(parents[i]);
-            } else if (this.isFunction(parents[i])) {
-                val = parents[i]();
-                if (this.isArray(val) && val.length > 1) {
-                    points.push(view.create('point3d', [parents[i]], attr));
-                    points[points.length - 1]._is_new = true;
-                }
-            } else {
-                points.push(view.select(parents[i]));
-            }
+    //         if (
+    //             this.isArray(parents[i]) &&
+    //             parents[i].length > 0 &&
+    //             parents[i].every((x) => this.isArray(x) && this.isNumber(x[0]))
+    //         ) {
+    //             // Testing for array-of-arrays-of-numbers, like [[1,2,3],[2,3,4]]
+    //             for (j = 0; j < parents[i].length; j++) {
+    //                 points.push(view.create('point3d', parents[i][j], attr));
+    //                 points[points.length - 1]._is_new = true;
+    //             }
+    //         } else if (
+    //             this.isArray(parents[i]) &&
+    //             parents[i].every((x) => this.isNumber(x) || this.isFunction(x))
+    //         ) {
+    //             // Single array [1,2,3]
+    //             points.push(view.create('point3d', parents[i], attr));
+    //             points[points.length - 1]._is_new = true;
+    //         } else if (this.isPoint3D(parents[i])) {
+    //             points.push(parents[i]);
+    //         } else if (this.isFunction(parents[i])) {
+    //             val = parents[i]();
+    //             if (this.isArray(val) && val.length > 1) {
+    //                 points.push(view.create('point3d', [parents[i]], attr));
+    //                 points[points.length - 1]._is_new = true;
+    //             }
+    //         } else {
+    //             points.push(view.select(parents[i]));
+    //         }
 
-            if (!this.isPoint3D(points[i])) {
-                return false;
-            }
-        }
+    //         if (!this.isPoint3D(points[i])) {
+    //             return false;
+    //         }
+    //     }
 
-        return points;
-    }
+    //     return points;
+    // }
 
     /**
      * Generates a function which calls the function fn in the scope of owner.
@@ -647,7 +654,7 @@ export class Type {
      * @param {Object} owner Scope in which fn is executed.
      * @returns {Function} A function with the same signature as fn.
      */
-    static bind(fn, owner) {
+    static bind(fn: Function, owner: object) {
         return function () {
             return fn.apply(owner, arguments);
         };
@@ -675,22 +682,25 @@ export class Type {
      * @returns {Number} The index of the first appearance of the given value, or
      * <tt>-1</tt> if the value was not found.
      */
-    static indexOf(array, value, sub) {
-        var i,
-            s = this.exists(sub);
-
-        if (Array.indexOf && !s) {
-            return array.indexOf(value);
-        }
-
-        for (i = 0; i < array.length; i++) {
-            if ((s && array[i][sub] === value) || (!s && array[i] === value)) {
-                return i;
-            }
-        }
-
-        return -1;
+    static indexOf(array, value, sub){
+        throw new Error('figure this out')
     }
+    // static indexOf(array, value, sub) {
+    //     var i,
+    //         s = this.exists(sub);
+
+    //     if (Array.indexOf && !s) {
+    //         return array.indexOf(value);
+    //     }
+
+    //     for (i = 0; i < array.length; i++) {
+    //         if ((s && array[i][sub] === value) || (!s && array[i] === value)) {
+    //             return i;
+    //         }
+    //     }
+
+    //     return -1;
+    // }
 
     /**
      * Eliminates duplicate entries in an array consisting of numbers and strings.
@@ -700,7 +710,7 @@ export class Type {
     static eliminateDuplicates(a) {
         var i,
             len = a.length,
-            result = [],
+            result:number[] = [],
             obj = {};
 
         for (i = 0; i < len; i++) {
@@ -743,7 +753,7 @@ export class Type {
         var i,
             j,
             isArray,
-            ret = [];
+            ret:number[] = [];
 
         if (arr.length === 0) {
             return [];
@@ -757,7 +767,7 @@ export class Type {
                 continue;
             }
             for (j = i + 1; j < arr.length; j++) {
-                if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
+                if (isArray && Type.cmpArrays(arr[i], arr[j])) {
                     arr[i] = [];
                 } else if (!isArray && arr[i] === arr[j]) {
                     arr[i] = '';
@@ -783,42 +793,42 @@ export class Type {
         return ret;
     }
 
-    /**
-     * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
-     * @param {Array} arr
-     * @param val
-     * @returns {Boolean}
-     */
-    static isInArray(arr, val) {
-        return JXG.indexOf(arr, val) > -1;
-    }
+    // /**
+    //  * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
+    //  * @param {Array} arr
+    //  * @param val
+    //  * @returns {Boolean}
+    //  */
+    // static isInArray(arr, val) {
+    //     return Type.indexOf(arr, val) > -1;
+    // }
 
-    /**
-     * Converts an array of {@link JXG.Coords} objects into a coordinate matrix.
-     * @param {Array} coords
-     * @param {Boolean} split
-     * @returns {Array}
-     */
-    static coordsArrayToMatrix(coords, split) {
-        var i,
-            x = [],
-            m = [];
+    // /**
+    //  * Converts an array of {@link JXG.Coords} objects into a coordinate matrix.
+    //  * @param {Array} coords
+    //  * @param {Boolean} split
+    //  * @returns {Array}
+    //  */
+    // static coordsArrayToMatrix(coords:, split) {
+    //     var i,
+    //         x:number[] = [],
+    //         m:number[] = [];
 
-        for (i = 0; i < coords.length; i++) {
-            if (split) {
-                x.push(coords[i].usrCoords[1]);
-                m.push(coords[i].usrCoords[2]);
-            } else {
-                m.push([coords[i].usrCoords[1], coords[i].usrCoords[2]]);
-            }
-        }
+    //     for (i = 0; i < coords.length; i++) {
+    //         if (split) {
+    //             x.push(coords[i].usrCoords[1]);
+    //             m.push(coords[i].usrCoords[2]);
+    //         } else {
+    //             m.push([coords[i].usrCoords[1], coords[i].usrCoords[2]]);
+    //         }
+    //     }
 
-        if (split) {
-            m = [x, m];
-        }
+    //     if (split) {
+    //         m = [x, m];
+    //     }
 
-        return m;
-    }
+    //     return m;
+    // }
 
     /**
      * Compare two arrays.
@@ -877,7 +887,7 @@ export class Type {
      * @returns {Number}
      */
     static trunc(n, p) {
-        p = JXG.def(p, 0);
+        p = Type.def(p, 0);
 
         return this.toFixed(n, p);
     }
@@ -983,11 +993,11 @@ export class Type {
             str;
 
         if (x >= 0.1) {
-            str = this.toFixed(val, 2);
+            str = Type.toFixed(val, 2);
         } else if (x >= 0.01) {
-            str = this.toFixed(val, 4);
+            str = Type.toFixed(val, 4);
         } else if (x >= 0.0001) {
-            str = this.toFixed(val, 6);
+            str = Type.toFixed(val, 6);
         } else {
             str = val;
         }
@@ -1064,32 +1074,32 @@ export class Type {
         };
     }
 
-    /**
-     * Extracts the keys of a given object.
-     * @param object The object the keys are to be extracted
-     * @param onlyOwn If true, hasOwnProperty() is used to verify that only keys are collected
-     * the object owns itself and not some other object in the prototype chain.
-     * @returns {Array} All keys of the given object.
-     */
-    static keys(object, onlyOwn) {
-        var keys = [],
-            property;
+    // /**
+    //  * Extracts the keys of a given object.
+    //  * @param object The object the keys are to be extracted
+    //  * @param onlyOwn If true, hasOwnProperty() is used to verify that only keys are collected
+    //  * the object owns itself and not some other object in the prototype chain.
+    //  * @returns {Array} All keys of the given object.
+    //  */
+    // static keys(object, onlyOwn) {
+    //     var keys = [],
+    //         property;
 
-        // the caller decides if we use hasOwnProperty
-        /*jslint forin:true*/
-        for (property in object) {
-            if (onlyOwn) {
-                if (object.hasOwnProperty(property)) {
-                    keys.push(property);
-                }
-            } else {
-                keys.push(property);
-            }
-        }
-        /*jslint forin:false*/
+    //     // the caller decides if we use hasOwnProperty
+    //     /*jslint forin:true*/
+    //     for (property in object) {
+    //         if (onlyOwn) {
+    //             if (object.hasOwnProperty(property)) {
+    //                 keys.push(property);
+    //             }
+    //         } else {
+    //             keys.push(property);
+    //         }
+    //     }
+    //     /*jslint forin:false*/
 
-        return keys;
-    }
+    //     return keys;
+    // }
 
     /**
      * This outputs an object with a base class reference to the given object. This is useful if
@@ -1099,7 +1109,7 @@ export class Type {
      * @returns {Object} An object with a base class reference to <tt>obj</tt>.
      */
     static clone(obj) {
-        var cObj = {};
+        var cObj:LooseObject = {};
 
         cObj.prototype = obj;
 
@@ -1319,12 +1329,13 @@ export class Type {
      * @see JXG.merge
      *
      */
-    static mergeAttr(attr, special, toLower, ignoreUndefinedSpecials) {
+    static mergeAttr(attr:object, special:object, toLower:boolean=true, ignoreUndefinedSpecials:boolean = false) {
         var e, e2, o;
 
-        toLower = toLower || true;
-        ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
+        // toLower = toLower || true;
+        // ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
 
+        console.log('enter mergeAttr', attr, special)
         for (e in special) {
             if (special.hasOwnProperty(e)) {
                 e2 = toLower ? e.toLowerCase() : e;
@@ -1373,6 +1384,8 @@ export class Type {
                 }
             }
         }
+        console.log('exit Merge', attr)
+        console.log('wai')
     }
 
     /**
@@ -1427,7 +1440,13 @@ export class Type {
      * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'. Must be provided in lower case!
      * @returns {Object} The resulting attributes object
      */
-    static copyAttributes(attributes, options, s) {
+
+    // examples:
+    // attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
+    // attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
+    // attr_curve = Type.copyAttributes(attributes, board.options, "conic");
+
+    static copyAttributes(attributes: object, options: object, ...s:string[]) {
         var a,
             arg,
             i,
@@ -1448,16 +1467,16 @@ export class Type {
             };
 
         len = arguments.length;
-        if (len < 3 || primitives[s]) {
+        if (len < 3 || primitives[s[0]]) {
             // Default options from Options.elements
-            a = this.deepCopy(Options.elements, null, true);
+            a = this.deepCopy(Options.elements, {}, true);
         } else {
             a = {};
         }
 
         // Only the layer of the main element is set.
-        if (len < 4 && this.exists(s) && this.exists(Options.layer[s])) {
-            a.layer = Options.layer[s];
+        if (len < 4 && this.exists(s) && this.exists(Options.layer[s[3]])) {
+            a.layer = Options.layer[s[3]];
         }
 
         // Default options from the specific element like 'line' in
@@ -1546,59 +1565,60 @@ export class Type {
         }
     }
 
-    /**
-     * Create a stripped down version of a JSXGraph element for cloning to the background.
-     * Used in {JXG.GeometryElement#cloneToBackground} for creating traces.
-     *
-     * @param {JXG.GeometryElement} el Element to be cloned
-     * @returns Object Cloned element
-     * @private
-     */
-    static getCloneObject(el) {
-        var obj,
-            key,
-            copy = {};
+    // /**
+    //  * Create a stripped down version of a JSXGraph element for cloning to the background.
+    //  * Used in {JXG.GeometryElement#cloneToBackground} for creating traces.
+    //  *
+    //  * @param {JXG.GeometryElement} el Element to be cloned
+    //  * @returns Object Cloned element
+    //  * @private
+    //  */
+    // static getCloneObject(el:GeometryElement) {
+    //     var obj,
+    //         key
 
-        copy.id = el.id + 'T' + el.numTraces;
-        el.numTraces += 1;
+    //     let copy:LooseObject = {}
 
-        copy.coords = el.coords;
-        obj = this.deepCopy(el.visProp, el.visProp.traceattributes, true);
-        copy.visProp = {};
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                if (
-                    key.indexOf('aria') !== 0 &&
-                    key.indexOf('highlight') !== 0 &&
-                    key.indexOf('attractor') !== 0 &&
-                    key !== 'label' &&
-                    key !== 'needsregularupdate' &&
-                    key !== 'infoboxdigits'
-                ) {
-                    copy.visProp[key] = el.eval(obj[key]);
-                }
-            }
-        }
-        copy.evalVisProp = function (val) {
-            return copy.visProp[val];
-        };
-        copy.eval = function (val) {
-            return val;
-        };
+    //     copy.id = el.id + 'T' + el.numTraces;
+    //     el.numTraces += 1;
 
-        copy.visProp.layer = el.board.options.layer.trace;
-        copy.visProp.tabindex = null;
-        copy.visProp.highlight = false;
-        copy.board = el.board;
-        copy.elementClass = el.elementClass;
+    //     copy.coords = el.coords;
+    //     obj = this.deepCopy(el.visProp, el.visProp.traceattributes, true);
+    //     copy.visProp = {};
+    //     for (key in obj) {
+    //         if (obj.hasOwnProperty(key)) {
+    //             if (
+    //                 key.indexOf('aria') !== 0 &&
+    //                 key.indexOf('highlight') !== 0 &&
+    //                 key.indexOf('attractor') !== 0 &&
+    //                 key !== 'label' &&
+    //                 key !== 'needsregularupdate' &&
+    //                 key !== 'infoboxdigits'
+    //             ) {
+    //                 copy.visProp[key] = el.eval(obj[key]);
+    //             }
+    //         }
+    //     }
+    //     copy.evalVisProp = function (val) {
+    //         return copy.visProp[val];
+    //     };
+    //     copy.eval = function (val) {
+    //         return val;
+    //     };
 
-        this.clearVisPropOld(copy);
-        copy.visPropCalc = {
-            visible: el.evalVisProp('visible'),
-        };
+    //     copy.visProp.layer = el.board.options.layer.trace;
+    //     copy.visProp.tabindex = null;
+    //     copy.visProp.highlight = false;
+    //     copy.board = el.board;
+    //     copy.elementClass = el.elementClass;
 
-        return copy;
-    }
+    //     this.clearVisPropOld(copy);
+    //     copy.visPropCalc = {
+    //         visible: el.evalVisProp('visible'),
+    //     };
+
+    //     return copy;
+    // }
 
     /**
      * Converts a JavaScript object into a JSON string.
@@ -1610,7 +1630,7 @@ export class Type {
     static toJSON(obj, noquote) {
         var list, prop, i, s, val;
 
-        noquote = JXG.def(noquote, false);
+        noquote = this.def(noquote, false);
 
         // check for native JSON support:
         if (JSON !== undefined && JSON.stringify && !noquote) {
@@ -1630,7 +1650,7 @@ export class Type {
 
                     if (this.isArray(obj)) {
                         for (i = 0; i < obj.length; i++) {
-                            list.push(JXG.toJSON(obj[i], noquote));
+                            list.push(this.toJSON(obj[i], noquote));
                         }
 
                         return '[' + list.join(',') + ']';
@@ -1639,7 +1659,7 @@ export class Type {
                     for (prop in obj) {
                         if (obj.hasOwnProperty(prop)) {
                             try {
-                                val = JXG.toJSON(obj[prop], noquote);
+                                val = Type.toJSON(obj[prop], noquote);
                             } catch (e2) {
                                 val = '';
                             }
@@ -1848,48 +1868,48 @@ export class Type {
         return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
     }
 
-    /**
-     * Convert a floating point number to a string integer + fraction.
-     * Returns either a string of the form '3 1/3' (in case of useTeX=false)
-     * or '3 \\frac{1}{3}' (in case of useTeX=true).
-     *
-     * @param {Number} x
-     * @param {Boolean} [useTeX=false]
-     * @param {Number} [order=0.001]
-     * @returns {String}
-     * @see JXG.Math.decToFraction
-     */
-    static toFraction(x, useTeX, order) {
-        var arr = JSXMath.decToFraction(x, order),
-            str = '';
+    // /**
+    //  * Convert a floating point number to a string integer + fraction.
+    //  * Returns either a string of the form '3 1/3' (in case of useTeX=false)
+    //  * or '3 \\frac{1}{3}' (in case of useTeX=true).
+    //  *
+    //  * @param {Number} x
+    //  * @param {Boolean} [useTeX=false]
+    //  * @param {Number} [order=0.001]
+    //  * @returns {String}
+    //  * @see JXG.Math.decToFraction
+    //  */
+    // static toFraction(x, useTeX, order) {
+    //     var arr = JSXMath.decToFraction(x, order),
+    //         str = '';
 
-        if (arr[1] === 0 && arr[2] === 0) {
-            // 0
-            str += '0';
-        } else {
-            // Sign
-            if (arr[0] < 0) {
-                str += '-';
-            }
-            if (arr[2] === 0) {
-                // Integer
-                str += arr[1];
-            } else if (!(arr[2] === 1 && arr[3] === 1)) {
-                // Proper fraction
-                if (arr[1] !== 0) {
-                    // Absolute value larger than 1
-                    str += arr[1] + ' ';
-                }
-                // Add fractional part
-                if (useTeX === true) {
-                    str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
-                } else {
-                    str += arr[2] + '/' + arr[3];
-                }
-            }
-        }
-        return str;
-    }
+    //     if (arr[1] === 0 && arr[2] === 0) {
+    //         // 0
+    //         str += '0';
+    //     } else {
+    //         // Sign
+    //         if (arr[0] < 0) {
+    //             str += '-';
+    //         }
+    //         if (arr[2] === 0) {
+    //             // Integer
+    //             str += arr[1];
+    //         } else if (!(arr[2] === 1 && arr[3] === 1)) {
+    //             // Proper fraction
+    //             if (arr[1] !== 0) {
+    //                 // Absolute value larger than 1
+    //                 str += arr[1] + ' ';
+    //             }
+    //             // Add fractional part
+    //             if (useTeX === true) {
+    //                 str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
+    //             } else {
+    //                 str += arr[2] + '/' + arr[3];
+    //             }
+    //         }
+    //     }
+    //     return str;
+    // }
 
     /**
      * Concat array src to array dest.

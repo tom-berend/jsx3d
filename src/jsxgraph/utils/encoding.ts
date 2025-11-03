@@ -1,7 +1,7 @@
 /*global JXG: true, define: true, escape: true, unescape: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-import { JXG } from "../jxg.js";
+// import { JXG } from "../jxg.js";
 
 export class Encoding {
     // constants
@@ -92,9 +92,9 @@ export class Encoding {
             j = 0,
             codepoint = 0,
             state = this.UTF8_ACCEPT,
-            chars = [],
+            chars:number[] = [],
             len = utftext.length,
-            results = [];
+            results:string[] = [];
 
         for (i = 0; i < len; i++) {
             charCode = utftext.charCodeAt(i);

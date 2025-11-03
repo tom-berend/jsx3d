@@ -39,8 +39,10 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see https://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-import { JXG } from "../jxg.js";
+// import { JXG } from "../jxg.js";
 import { Type } from "./type.js";
+import {Env} from "./env.js"
+
 import { JSXMath } from "../math/jsxmath.js";
 import { Options } from "../options.js"
 
@@ -397,7 +399,7 @@ export class Color {
      * @returns {String} A 'rgb(r, g, b)' formatted string
      */
     static hex2rgb(hex) {
-        JXG.deprecated("JXG.hex2rgb()", "JXG.rgb2css()");
+        Env.deprecated("JXG.hex2rgb()", "JXG.rgb2css()");
         return this.rgb2css(hex);
     };
 
@@ -717,7 +719,7 @@ export class Color {
             return color;
         }
 
-        arr = this.rgbParser(color);
+        arr = Color.rgbParser(color);
         x = Math.floor(0.3 * arr[0] + 0.59 * arr[1] + 0.11 * arr[2]);
 
         // rgbParser and Math.floor ensure that x is 0 <= x <= 255.
@@ -979,51 +981,52 @@ export class Color {
      *
      */
     setClassicColors() {
-        Options.elements.strokeColor = "blue";
-        Options.elements.fillColor = "red";
-        Options.hatch.strokeColor = "blue";
-        Options.angle.fillColor = "#ff7f00";
-        Options.angle.highlightFillColor = "#ff7f00";
-        Options.angle.strokeColor = "#ff7f00";
-        Options.angle.label.strokeColor = "blue";
-        Options.arc.strokeColor = "blue";
-        Options.circle.center.fillColor = "red";
-        Options.circle.center.strokeColor = "blue";
-        Options.circumcircle.strokeColor = "blue";
-        Options.circumcircle.center.fillColor = "red";
-        Options.circumcircle.center.strokeColor = "blue";
-        Options.circumcirclearc.strokeColor = "blue";
-        Options.circumcirclesector.strokeColor = "blue";
-        Options.circumcirclesector.fillColor = "green";
-        Options.circumcirclesector.highlightFillColor = "green";
-        Options.conic.strokeColor = "blue";
-        Options.curve.strokeColor = "blue";
-        Options.incircle.strokeColor = "blue";
-        Options.incircle.center.fillColor = "red";
-        Options.incircle.center.strokeColor = "blue";
-        Options.inequality.fillColor = "red";
-        Options.integral.fillColor = "red";
-        Options.integral.curveLeft.color = "red";
-        Options.integral.curveRight.color = "red";
-        Options.line.strokeColor = "blue";
-        Options.point.fillColor = "red";
-        Options.point.strokeColor = "red";
-        Options.polygon.fillColor = "green";
-        Options.polygon.highlightFillColor = "green";
-        Options.polygon.vertices.strokeColor = "red";
-        Options.polygon.vertices.fillColor = "red";
-        Options.regularpolygon.fillColor = "green";
-        Options.regularpolygon.highlightFillColor = "green";
-        Options.regularpolygon.vertices.strokeColor = "red";
-        Options.regularpolygon.vertices.fillColor = "red";
-        Options.riemannsum.fillColor = "yellow";
-        Options.sector.fillColor = "green";
-        Options.sector.highlightFillColor = "green";
-        Options.semicircle.center.fillColor = "red";
-        Options.semicircle.center.strokeColor = "blue";
-        Options.slopetriangle.fillColor = "red";
-        Options.slopetriangle.highlightFillColor = "red";
-        Options.turtle.arrow.strokeColor = "blue";
+        throw new Error('fix me with set-attribute!!')
+        // Options.elements.strokeColor = "blue";
+        // Options.elements.fillColor = "red";
+        // Options.hatch.strokeColor = "blue";
+        // Options.angle.fillColor = "#ff7f00";
+        // Options.angle.highlightFillColor = "#ff7f00";
+        // Options.angle.strokeColor = "#ff7f00";
+        // Options.angle.label.strokeColor = "blue";
+        // Options.arc.strokeColor = "blue";
+        // Options.circle.center.fillColor = "red";
+        // Options.circle.center.strokeColor = "blue";
+        // Options.circumcircle.strokeColor = "blue";
+        // Options.circumcircle.center.fillColor = "red";
+        // Options.circumcircle.center.strokeColor = "blue";
+        // Options.circumcirclearc.strokeColor = "blue";
+        // Options.circumcirclesector.strokeColor = "blue";
+        // Options.circumcirclesector.fillColor = "green";
+        // Options.circumcirclesector.highlightFillColor = "green";
+        // Options.conic.strokeColor = "blue";
+        // Options.curve.strokeColor = "blue";
+        // Options.incircle.strokeColor = "blue";
+        // Options.incircle.center.fillColor = "red";
+        // Options.incircle.center.strokeColor = "blue";
+        // Options.inequality.fillColor = "red";
+        // Options.integral.fillColor = "red";
+        // Options.integral.curveLeft.color = "red";
+        // Options.integral.curveRight.color = "red";
+        // Options.line.strokeColor = "blue";
+        // Options.point.fillColor = "red";
+        // Options.point.strokeColor = "red";
+        // Options.polygon.fillColor = "green";
+        // Options.polygon.highlightFillColor = "green";
+        // Options.polygon.vertices.strokeColor = "red";
+        // Options.polygon.vertices.fillColor = "red";
+        // Options.regularpolygon.fillColor = "green";
+        // Options.regularpolygon.highlightFillColor = "green";
+        // Options.regularpolygon.vertices.strokeColor = "red";
+        // Options.regularpolygon.vertices.fillColor = "red";
+        // Options.riemannsum.fillColor = "yellow";
+        // Options.sector.fillColor = "green";
+        // Options.sector.highlightFillColor = "green";
+        // Options.semicircle.center.fillColor = "red";
+        // Options.semicircle.center.strokeColor = "blue";
+        // Options.slopetriangle.fillColor = "red";
+        // Options.slopetriangle.highlightFillColor = "red";
+        // Options.turtle.arrow.strokeColor = "blue";
     };
 
     /**

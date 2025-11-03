@@ -32,7 +32,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-import { JXG } from "../jxg.js";
+// import { JXG } from "../jxg.js";
 import { Encoding } from "./encoding.js";
 
 
@@ -41,8 +41,8 @@ import { Encoding } from "./encoding.js";
  * @namespace
 */
 export class Base64 {
-    public alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-    public pad = "=";
+    static alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    static pad = "=";
 
     // Local helper functions
     /**
@@ -52,7 +52,7 @@ export class Base64 {
      * @returns {Number} <= 255
      * @private
      */
-    _getByte(s, i) {
+    static _getByte(s, i) {
         return s.charCodeAt(i) & 0xff;
     }
 
@@ -64,8 +64,8 @@ export class Base64 {
      * @throws {Error} If the character can not be found in the alphabet.
      * @private
      */
-    _getIndex(s, i) {
-        return alphabet.indexOf(s.charAt(i));
+    static _getIndex(s, i) {
+        return this.alphabet.indexOf(s.charAt(i));
     }
 
     /**
@@ -79,7 +79,7 @@ export class Base64 {
             len,
             padLen,
             encInput,
-            buffer = [];
+            buffer:string[] = [];
 
         encInput = Encoding.encode(input);
         len = encInput.length;
@@ -91,10 +91,10 @@ export class Base64 {
                 (this._getByte(encInput, i + 1) << 8) |
                 this._getByte(encInput, i + 2);
             buffer.push(
-                alphabet.charAt(bin >> 18),
-                alphabet.charAt((bin >> 12) & 63),
-                alphabet.charAt((bin >> 6) & 63),
-                alphabet.charAt(bin & 63)
+                this.alphabet.charAt(bin >> 18),
+                this.alphabet.charAt((bin >> 12) & 63),
+                this.alphabet.charAt((bin >> 6) & 63),
+                this.alphabet.charAt(bin & 63)
             );
         }
 
@@ -102,19 +102,19 @@ export class Base64 {
             case 1:
                 bin = this._getByte(encInput, len - 1);
                 buffer.push(
-                    alphabet.charAt(bin >> 2),
-                    alphabet.charAt((bin << 4) & 63),
-                    pad,
-                    pad
+                    this.alphabet.charAt(bin >> 2),
+                    this.alphabet.charAt((bin << 4) & 63),
+                    this.pad,
+                    this.pad
                 );
                 break;
             case 2:
                 bin = (this._getByte(encInput, len - 2) << 8) | this._getByte(encInput, len - 1);
                 buffer.push(
-                    alphabet.charAt(bin >> 10),
-                    alphabet.charAt((bin >> 4) & 63),
-                    alphabet.charAt((bin << 2) & 63),
-                    pad
+                    this.alphabet.charAt(bin >> 10),
+                    this.alphabet.charAt((bin >> 4) & 63),
+                    this.alphabet.charAt((bin << 2) & 63),
+                    this.pad
                 );
                 break;
         }
@@ -132,14 +132,13 @@ export class Base64 {
      */
     static decode(input, utf8?) {
         var encInput,
-            pad,
             i,
             len,
             padLen,
             bin,
             output,
-            result = [],
-            buffer = [];
+            result:string[] = [],
+            buffer:number[] = [];
 
         // deactivate regexp linting. Our regex is secure, because we replace everything with ''
         /*jslint regexp:true*/
@@ -154,10 +153,10 @@ export class Base64 {
             );
         }
 
-        if (encInput.charAt(len - 1) === pad) {
+        if (encInput.charAt(len - 1) === this.pad) {
             padLen = 1;
 
-            if (encInput.charAt(len - 2) === pad) {
+            if (encInput.charAt(len - 2) === this.pad) {
                 padLen = 2;
             }
 
@@ -210,11 +209,11 @@ export class Base64 {
      * @param {string} input
      * @returns {Array}
      */
-    static decodeAsArray(input) {
+    static decodeAsArray(input:string):number[] {
         var i,
-            dec = this.decode(input),
-            ar = [],
-            len = dec.length;
+            dec = this.decode(input)
+            let ar :number[]= []
+            let len = dec.length;
 
         for (i = 0; i < len; i++) {
             ar[i] = dec.charCodeAt(i);

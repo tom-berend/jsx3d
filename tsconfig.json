@@ -1,18 +1,26 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "lib": ["ES2015","DOM"],
-    "allowJs": true,
-    "outDir": "build",
-    "rootDir": "src",
-    "strict": true,
-    "esModuleInterop": true,
-    "types": ["node"],
-    "skipLibCheck": true,
-    "noImplicitAny": false,
-    "sourceMap":true
-  },
-  "include": ["src/**/*"],
+    "compilerOptions": {
+        "target": "es6",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "lib": [
+            "ES2015",
+            "DOM"
+        ],
+        "allowJs": true,
+        "outDir": "build",
+        "rootDir": "src",
+        "strict": true,
+        "esModuleInterop": true,
+        "types": [
+            "node",
+            "jasmine"
+        ],
+        "skipLibCheck": true,
+        "noImplicitAny": false,
+        "sourceMap": true,
+    },
+    "include": [
+        "src/**/*"
+    ],
 }

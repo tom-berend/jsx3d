@@ -1,9 +1,9 @@
 export default {
-  srcDir: "build/useCase",
+  srcDir: "build",
   // srcFiles should usually be left empty when using ES modules, because you'll
   // explicitly import sources from your specs.
   srcFiles: [],
-  specDir: "build/tests",
+  specDir: "build",
   specFiles: [
     "**/*.spec.js",
   ],
