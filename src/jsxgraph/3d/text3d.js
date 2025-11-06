@@ -222,7 +222,7 @@ JXG.extend(
          *    p.normalizeCoords();
          */
         normalizeCoords: function () {
-            if (Math.abs(this.coords[0]) > Mat.eps) {
+            if (Math.abs(this.coords[0]) > JSXMath.eps) {
                 this.coords[1] /= this.coords[0];
                 this.coords[2] /= this.coords[0];
                 this.coords[3] /= this.coords[0];
@@ -345,7 +345,7 @@ JXG.extend(
          * @returns {Boolean} True if the first entry of the coordinate vector is not zero; false otherwise.
          */
         testIfFinite: function () {
-            return Math.abs(this.coords[0]) > Mat.eps ? true : false;
+            return Math.abs(this.coords[0]) > JSXMath.eps ? true : false;
             // return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
 

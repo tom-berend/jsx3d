@@ -60,7 +60,7 @@ import Quadtree from "./bqdt.js";
  *      max_steps: 1024,      // Max number of points in one call of tracing
  *      alpha_0: 0.05,        // Angle between two successive tangents: smoothness of curve
  *
- *      tol_u0: Mat.eps,      // Tolerance to find starting points for tracing.
+ *      tol_u0: JSXMath.eps,      // Tolerance to find starting points for tracing.
  *      tol_newton: 1.0e-7,   // Tolerance for Newton steps.
  *      tol_cusp: 0.05,       // Tolerance for cusp / bifurcation detection
  *      tol_progress: 0.0001, // If two points are closer than this value, we bail out
@@ -170,7 +170,7 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         max_steps: 1024,      // Max number of points in one call of tracing
         alpha_0: 0.05,        // Angle between two successive tangents: smoothness of curve
 
-        tol_u0: Mat.eps,      // Tolerance to find starting points for tracing.
+        tol_u0: JSXMath.eps,      // Tolerance to find starting points for tracing.
         tol_newton: 1.0e-7,   // Tolerance for Newton steps.
         tol_cusp: 0.05,       // Tolerance for cusp / bifurcation detection
         tol_progress: 0.0001, // If two points are closer than this value, we bail out
@@ -199,7 +199,7 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         this.dfx = dfx;
     } else {
         this.dfx = function (x, y) {
-            var h = Mat.eps * Mat.eps;
+            var h = JSXMath.eps * JSXMath.eps;
             return (this.f(x + h, y) - this.f(x - h, y)) * 0.5 / h;
         };
     }
@@ -208,7 +208,7 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         this.dfy = dfy;
     } else {
         this.dfy = function (x, y) {
-            var h = Mat.eps * Mat.eps;
+            var h = JSXMath.eps * JSXMath.eps;
             return (this.f(x, y + h) - this.f(x, y - h)) * 0.5 / h;
         };
     }
@@ -256,14 +256,14 @@ Type.extend(
                 };
 
             // Vertical lines or circular search:
-            mi_x = Math.min(this.bbox[0], this.bbox[2]) - Mat.eps;
+            mi_x = Math.min(this.bbox[0], this.bbox[2]) - JSXMath.eps;
             ma_x = Math.max(this.bbox[0], this.bbox[2]);
-            mi_y = Math.min(this.bbox[1], this.bbox[3]) + Mat.eps;
+            mi_y = Math.min(this.bbox[1], this.bbox[3]) + JSXMath.eps;
             ma_y = Math.max(this.bbox[1], this.bbox[3]);
 
             if (doVerticalSearch) {
                 delta = this.config.resolution_out / this.config.unitX;
-                delta *= (1 + Mat.eps);
+                delta *= (1 + JSXMath.eps);
                 // console.log("Outer delta x", delta)
 
                 for (x = mi_x; x < ma_x; x += delta) {
@@ -282,7 +282,7 @@ Type.extend(
             }
             if (doHorizontalSearch) {
                 delta = this.config.resolution_out / this.config.unitY;
-                delta *= (1 + Mat.eps);
+                delta *= (1 + JSXMath.eps);
                 // console.log("Outer delta y", delta)
 
                 for (y = mi_y; y < ma_y; y += delta) {
@@ -347,7 +347,7 @@ Type.extend(
                 // t = Numerics.chandrupatla(fmi, [t_mi, t_ma]);
 
                 ft = fmi(t);
-                if (Math.abs(ft) > Math.max((ma - mi) * Mat.eps, 0.001)) {
+                if (Math.abs(ft) > Math.max((ma - mi) * JSXMath.eps, 0.001)) {
                     //console.log("searchLine:",  dir, fix, t, "no root " + ft);
                     return false;
                     // throw new Error("searchLine: no root " + ft);
@@ -361,7 +361,7 @@ Type.extend(
                     delta = this.config.resolution_in / this.config.unitX;
                     // console.log("Inner delta y", delta)
                 }
-                delta *= (1 + Mat.eps);
+                delta *= (1 + JSXMath.eps);
 
                 is_in = this.curveContainsPoint(u0, dataX, dataY,
                     delta * 2,           // Allowed dist from segment
@@ -897,7 +897,7 @@ Type.extend(
             // In the latter case, if both eigenvalues are zero
             // this is a somewhat crude decision.
             //
-            var h = Mat.eps * Mat.eps * 100,
+            var h = JSXMath.eps * JSXMath.eps * 100,
                 x, y, a, b, c, d, ad,
                 lbda1, lbda2,
                 dis;
@@ -994,7 +994,7 @@ Type.extend(
             var t = [-A[1], A[0]],
                 nrm = Mat.norm(t, 2);
 
-            if (nrm < Mat.eps) {
+            if (nrm < JSXMath.eps) {
                 // console.log("Approx. Singularity", t, "is zero", nrm);
             }
             return [t[0] / nrm, t[1] / nrm];
@@ -1010,7 +1010,7 @@ Type.extend(
             var t = [-this.dfy(u[0], u[1]), this.dfx(u[0], u[1])],
                 nrm = Mat.norm(t, 2);
 
-            if (nrm < Mat.eps * Mat.eps) {
+            if (nrm < JSXMath.eps * JSXMath.eps) {
                 // console.log("Singularity", t, "is zero", "at", u, ":", nrm);
                 return false;
             }

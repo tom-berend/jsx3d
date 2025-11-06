@@ -375,7 +375,7 @@ export class Point extends CoordsElement {
     isOn(el, tol) {
         var arr, crds;
 
-        tol = tol || Mat.eps;
+        tol = tol || JSXMath.eps;
 
         if (Type.isPoint(el)) {
             return this.Dist(el) < tol;

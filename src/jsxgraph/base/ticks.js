@@ -114,7 +114,7 @@ JXG.Ticks = function (line, ticks, attributes) {
         this.fixedTicks = ticks;
     } else {
         // Obsolete:
-        // if (Math.abs(ticks) < Mat.eps || ticks < 0) {
+        // if (Math.abs(ticks) < JSXMath.eps || ticks < 0) {
         //     ticks = attributes.defaultdistance;
         // }
         this.equidistant = true;
@@ -255,10 +255,10 @@ JXG.extend(
                         !(
                             (this.line.stdform[1] === 0 &&
                                 Math.abs(t[0][0] - this.line.point1.coords.scrCoords[1]) <
-                                Mat.eps) ||
+                                JSXMath.eps) ||
                             (this.line.stdform[2] === 0 &&
                                 Math.abs(t[1][0] - this.line.point1.coords.scrCoords[2]) <
-                                Mat.eps)
+                                JSXMath.eps)
                         )
                     ) {
                         // tick length is not zero, ie. at least one pixel
@@ -311,8 +311,8 @@ JXG.extend(
             }
 
             if (
-                Math.abs(this.line.stdform[1]) < Mat.eps &&
-                Math.abs(c.usrCoords[1] * oldc.usrCoords[1]) > Mat.eps
+                Math.abs(this.line.stdform[1]) < JSXMath.eps &&
+                Math.abs(c.usrCoords[1] * oldc.usrCoords[1]) > JSXMath.eps
             ) {
                 // Horizontal line
                 dx = oldc.usrCoords[1] / c.usrCoords[1];
@@ -320,8 +320,8 @@ JXG.extend(
                 bb[2] *= dx;
                 this.board.setBoundingBox(bb, this.board.keepaspectratio, "update");
             } else if (
-                Math.abs(this.line.stdform[2]) < Mat.eps &&
-                Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps
+                Math.abs(this.line.stdform[2]) < JSXMath.eps &&
+                Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > JSXMath.eps
             ) {
                 // Vertical line
                 dy = oldc.usrCoords[2] / c.usrCoords[2];
@@ -345,7 +345,7 @@ JXG.extend(
                 this.setTicksSizeVariables();
 
                 // If the parent line is not finite, we can stop here.
-                if (Math.abs(this.dx) < Mat.eps && Math.abs(this.dy) < Mat.eps) {
+                if (Math.abs(this.dx) < JSXMath.eps && Math.abs(this.dy) < JSXMath.eps) {
                     return;
                 }
             }
@@ -411,12 +411,12 @@ JXG.extend(
                 if (len < 2) {
                     this.dxMaj = 0;
                     this.dyMaj = 0;
-                } else if (Mat.relDif(pos, mi) < Mat.eps) {
+                } else if (Mat.relDif(pos, mi) < JSXMath.eps) {
                     this.dxMaj =
                         this.line.points[0].usrCoords[2] - this.line.points[1].usrCoords[2];
                     this.dyMaj =
                         this.line.points[1].usrCoords[1] - this.line.points[0].usrCoords[1];
-                } else if (Mat.relDif(pos, ma) < Mat.eps) {
+                } else if (Mat.relDif(pos, ma) < JSXMath.eps) {
                     this.dxMaj =
                         this.line.points[len - 2].usrCoords[2] -
                         this.line.points[len - 1].usrCoords[2];
@@ -551,7 +551,7 @@ JXG.extend(
                 arrowData,
                 // angle,
                 a1, a2, m1, m2,
-                eps = Mat.eps * 10,
+                eps = JSXMath.eps * 10,
                 ev_sf = this.line.evalVisProp('straightfirst'),
                 ev_sl = this.line.evalVisProp('straightlast'),
                 ev_i = this.evalVisProp('includeboundaries');
@@ -569,13 +569,13 @@ JXG.extend(
 
             // Are the original defining points within the board?
             isPoint1inBoard =
-                Math.abs(point1.usrCoords[0]) >= Mat.eps &&
+                Math.abs(point1.usrCoords[0]) >= JSXMath.eps &&
                 point1.scrCoords[1] >= 0.0 &&
                 point1.scrCoords[1] <= this.board.canvasWidth &&
                 point1.scrCoords[2] >= 0.0 &&
                 point1.scrCoords[2] <= this.board.canvasHeight;
             isPoint2inBoard =
-                Math.abs(point2.usrCoords[0]) >= Mat.eps &&
+                Math.abs(point2.usrCoords[0]) >= JSXMath.eps &&
                 point2.scrCoords[1] >= 0.0 &&
                 point2.scrCoords[1] <= this.board.canvasWidth &&
                 point2.scrCoords[2] >= 0.0 &&
@@ -716,7 +716,7 @@ JXG.extend(
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
             var tickPosition,
-                eps = Mat.eps,
+                eps = JSXMath.eps,
                 deltas, ticksDelta,
                 // ev_mia = this.evalVisProp('minorticksinarrow'),
                 // ev_maa = this.evalVisProp('minorticksinarrow'),
@@ -738,7 +738,7 @@ JXG.extend(
             ticksDelta *= this.evalVisProp('scale');
 
             // In case of insertTicks, adjust ticks distance to satisfy the minTicksDistance restriction.
-            // if (ev_it) { // } && this.minTicksDistance > Mat.eps) {
+            // if (ev_it) { // } && this.minTicksDistance > JSXMath.eps) {
             //     ticksDelta = this.adjustTickDistance(ticksDelta, coordsZero, deltas);
             // }
 
@@ -746,7 +746,7 @@ JXG.extend(
             ticksDelta /= (ev_mt + 1);
             this.ticksDelta = ticksDelta;
 
-            if (ticksDelta < Mat.eps) {
+            if (ticksDelta < JSXMath.eps) {
                 return;
             }
             if (Math.abs(bounds.upper - bounds.lower) > ticksDelta * 2048) {
@@ -1008,7 +1008,7 @@ JXG.extend(
                 ti,
                 x,
                 y,
-                eps2 = Mat.eps,
+                eps2 = JSXMath.eps,
                 fixedTick,
                 hasLabelOverrides = Type.isArray(this.visProp.labels),
                 deltas,
@@ -1085,7 +1085,7 @@ JXG.extend(
             //     // Check if direction is incorrect, then swap
             //     if (
             //         point1UsrCoords[1] > point2UsrCoords[1] ||
-            //         (Math.abs(point1UsrCoords[1] - point2UsrCoords[1]) < Mat.eps &&
+            //         (Math.abs(point1UsrCoords[1] - point2UsrCoords[1]) < JSXMath.eps &&
             //             point1UsrCoords[2] > point2UsrCoords[2])
             //     ) {
             //         point1UsrCoords = this.line.point2.coords.usrCoords;
@@ -1430,7 +1430,7 @@ JXG.extend(
             if (!Type.exists(value)) {
                 // could be null or undefined
                 distance = this.getDistanceFromZero(zero, tick);
-                if (Math.abs(distance) < Mat.eps) {
+                if (Math.abs(distance) < JSXMath.eps) {
                     // Point is zero
                     return "0";
                 }

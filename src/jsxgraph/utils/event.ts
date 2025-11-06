@@ -35,11 +35,11 @@
  * The Events class is the parent of Board and GeometryElement.
  */
 
-type argVals = string|number|Boolean  // arguments for event handlers
+type argVals = string | number | Boolean  // arguments for event handlers
 
 
 
-import { Type } from "./type.js";
+import { LooseObject, Type } from "./type.js";
 import { GeometryElement } from "../base/element.js";
 import { Coords } from "../base/coords.js";
 import { CoordsElement } from "../base/coordselement.js";
@@ -49,15 +49,15 @@ import { CoordsElement } from "../base/coordselement.js";
  */
 export class Events {
     /**  Holds the registered event handlers.  */
-    public eventHandlers: {}
+    public eventHandlers: LooseObject = {}
 
     /**  Events can be suspended to prevent endless loops. */
-    public suspended: {}
+    public suspended: LooseObject = {}
 
     /** initially this.trigger() */
     public triggerEventHandlers: Function = this.trigger
 
-
+    constructor() {  /* nothing yet */ }
 
     /**
      * Triggers all event handlers of this element for a given event.
@@ -66,7 +66,7 @@ export class Events {
      * @param {Array} args The arguments passed onto the event handler
      * @returns Reference to the object.
      */
-    trigger(event:string[], args:argVals[]) {
+    trigger(event: string[], args: argVals[]) {
 
         let len1 = event.length;
         for (let j = 0; j < len1; j++) {

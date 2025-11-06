@@ -96,11 +96,11 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @memberof JXG.Math.Numerics
          */
         Numerics.Gauss = function (A, b) {
-            var i, j, k, 
+            var i, j, k,
             // copy the matrix to prevent changes in the original
-            Acopy, 
+            Acopy,
             // solution vector, to prevent changing b
-            x, eps = Mat.eps, 
+            x, eps = JSXMath.eps,
             // number of columns of A
             n = A.length > 0 ? A[0].length : 0;
             if (n !== b.length || n !== A.length) {
@@ -187,7 +187,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @memberof JXG.Math.Numerics
          */
         Numerics.gaussBareiss = function (mat) {
-            var k, c, s, i, j, p, n, M, t, eps = Mat.eps;
+            var k, c, s, i, j, p, n, M, t, eps = JSXMath.eps;
             n = mat.length;
             if (n <= 0) {
                 return 0;
@@ -258,7 +258,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @memberof JXG.Math.Numerics
          */
         Numerics.Jacobi = function (Ain) {
-            var i, j, k, aa, si, co, tt, ssum, amax, eps = Mat.eps * Mat.eps, sum = 0.0, n = Ain.length, V = [
+            var i, j, k, aa, si, co, tt, ssum, amax, eps = JSXMath.eps * JSXMath.eps, sum = 0.0, n = Ain.length, V = [
                 [0, 0, 0],
                 [0, 0, 0],
                 [0, 0, 0]
@@ -788,22 +788,22 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                     weights as evaluated with 80 decimal digit arithmetic by
                     L. W. Fullerton, Bell Labs, Nov. 1981. */
-            var xgk = 
+            var xgk =
             /* abscissae of the 15-point kronrod rule */
             [
                 0.991455371120812639206854697526329, 0.949107912342758524526189684047851,
                 0.864864423359769072789712788640926, 0.741531185599394439863864773280788,
                 0.58608723546769113029414483825873, 0.405845151377397166906606412076961,
                 0.207784955007898467600689403773245, 0.0
-            ], 
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
-            wg = 
+            wg =
             /* weights of the 7-point gauss rule */
             [
                 0.129484966168869693270611432679082, 0.27970539148927666790146777142378,
                 0.381830050505118944950369775488975, 0.417959183673469387755102040816327
-            ], wgk = 
+            ], wgk =
             /* weights of the 15-point kronrod rule */
             [
                 0.02293532201052922496373200805897, 0.063092092629978553290700663189204,
@@ -828,7 +828,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                     weights as evaluated with 80 decimal digit arithmetic by
                     L. W. Fullerton, Bell Labs, Nov. 1981. */
-            var xgk = 
+            var xgk =
             /* abscissae of the 21-point kronrod rule */
             [
                 0.995657163025808080735527280689003, 0.973906528517171720077964012084452,
@@ -836,16 +836,16 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
                 0.780817726586416897063717578345042, 0.679409568299024406234327365114874,
                 0.562757134668604683339000099272694, 0.433395394129247190799265943165784,
                 0.294392862701460198131126603103866, 0.14887433898163121088482600112972, 0.0
-            ], 
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
-            wg = 
+            wg =
             /* weights of the 10-point gauss rule */
             [
                 0.066671344308688137593568809893332, 0.149451349150580593145776339657697,
                 0.219086362515982043995534934228163, 0.269266719309996355091226921569469,
                 0.295524224714752870173892994651338
-            ], wgk = 
+            ], wgk =
             /* weights of the 21-point kronrod rule */
             [
                 0.011694638867371874278064396062192, 0.03255816230796472747881897245939,
@@ -872,7 +872,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                     weights as evaluated with 80 decimal digit arithmetic by
                     L. W. Fullerton, Bell Labs, Nov. 1981. */
-            var xgk = 
+            var xgk =
             /* abscissae of the 21-point kronrod rule */
             [
                 0.998002298693397060285172840152271, 0.987992518020485428489565718586613,
@@ -883,17 +883,17 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
                 0.485081863640239680693655740232351, 0.394151347077563369897207370981045,
                 0.299180007153168812166780024266389, 0.201194093997434522300628303394596,
                 0.101142066918717499027074231447392, 0.0
-            ], 
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
-            wg = 
+            wg =
             /* weights of the 10-point gauss rule */
             [
                 0.030753241996117268354628393577204, 0.070366047488108124709267416450667,
                 0.107159220467171935011869546685869, 0.139570677926154314447804794511028,
                 0.166269205816993933553200860481209, 0.186161000015562211026800561866423,
                 0.198431485327111576456118326443839, 0.202578241925561272880620199967519
-            ], wgk = 
+            ], wgk =
             /* weights of the 21-point kronrod rule */
             [
                 0.005377479872923348987792051430128, 0.015007947329316122538374763075807,
@@ -1106,7 +1106,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
             if (limit > ws.limit) {
                 jxg_js_1.JXG.warn("iteration limit exceeds available workspace");
             }
-            if (epsabs <= 0 && (epsrel < 50 * Mat.eps || epsrel < 0.5e-28)) {
+            if (epsabs <= 0 && (epsrel < 50 * JSXMath.eps || epsrel < 0.5e-28)) {
                 jxg_js_1.JXG.warn("tolerance cannot be acheived with given epsabs and epsrel");
             }
             result0 = q.apply(this, [interval, f, resultObj]);
@@ -1251,7 +1251,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @memberof JXG.Math.Numerics
          */
         Numerics.Newton = function (f, x, context) {
-            var df, i = 0, h = Mat.eps, newf = f.apply(context, [x]);
+            var df, i = 0, h = JSXMath.eps, newf = f.apply(context, [x]);
             // nfev = 1;
             // For compatibility
             if (type_js_1.Type.isArray(x)) {
@@ -1356,7 +1356,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
             D01 = this.D(c2.X, c2);
             D10 = this.D(c1.Y, c1);
             D11 = this.D(c2.Y, c2);
-            while (F > Mat.eps && count < 10) {
+            while (F > JSXMath.eps && count < 10) {
                 a = D00(t1);
                 b = -D01(t2);
                 c = D10(t1);
@@ -1651,7 +1651,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          *
          */
         Numerics.lagrangePolynomial = function (p) {
-            var w = [], that = this, 
+            var w = [], that = this,
             /** @ignore */
             fct = function (x, suspendedUpdate) {
                 var i, // j,
@@ -1828,7 +1828,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
                 t = "";
                 for (j = 0; j < coeffs.length; j++) {
                     c = coeffs[j];
-                    if (Math.abs(c) < Mat.eps) {
+                    if (Math.abs(c) < JSXMath.eps) {
                         continue;
                     }
                     if (jxg_js_1.JXG.exists(digits)) {
@@ -1966,9 +1966,9 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
             /** @ignore */
             makeFct = function (which) {
                 return function (t, suspendedUpdate) {
-                    var s, c, 
+                    var s, c,
                     // control point at the beginning and at the end
-                    first, last, t1, t2, dt0, dt1, dt2, 
+                    first, last, t1, t2, dt0, dt1, dt2,
                     // dx, dy,
                     len;
                     if (points.length < 2) {
@@ -2015,13 +2015,13 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
                                 dt0 = Math.sqrt(dt0);
                                 dt1 = Math.sqrt(dt1);
                                 dt2 = Math.sqrt(dt2);
-                                if (dt1 < Mat.eps) {
+                                if (dt1 < JSXMath.eps) {
                                     dt1 = 1.0;
                                 }
-                                if (dt0 < Mat.eps) {
+                                if (dt0 < JSXMath.eps) {
                                     dt0 = dt1;
                                 }
-                                if (dt2 < Mat.eps) {
+                                if (dt2 < JSXMath.eps) {
                                     dt2 = dt1;
                                 }
                                 t1 =
@@ -2232,7 +2232,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @memberof JXG.Math.Numerics
          */
         Numerics.bezier = function (points) {
-            var len, flen, 
+            var len, flen,
             /** @ignore */
             makeFct = function (which) {
                 return function (t, suspendedUpdate) {
@@ -2385,7 +2385,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
                         h *= 0.5;
                         h2 *= 0.5;
                         phi2 = (f(x + h, suspendedUpdate) - f(x - h, suspendedUpdate)) / h2;
-    
+
                         return phi2 + (phi2 - phi) / 3.0;
                         */
                     return (f(x + h, suspendedUpdate) - f(x - h, suspendedUpdate)) / h2;
@@ -2828,7 +2828,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
             p, // Interpolation step is calculated in the form p/q; division
             q, // operations is delayed until the last moment
             new_step, // Step at this iteration
-            eps = Mat.eps, maxiter = this.maxIterationsRoot, niter = 0;
+            eps = JSXMath.eps, maxiter = this.maxIterationsRoot, niter = 0;
             // nfev = 0;
             if (type_js_1.Type.isArray(x0)) {
                 if (x0.length < 2) {
@@ -2968,7 +2968,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @memberof JXG.Math.Numerics
          */
         Numerics.chandrupatla = function (f, x0, context) {
-            var a, b, fa, fb, res, niter = 0, maxiter = this.maxIterationsRoot, rand = 1 + Math.random() * 0.001, t = 0.5 * rand, eps = Mat.eps, // 1.e-10,
+            var a, b, fa, fb, res, niter = 0, maxiter = this.maxIterationsRoot, rand = 1 + Math.random() * 0.001, t = 0.5 * rand, eps = JSXMath.eps, // 1.e-10,
             dlt = 0.00001, x1, x2, x3, x, f1, f2, f3, y, xm, fm, tol, tl, xi, ph, fl, fh, AL, A, B, C, D;
             if (type_js_1.Type.isArray(x0)) {
                 if (x0.length < 2) {
@@ -3162,7 +3162,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          **/
         Numerics.fminbr = function (f, x0, context) {
             var a, b, x, v, w, fx, fv, fw, x00, range, middle_range, tol_act, new_step, p, q, t, ft, r = (3.0 - Math.sqrt(5.0)) * 0.5, // Golden section ratio
-            tol = Mat.eps, sqrteps = Mat.eps, // Math.sqrt(Mat.eps),
+            tol = JSXMath.eps, sqrteps = JSXMath.eps, // Math.sqrt(JSXMath.eps),
             maxiter = this.maxIterationsMinimize, niter = 0;
             // nfev = 0;
             if (!type_js_1.Type.isArray(x0) || x0.length < 2) {
@@ -3345,8 +3345,8 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @returns {Array} [x, y] x is the position of the global minimum and y = f(x).
          */
         Numerics.glomin = function (f, x0) {
-            var a0, a2, a3, d0, d1, d2, h, k, m2, p, q, qs, r, s, sc, y, y0, y1, y2, y3, yb, z0, z1, z2, a, b, c, x, m = 10000000.0, t = Mat.eps, // * Mat.eps,
-            e = Mat.eps * Mat.eps, machep = Mat.eps * Mat.eps * Mat.eps;
+            var a0, a2, a3, d0, d1, d2, h, k, m2, p, q, qs, r, s, sc, y, y0, y1, y2, y3, yb, z0, z1, z2, a, b, c, x, m = 10000000.0, t = JSXMath.eps, // * JSXMath.eps,
+            e = JSXMath.eps * JSXMath.eps, machep = JSXMath.eps * JSXMath.eps * JSXMath.eps;
             a = x0[0];
             b = x0[1];
             c = (f(a) < f(b)) ? a : b;
@@ -3543,7 +3543,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          *
          */
         Numerics.polzeros = function (coeffs, deg, tol, max_it, initial_values) {
-            var i, le, off, it, debug = false, cc = [], obvious = [], roots = [], 
+            var i, le, off, it, debug = false, cc = [], obvious = [], roots = [],
             /**
              * Horner method to evaluate polynomial or the derivative thereof for complex numbers,
              * i.e. coefficients and variable are complex.
@@ -3811,7 +3811,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
          * @memberof JXG.Math.Numerics
          */
         Numerics.RamerDouglasPeucker = function (pts, eps) {
-            var allPts = [], newPts = [], i, k, len, endless = true, 
+            var allPts = [], newPts = [], i, k, len, endless = true,
             /**
              * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
              * It searches for the point between index i and j which
@@ -3823,7 +3823,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js", "../utils/env.js"
              * @private
              */
             findSplit = function (pts, i, j) {
-                var d, k, ci, cj, ck, x0, y0, x1, y1, den, lbda, eps = Mat.eps * Mat.eps, huge = 10000, dist = 0, f = i;
+                var d, k, ci, cj, ck, x0, y0, x1, y1, den, lbda, eps = JSXMath.eps * JSXMath.eps, huge = 10000, dist = 0, f = i;
                 if (j - i < 2) {
                     return [-1.0, 0];
                 }

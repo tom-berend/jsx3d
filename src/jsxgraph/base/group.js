@@ -304,7 +304,7 @@ JXG.extend(
                     t.update(); // t.update initializes t.matrix, which is needed if the action element is the first group element.
                 } else if (drag.action === "scaling") {
                     s = Geometry.distance(this.coords[drag.id].usrCoords.slice(1), center);
-                    if (Math.abs(s) < Mat.eps) {
+                    if (Math.abs(s) < JSXMath.eps) {
                         return this;
                     }
                     s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
@@ -390,7 +390,7 @@ JXG.extend(
                 if (this.objects.hasOwnProperty(el)) {
                     obj = this.objects[el].point;
 
-                    if (obj.coords.distance(COORDS_BY.USER, this.coords[el]) > Mat.eps) {
+                    if (obj.coords.distance(COORDS_BY.USER, this.coords[el]) > JSXMath.eps) {
                         changed.push(obj.id);
                     }
                 }

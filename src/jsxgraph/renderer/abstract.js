@@ -440,7 +440,7 @@ define(["require", "exports", "../jxg.js", "../options.js", "../base/coords.js",
          * @private
          */
         AbstractRenderer.prototype.getArrowHeadData = function (el, strokewidth, hl) {
-            var minlen = Mat.eps, typeFirst, typeLast, offFirst = 0, offLast = 0, sizeFirst = 0, sizeLast = 0, ev_fa = el.evalVisProp('firstarrow'), ev_la = el.evalVisProp('lastarrow'), off, size;
+            var minlen = JSXMath.eps, typeFirst, typeLast, offFirst = 0, offLast = 0, sizeFirst = 0, sizeLast = 0, ev_fa = el.evalVisProp('firstarrow'), ev_la = el.evalVisProp('lastarrow'), off, size;
             /*
                Handle arrow heads.
 
@@ -753,7 +753,7 @@ define(["require", "exports", "../jxg.js", "../options.js", "../base/coords.js",
             var radius = el.Radius();
             if (
             /*radius > 0.0 &&*/
-            Math.abs(el.center.coords.usrCoords[0]) > Mat.eps &&
+            Math.abs(el.center.coords.usrCoords[0]) > JSXMath.eps &&
                 !isNaN(radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]) &&
                 radius * el.board.unitX < 2000000) {
                 this.updateEllipsePrim(el.rendNode, el.center.coords.scrCoords[1], el.center.coords.scrCoords[2], radius * el.board.unitX, radius * el.board.unitY);

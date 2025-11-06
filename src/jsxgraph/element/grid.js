@@ -216,7 +216,7 @@ import {Constants} from "../base/constants.js";
  * </script><pre>
  */
 JXG.createGrid = function (board, parents, attributes) {
-    var eps = Mat.eps,       // to avoid rounding errors
+    var eps = JSXMath.eps,       // to avoid rounding errors
         maxLines = 5000,    // maximum number of vertical or horizontal grid elements (abort criterion for performance reasons)
 
         majorGrid,      // main object which will be returned as grid

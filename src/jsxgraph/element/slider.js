@@ -353,7 +353,7 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.setValue = function (val) {
         var d = this._smax - this._smin;
 
-        if (Math.abs(d) > Mat.eps) {
+        if (Math.abs(d) > JSXMath.eps) {
             this.position = (val - this._smin) / d;
         } else {
             this.position = 0.0; //this._smin;
@@ -480,7 +480,7 @@ JXG.createSlider = function (board, parents, attributes) {
                     smax = p3._smax,
                     val = (this.getDistanceFromZero(zero, tick) * (smax - smin)) / dFull + smin;
 
-                if (dFull < Mat.eps || Math.abs(val) < Mat.eps) {
+                if (dFull < JSXMath.eps || Math.abs(val) < JSXMath.eps) {
                     // Point is zero
                     labelText = "0";
                 } else {
@@ -500,7 +500,7 @@ JXG.createSlider = function (board, parents, attributes) {
                     var dFull = p3.point1.Dist(p3.point2),
                         d = p3.point1.coords.distance(COORDS_BY.USER, tick);
 
-                    if (dFull < Mat.eps) {
+                    if (dFull < JSXMath.eps) {
                         return 0;
                     }
 

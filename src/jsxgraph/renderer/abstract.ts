@@ -549,7 +549,7 @@ export abstract class AbstractRenderer {
      * @private
      */
     getArrowHeadData(el, strokewidth, hl) {
-        var minlen = Mat.eps,
+        var minlen = JSXMath.eps,
             typeFirst,
             typeLast,
             offFirst = 0,
@@ -935,7 +935,7 @@ export abstract class AbstractRenderer {
 
         if (
             /*radius > 0.0 &&*/
-            Math.abs(el.center.coords.usrCoords[0]) > Mat.eps &&
+            Math.abs(el.center.coords.usrCoords[0]) > JSXMath.eps &&
             !isNaN(radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]) &&
             radius * el.board.unitX < 2000000
         ) {
@@ -1709,7 +1709,7 @@ export abstract class AbstractRenderer {
                     e.cancelBubble = true;
                 }
             }
-        createButton = function (label, handler, board_id, type) {
+        let createButton = function (label, handler, board_id, type) {
             var button;
 
             board_id = board_id || "";

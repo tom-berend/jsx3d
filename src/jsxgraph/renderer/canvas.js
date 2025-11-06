@@ -1328,7 +1328,7 @@ JXG.extend(
                         node.style['transform-origin'] = (cx) + 'px ' + (cy) + 'px';
                     }
                 } else {
-                    if (Math.abs(Numerics.det(m)) >= Mat.eps) {
+                    if (Math.abs(Numerics.det(m)) >= JSXMath.eps) {
                         ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
                     }
                 }

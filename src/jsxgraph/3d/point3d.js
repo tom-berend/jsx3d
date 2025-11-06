@@ -576,7 +576,7 @@ JXG.extend(
                 !Type.exists(time) ||
                 time === 0
                 // check for tiny move, is this necessary?
-                // Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > Mat.eps
+                // Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > JSXMath.eps
             ) {
                 this.setPosition([X, Y, Z], true);  // no event here
                 return this.board.update(this);
@@ -585,9 +585,9 @@ JXG.extend(
             // In case there is no callback and we are already at the endpoint we can stop here
             if (
                 !Type.exists(options.callback) &&
-                Math.abs(dX) < Mat.eps &&
-                Math.abs(dY) < Mat.eps &&
-                Math.abs(dZ) < Mat.eps
+                Math.abs(dX) < JSXMath.eps &&
+                Math.abs(dY) < JSXMath.eps &&
+                Math.abs(dZ) < JSXMath.eps
             ) {
                 return this;
             }

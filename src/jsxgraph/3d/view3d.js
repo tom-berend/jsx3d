@@ -343,7 +343,7 @@ JXG.extend(
 
         // extract bank by rotating the view box z axis onto the camera yz plane
         rBank = Math.sqrt(rem[1][3] * rem[1][3] + rem[2][3] * rem[2][3]);
-        if (rBank > Mat.eps) {
+        if (rBank > JSXMath.eps) {
             cosBank = rem[2][3] / rBank;
             sinBank = rem[1][3] / rBank;
         } else {
@@ -384,9 +384,9 @@ JXG.extend(
     anglesHaveMoved: function () {
         return (
             this._hasMoveAz || this._hasMoveEl ||
-            Math.abs(this.angles.az - this.az_slide.Value()) > Mat.eps ||
-            Math.abs(this.angles.el - this.el_slide.Value()) > Mat.eps ||
-            Math.abs(this.angles.bank - this.bank_slide.Value()) > Mat.eps
+            Math.abs(this.angles.az - this.az_slide.Value()) > JSXMath.eps ||
+            Math.abs(this.angles.el - this.el_slide.Value()) > JSXMath.eps ||
+            Math.abs(this.angles.bank - this.bank_slide.Value()) > JSXMath.eps
         );
     },
 
@@ -534,7 +534,7 @@ JXG.extend(
         dx = this._trackball.dx;
         dy = this._trackball.dy;
         dr2 = dx * dx + dy * dy;
-        if (dr2 > Mat.eps) {
+        if (dr2 > JSXMath.eps) {
             // // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
             // // Rotation axis:
             // //     n = (-dy/dr, dx/dr, 0)
@@ -1138,7 +1138,7 @@ JXG.extend(
             try {
                 // Prevent singularity in case elevation angle is zero
                 if (mat[2][3] === 1.0) {
-                    mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    mat[2][1] = mat[2][2] = JSXMath.eps * 0.001;
                 }
                 sol = Mat.Numerics.Gauss(mat, rhs);
             } catch (e) {
@@ -1162,7 +1162,7 @@ JXG.extend(
             try {
                 // Prevent singularity in case elevation angle is zero
                 if (mat[2][3] === 1.0) {
-                    mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    mat[2][1] = mat[2][2] = JSXMath.eps * 0.001;
                 }
 
                 sol = Mat.Numerics.Gauss(mat, rhs);
@@ -1347,12 +1347,12 @@ JXG.extend(
             q = p.slice(1);
         }
         return (
-            q[0] > this.bbox3D[0][0] - Mat.eps &&
-            q[0] < this.bbox3D[0][1] + Mat.eps &&
-            q[1] > this.bbox3D[1][0] - Mat.eps &&
-            q[1] < this.bbox3D[1][1] + Mat.eps &&
-            q[2] > this.bbox3D[2][0] - Mat.eps &&
-            q[2] < this.bbox3D[2][1] + Mat.eps
+            q[0] > this.bbox3D[0][0] - JSXMath.eps &&
+            q[0] < this.bbox3D[0][1] + JSXMath.eps &&
+            q[1] > this.bbox3D[1][0] - JSXMath.eps &&
+            q[1] < this.bbox3D[1][1] + JSXMath.eps &&
+            q[2] > this.bbox3D[2][0] - JSXMath.eps &&
+            q[2] < this.bbox3D[2][1] + JSXMath.eps
         );
     },
 
@@ -1460,7 +1460,7 @@ JXG.extend(
 
             sol = Numerics.Gauss(mat, b);
             t = sol[1];
-            if (t > -Mat.eps && t < 1 + Mat.eps) {
+            if (t > -JSXMath.eps && t < 1 + JSXMath.eps) {
                 c = [1, p1[1] + t * vec[1], p1[2] + t * vec[2], p1[3] + t * vec[3]];
                 ret.push(c);
             }

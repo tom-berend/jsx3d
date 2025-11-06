@@ -588,7 +588,7 @@ export class Statistics {
             tmpslopes.length = 0;
 
             for (j = 0; j < coords.length; j++) {
-                if (Math.abs(coords[j].usrCoords[1] - coords[i].usrCoords[1]) > Mat.eps) {
+                if (Math.abs(coords[j].usrCoords[1] - coords[i].usrCoords[1]) > JSXMath.eps) {
                     tmpslopes[j] =
                         (coords[j].usrCoords[2] - coords[i].usrCoords[2]) /
                         (coords[j].usrCoords[1] - coords[i].usrCoords[1]);

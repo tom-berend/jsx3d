@@ -323,7 +323,7 @@ Mat.Symbolic = {
                 ye = s * tx + c * ye;
 
                 // Step 3
-                if (bol.stretch && Math.abs(P2.symbolic.x) > Mat.eps) {
+                if (bol.stretch && Math.abs(P2.symbolic.x) > JSXMath.eps) {
                     sf = P2.symbolic.x;
 
                     for (i = 0; i < board.listOfFreePoints.length; i++) {
@@ -355,21 +355,21 @@ Mat.Symbolic = {
             for (i = 0; i < board.listOfFreePoints.length; i++) {
                 tx = board.listOfFreePoints[i].symbolic.x;
 
-                if (Math.abs(tx) < Mat.eps) {
+                if (Math.abs(tx) < JSXMath.eps) {
                     board.listOfFreePoints[i].symbolic.x = 0;
                 }
 
-                if (Math.abs(tx - Math.round(tx)) < Mat.eps) {
+                if (Math.abs(tx - Math.round(tx)) < JSXMath.eps) {
                     board.listOfFreePoints[i].symbolic.x = Math.round(tx);
                 }
 
                 tx = board.listOfFreePoints[i].symbolic.y;
 
-                if (Math.abs(tx) < Mat.eps) {
+                if (Math.abs(tx) < JSXMath.eps) {
                     board.listOfFreePoints[i].symbolic.y = 0;
                 }
 
-                if (Math.abs(tx - Math.round(tx)) < Mat.eps) {
+                if (Math.abs(tx - Math.round(tx)) < JSXMath.eps) {
                     board.listOfFreePoints[i].symbolic.y = Math.round(tx);
                 }
             }

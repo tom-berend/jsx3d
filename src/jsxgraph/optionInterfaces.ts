@@ -5683,7 +5683,7 @@ export interface ImplicitcurveOptions {
      * @type {Number|Function}
      * @defaultValue JXG.Math.eps
      */
-    tol_u0?: number  // Mat.eps,
+    tol_u0?: number  // JSXMath.eps,
 
     /**
      * Tolerance for the Newton steps.

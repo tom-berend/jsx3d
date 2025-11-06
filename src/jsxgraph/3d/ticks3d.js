@@ -114,7 +114,7 @@ JXG.createTicks3D = function (board, parents, attributes) {
             v2[i] /= l2;
         }
 
-        if (Math.abs(step) < Mat.eps) {
+        if (Math.abs(step) < JSXMath.eps) {
             return;
         }
         for (u = s1; u <= e1; u += step) {
@@ -181,7 +181,7 @@ JXG.createTicks3D = function (board, parents, attributes) {
             v2[i] /= l2;
         }
 
-        if (Math.abs(step) < Mat.eps) {
+        if (Math.abs(step) < JSXMath.eps) {
             return;
         }
         for (u = s1; u <= e1; u += step) {

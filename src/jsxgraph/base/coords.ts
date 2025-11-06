@@ -82,7 +82,7 @@ export class Coords /*extends GeometryElement*/ {
      * @param {Boolean} [emitter=true]
      * @constructor
      */
-    constructor(method: COORDS_BY, coordinates: number[], board: Board, emitter: boolean = true) {
+    constructor(method: COORDS_BY, coordinates: number[]|Object|Function, board: Board, emitter: boolean = true) {
         if(board===undefined)
             throw new Error('who did not send Board??')
 

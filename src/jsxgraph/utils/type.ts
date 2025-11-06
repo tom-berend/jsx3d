@@ -1348,7 +1348,6 @@ export class Type {
                 }
             }
         }
-        console.log('returns', result)
         return result
     }
 
@@ -1423,9 +1422,6 @@ export class Type {
         isAvail = true;
         for (i = 2; i < len; i++) {
             arg = arguments[i];
-            console.log(o,arg)
-            let ff = Options.board
-            console.log(ff)
             if (Options[arg]) {
                 o = Options[arg];
             } else {

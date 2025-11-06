@@ -336,8 +336,8 @@ export class JSXGraph {
             // Size of HTML div.
             // If zero, the size is set to a small value to avoid
             // division by zero.
-            // w = Math.max(parseInt(dimensions.width, 10), Mat.eps);
-            // h = Math.max(parseInt(dimensions.height, 10), Mat.eps);
+            // w = Math.max(parseInt(dimensions.width, 10), JSXMath.eps);
+            // h = Math.max(parseInt(dimensions.height, 10), JSXMath.eps);
             w = parseInt(dimensions.width, 10);
             h = parseInt(dimensions.height, 10);
 

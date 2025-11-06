@@ -59,7 +59,7 @@ export class Expect {
     static each(a: any[], format: Function, copy: Boolean = false) {
         var i,
             len,
-            r = [];
+            r:any[] = [];
 
         if (Type.exists(a.length)) {
             len = a.length;

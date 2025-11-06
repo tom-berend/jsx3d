@@ -1050,7 +1050,7 @@ JXG.extend(
             this.normal = Mat.crossProduct(this.vec1.slice(1), this.vec2.slice(1));
 
             len = Mat.norm(this.normal);
-            if (Math.abs(len) > Mat.eps * Mat.eps) {
+            if (Math.abs(len) > JSXMath.eps * JSXMath.eps) {
                 for (i = 0; i < 3; i++) {
                     this.normal[i] /= len;
                 }

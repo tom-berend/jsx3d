@@ -55,7 +55,7 @@ import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
 import { GeometryElement } from 'element';
 import { SVGRenderer } from '../renderer/svg.js';
-
+import { JSXMath } from '../math/jsxmath.js';
 import {Text} from '../base/text.js'
 
 export class Board extends Events {
@@ -476,7 +476,7 @@ export class Board extends Events {
      */
     public options: Object
     public origin
-
+    public maxboundingbox:number[]
 
 
     /**
@@ -5298,10 +5298,10 @@ export class Board extends Events {
                 this
             ).usrCoords;
             if (
-                ul[1] < this.maxboundingbox[0] - Mat.eps ||
-                ul[2] > this.maxboundingbox[1] + Mat.eps ||
-                lr[1] > this.maxboundingbox[2] + Mat.eps ||
-                lr[2] < this.maxboundingbox[3] - Mat.eps
+                ul[1] < Options.board.maxBoundingBox[0] - JSXMath.eps ||
+                ul[2] > Options.board.maxBoundingBox[1] + JSXMath.eps ||
+                lr[1] > Options.board.maxBoundingBox[2] + JSXMath.eps ||
+                lr[2] < Options.board.maxBoundingBox[3] - JSXMath.eps
             ) {
                 this.origin.scrCoords[1] = ox;
                 this.origin.scrCoords[2] = oy;
@@ -6018,8 +6018,8 @@ export class Board extends Events {
             box = this.getBoundingBox();    // This is the actual bounding box.
         }
 
-        // this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
-        // this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+        // this.canvasWidth = Math.max(parseFloat(canvasWidth), JSXMath.eps);
+        // this.canvasHeight = Math.max(parseFloat(canvasHeight), JSXMath.eps);
         this.canvasWidth = parseFloat(canvasWidth);
         this.canvasHeight = parseFloat(canvasHeight);
 
@@ -6540,19 +6540,13 @@ export class Board extends Events {
      * @returns {Object} Reference to the created element. This is usually a GeometryElement, but can be an array containing
      * two or more elements.
      */
-    create(elementType, parents, attributes) {
+    create(elementType:string, parents:any[]=[], attributes:object={}) {
         var el, i;
 
         elementType = elementType.toLowerCase();
 
-        if (!Type.exists(parents)) {
-            parents = [];
-        }
 
-        if (!Type.exists(attributes)) {
-            attributes = {};
-        }
-
+        // this loop lets us select parents by name (eg: a point with label 'A' can be referenced by A)
         for (i = 0; i < parents.length; i++) {
             if (
                 Type.isString(parents[i]) &&
@@ -6674,10 +6668,10 @@ export class Board extends Events {
         }
 
         if (
-            bbox[0] < this.maxboundingbox[0] - Mat.eps ||
-            bbox[1] > this.maxboundingbox[1] + Mat.eps ||
-            bbox[2] > this.maxboundingbox[2] + Mat.eps ||
-            bbox[3] < this.maxboundingbox[3] - Mat.eps
+            bbox[0] < Options.board.maxBoundingBox[0] - JSXMath.eps ||
+            bbox[1] > Options.board.maxBoundingBox[1] + JSXMath.eps ||
+            bbox[2] > Options.board.maxBoundingBox[2] + JSXMath.eps ||
+            bbox[3] < Options.board.maxBoundingBox[3] - JSXMath.eps
         ) {
             return this;
         }
@@ -7388,7 +7382,7 @@ export class Board extends Events {
      *   return true;
      * });
      */
-    select(str: string | Object | Function, onlyByIdOrName: Boolean) {
+    select(str: string | Object | Function, onlyByIdOrName: Boolean=false) {
         var flist,
             olist,
             i,

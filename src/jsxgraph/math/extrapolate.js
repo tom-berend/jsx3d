@@ -426,7 +426,7 @@ Mat.Extrapolate = {
         //         console.log(algs[i], t, res)
         //     }
         // }
-        // return [f(x0 + Math.sign(h0) * Math.sqrt(Mat.eps)), 'direct', 0];
+        // return [f(x0 + Math.sign(h0) * Math.sqrt(JSXMath.eps)), 'direct', 0];
     }
 };
 

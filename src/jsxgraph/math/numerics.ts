@@ -98,7 +98,7 @@ export class Numerics {
             Acopy,
             // solution vector, to prevent changing b
             x,
-            eps = Mat.eps,
+            eps = JSXMath.eps,
             // number of columns of A
             n = A.length > 0 ? A[0].length : 0;
 
@@ -204,7 +204,7 @@ export class Numerics {
         var k, c, s,
             i, j, p,
             n, M, t,
-            eps = Mat.eps;
+            eps = JSXMath.eps;
 
         n = mat.length;
 
@@ -301,7 +301,7 @@ export class Numerics {
             tt,
             ssum,
             amax,
-            eps = Mat.eps * Mat.eps,
+            eps = JSXMath.eps * JSXMath.eps,
             sum = 0.0,
             n = Ain.length,
             V = [
@@ -1344,7 +1344,7 @@ export class Numerics {
         if (limit > ws.limit) {
             JXG.warn("iteration limit exceeds available workspace");
         }
-        if (epsabs <= 0 && (epsrel < 50 * Mat.eps || epsrel < 0.5e-28)) {
+        if (epsabs <= 0 && (epsrel < 50 * JSXMath.eps || epsrel < 0.5e-28)) {
             JXG.warn("tolerance cannot be acheived with given epsabs and epsrel");
         }
 
@@ -1518,7 +1518,7 @@ export class Numerics {
     static Newton(f, x, context) {
         var df,
             i = 0,
-            h = Mat.eps,
+            h = JSXMath.eps,
             newf = f.apply(context, [x]);
         // nfev = 1;
 
@@ -1638,7 +1638,7 @@ export class Numerics {
         D10 = this.D(c1.Y, c1);
         D11 = this.D(c2.Y, c2);
 
-        while (F > Mat.eps && count < 10) {
+        while (F > JSXMath.eps && count < 10) {
             a = D00(t1);
             b = -D01(t2);
             c = D10(t1);
@@ -2192,7 +2192,7 @@ export class Numerics {
             t = "";
             for (j = 0; j < coeffs.length; j++) {
                 c = coeffs[j];
-                if (Math.abs(c) < Mat.eps) {
+                if (Math.abs(c) < JSXMath.eps) {
                     continue;
                 }
                 if (JXG.exists(digits)) {
@@ -2416,13 +2416,13 @@ export class Numerics {
                             dt1 = Math.sqrt(dt1);
                             dt2 = Math.sqrt(dt2);
 
-                            if (dt1 < Mat.eps) {
+                            if (dt1 < JSXMath.eps) {
                                 dt1 = 1.0;
                             }
-                            if (dt0 < Mat.eps) {
+                            if (dt0 < JSXMath.eps) {
                                 dt0 = dt1;
                             }
-                            if (dt2 < Mat.eps) {
+                            if (dt2 < JSXMath.eps) {
                                 dt2 = dt1;
                             }
 
@@ -3385,7 +3385,7 @@ export class Numerics {
             p,         // Interpolation step is calculated in the form p/q; division
             q,         // operations is delayed until the last moment
             new_step,  // Step at this iteration
-            eps = Mat.eps,
+            eps = JSXMath.eps,
             maxiter = this.maxIterationsRoot,
             niter = 0;
         // nfev = 0;
@@ -3555,7 +3555,7 @@ export class Numerics {
             maxiter = this.maxIterationsRoot,
             rand = 1 + Math.random() * 0.001,
             t = 0.5 * rand,
-            eps = Mat.eps, // 1.e-10,
+            eps = JSXMath.eps, // 1.e-10,
             dlt = 0.00001,
             x1, x2, x3, x,
             f1, f2, f3, y,
@@ -3777,8 +3777,8 @@ export class Numerics {
             range, middle_range, tol_act, new_step,
             p, q, t, ft,
             r = (3.0 - Math.sqrt(5.0)) * 0.5,      // Golden section ratio
-            tol = Mat.eps,
-            sqrteps = Mat.eps, // Math.sqrt(Mat.eps),
+            tol = JSXMath.eps,
+            sqrteps = JSXMath.eps, // Math.sqrt(JSXMath.eps),
             maxiter = this.maxIterationsMinimize,
             niter = 0;
         // nfev = 0;
@@ -3986,9 +3986,9 @@ export class Numerics {
             z0, z1, z2,
             a, b, c, x,
             m = 10000000.0,
-            t = Mat.eps, // * Mat.eps,
-            e = Mat.eps * Mat.eps,
-            machep = Mat.eps * Mat.eps * Mat.eps;
+            t = JSXMath.eps, // * JSXMath.eps,
+            e = JSXMath.eps * JSXMath.eps,
+            machep = JSXMath.eps * JSXMath.eps * JSXMath.eps;
 
         a = x0[0];
         b = x0[1];
@@ -4541,7 +4541,7 @@ export class Numerics {
                 var d, k, ci, cj, ck,
                     x0, y0, x1, y1,
                     den, lbda,
-                    eps = Mat.eps * Mat.eps,
+                    eps = JSXMath.eps * JSXMath.eps,
                     huge = 10000,
                     dist = 0,
                     f = i;

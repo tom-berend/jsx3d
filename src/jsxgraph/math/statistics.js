@@ -510,7 +510,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js"], function (requir
             for (i = 0; i < coords.length; i++) {
                 tmpslopes.length = 0;
                 for (j = 0; j < coords.length; j++) {
-                    if (Math.abs(coords[j].usrCoords[1] - coords[i].usrCoords[1]) > Mat.eps) {
+                    if (Math.abs(coords[j].usrCoords[1] - coords[i].usrCoords[1]) > JSXMath.eps) {
                         tmpslopes[j] =
                             (coords[j].usrCoords[2] - coords[i].usrCoords[2]) /
                                 (coords[j].usrCoords[1] - coords[i].usrCoords[1]);
@@ -601,7 +601,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js"], function (requir
          *   })
          * }
          * </script><pre>
-    
+
          */
         Statistics.randomNormal = function (mean, stdDev) {
             return this.generateGaussian(mean, stdDev);
@@ -668,7 +668,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js"], function (requir
          *   })
          * }
          * </script><pre>
-    
+
         */
         Statistics.randomExponential = function (lbda) {
             var u;
@@ -686,7 +686,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js"], function (requir
          * Generate value of a random variable with gamma distribution of order alpha.
          * See <a href="https://en.wikipedia.org/wiki/Gamma_distribution">https://en.wikipedia.org/wiki/Gamma_distribution</a>.
          * Algorithm: D.E. Knuth, TAOCP 2, p. 129.
-    
+
          * @param {Number} a shape, <i> &gt; 0</i>
          * @param {Number} [b=1] scale, <i> &gt; 0</i>
          * @param {Number} [t=0] threshold
@@ -1065,7 +1065,7 @@ define(["require", "exports", "../jxg.js", "../utils/type.js"], function (requir
          * @memberof JXG.Math.Statistics
          */
         Statistics.randomHypergeometric = function (good, bad, k) {
-            var i, u, x = 0, 
+            var i, u, x = 0,
             // kk,
             // n = good + bad,
             d1 = good + bad - k, d2 = Math.min(good, bad), y = d2;

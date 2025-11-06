@@ -83,113 +83,6 @@ export interface AriaAttributes {
     ignore?: Boolean
 }
 
-
-// export interface GeometryElementAttributes extends ShortcutAttributes {
-//     /** Apply CSS classes to an element in highlighted view. It is possible to supply one or more CSS classes separated by blanks. <p> For non-text and non-image elements, this feature is available for the SVG renderer, only. */
-//     highlightCssClass?: string
-//     /** If this is set to true, the element is updated in every update call of the board. If set to false, the element is updated only after zoom events or more generally, when the bounding box has been changed. Examples for the latter behavior should be axes. */
-//     needsRegularUpdate?: Boolean
-//     /** Precision options for JSXGraph elements. This attributes takes either the value 'inherit' or an object of the form: <pre> precision: { touch: 30, mouse: 4, pen: 4 } </pre> In the first case, the global, JSXGraph-wide values of JXGraph.Options.precision are taken. */
-//     precision?: string
-//     /** A private element will be inaccessible in certain environments, e.g. a graphical user interface. */
-//     priv?: Boolean
-//     /** Transition duration (in milliseconds) for certain cahnges of properties like color and opacity. The properties can be set in the attribute transitionProperties Works in SVG renderer, only. */
-//     transitionDuration?: number
-//     /** Properties which change smoothly in the time set in transitionDuration. Possible values are ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry'] (and maybe more) for geometry elements and ['color', 'opacity', 'all'] for HTML texts. */
-//     transitionProperties?: string[]
-//     /** ARIA settings for the element. */
-//     aria?: AriaAttributes
-//     /** Apply CSS classes to an element in non-highlighted view. */
-//     cssClass?: string
-//     /** Apply CSS classes to an element in non-highlighted view. */
-//     cssStyle?: string | Function
-//     /** The fill color of this geometry element. */
-//     fillColor?: string | Function
-//     /** Opacity for fill color. */
-//     fillOpacity?: number | Function
-//     /** The stroke color of the given geometry element. */
-//     strokeColor?: string | Function
-//     /** Opacity for element's stroke color. */
-//     strokeOpacity?: number | Function
-//     /** Width of the element's stroke. */
-//     strokeWidth?: number | Function
-//     /** If false the element won't be visible on the currentBoard, otherwise it is shown. */
-//     visible?: Boolean | Function
-//     /** Determines the elements border-style. Possible values are: 0 for a solid line 1 for a dotted line 2 for a line with small dashes 3 for a line with medium dashes 4 for a line with big dashes 5 for a line with alternating medium and big dashes and large gaps 6 for a line with alternating medium and big dashes and small gaps 7 for a dotted line. Needs JXG.GeometryElement#linecap set to ”round” for round dots.The dash patterns are defined in JXG.AbstractRenderer#dashArray. */
-//     dash?: number
-//     /** if true the element will be drawn in grey scale colors (as default) to visualize that it's only a draft. */
-//     draft?: Boolean
-//     /** If true the element is fixed and can not be dragged around. The element will be repositioned on zoom and moveOrigin events. */
-//     fixed?: Boolean
-//     /** If true a label will display the element's name. */
-//     withLabel?: Boolean
-//     /** If enabled:true the (stroke) element will get a customized shadow.Customize color and opacity: If the object's RGB stroke color is [r,g,b] and its opacity is op, and the shadow parameters color is given as [r', g', b'] and opacity as op' the shadow will receive the RGB color[blend*r + r', blend*g + g', blend*b + b']and its opacity will be equal to op * op'. Further, the parameters blur and offset can be adjusted.This attribute is only available with SVG, not with canvas. */
-//     shadow?: Object
-//     /** Snaps the element or its parents to the grid. Currently only relevant for points, circles, and lines. Points are snapped to grid directly, on circles and lines it's only the parent points that are snapped */
-//     snapToGrid?: Boolean
-//     /** If some size of an element is controlled by a function, like the circle radius or segments of fixed length, this attribute controls what happens if the value is negative. By default, the absolute value is taken. If true, the maximum of 0 and the value is used. */
-//     nonnegativeOnly?: Boolean
-//     /** If true, the dash pattern is multiplied by strokeWidth / 2. */
-//     dashScale?: Boolean
-//     /** If the element is dragged it will be moved on mousedown or touchstart to the top of its layer. Works only for SVG renderer and for simple elements consisting of one SVG node. */
-//     dragToTopOfLayer?: Boolean
-//     /** If true the element is fixed and can not be dragged around. The element will even stay at its position on zoom and moveOrigin events. Only free elements like points, texts, curves can be frozen. */
-//     frozen?: Boolean
-//     /** Gradient type. Possible values are 'linear'. 'radial' or null. */
-//     gradient?: 'linear' | 'radial' | 'null'
-//     /** Angle (in radians) of the gradiant in case the gradient is of type 'linear'. If the angle is 0, the first color is on the left and the second color is on the right. If the angle is π/2 the first color is on top and the second color at the bottom. */
-//     gradientAngle?: number
-//     /** From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient. The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle. For radial gradients in canvas this is the value 'x1'. Takes a value between 0 and 1. */
-//     gradientCX?: number
-//     /** From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient. The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle. For radial gradients in canvas this is the value 'y1'. Takes a value between 0 and 1. */
-//     gradientCY?: number
-//     /** The gradientEndOffset attribute is a number (ranging from 0 to 1) which indicates where the second gradient stop is placed, see the SVG specification for more information. For linear gradients, this attribute represents a location along the gradient vector. For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle. */
-//     gradientEndOffset?: number
-//     /** This attribute defines the radius of the start circle of the radial gradient. The gradient will be drawn such that the 0% <stop> is mapped to the perimeter of the start circle. For radial gradients in canvas this is the value 'r0'. Takes a value between 0 and 1. */
-//     gradientFR?: number
-//     /** `fx` and `fy` define the focal point for the radial gradient. The gradient will be drawn such that the 0% gradient stop is mapped to (fx, fy). For radial gradients in canvas this is the value 'x0'. Takes a value between 0 and 1. */
-//     gradientFX?: number
-//     /** y-coordinate of the circle center for the second color in case of gradient 'radial'. (The attribute fy in SVG) For radial gradients in canvas this is the value 'y0'. Takes a value between 0 and 1. */
-//     gradientFY?: number
-//     /** From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient. The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle. For radial gradients in canvas this is the value 'r1'. Takes a value between 0 and 1. */
-//     gradientR?: number
-//     /** Second color for gradient. */
-//     gradientSecondColor?: String
-//     /** Opacity of second gradient color. Takes a value between 0 and 1. */
-//     gradientSecondOpacity?: number
-//     /** The gradientStartOffset attribute is a number (ranging from 0 to 1) which indicates where the first gradient stop is placed, see the SVG specification for more information. For linear gradients, this attribute represents a location along the gradient vector. For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle. */
-//     gradientStartOffset?: number
-//     /** Should the element use highlight attributes on mouseOver? */
-//     highlight?: Boolean
-//     /** The fill color of the given geometry element when the mouse is pointed over it. */
-//     highlightFillColor?: string | Function
-//     /** Opacity for fill color when the object is highlighted. */
-//     highlightFillOpacity?: number | Function
-//     /** The stroke color of the given geometry element when the user moves the mouse over it. */
-//     highlightStrokeColor?: string | Function
-//     /** Opacity for stroke color when the object is highlighted. */
-//     highlightStrokeOpacity?: number | Function
-//     /** Width of the element's stroke when the mouse is pointed over it. */
-//     highlightStrokeWidth?: number | Function
-//     /** Display layer which will contain the element. */
-//     layer?: number
-//     /** Line endings (linecap) of a stroke element, i.e. line, circle, curve. Possible values are:'butt','round','square'. */
-//     lineCap?: 'butt' | 'round' | 'square'
-//     /** Determines whether two-finger manipulation may rotate this object. If set to false, the object can only be scaled and translated.In case the element is a polygon or line and it has the attribute ”rotatable:false”, moving the element with two fingers results in a rotation or translation.If an element is set to be neither scalable nor rotatable, it can only be translated.In case of a polygon, scaling is only possible if no vertex has snapToGrid or snapToPoints enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have snapToGrid disabled. */
-//     rotatable?: Boolean
-//     /** Determines whether two-finger manipulation of this object may change its size. If set to false, the object is only rotated and translated.In case the element is a horizontal or vertical line having ticks, ”scalable:true” enables zooming of the currentBoard by dragging ticks lines. This feature is enabled, for the ticks element of the line element the attribute ”fixed” has to be false and the line element's scalable attribute has to be true.In case the element is a polygon or line and it has the attribute ”scalable:false”, moving the element with two fingers results in a rotation or translation.If an element is set to be neither scalable nor rotatable, it can only be translated.In case of a polygon, scaling is only possible if no vertex has snapToGrid or snapToPoints enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have snapToGrid disabled. */
-//     scalable?: Boolean
-//     /** Controls if an element can get the focus with the tab key. tabindex corresponds to the HTML attribute of the same name. See descriptiona at MDN. The additional value ”null” completely disables focus of an element. The value will be ignored if keyboard control of the currentBoard is not enabled or the element is fixed or not visible. */
-//     tabindex?: number
-//     /** If true the element will be traced, i.e. on every movement the element will be copied to the background. Use JXG.GeometryElement#clearTrace to delete the trace elements.The calling of element.setAttribute({trace:false}) additionally deletes all traces of this element. By calling element.setAttribute({trace:'pause'}) the removal of already existing traces can be prevented.The visual appearance of the trace can be influenced by JXG.GeometryElement#traceAttributes. */
-//     trace?: Boolean
-//     /** Extra visual properties for traces of an element */
-//     // traceAttributes?: PointAttributes
-// }
-
-
-
-
 export class GeometryElement extends Events {
 
     /**
@@ -526,7 +419,7 @@ export class GeometryElement extends Events {
 
         var name, key, attr;
 
-        if(board==undefined){
+        if (board == undefined) {
             throw new Error('who did not send Board??')
         }
 
@@ -1067,7 +960,7 @@ export class GeometryElement extends Events {
      * @return {JXG.GeometryElement} Reference to the element
      * @private
      */
-    fullUpdate(visible) {
+    fullUpdate(visible: 'inherit' | boolean = 'inherit') {
         return this.prepareUpdate().update().updateVisibility(visible).updateRenderer();
     }
 

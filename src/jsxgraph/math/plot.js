@@ -59,7 +59,7 @@ Mat.Plot = {
 
         for (i = 0; i < len; i++) {
             p = points[i].usrCoords;
-            if (!isNaN(p[1]) && !isNaN(p[2]) && Math.abs(p[0]) > Mat.eps) {
+            if (!isNaN(p[1]) && !isNaN(p[2]) && Math.abs(p[0]) > JSXMath.eps) {
                 b = true;
                 break;
             }
@@ -181,7 +181,7 @@ Mat.Plot = {
                     y1 = p2[1] - p1[2],
                     den = x1 * x1 + y1 * y1;
 
-                if (den >= Mat.eps) {
+                if (den >= JSXMath.eps) {
                     lbda = (x0 * x1 + y0 * y1) / den;
                     if (lbda > 0) {
                         if (lbda <= 1) {
@@ -374,12 +374,12 @@ Mat.Plot = {
             t,
             p;
 
-        t = t0 + Mat.eps;
+        t = t0 + JSXMath.eps;
         pnt.setCoordinates(COORDS_BY.USER, [curve.X(t, true), curve.Y(t, true)], false);
         p = pnt.usrCoords;
         is_undef = isNaN(p[1] + p[2]);
         if (!is_undef) {
-            t = t0 - Mat.eps;
+            t = t0 - JSXMath.eps;
             pnt.setCoordinates(
                 COORDS_BY.USER,
                 [curve.X(t, true), curve.Y(t, true)],
@@ -773,8 +773,8 @@ Mat.Plot = {
             !isNaN(limes.left_y) &&
             !isNaN(limes.right_x) &&
             !isNaN(limes.right_y) &&
-            (Math.abs(limes.left_x - limes.right_x) > Mat.eps ||
-                Math.abs(limes.left_y - limes.right_y) > Mat.eps)
+            (Math.abs(limes.left_x - limes.right_x) > JSXMath.eps ||
+                Math.abs(limes.left_y - limes.right_y) > JSXMath.eps)
         ) {
             p1 = new Coords(COORDS_BY.SCREEN, pnt, curve.board);
             p1._t = t;
@@ -1142,7 +1142,7 @@ Mat.Plot = {
                 t_good = t;
             }
             ++j;
-        } while (j < max_it && Math.abs(t_good - t_bad) > Mat.eps);
+        } while (j < max_it && Math.abs(t_good - t_bad) > JSXMath.eps);
         return t;
     },
 
@@ -1174,7 +1174,7 @@ Mat.Plot = {
      */
     _getJumpPos: function (curve, ta, tb) {
         var max_func = function (t) {
-            var e = Mat.eps * Mat.eps,
+            var e = JSXMath.eps * JSXMath.eps,
                 c1 = [curve.X(t, true), curve.Y(t, true)],
                 c2 = [curve.X(t + e, true), curve.Y(t + e, true)];
             return -Math.abs((c2[1] - c1[1]) / (c2[0] - c1[0]));

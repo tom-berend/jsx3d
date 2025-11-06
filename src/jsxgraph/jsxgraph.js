@@ -118,7 +118,7 @@ define(["require", "exports", "./jxg.js", "./utils/env.js", "./utils/type.js", "
          */
         JSXGraph._setAttributes = function (attributes, options) {
             // merge attributes
-            var attr = type_js_1.Type.copyAttributes(attributes, options, 'board'), 
+            var attr = type_js_1.Type.copyAttributes(attributes, options, 'board'),
             // These attributes - which are objects - have to be copied separately.
             list = [
                 'drag',
@@ -269,8 +269,8 @@ define(["require", "exports", "./jxg.js", "./utils/env.js", "./utils/type.js", "
                 // Size of HTML div.
                 // If zero, the size is set to a small value to avoid
                 // division by zero.
-                // w = Math.max(parseInt(dimensions.width, 10), Mat.eps);
-                // h = Math.max(parseInt(dimensions.height, 10), Mat.eps);
+                // w = Math.max(parseInt(dimensions.width, 10), JSXMath.eps);
+                // h = Math.max(parseInt(dimensions.height, 10), JSXMath.eps);
                 w = parseInt(dimensions.width, 10);
                 h = parseInt(dimensions.height, 10);
                 if (type_js_1.Type.exists(bbox) && attr.keepaspectratio) {
@@ -303,8 +303,8 @@ define(["require", "exports", "./jxg.js", "./utils/env.js", "./utils/type.js", "
             this._setARIA(box, attr);
             // Create the board.
             // board.options will contain the user supplied board attributes
-            var board = new board_js_1.Board(box, renderer, attr.id, [originX, originY], 
-            /*attr.zoomfactor * */ attr.zoomx, 
+            var board = new board_js_1.Board(box, renderer, attr.id, [originX, originY],
+            /*attr.zoomfactor * */ attr.zoomx,
             /*attr.zoomfactor * */ attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
             board.keepaspectratio = attr.keepaspectratio;
             this._fillBoard(board, attr, dimensions);

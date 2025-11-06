@@ -48,15 +48,15 @@ import { GeometryElement } from "../base/element.js";
 
 
 
-export class CoordsElement /*extends Coords*/ {
+export class CoordsElement extends GeometryElement {
 
     public usrCoords: number[] = [];
     public scrCoords: number[] = [];
     public method: COORDS_BY;
 
-    public coords;
-    public initialCoords;
-    public actualCoords;
+    public coords: Coords
+    public initialCoords: Coords;
+    public actualCoords: Coords;
 
 
 
@@ -80,9 +80,8 @@ export class CoordsElement /*extends Coords*/ {
      * {@link JXG.Options#elements} and - optionally - a name and an id.
      */
     // constructor(board: Board, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS, method: COORDS_BY) {
-    constructor(coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS, method: COORDS_BY) {
-
-        // super(COORDS_BY.USER, [0, 0])
+    constructor(board: Board, method: COORDS_BY, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object /*, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS*/) {
+        super(board, attributes)
 
 
         // for (let i = 0; i < coordinates.length; ++i) {
@@ -326,7 +325,7 @@ export class CoordsElement /*extends Coords*/ {
                 i = 1;
                 d = p2c[i] - p1c[i];
 
-                if (Math.abs(d) < Mat.eps) {
+                if (Math.abs(d) < JSXMath.eps) {
                     i = 2;
                     d = p2c[i] - p1c[i];
                 }
@@ -370,7 +369,7 @@ export class CoordsElement /*extends Coords*/ {
             d = p1c.distance(COORDS_BY.USER, p2c);
 
             // The defining points are identical
-            if (d < Mat.eps) {
+            if (d < JSXMath.eps) {
                 //this.coords.setCoordinates(COORDS_BY.USER, p1c);
                 newCoords = p1c;
                 doRound = true;
@@ -381,11 +380,11 @@ export class CoordsElement /*extends Coords*/ {
                 p2c = p2c.usrCoords.slice(0);
 
                 // The second point is an ideal point
-                if (Math.abs(p2c[0]) < Mat.eps) {
+                if (Math.abs(p2c[0]) < JSXMath.eps) {
                     i = 1;
                     d = p2c[i];
 
-                    if (Math.abs(d) < Mat.eps) {
+                    if (Math.abs(d) < JSXMath.eps) {
                         i = 2;
                         d = p2c[i];
                     }
@@ -396,11 +395,11 @@ export class CoordsElement /*extends Coords*/ {
                     newPos = (sgn * d) / (d + 1);
 
                     // The first point is an ideal point
-                } else if (Math.abs(p1c[0]) < Mat.eps) {
+                } else if (Math.abs(p1c[0]) < JSXMath.eps) {
                     i = 1;
                     d = p1c[i];
 
-                    if (Math.abs(d) < Mat.eps) {
+                    if (Math.abs(d) < JSXMath.eps) {
                         i = 2;
                         d = p1c[i];
                     }
@@ -417,7 +416,7 @@ export class CoordsElement /*extends Coords*/ {
                     i = 1;
                     d = p2c[i] - p1c[i];
 
-                    if (Math.abs(d) < Mat.eps) {
+                    if (Math.abs(d) < JSXMath.eps) {
                         i = 2;
                         d = p2c[i] - p1c[i];
                     }
@@ -437,7 +436,7 @@ export class CoordsElement /*extends Coords*/ {
                 // Second, call update(fromParent==true) to make the positioning snappier.
                 ev_sw = this.evalVisProp('snapwidth');
                 if (
-                    ev_sw > 0.0 && Math.abs(this._smax - this._smin) >= Mat.eps
+                    ev_sw > 0.0 && Math.abs(this._smax - this._smin) >= JSXMath.eps
                 ) {
                     newPos = Math.max(Math.min(newPos, 1), 0);
                     // v = newPos * (this._smax - this._smin) + this._smin;
@@ -452,7 +451,7 @@ export class CoordsElement /*extends Coords*/ {
             p1c = slide.point1.coords;
             if (
                 !slide.evalVisProp('straightfirst') &&
-                Math.abs(p1c.usrCoords[0]) > Mat.eps &&
+                Math.abs(p1c.usrCoords[0]) > JSXMath.eps &&
                 newPos < 0
             ) {
                 newCoords = p1c;
@@ -463,7 +462,7 @@ export class CoordsElement /*extends Coords*/ {
             p2c = slide.point2.coords;
             if (
                 !slide.evalVisProp('straightlast') &&
-                Math.abs(p2c.usrCoords[0]) > Mat.eps &&
+                Math.abs(p2c.usrCoords[0]) > JSXMath.eps &&
                 newPos > 1
             ) {
                 newCoords = p2c;
@@ -516,7 +515,7 @@ export class CoordsElement /*extends Coords*/ {
                 if (this.visProp.isgeonext) {
                     delta = 1.0;
                 }
-                if (Math.abs(delta) > Mat.eps) {
+                if (Math.abs(delta) > JSXMath.eps) {
                     newPos /= delta;
                 }
             } else {
@@ -612,7 +611,7 @@ export class CoordsElement /*extends Coords*/ {
         snapValueDistance = this.evalVisProp('snapvaluedistance');
 
         if (Type.isArray(snapValues) &&
-            Math.abs(this._smax - this._smin) >= Mat.eps &&
+            Math.abs(this._smax - this._smin) >= JSXMath.eps &&
             snapValueDistance > 0.0) {
             for (i = 0; i < snapValues.length; i++) {
                 d = Math.abs(pos * (this._smax - this._smin) + this._smin - snapValues[i]);
@@ -665,8 +664,8 @@ export class CoordsElement /*extends Coords*/ {
             ) {
                 c = [0, 0, 0];
                 // The second point is an ideal point
-            } else if (Math.abs(p2c[0]) < Mat.eps) {
-                lbda = Math.min(Math.abs(this.position), 1 - Mat.eps);
+            } else if (Math.abs(p2c[0]) < JSXMath.eps) {
+                lbda = Math.min(Math.abs(this.position), 1 - JSXMath.eps);
                 lbda /= 1.0 - lbda;
 
                 if (this.position < 0) {
@@ -679,9 +678,9 @@ export class CoordsElement /*extends Coords*/ {
                     p1c[2] + lbda * p2c[2]
                 ];
                 // The first point is an ideal point
-            } else if (Math.abs(p1c[0]) < Mat.eps) {
-                lbda = Math.max(this.position, Mat.eps);
-                lbda = Math.min(lbda, 2 - Mat.eps);
+            } else if (Math.abs(p1c[0]) < JSXMath.eps) {
+                lbda = Math.max(this.position, JSXMath.eps);
+                lbda = Math.min(lbda, 2 - JSXMath.eps);
 
                 if (lbda > 1) {
                     lbda = (lbda - 1) / (lbda - 2);
@@ -778,7 +777,7 @@ export class CoordsElement /*extends Coords*/ {
                     }
 
                     this.position = angle;
-                    if (Math.abs(delta) > Mat.eps) {
+                    if (Math.abs(delta) > JSXMath.eps) {
                         this.position /= delta;
                     }
                 }
@@ -831,7 +830,7 @@ export class CoordsElement /*extends Coords*/ {
             this.isReal = !isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]);
             //Homogeneous coords: ideal point
             this.isReal =
-                Math.abs(this.coords.usrCoords[0]) > Mat.eps ? this.isReal : false;
+                Math.abs(this.coords.usrCoords[0]) > JSXMath.eps ? this.isReal : false;
 
             if (
                 // wasReal &&
@@ -2076,7 +2075,7 @@ export class CoordsElement /*extends Coords*/ {
         if (
             !Type.exists(time) ||
             time === 0 ||
-            Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > Mat.eps
+            Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > JSXMath.eps
         ) {
             this.setPosition(COORDS_BY.USER, where.usrCoords);
             return this.board.update(this);
@@ -2085,8 +2084,8 @@ export class CoordsElement /*extends Coords*/ {
         // In case there is no callback and we are already at the endpoint we can stop here
         if (
             !Type.exists(options.callback) &&
-            Math.abs(dX) < Mat.eps &&
-            Math.abs(dY) < Mat.eps
+            Math.abs(dX) < JSXMath.eps &&
+            Math.abs(dY) < JSXMath.eps
         ) {
             return this;
         }

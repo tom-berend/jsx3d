@@ -404,9 +404,9 @@ JXG.createSector = function (board, parents, attributes) {
             this.point3.coords = new Coords(COORDS_BY.USER, C, el.board);
 
             if (
-                Math.abs(A[0]) < Mat.eps ||
-                Math.abs(B[0]) < Mat.eps ||
-                Math.abs(C[0]) < Mat.eps
+                Math.abs(A[0]) < JSXMath.eps ||
+                Math.abs(B[0]) < JSXMath.eps ||
+                Math.abs(C[0]) < JSXMath.eps
             ) {
                 this.dataX = [NaN];
                 this.dataY = [NaN];
@@ -1642,7 +1642,7 @@ JXG.createAngle = function (board, parents, attributes) {
             deg = 360.0 - deg;
         }
 
-        if (Math.abs(deg - 90.0) < this.evalVisProp('orthosensitivity') + Mat.eps) {
+        if (Math.abs(deg - 90.0) < this.evalVisProp('orthosensitivity') + JSXMath.eps) {
             type = this.evalVisProp('orthotype');
         }
 

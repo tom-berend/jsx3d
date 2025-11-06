@@ -3717,8 +3717,8 @@ export class Geometry {
 
             // Distinction between closed and open curves is not necessary.
             // If closed, the cyclic projection shift will work anyhow
-            // if (Math.abs(curve.X(minX) - curve.X(maxX)) < Mat.eps &&
-            //     Math.abs(curve.Y(minX) - curve.Y(maxX)) < Mat.eps) {
+            // if (Math.abs(curve.X(minX) - curve.X(maxX)) < JSXMath.eps &&
+            //     Math.abs(curve.Y(minX) - curve.Y(maxX)) < JSXMath.eps) {
             //     // Cyclically
             //     if (t < minX) {console.log(t)
             //         t = maxX + t - minX;

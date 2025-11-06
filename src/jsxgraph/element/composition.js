@@ -628,8 +628,8 @@ JXG.createMidpoint = function (board, parents, attributes) {
                 var x = a.coords.usrCoords[1] + b.coords.usrCoords[1];
                 if (
                     isNaN(x) ||
-                    Math.abs(a.coords.usrCoords[0]) < Mat.eps ||
-                    Math.abs(b.coords.usrCoords[0]) < Mat.eps
+                    Math.abs(a.coords.usrCoords[0]) < JSXMath.eps ||
+                    Math.abs(b.coords.usrCoords[0]) < JSXMath.eps
                 ) {
                     return NaN;
                 }
@@ -640,8 +640,8 @@ JXG.createMidpoint = function (board, parents, attributes) {
                 var y = a.coords.usrCoords[2] + b.coords.usrCoords[2];
                 if (
                     isNaN(y) ||
-                    Math.abs(a.coords.usrCoords[0]) < Mat.eps ||
-                    Math.abs(b.coords.usrCoords[0]) < Mat.eps
+                    Math.abs(a.coords.usrCoords[0]) < JSXMath.eps ||
+                    Math.abs(b.coords.usrCoords[0]) < JSXMath.eps
                 ) {
                     return NaN;
                 }
@@ -2783,7 +2783,7 @@ JXG.createInequality = function (board, parents, attributes) {
             // it is circumvented here.
             if (
                 Math.abs(Mat.innerProduct(dp.coords.usrCoords, parents[0].stdform, 3)) >=
-                Mat.eps
+                JSXMath.eps
             ) {
                 dp = Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
             } else {

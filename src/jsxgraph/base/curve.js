@@ -1161,7 +1161,7 @@ JXG.extend(
             }
             c = (new Coords(COORDS_BY.USER, [x, y], this.board)).scrCoords;
 
-            e = Mat.eps;
+            e = JSXMath.eps;
             if (t < mi + e) {
                 dx = (this.X(t + e) - this.X(t)) / e;
                 dy = (this.Y(t + e) - this.Y(t)) / e;
@@ -1266,7 +1266,7 @@ JXG.extend(
                 // y = this.Y(t);
                 // c = (new Coords(COORDS_BY.USER, [x, y], this.board)).scrCoords;
 
-                // e = Mat.eps;
+                // e = JSXMath.eps;
                 // if (t < this.minX() + e) {
                 //     dx = (this.X(t + e) - this.X(t)) / e;
                 //     dy = (this.Y(t + e) - this.Y(t)) / e;

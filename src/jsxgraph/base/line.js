@@ -227,7 +227,7 @@ JXG.extend(
             p2c = p2c.usrCoords.slice(0);
 
             // The defining points are identical
-            if (d < Mat.eps) {
+            if (d < JSXMath.eps) {
                 pos = 0;
             } else {
                 /*
@@ -243,10 +243,10 @@ JXG.extend(
 
                 // At least one point is an ideal point
                 if (d === Number.POSITIVE_INFINITY) {
-                    d = 1 / Mat.eps;
+                    d = 1 / JSXMath.eps;
 
                     // The second point is an ideal point
-                    if (Math.abs(p2c[0]) < Mat.eps) {
+                    if (Math.abs(p2c[0]) < JSXMath.eps) {
                         d /= Geometry.distance([0, 0, 0], p2c);
                         p2c = [1, p1c[1] + p2c[1] * d, p1c[2] + p2c[2] * d];
                         // The first point is an ideal point
@@ -258,7 +258,7 @@ JXG.extend(
                 i = 1;
                 d = p2c[i] - p1c[i];
 
-                if (Math.abs(d) < Mat.eps) {
+                if (Math.abs(d) < JSXMath.eps) {
                     i = 2;
                     d = p2c[i] - p1c[i];
                 }
@@ -348,7 +348,7 @@ JXG.extend(
             );
 
             // If the position of the points or the fixed length function has been changed we have to work.
-            if (d1 > Mat.eps || d2 > Mat.eps || d !== d_new) {
+            if (d1 > JSXMath.eps || d2 > JSXMath.eps || d !== d_new) {
                 drag1 =
                     this.point1.isDraggable &&
                     this.point1.type !== OBJECT_TYPE.GLIDER &&
@@ -362,7 +362,7 @@ JXG.extend(
                 // Then we try to adapt the point that was not dragged
                 // If this point can not be moved (e.g. because it is a glider)
                 // we try move the other point
-                if (d > Mat.eps) {
+                if (d > JSXMath.eps) {
                     if ((d1 > d2 && drag2) || (d1 <= d2 && drag2 && !drag1)) {
                         this.point2.setPositionDirectly(COORDS_BY.USER, [
                             this.point1.X() + ((this.point2.X() - this.point1.X()) * d_new) / d,
@@ -448,7 +448,7 @@ JXG.extend(
                         this.point1.coords.usrCoords[2] +
                         this.point2.coords.usrCoords[1] +
                         this.point2.coords.usrCoords[2]
-                    ) && Mat.innerProduct(this.stdform, this.stdform, 3) >= Mat.eps * Mat.eps;
+                    ) && Mat.innerProduct(this.stdform, this.stdform, 3) >= JSXMath.eps * JSXMath.eps;
 
                 if (
                     //wasReal &&
@@ -526,7 +526,7 @@ JXG.extend(
          * @returns {Number} The y intersect.
          */
         getRise: function () {
-            if (Math.abs(this.stdform[2]) >= Mat.eps) {
+            if (Math.abs(this.stdform[2]) >= JSXMath.eps) {
                 return -this.stdform[0] / this.stdform[2];
             }
 
@@ -538,7 +538,7 @@ JXG.extend(
          * @returns {Number} The slope of the line or Infinity if the line is parallel to the y-axis.
          */
         Slope: function () {
-            if (Math.abs(this.stdform[2]) >= Mat.eps) {
+            if (Math.abs(this.stdform[2]) >= JSXMath.eps) {
                 return -this.stdform[1] / this.stdform[2];
             }
 
@@ -696,7 +696,7 @@ JXG.extend(
                     case "lft":
                     case "llft":
                     case "ulft":
-                        if (c1[1] < c2[1] + Mat.eps) {
+                        if (c1[1] < c2[1] + JSXMath.eps) {
                             x = c1[1];
                             y = c1[2];
                         } else {
@@ -707,7 +707,7 @@ JXG.extend(
                     case "rt":
                     case "lrt":
                     case "urt":
-                        if (c1[1] > c2[1] + Mat.eps) {
+                        if (c1[1] > c2[1] + JSXMath.eps) {
                             x = c1[1];
                             y = c1[2];
                         } else {
@@ -768,20 +768,20 @@ JXG.extend(
                     fs = this.label.evalVisProp('fontsize');
                 }
 
-                if (Math.abs(x) < Mat.eps) {
+                if (Math.abs(x) < JSXMath.eps) {
                     x = fs;
                 } else if (
-                    this.board.canvasWidth + Mat.eps > x &&
-                    x > this.board.canvasWidth - fs - Mat.eps
+                    this.board.canvasWidth + JSXMath.eps > x &&
+                    x > this.board.canvasWidth - fs - JSXMath.eps
                 ) {
                     x = this.board.canvasWidth - fs;
                 }
 
-                if (Mat.eps + fs > y && y > -Mat.eps) {
+                if (JSXMath.eps + fs > y && y > -JSXMath.eps) {
                     y = fs;
                 } else if (
-                    this.board.canvasHeight + Mat.eps > y &&
-                    y > this.board.canvasHeight - fs - Mat.eps
+                    this.board.canvasHeight + JSXMath.eps > y &&
+                    y > this.board.canvasHeight - fs - JSXMath.eps
                 ) {
                     y = this.board.canvasHeight - fs;
                 }
@@ -940,7 +940,7 @@ JXG.extend(
                 b = this.stdform[2];
 
             x =
-                Math.abs(this.point1.coords.usrCoords[0]) > Mat.eps
+                Math.abs(this.point1.coords.usrCoords[0]) > JSXMath.eps
                     ? this.point1.coords.usrCoords[1]
                     : this.point2.coords.usrCoords[1];
 
@@ -960,7 +960,7 @@ JXG.extend(
                 a = this.stdform[1];
 
             y =
-                Math.abs(this.point1.coords.usrCoords[0]) > Mat.eps
+                Math.abs(this.point1.coords.usrCoords[0]) > JSXMath.eps
                     ? this.point1.coords.usrCoords[2]
                     : this.point2.coords.usrCoords[2];
 
@@ -978,7 +978,7 @@ JXG.extend(
          */
         Z: function (t) {
             var z =
-                Math.abs(this.point1.coords.usrCoords[0]) > Mat.eps
+                Math.abs(this.point1.coords.usrCoords[0]) > JSXMath.eps
                     ? this.point1.coords.usrCoords[0]
                     : this.point2.coords.usrCoords[0];
 

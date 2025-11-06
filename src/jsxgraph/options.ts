@@ -1052,7 +1052,7 @@ export class Options {
         resolution_inner: 5,
         max_steps: 1024,
         alpha_0: 0.05,
-        tol_u0: 0.000001,  // Mat.eps,
+        tol_u0: 0.000001,  // JSXMath.eps,
         tol_newton: 1.0e-7,
         tol_cusp: 0.05,
         tol_progress: 0.0001,
