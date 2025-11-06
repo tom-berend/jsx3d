@@ -1558,7 +1558,7 @@ export interface GeometryElementOptions {
      * @see Text#highlightCssClass
      * @see JXG.GeometryElement#cssClass
      */
-    highlightCssClass: string
+    highlightCssClass?: string
 
     /**
      * Determines the elements border-style.

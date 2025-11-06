@@ -109,7 +109,7 @@ export class Coords {
     }
     /**
      * Calculate distance of one point to another.
-     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>COORDS_BY.USER</b> and <b>COORDS_BY.SCREEN</b>.
      * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
      * @returns {Number} The distance
      */
@@ -139,7 +139,7 @@ export class Coords {
      * @returns {JXG.Coords} Reference to the coords object.
      */
     setCoordinates(coord_type, coordinates, doRound, noevent) {
-        var uc = this.usrCoords, sc = this.scrCoords, 
+        var uc = this.usrCoords, sc = this.scrCoords,
         // Original values
         ou = [uc[0], uc[1], uc[2]], os = [sc[0], sc[1], sc[2]];
         if (coord_type === COORDS_BY.USER) {

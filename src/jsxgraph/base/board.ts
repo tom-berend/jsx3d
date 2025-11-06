@@ -39,7 +39,7 @@
  */
 
 import { JXG } from '../jxg.js';
-import { BOARD_MODE, BOARD_QUALITY } from './constants.js';
+import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS,OBJECT_TYPE,COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
 import { Numerics } from '../math/numerics.js';
@@ -475,6 +475,7 @@ export class Board extends Events {
      * @type JXG.Options
      */
     public options: Object
+    public origin
 
 
 
@@ -1121,7 +1122,7 @@ export class Board extends Events {
             indices = [],
             name = '';
 
-        if (object.type === Const.OBJECT_TYPE_TICKS) {
+        if (object.type === OBJECT_TYPE.TICKS) {
             return '';
         }
 
@@ -1130,7 +1131,7 @@ export class Board extends Events {
             possibleNames = [
                 '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
             ];
-        } else if (object.type === Const.OBJECT_TYPE_ANGLE) {
+        } else if (object.type === OBJECT_TYPE.ANGLE) {
             possibleNames = [
                 '', '&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;', '&iota;', '&kappa;', '&lambda;',
                 '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'
@@ -1146,9 +1147,9 @@ export class Board extends Events {
             !Type.isPoint(object) &&
             !Type.isPoint3D(object) &&
             object.elementClass !== OBJECT_CLASS.LINE &&
-            object.type !== Const.OBJECT_TYPE_ANGLE
+            object.type !== OBJECT_TYPE.ANGLE
         ) {
-            if (object.type === Const.OBJECT_TYPE_POLYGON) {
+            if (object.type === OBJECT_TYPE.POLYGON) {
                 pre = 'P_{';
             } else if (object.elementClass === OBJECT_CLASS.CIRCLE) {
                 pre = 'k_{';
@@ -1799,7 +1800,7 @@ export class Board extends Events {
      */
     moveObject(x, y, o, evt, type) {
         var newPos = new Coords(
-            JXG.COORDS_BY_SCREEN,
+            COORDS_BY.SCREEN,
             this.getScrCoordsOfMouse(x, y),
             this
         ),
@@ -1832,7 +1833,7 @@ export class Board extends Events {
         // We have to distinguish between CoordsElements and other elements like lines.
         // The latter need the difference between two move events.
         if (Type.exists(drag.coords)) {
-            drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, this.drag_position, [x, y]);
+            drag.setPositionDirectly(COORDS_BY.SCREEN, this.drag_position, [x, y]);
         } else {
             this.displayInfobox(false);
             // Hide infobox in case the user has touched an intersection point
@@ -1840,7 +1841,7 @@ export class Board extends Events {
 
             if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                 drag.setPositionDirectly(
-                    JXG.COORDS_BY_SCREEN,
+                    COORDS_BY.SCREEN,
                     [newPos.scrCoords[1], newPos.scrCoords[2]],
                     [o.targets[0].Xprev, o.targets[0].Yprev]
                 );
@@ -1894,7 +1895,7 @@ export class Board extends Events {
 
         if (
             drag.elementClass === OBJECT_CLASS.LINE ||
-            drag.type === Const.OBJECT_TYPE_POLYGON
+            drag.type === OBJECT_TYPE.POLYGON
         ) {
             this.twoFingerTouchObject(o.targets, drag, id);
         } else if (drag.elementClass === OBJECT_CLASS.CIRCLE) {
@@ -1925,17 +1926,17 @@ export class Board extends Events {
             dxx, dyy,
             C, S, LL, tx, ty, lbda;
 
-        crd = new Coords(JXG.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
+        crd = new Coords(COORDS_BY.SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
         x1 = crd[1];
         y1 = crd[2];
-        crd = new Coords(JXG.COORDS_BY_SCREEN, [finger2.Xprev, finger2.Yprev], this).usrCoords;
+        crd = new Coords(COORDS_BY.SCREEN, [finger2.Xprev, finger2.Yprev], this).usrCoords;
         x2 = crd[1];
         y2 = crd[2];
 
-        crd = new Coords(JXG.COORDS_BY_SCREEN, [finger1.X, finger1.Y], this).usrCoords;
+        crd = new Coords(COORDS_BY.SCREEN, [finger1.X, finger1.Y], this).usrCoords;
         xx1 = crd[1];
         yy1 = crd[2];
-        crd = new Coords(JXG.COORDS_BY_SCREEN, [finger2.X, finger2.Y], this).usrCoords;
+        crd = new Coords(COORDS_BY.SCREEN, [finger2.X, finger2.Y], this).usrCoords;
         xx2 = crd[1];
         yy2 = crd[2];
 
@@ -2000,7 +2001,7 @@ export class Board extends Events {
                     ar.push(drag.point2);
                 }
                 t.applyOnce(ar);
-            } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
+            } else if (drag.type === OBJECT_TYPE.POLYGON) {
                 len = drag.vertices.length - 1;
                 snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
                 for (i = 0; i < len && !snap; ++i) {
@@ -2049,13 +2050,13 @@ export class Board extends Events {
                 moveEl = tar[1];
             }
 
-            fix = new Coords(JXG.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)
+            fix = new Coords(COORDS_BY.SCREEN, [fixEl.Xprev, fixEl.Yprev], this)
                 .usrCoords;
             // Previous finger position
-            op = new Coords(JXG.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)
+            op = new Coords(COORDS_BY.SCREEN, [moveEl.Xprev, moveEl.Yprev], this)
                 .usrCoords;
             // New finger position
-            np = new Coords(JXG.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this).usrCoords;
+            np = new Coords(COORDS_BY.SCREEN, [moveEl.X, moveEl.Y], this).usrCoords;
 
             alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
@@ -2154,7 +2155,7 @@ export class Board extends Events {
             i,
             len;
 
-        if (obj.type === Const.OBJECT_TYPE_TICKS) {
+        if (obj.type === OBJECT_TYPE.TICKS) {
             xy.push([1, NaN, NaN]);
         } else if (obj.elementClass === OBJECT_CLASS.LINE) {
             xy.push(obj.point1.coords.usrCoords);
@@ -2164,16 +2165,16 @@ export class Board extends Events {
             if (obj.method === 'twoPoints') {
                 xy.push(obj.point2.coords.usrCoords);
             }
-        } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
+        } else if (obj.type === OBJECT_TYPE.POLYGON) {
             len = obj.vertices.length - 1;
             for (i = 0; i < len; i++) {
                 xy.push(obj.vertices[i].coords.usrCoords);
             }
-        } else if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+        } else if (obj.type === OBJECT_TYPE.SECTOR) {
             xy.push(obj.point1.coords.usrCoords);
             xy.push(obj.point2.coords.usrCoords);
             xy.push(obj.point3.coords.usrCoords);
-        } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
+        } else if (Type.isPoint(obj) || obj.type === OBJECT_TYPE.GLIDER) {
             xy.push(obj.coords.usrCoords);
         } else if (obj.elementClass === OBJECT_CLASS.CURVE) {
             // if (Type.exists(obj.parents)) {
@@ -2818,7 +2819,7 @@ export class Board extends Events {
             [evt.touches[1].clientX, evt.touches[1].clientY]
         ];
 
-        c = new Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
+        c = new Coords(COORDS_BY.SCREEN, this.getMousePosition(evt, 0), this);
 
         if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !isPinch) {
             // Pan detected
@@ -3799,8 +3800,8 @@ export class Board extends Events {
                     if (
                         Type.isPoint(obj) ||
                         obj.elementClass === OBJECT_CLASS.TEXT ||
-                        obj.type === Const.OBJECT_TYPE_TICKS ||
-                        obj.type === Const.OBJECT_TYPE_IMAGE
+                        obj.type === OBJECT_TYPE.TICKS ||
+                        obj.type === OBJECT_TYPE.IMAGE
                     ) {
                         // It's a point, so it's single touch, so we just push it to our touches
                         targets = [target];
@@ -3814,7 +3815,7 @@ export class Board extends Events {
                         obj.elementClass === OBJECT_CLASS.LINE ||
                         obj.elementClass === OBJECT_CLASS.CIRCLE ||
                         obj.elementClass === OBJECT_CLASS.CURVE ||
-                        obj.type === Const.OBJECT_TYPE_POLYGON
+                        obj.type === OBJECT_TYPE.POLYGON
                     ) {
                         found = false;
 
@@ -4379,7 +4380,7 @@ export class Board extends Events {
         if (zoomCenter === 'board') {
             pos = [];
         } else { // including zoomCenter === 'auto'
-            pos = new Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this).usrCoords;
+            pos = new Coords(COORDS_BY.SCREEN, this.getMousePosition(evt), this).usrCoords;
         }
 
         // pos == [] does not throw an error
@@ -4561,12 +4562,12 @@ export class Board extends Events {
                 // For coordsElement setPosition has to call setPositionDirectly.
                 // Otherwise the position is set by a translation.
                 if (Type.exists(el.coords)) {
-                    el.setPosition(JXG.COORDS_BY_USER, dir);
+                    el.setPosition(COORDS_BY.USER, dir);
                     this.updateInfobox(el);
                 } else {
                     this.displayInfobox(false);
                     el.setPositionDirectly(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         dir,
                         [0, 0]
                     );
@@ -5174,7 +5175,7 @@ export class Board extends Events {
             absPos = Env.getPosition(evt, null, this.document),
             x = absPos[0] - cPos[0],
             y = absPos[1] - cPos[1],
-            newCoords = new Coords(JXG.COORDS_BY_SCREEN, [x, y], this);
+            newCoords = new Coords(COORDS_BY.SCREEN, [x, y], this);
 
         return newCoords.usrCoords.slice(1);
     }
@@ -5290,9 +5291,9 @@ export class Board extends Events {
                 this.origin.scrCoords[2] -= this.drag_dy;
             }
 
-            ul = new Coords(JXG.COORDS_BY_SCREEN, [0, 0], this).usrCoords;
+            ul = new Coords(COORDS_BY.SCREEN, [0, 0], this).usrCoords;
             lr = new Coords(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [this.canvasWidth, this.canvasHeight],
                 this
             ).usrCoords;
@@ -5337,9 +5338,9 @@ export class Board extends Events {
                     t = e.coords.usrCoords[what];
 
                     if (what === 2) {
-                        e.setPositionDirectly(JXG.COORDS_BY_USER, [f(), t]);
+                        e.setPositionDirectly(COORDS_BY.USER, [f(), t]);
                     } else {
-                        e.setPositionDirectly(JXG.COORDS_BY_USER, [t, f()]);
+                        e.setPositionDirectly(COORDS_BY.USER, [t, f()]);
                     }
                     e.prepareUpdate().update();
                 };
@@ -5512,9 +5513,9 @@ export class Board extends Events {
             gridStep[1] = Type.parseNumber(gridStep[1], Math.abs(bbox[0] - bbox[2]), 1 / this.unitY);
         }
 
-        p1 = new Coords(JXG.COORDS_BY_USER, [0, 0], this);
+        p1 = new Coords(COORDS_BY.USER, [0, 0], this);
         p2 = new Coords(
-            JXG.COORDS_BY_USER,
+            COORDS_BY.USER,
             [gridStep[0], gridStep[1]],
             this
         );
@@ -5867,7 +5868,7 @@ export class Board extends Events {
                 for (i = object._pos; i < this.objectsList.length; i++) {
                     this.objectsList[i]._pos--;
                 }
-            } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
+            } else if (object.type !== OBJECT_TYPE.TURTLE) {
                 JXG.debug(
                     'Board.removeObject: object ' + object.id + ' not found in list.'
                 );
@@ -6128,7 +6129,7 @@ export class Board extends Events {
                 // Special case sphere3d in central projection:
                 // We have to update the defining points of the ellipse
                 if (pEl.visProp.element3d &&
-                    pEl.visProp.element3d.type === Const.OBJECT_TYPE_SPHERE3D
+                    pEl.visProp.element3d.type === OBJECT_TYPE.SPHERE3D
                 ) {
                     for (i = 0; i < pEl.parents.length; i++) {
                         this.objects[pEl.parents[i]].needsUpdate = true;
@@ -6755,9 +6756,9 @@ export class Board extends Events {
      * @returns {Array} bounding box [x1,y1,x2,y2] upper left corner, lower right corner
      */
     getBoundingBox() {
-        var ul = new Coords(JXG.COORDS_BY_SCREEN, [0, 0], this).usrCoords,
+        var ul = new Coords(COORDS_BY.SCREEN, [0, 0], this).usrCoords,
             lr = new Coords(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [this.canvasWidth, this.canvasHeight],
                 this
             ).usrCoords;
@@ -7157,7 +7158,7 @@ export class Board extends Events {
                     ) {
                         delete o.animationPath;
                     } else {
-                        o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords);
+                        o.setPositionDirectly(COORDS_BY.USER, newCoords);
                         o.fullUpdate();
                         obj = o;
                     }
@@ -7670,19 +7671,19 @@ export class Board extends Events {
         var A = this.selectingBox[0],
             B = this.selectingBox[1];
 
-        this.selectionPolygon.vertices[0].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
+        this.selectionPolygon.vertices[0].setPositionDirectly(COORDS_BY.SCREEN, [
             A[0],
             A[1]
         ]);
-        this.selectionPolygon.vertices[1].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
+        this.selectionPolygon.vertices[1].setPositionDirectly(COORDS_BY.SCREEN, [
             A[0],
             B[1]
         ]);
-        this.selectionPolygon.vertices[2].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
+        this.selectionPolygon.vertices[2].setPositionDirectly(COORDS_BY.SCREEN, [
             B[0],
             B[1]
         ]);
-        this.selectionPolygon.vertices[3].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
+        this.selectionPolygon.vertices[3].setPositionDirectly(COORDS_BY.SCREEN, [
             B[0],
             A[1]
         ]);

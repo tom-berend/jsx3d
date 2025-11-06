@@ -60,7 +60,7 @@
  * defined in this file directly in the JXG namespace.
  */
 
-import { Board } from "./"
+import { Board } from "./base/board.js"
 import { JSXGraph } from "./jsxgraph.js";
 
 

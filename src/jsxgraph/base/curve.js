@@ -65,7 +65,7 @@ import {Type} from "../utils/type.js";
  * @see JXG.Board#addCurve
  */
 JXG.Curve = function (board, parents, attributes) {
-    this.constructor(board, attributes, Const.OBJECT_TYPE_CURVE, Const.OBJECT_CLASS_CURVE);
+    this.constructor(board, attributes, OBJECT_TYPE.CURVE, Const.OBJECT_CLASS_CURVE);
 
     this.points = [];
     /**
@@ -169,7 +169,7 @@ JXG.extend(
             }
 
             leftCoords = new Coords(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [-this.board.canvasWidth * 0.1, 0],
                 this.board,
                 false
@@ -189,7 +189,7 @@ JXG.extend(
                 return 2 * Math.PI;
             }
             rightCoords = new Coords(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [this.board.canvasWidth * 1.1, 0],
                 this.board,
                 false
@@ -264,7 +264,7 @@ JXG.extend(
             }
 
             // From now on, x,y are usrCoords
-            checkPoint = new Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board, false);
+            checkPoint = new Coords(COORDS_BY.SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
 
@@ -330,7 +330,7 @@ JXG.extend(
                     this.evalVisProp('useqdt') &&
                     this.bezierDegree !== 3
                 ) {
-                    qdt = this.qdt.query(new Coords(JXG.COORDS_BY_USER, [x, y], this.board));
+                    qdt = this.qdt.query(new Coords(COORDS_BY.USER, [x, y], this.board));
                     points = qdt.points;
                     len = points.length;
                 } else {
@@ -397,7 +397,7 @@ JXG.extend(
             if (this.points.length < this.numberPoints) {
                 for (i = this.points.length; i < len; i++) {
                     this.points[i] = new Coords(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         [0, 0],
                         this.board,
                         false
@@ -758,7 +758,7 @@ JXG.extend(
                         y = i;
                         // The last parameter prevents rounding in usr2screen().
                         this.points[i].setCoordinates(
-                            JXG.COORDS_BY_USER,
+                            COORDS_BY.USER,
                             [this.dataX[i], this.dataY[i]],
                             false
                         );
@@ -767,7 +767,7 @@ JXG.extend(
                         y = this.X(x);
                         // The last parameter prevents rounding in usr2screen().
                         this.points[i].setCoordinates(
-                            JXG.COORDS_BY_USER,
+                            COORDS_BY.USER,
                             [this.dataX[i], this.Y(y, suspendUpdate)],
                             false
                         );
@@ -881,7 +881,7 @@ JXG.extend(
 
             if (len > 0) {
                 c = Mat.matVecMult(this.transformMat, p.usrCoords);
-                p.setCoordinates(JXG.COORDS_BY_USER, c, false, true);
+                p.setCoordinates(COORDS_BY.USER, c, false, true);
             }
 
             return p;
@@ -1159,7 +1159,7 @@ JXG.extend(
                 x = this.X(mi) + lbda * (this.X(ma) - this.X(mi));
                 y = this.Y(mi) + lbda * (this.Y(ma) - this.Y(mi));
             }
-            c = (new Coords(JXG.COORDS_BY_USER, [x, y], this.board)).scrCoords;
+            c = (new Coords(COORDS_BY.USER, [x, y], this.board)).scrCoords;
 
             e = Mat.eps;
             if (t < mi + e) {
@@ -1191,7 +1191,7 @@ JXG.extend(
             x = c[1] + dy * this.label.size[0] * dist;
             y = c[2] - dx * this.label.size[1] * dist;
 
-            return new Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+            return new Coords(COORDS_BY.SCREEN, [x, y], this.board);
         },
 
         // documented in geometryElement
@@ -1207,11 +1207,11 @@ JXG.extend(
                 by = 0.95 * this.board.canvasHeight;
 
             if (!Type.exists(this.label)) {
-                return new Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+                return new Coords(COORDS_BY.SCREEN, [NaN, NaN], this.board);
             }
             pos = this.label.evalVisProp('position');
             if (!Type.isString(pos)) {
-                return new Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+                return new Coords(COORDS_BY.SCREEN, [NaN, NaN], this.board);
             }
 
             if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
@@ -1264,7 +1264,7 @@ JXG.extend(
                 // t = this.minX() + lbda;
                 // x = this.X(t);
                 // y = this.Y(t);
-                // c = (new Coords(JXG.COORDS_BY_USER, [x, y], this.board)).scrCoords;
+                // c = (new Coords(COORDS_BY.USER, [x, y], this.board)).scrCoords;
 
                 // e = Mat.eps;
                 // if (t < this.minX() + e) {
@@ -1294,10 +1294,10 @@ JXG.extend(
                 // x = c[1] + dy * this.label.size[0] * dist;
                 // y = c[2] - dx * this.label.size[1] * dist;
 
-                // return new Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+                // return new Coords(COORDS_BY.SCREEN, [x, y], this.board);
 
             }
-            c = new Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board, false);
+            c = new Coords(COORDS_BY.SCREEN, [x, y], this.board, false);
             return Geometry.projectCoordsToCurve(
                 c.usrCoords[1], c.usrCoords[2], 0, this, this.board
             )[0];
@@ -1430,7 +1430,7 @@ JXG.extend(
                 } else {
                     delta = [where[0] - p.usrCoords[1], where[1] - p.usrCoords[2]];
                 }
-                this.setPosition(JXG.COORDS_BY_USER, delta);
+                this.setPosition(COORDS_BY.USER, delta);
                 return this.board.update(this);
             }
             return this;
@@ -1472,8 +1472,8 @@ JXG.extend(
         //         v = this.points,
         //         isIn = false;
 
-        //     if (coord_type === JXG.COORDS_BY_USER) {
-        //         crds = new Coords(JXG.COORDS_BY_USER, [x_in, y_in], this.board);
+        //     if (coord_type === COORDS_BY.USER) {
+        //         crds = new Coords(COORDS_BY.USER, [x_in, y_in], this.board);
         //         x = crds.scrCoords[1];
         //         y = crds.scrCoords[2];
         //     } else {
@@ -1672,17 +1672,17 @@ JXG.createCurve = function (board, parents, attributes) {
     if (
         Type.isTransformationOrArray(parents[1]) &&
         Type.isObject(obj) &&
-        (obj.type === Const.OBJECT_TYPE_CURVE ||
-            obj.type === Const.OBJECT_TYPE_ANGLE ||
-            obj.type === Const.OBJECT_TYPE_ARC ||
-            obj.type === Const.OBJECT_TYPE_CONIC ||
-            obj.type === Const.OBJECT_TYPE_SECTOR)
+        (obj.type === OBJECT_TYPE.CURVE ||
+            obj.type === OBJECT_TYPE.ANGLE ||
+            obj.type === OBJECT_TYPE.ARC ||
+            obj.type === OBJECT_TYPE.CONIC ||
+            obj.type === OBJECT_TYPE.SECTOR)
     ) {
-        if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+        if (obj.type === OBJECT_TYPE.SECTOR) {
             attr = Type.copyAttributes(attributes, board.options, "sector");
-        } else if (obj.type === Const.OBJECT_TYPE_ARC) {
+        } else if (obj.type === OBJECT_TYPE.ARC) {
             attr = Type.copyAttributes(attributes, board.options, "arc");
-        } else if (obj.type === Const.OBJECT_TYPE_ANGLE) {
+        } else if (obj.type === OBJECT_TYPE.ANGLE) {
             if (!Type.exists(attributes.withLabel)) {
                 attributes.withLabel = false;
             }
@@ -2567,7 +2567,7 @@ JXG.createTracecurve = function (board, parents, attributes) {
     glider = board.select(parents[0]);
     tracepoint = board.select(parents[1]);
 
-    if (glider.type !== Const.OBJECT_TYPE_GLIDER || !Type.isPoint(tracepoint)) {
+    if (glider.type !== OBJECT_TYPE.GLIDER || !Type.isPoint(tracepoint)) {
         throw new Error(
             "JSXGraph: Can't create trace curve with parent types '" +
             typeof parents[0] +
@@ -2615,7 +2615,7 @@ JXG.createTracecurve = function (board, parents, attributes) {
             y = slideObj.Y(t) / slideObj.Z(t);
 
             // Position the glider
-            glider.setPositionDirectly(JXG.COORDS_BY_USER, [x, y]);
+            glider.setPositionDirectly(COORDS_BY.USER, [x, y]);
             from = false;
 
             // Update all elements from the glider up to the trace element
@@ -3018,7 +3018,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
 //      */
 //     c.updateCurve = function () {
 //         this.points = parents[0].points.concat(
-//                 [new JXG.Coords(JXG.COORDS_BY_USER, [NaN, NaN], this.board)]
+//                 [new JXG.Coords(COORDS_BY.USER, [NaN, NaN], this.board)]
 //             ).concat(parents[1].points);
 //         this.numberPoints = this.points.length;
 //         return this;

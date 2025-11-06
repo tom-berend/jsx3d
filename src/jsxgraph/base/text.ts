@@ -57,6 +57,7 @@ import { Env } from "../utils/env.js";
 import { Type } from "../utils/type.js";
 import { JSXMath } from "../math/jsxmath.js";
 import { CoordsElement } from "./coordselement.js";
+import { Coords } from "./coords.js";
 
 var priv = {
     /**
@@ -87,12 +88,18 @@ var priv = {
  * @param {string|function} content A string or a function returning a string.
  *
  */
-export class Text extends CoordsElement {
+export class Text extends Coords {
+
+        content = "";
+        plaintext = "";
+        plaintextOld = null;
+        orgText = "";
+
 
     constructor(board, parents, attributes) {
-        super(board, attributes)
+        super(COORDS_BY.USER, parents[1],board)
+        // this.board = board
 
-        this.board = board;
 
         this.setCoordinates(this.method, parents, false, true);
 
@@ -127,12 +134,10 @@ export class Text extends CoordsElement {
         // this.constructor(board, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT);
 
         this.element = this.board.select(attributes.anchor);
-        this.coordsConstructor(coords, this.evalVisProp('islabel'));
 
-        this.content = "";
-        this.plaintext = "";
-        this.plaintextOld = null;
-        this.orgText = "";
+        // TODO :  what is this
+        // this.coordsConstructor(coords, this.evalVisProp('islabel'));
+
 
         this.needsSizeUpdate = false;
         // Only used by infobox anymore
@@ -637,9 +642,9 @@ export class Text extends CoordsElement {
             dx = (x - coordsAnchor.usrCoords[1]) * this.board.unitX;
             dy = -(y - coordsAnchor.usrCoords[2]) * this.board.unitY;
 
-            this.relativeCoords.setCoordinates(JXG.COORDS_BY_SCREEN, [dx, dy]);
+            this.relativeCoords.setCoordinates(COORDS_BY.SCREEN, [dx, dy]);
         } else {
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [x, y]);
+            this.coords.setCoordinates(COORDS_BY.USER, [x, y]);
         }
 
         // this should be a local update, otherwise there might be problems

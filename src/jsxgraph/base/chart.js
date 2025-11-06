@@ -424,7 +424,7 @@ JXG.extend(
                     }
 
                     this.point2.coords = new Coords(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         [
                             this.point1.coords.usrCoords[1] + dx * f,
                             this.point1.coords.usrCoords[2] + dy * f
@@ -615,7 +615,7 @@ JXG.extend(
                     this.setLabelRelativeCoords(relCoords);
 
                     return new Coords(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         [this.point2.X(), this.point2.Y()],
                         this.board
                     );
@@ -1345,7 +1345,7 @@ JXG.Legend = function (board, coords, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "legend");
 
     this.board = board;
-    this.coords = new Coords(JXG.COORDS_BY_USER, coords, this.board);
+    this.coords = new Coords(COORDS_BY.USER, coords, this.board);
     this.myAtts = {};
     this.label_array = attr.labelarray || attr.labels;
     this.color_array = attr.colorarray || attr.colors;
@@ -1385,7 +1385,7 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
         getLabelAnchor = function () {
             this.setLabelRelativeCoords(this.visProp.label.offset);
             return new Coords(
-                JXG.COORDS_BY_USER,
+                COORDS_BY.USER,
                 [this.point2.X(), this.point2.Y()],
                 this.board
             );

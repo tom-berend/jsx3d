@@ -70,7 +70,7 @@ JXG.Group = function (board, id, name, objects, attributes) {
     }
     this.board.groups[this.id] = this;
 
-    this.type = Const.OBJECT_TYPE_POINT;
+    this.type = OBJECT_TYPE.POINT;
     this.elementClass = Const.OBJECT_CLASS_POINT;
 
     if (name === "" || !Type.exists(name)) {
@@ -390,7 +390,7 @@ JXG.extend(
                 if (this.objects.hasOwnProperty(el)) {
                     obj = this.objects[el].point;
 
-                    if (obj.coords.distance(JXG.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
+                    if (obj.coords.distance(COORDS_BY.USER, this.coords[el]) > Mat.eps) {
                         changed.push(obj.id);
                     }
                 }
@@ -481,7 +481,7 @@ JXG.extend(
                             if (drag.action === "translation") {
                                 if (!Type.isInArray(drag.changed, obj.id)) {
                                     if (obj.elementClass === Const.OBJECT_CLASS_POINT) {
-                                        obj.coords.setCoordinates(JXG.COORDS_BY_USER, [
+                                        obj.coords.setCoordinates(COORDS_BY.USER, [
                                             this.coords[el].usrCoords[1] + t[0],
                                             this.coords[el].usrCoords[2] + t[1]
                                         ]);
@@ -498,7 +498,7 @@ JXG.extend(
                         } else {
                             if (drag.action === "rotation" || drag.action === "scaling") {
                                 obj.coords.setCoordinates(
-                                    JXG.COORDS_BY_USER,
+                                    COORDS_BY.USER,
                                     Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords)
                                 );
                             }

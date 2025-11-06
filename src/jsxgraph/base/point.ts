@@ -167,7 +167,7 @@ export class Point extends CoordsElement {
             this.transformations[i].update();
             c = Mat.matVecMult(this.transformations[i].matrix, c);
         }
-        this.coords.setCoordinates(JXG.COORDS_BY_USER, c);
+        this.coords.setCoordinates(COORDS_BY.USER, c);
 
         return this;
     }
@@ -218,7 +218,7 @@ export class Point extends CoordsElement {
             );
         }
 
-        this.type = Const.OBJECT_TYPE_INTERSECTION;
+        this.type = OBJECT_TYPE.INTERSECTION;
         this.elType = "intersection";
         this.parents = [el1.id, el2.id, i, j];
 
@@ -406,13 +406,13 @@ export class Point extends CoordsElement {
         } else if (el.elementClass === OBJECT_CLASS.CURVE) {
             crds = Geometry.projectPointToCurve(this, el, this.board)[0];
             return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
-        } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+        } else if (el.type === OBJECT_TYPE.POLYGON) {
             if (el.evalVisProp('hasinnerpoints')) {
                 if (
                     el.pnpoly(
                         this.coords.usrCoords[1],
                         this.coords.usrCoords[2],
-                        JXG.COORDS_BY_USER
+                        COORDS_BY.USER
                     )
                 ) {
                     return true;
@@ -420,7 +420,7 @@ export class Point extends CoordsElement {
             }
             arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
             return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
-        } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
+        } else if (el.type === OBJECT_TYPE.TURTLE) {
             crds = Geometry.projectPointToTurtle(this, el, this.board);
             return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
         }
@@ -846,7 +846,7 @@ export class Glider extends Point {
         func = Geometry.otherIntersectionFunction(input, others, el.visProp.alwaysintersect, el.visProp.precision);
         el.addConstraint([func]);
 
-        el.type = Const.OBJECT_TYPE_INTERSECTION;
+        el.type = OBJECT_TYPE.INTERSECTION;
         el.elType = "otherintersection";
         el.setParents([el1.id, el2.id]);
         el.addParents(others);
@@ -943,10 +943,10 @@ export class Glider extends Point {
 
         if (parents.length > 1) {
             firstParentIsConic =
-                parents[0].type === Const.OBJECT_TYPE_CONIC ||
+                parents[0].type === OBJECT_TYPE.CONIC ||
                 parents[0].elementClass === OBJECT_CLASS.CIRCLE;
             secondParentIsConic =
-                parents[1].type === Const.OBJECT_TYPE_CONIC ||
+                parents[1].type === OBJECT_TYPE.CONIC ||
                 parents[1].elementClass === OBJECT_CLASS.CIRCLE;
 
             firstParentIsLine = parents[0].elementClass === OBJECT_CLASS.LINE;
@@ -954,11 +954,11 @@ export class Glider extends Point {
         }
 
         /*        if (parents.length !== 2 || !((
-                    parents[0].type === Const.OBJECT_TYPE_CONIC ||
+                    parents[0].type === OBJECT_TYPE.CONIC ||
                     parents[0].elementClass === OBJECT_CLASS.CIRCLE) &&
                     parents[1].elementClass === OBJECT_CLASS.LINE ||
                     parents[0].elementClass === OBJECT_CLASS.LINE && (
-                    parents[1].type === Const.OBJECT_TYPE_CONIC ||
+                    parents[1].type === OBJECT_TYPE.CONIC ||
                     parents[1].elementClass === OBJECT_CLASS.CIRCLE))) {*/
         if (
             parents.length !== 2 ||

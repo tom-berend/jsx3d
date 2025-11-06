@@ -101,7 +101,7 @@ import {Type} from "../utils/type.js";
  */
 JXG.Transformation = function (board, type, params, is3D) {
     this.elementClass = Const.OBJECT_CLASS_OTHER;
-    this.type = Const.OBJECT_TYPE_TRANSFORMATION;
+    this.type = OBJECT_TYPE.TRANSFORMATION;
 
     if (is3D) {
         this.is3D = true;
@@ -631,7 +631,7 @@ JXG.extend(
                     p[i].coords = Mat.matVecMult(this.matrix, p[i].coords);
                 } else {
                     c = Mat.matVecMult(this.matrix, p[i].coords.usrCoords);
-                    p[i].coords.setCoordinates(JXG.COORDS_BY_USER, c);
+                    p[i].coords.setCoordinates(COORDS_BY.USER, c);
                 }
             }
         },

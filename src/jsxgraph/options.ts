@@ -2083,17 +2083,17 @@ export class Options {
                    }
                } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                    copyProps(p, o.circle);
-               } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
+               } else if (p.type === OBJECT_TYPE.ANGLE) {
                    copyProps(p, o.angle);
-               } else if (p.type === Const.OBJECT_TYPE_ARC) {
+               } else if (p.type === OBJECT_TYPE.ARC) {
                    copyProps(p, o.arc);
-               } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
+               } else if (p.type === OBJECT_TYPE.POLYGON) {
                    copyProps(p, o.polygon);
-               } else if (p.type === Const.OBJECT_TYPE_CONIC) {
+               } else if (p.type === OBJECT_TYPE.CONIC) {
                    copyProps(p, o.conic);
-               } else if (p.type === Const.OBJECT_TYPE_CURVE) {
+               } else if (p.type === OBJECT_TYPE.CURVE) {
                    copyProps(p, o.curve);
-               } else if (p.type === Const.OBJECT_TYPE_SECTOR) {
+               } else if (p.type === OBJECT_TYPE.SECTOR) {
                    p.arc.visProp.fillcolor = o.sector.fillColor;
                    p.arc.visProp.highlightFillColor = o.sector.highlightFillColor;
                    p.arc.visProp.fillopacity = o.sector.fillOpacity;

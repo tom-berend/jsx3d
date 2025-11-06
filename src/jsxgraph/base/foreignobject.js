@@ -64,7 +64,7 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
     this.constructor(
         board,
         attributes,
-        Const.OBJECT_TYPE_FOREIGNOBJECT,
+        OBJECT_TYPE.FOREIGNOBJECT,
         Const.OBJECT_CLASS_OTHER
     );
     this.element = this.board.select(attributes.anchor);
@@ -155,7 +155,7 @@ JXG.extend(
             }
 
             // foreignObject is transformed
-            c = new Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+            c = new Coords(COORDS_BY.SCREEN, [x, y], this.board);
             // v is the vector from anchor point to the drag point
             c = c.usrCoords;
             v = [c[0] - this.span[0][0], c[1] - this.span[0][1], c[2] - this.span[0][2]];

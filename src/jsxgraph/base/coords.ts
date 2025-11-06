@@ -37,15 +37,16 @@ import { COORDS_BY, OBJECT_TYPE, OBJECT_CLASS } from "./constants.js";
 import { Events } from '../utils/event.js';
 // import { Type } from "../utils/type.js";
 // import { JSXMath } from "../math/jsxmath.js";
-import { Board } from "jsxgraph";
+import { Board } from "./board.js";
 import { GeometryElement } from "./element.js";
+import { GeometryElementOptions } from "../optionInterfaces.js";
 
 /**
  * @fileoverview In this file the Coords object is defined, a class to manage all
  * properties and methods coordinates usually have.
  */
 
-export class Coords extends GeometryElement {
+export class Coords /*extends GeometryElement*/ {
     /**
      * Stores the board the object is used on.
      */
@@ -81,10 +82,13 @@ export class Coords extends GeometryElement {
      * @param {Boolean} [emitter=true]
      * @constructor
      */
-    constructor(board: Board, attributes: object) {
-        super(board, attributes)
+    constructor(method: COORDS_BY, coordinates: number[], board: Board, emitter: boolean = true) {
+        if(board===undefined)
+            throw new Error('who did not send Board??')
 
+        // super(board,{})
 
+        this.board = board
         this.method = method
 
         this.usrCoords = [];
@@ -113,7 +117,7 @@ export class Coords extends GeometryElement {
      * @private
      */
     normalizeUsrCoords() {
-        if (Math.abs(this.usrCoords[0]) > Mat.eps) {
+        if (Math.abs(this.usrCoords[0]) > JSXMath.eps) {
             this.usrCoords[1] /= this.usrCoords[0];
             this.usrCoords[2] /= this.usrCoords[0];
             this.usrCoords[0] = 1.0;
@@ -157,7 +161,7 @@ export class Coords extends GeometryElement {
 
     /**
      * Calculate distance of one point to another.
-     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>COORDS_BY.USER</b> and <b>COORDS_BY.SCREEN</b>.
      * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
      * @returns {Number} The distance
      */
@@ -258,7 +262,7 @@ export class Coords extends GeometryElement {
     isReal() {
         return (
             !isNaN(this.usrCoords[1] + this.usrCoords[2]) &&
-            Math.abs(this.usrCoords[0]) > Mat.eps
+            Math.abs(this.usrCoords[0]) > JSXMath.eps
         );
     }
 

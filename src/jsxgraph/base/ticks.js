@@ -62,7 +62,7 @@ import {Type} from "../utils/type.js";
  * @augments JXG.GeometryElement
  */
 JXG.Ticks = function (line, ticks, attributes) {
-    this.constructor(line.board, attributes, Const.OBJECT_TYPE_TICKS, Const.OBJECT_CLASS_OTHER);
+    this.constructor(line.board, attributes, OBJECT_TYPE.TICKS, Const.OBJECT_CLASS_OTHER);
 
     /**
      * The line the ticks belong to.
@@ -240,7 +240,7 @@ JXG.extend(
             if (
                 this.line.stdform[1] !== 0 &&
                 this.line.stdform[2] !== 0 &&
-                this.line.type !== Const.OBJECT_TYPE_AXIS
+                this.line.type !== OBJECT_TYPE.AXIS
             ) {
                 return false;
             }
@@ -292,7 +292,7 @@ JXG.extend(
 
         /**
          * Sets x and y coordinate of the tick.
-         * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {number} method The type of coordinates used here. Possible values are {@link COORDS_BY.USER} and {@link COORDS_BY.SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units
          * @returns {JXG.Ticks} this element
@@ -304,7 +304,7 @@ JXG.extend(
                 bb = this.board.getBoundingBox();
 
             if (
-                this.line.type !== Const.OBJECT_TYPE_AXIS ||
+                this.line.type !== OBJECT_TYPE.AXIS ||
                 !this.line.evalVisProp('scalable')
             ) {
                 return this;
@@ -468,7 +468,7 @@ JXG.extend(
                 ev_a = this.evalVisProp('anchor');
 
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
-                if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+                if (this.line.type === OBJECT_TYPE.AXIS) {
                     return Geometry.projectPointToLine(
                         {
                             coords: {
@@ -491,14 +491,14 @@ JXG.extend(
                 }
                 if (ev_a === "middle") {
                     return new Coords(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         [(c1z + c2z) * 0.5, (c1x + c2x) * 0.5, (c1y + c2y) * 0.5],
                         this.board
                     );
                 }
                 if (Type.isNumber(ev_a)) {
                     return new Coords(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         [
                             c1z + (c2z - c1z) * ev_a,
                             c1x + (c2x - c1x) * ev_a,
@@ -564,8 +564,8 @@ JXG.extend(
                 };
             }
 
-            point1 = new Coords(JXG.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board);
-            point2 = new Coords(JXG.COORDS_BY_USER, this.line.point2.coords.usrCoords, this.board);
+            point1 = new Coords(COORDS_BY.USER, this.line.point1.coords.usrCoords, this.board);
+            point2 = new Coords(COORDS_BY.USER, this.line.point2.coords.usrCoords, this.board);
 
             // Are the original defining points within the board?
             isPoint1inBoard =
@@ -685,7 +685,7 @@ JXG.extend(
 
             p1 = this.line.point1.coords;
             p2 = this.line.point2.coords;
-            distance = zero.distance(JXG.COORDS_BY_USER, point);
+            distance = zero.distance(COORDS_BY.USER, point);
 
             // Establish sign
             dirLine = [
@@ -897,8 +897,8 @@ JXG.extend(
         //             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
         //             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
         //             distScr = coordsZero.distance(
-        //                 JXG.COORDS_BY_SCREEN,
-        //                 new Coords(JXG.COORDS_BY_USER, [nx, ny], this.board)
+        //                 COORDS_BY.SCREEN,
+        //                 new Coords(COORDS_BY.USER, [nx, ny], this.board)
         //             );
         // // console.log(deltas, distScr, this.board.unitX, this.board.unitY, "ticksDelta:", ticksDelta);
 
@@ -918,8 +918,8 @@ JXG.extend(
         //                 nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
         //                 ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
         //                 distScr = coordsZero.distance(
-        //                     JXG.COORDS_BY_SCREEN,
-        //                     new Coords(JXG.COORDS_BY_USER, [nx, ny], this.board)
+        //                     COORDS_BY.SCREEN,
+        //                     new Coords(COORDS_BY.USER, [nx, ny], this.board)
         //                 );
         //             }
 
@@ -954,7 +954,7 @@ JXG.extend(
                 x = this.line.X(coordsZero + tickPosition);
                 y = this.line.Y(coordsZero + tickPosition);
             }
-            tickCoords = new Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+            tickCoords = new Coords(COORDS_BY.USER, [x, y], this.board);
             if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
                 labelVal = coordsZero + tickPosition;
                 this.setTicksSizeVariables(labelVal);
@@ -1029,7 +1029,7 @@ JXG.extend(
                     x = this.line.X(fixedTick);
                     y = this.line.Y(fixedTick);
                 }
-                tickCoords = new Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+                tickCoords = new Coords(COORDS_BY.USER, [x, y], this.board);
 
                 if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
                     this.setTicksSizeVariables(fixedTick);
@@ -1077,7 +1077,7 @@ JXG.extend(
                 point2UsrCoords,
                 distP1P2 = this.line.point1.Dist(this.line.point2);
 
-            // if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+            // if (this.line.type === OBJECT_TYPE.AXIS) {
             //     // When line is an Axis, direction depends on board coordinates system
             //     // Assume line.point1 and line.point2 are in correct order
             //     point1UsrCoords = this.line.point1.coords.usrCoords;

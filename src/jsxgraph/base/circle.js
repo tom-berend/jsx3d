@@ -73,7 +73,7 @@ import {Type} from "../utils/type.js";
  */
 JXG.Circle = function (board, method, par1, par2, attributes) {
     // Call the constructor of GeometryElement
-    this.constructor(board, attributes, Const.OBJECT_TYPE_CIRCLE, Const.OBJECT_CLASS_CIRCLE);
+    this.constructor(board, attributes, OBJECT_TYPE.CIRCLE, Const.OBJECT_CLASS_CIRCLE);
 
     /**
      * Stores the given method.
@@ -146,7 +146,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         // dann ist p2 die Id eines Objekts vom Typ Line!
         this.line = board.select(par2);
         this.radius = this.line.point1.coords.distance(
-            JXG.COORDS_BY_USER,
+            COORDS_BY.USER,
             this.line.point2.coords
         );
     } else if (method === "pointCircle") {
@@ -218,7 +218,7 @@ JXG.extend(
         hasPoint: function (x, y) {
             var prec, type,
                 mp = this.center.coords.usrCoords,
-                p = new Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board),
+                p = new Coords(COORDS_BY.SCREEN, [x, y], this.board),
                 r = this.Radius(),
                 dx, dy, dist;
 
@@ -361,7 +361,7 @@ JXG.extend(
 
                 if (this.method === "pointLine") {
                     this.radius = this.line.point1.coords.distance(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         this.line.point2.coords
                     );
                 } else if (this.method === "pointCircle") {
@@ -394,7 +394,7 @@ JXG.extend(
                 this.bezierDegree = 3;
                 for (i = 0; i < this.numberPoints; i++) {
                     this.points[i] = new Coords(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         [this.dataX[i], this.dataY[i]],
                         this.board
                     );
@@ -593,12 +593,12 @@ JXG.extend(
                 SQRTH = 7.071067811865e-1; // sqrt(2)/2
 
             if (!Type.exists(this.label)) {
-                return new Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+                return new Coords(COORDS_BY.SCREEN, [NaN, NaN], this.board);
             }
 
             pos = this.label.evalVisProp('position');
             if (!Type.isString(pos)) {
-                return new Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+                return new Coords(COORDS_BY.SCREEN, [NaN, NaN], this.board);
             }
 
             if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
@@ -667,10 +667,10 @@ JXG.extend(
                 x = c[1] + (r * this.board.unitX + this.label.size[0] * dist) * Math.cos(lbda);
                 y = c[2] - (r * this.board.unitY + this.label.size[1] * dist) * Math.sin(lbda);
 
-                return new Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+                return new Coords(COORDS_BY.SCREEN, [x, y], this.board);
             }
 
-            return new Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+            return new Coords(COORDS_BY.USER, [x, y], this.board);
         },
 
         // documented in geometry element

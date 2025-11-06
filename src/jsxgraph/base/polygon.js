@@ -55,7 +55,7 @@ import { Element } from "./element.js";
  * and {@link JXG.Options.polygon}.
  */
 JXG.Polygon = function (board, vertices, attributes) {
-    this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
+    this.constructor(board, attributes, OBJECT_TYPE.POLYGON, Const.OBJECT_CLASS_AREA);
 
     var i, l, len, j, p,
         attr_line = Type.copyAttributes(attributes, board.options, "polygon", "borders");
@@ -180,8 +180,8 @@ JXG.extend(
          * @param {Number} x_in x-coordinate (screen or user coordinates)
          * @param {Number} y_in y-coordinate (screen or user coordinates)
          * @param {Number} coord_type (Optional) the type of coordinates used here.
-         *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
-         *   Default value is JXG.COORDS_BY_SCREEN
+         *   Possible values are <b>COORDS_BY.USER</b> and <b>COORDS_BY.SCREEN</b>.
+         *   Default value is COORDS_BY.SCREEN
          *
          * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
          * @see JXG.Math.Geometry#pnpoly
@@ -191,7 +191,7 @@ JXG.extend(
          * var p = board.create('point', [4, 3]);
          * var txt = board.create('text', [-1, 0.5, function() {
          *   return 'Point A is inside of the polygon = ' +
-         *     pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
+         *     pol.pnpoly(p.X(), p.Y(), COORDS_BY.USER);
          * }]);
          *
          * </pre><div id="JXG7f96aec7-4e3d-4ffc-a3f5-d3f967b6691c" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -202,7 +202,7 @@ JXG.extend(
          *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          *     var p = board.create('point', [4, 3]);
          *     var txt = board.create('text', [-1, 0.5, function() {
-         *     		return 'Point A is inside of the polygon = ' + pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
+         *     		return 'Point A is inside of the polygon = ' + pol.pnpoly(p.X(), p.Y(), COORDS_BY.USER);
          *     }]);
          *
          *     })();
@@ -306,7 +306,7 @@ JXG.extend(
             var a, b, x, y, i;
 
             if (this.vertices.length === 0) {
-                return new Coords(JXG.COORDS_BY_USER, [1, 0, 0], this.board);
+                return new Coords(COORDS_BY.USER, [1, 0, 0], this.board);
             }
 
             a = this.vertices[0].X();
@@ -331,7 +331,7 @@ JXG.extend(
                 }
             }
 
-            return new Coords(JXG.COORDS_BY_USER, [(a + x) * 0.5, (b + y) * 0.5], this.board);
+            return new Coords(COORDS_BY.USER, [(a + x) * 0.5, (b + y) * 0.5], this.board);
         },
 
         getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, "getTextAnchor"),
@@ -896,7 +896,7 @@ JXG.extend(
 
         /**
          * Moves the polygon by the difference of two coordinates.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Number} method The type of coordinates used here. Possible values are {@link COORDS_BY.USER} and {@link COORDS_BY.SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units
          * @returns {JXG.Polygon} this element
@@ -1231,7 +1231,7 @@ JXG.createPolygon = function (board, parents, attributes) {
     }
     if (
         Type.isObject(obj) &&
-        obj.type === Const.OBJECT_TYPE_POLYGON &&
+        obj.type === OBJECT_TYPE.POLYGON &&
         Type.isTransformationOrArray(parents[1])
     ) {
         is_transform = true;
@@ -1382,7 +1382,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
                 attr.id = attr.ids[i - 2];
             }
             p[i] = board.create("point", [p[i - 2], rot], attr);
-            p[i].type = Const.OBJECT_TYPE_CAS;
+            p[i].type = OBJECT_TYPE.CAS;
 
             // The next two lines of code are needed to make regular polygons draggable
             // The new helper points are set to be draggable.
