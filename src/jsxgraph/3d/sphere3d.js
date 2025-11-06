@@ -58,7 +58,7 @@ import{Geometry}   from "../math/geometry.js";
  * @see JXG.Board#generateName
  */
 JXG.Sphere3D = function (view, method, par1, par2, attributes) {
-    this.constructor(view.board, attributes, Const.OBJECT_TYPE_SPHERE3D, Const.OBJECT_CLASS_3D);
+    this.constructor(view.board, attributes, OBJECT_TYPE.SPHERE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "sphere3d");
 
     this.board.finalizeAdding(this);

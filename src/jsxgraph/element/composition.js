@@ -1091,7 +1091,7 @@ JXG.createArrowParallel = function (board, parents, attributes) {
             straightFirst: false,
             straightLast: false
         });
-        p.type = Const.OBJECT_TYPE_VECTOR;
+        p.type = OBJECT_TYPE.VECTOR;
         p.elType = "arrowparallel";
 
         // parents are set in createParallel
@@ -1383,9 +1383,9 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
 // JXG.createMsector = function (board, parents, attributes) {
 //     var p, l, i, attr;
 
-//     if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
-//             parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
-//             parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
+//     if (parents[0].elementClass === OBJECT_CLASS.POINT &&
+//             parents[1].elementClass === OBJECT_CLASS.POINT &&
+//             parents[2].elementClass === OBJECT_CLASS.POINT) {
 //         // hidden and fixed helper
 //         attr = Type.copyAttributes(attributes, board.options, 'msector', 'point');
 //         p = board.create('point', [
@@ -1581,7 +1581,7 @@ JXG.createIncenter = function (board, parents, attributes) {
                     c = Mat.hypot(B.X() - A.X(), B.Y() - A.Y());
 
                     return new Coords(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         [
                             (a * A.X() + b * B.X() + c * C.X()) / (a + b + c),
                             (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c)
@@ -1928,7 +1928,7 @@ JXG.createReflection = function (board, parents, attributes) {
     } else if (
         parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
         parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
-        parents[0].type === Const.OBJECT_TYPE_POLYGON ||
+        parents[0].type === OBJECT_TYPE.POLYGON ||
         parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE
     ) {
         org = parents[0];
@@ -1965,7 +1965,7 @@ JXG.createReflection = function (board, parents, attributes) {
         r = JXG.createCurve(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
         r = JXG.createLine(board, [org, t], attr);
-    } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
+    } else if (org.type === OBJECT_TYPE.POLYGON) {
         r = JXG.createPolygon(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
         if (attr.type.toLowerCase() === "euclidean") {
@@ -2140,7 +2140,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
     } else if (
         parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
         parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
-        parents[0].type === Const.OBJECT_TYPE_POLYGON ||
+        parents[0].type === OBJECT_TYPE.POLYGON ||
         parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE
     ) {
         org = parents[0];
@@ -2179,7 +2179,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
         r = JXG.createCurve(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
         r = JXG.createLine(board, [org, t], attr);
-    } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
+    } else if (org.type === OBJECT_TYPE.POLYGON) {
         r = JXG.createPolygon(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
         if (attr.type.toLowerCase() === "euclidean") {
@@ -2404,7 +2404,7 @@ JXG.createIntegral = function (board, parents, attributes) {
         t = board.create('text', [
                 function () {
                     var off = new Coords(
-                            JXG.COORDS_BY_SCREEN,
+                            COORDS_BY.SCREEN,
                             [
                                 this.evalVisProp('offset.0') +
                                     this.board.origin.scrCoords[1],
@@ -2427,7 +2427,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                 },
                 function () {
                     var off = new Coords(
-                            JXG.COORDS_BY_SCREEN,
+                            COORDS_BY.SCREEN,
                             [
                                 0,
                                 this.evalVisProp('offset.1') +
@@ -2764,7 +2764,7 @@ JXG.createInequality = function (board, parents, attributes) {
                 expansion *
                 Math.max(
                     Geometry.perpendicular(parents[0], dp, board)[0].distance(
-                        JXG.COORDS_BY_USER,
+                        COORDS_BY.USER,
                         dp.coords
                     ),
                     w

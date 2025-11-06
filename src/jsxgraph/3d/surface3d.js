@@ -54,7 +54,7 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     this.constructor(
         view.board,
         attributes,
-        Const.OBJECT_TYPE_SURFACE3D,
+        OBJECT_TYPE.SURFACE3D,
         Const.OBJECT_CLASS_3D
     );
     this.constructor3D(view, "surface3d");

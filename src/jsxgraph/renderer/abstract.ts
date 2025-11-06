@@ -688,8 +688,8 @@ export abstract class AbstractRenderer {
             // useTotalLength = true,
             margin = null;
 
-        c1 = new Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
-        c2 = new Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
+        c1 = new Coords(COORDS_BY.USER, el.point1.coords.usrCoords, el.board);
+        c2 = new Coords(COORDS_BY.USER, el.point2.coords.usrCoords, el.board);
         margin = el.evalVisProp('margin');
         Geometry.calcStraight(el, c1, c2, margin);
 
@@ -756,7 +756,7 @@ export abstract class AbstractRenderer {
         if (a.evFirst || a.evLast) {
             // Correct the position of the arrow heads
             d1x = d1y = d2x = d2y = 0.0;
-            d = c1.distance(JXG.COORDS_BY_SCREEN, c2);
+            d = c1.distance(COORDS_BY.SCREEN, c2);
 
             if (a.evFirst && el.board.renderer.type !== "vml") {
                 if (d >= a.minLen) {
@@ -776,13 +776,13 @@ export abstract class AbstractRenderer {
                 }
             }
             c1.setCoordinates(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y],
                 false,
                 true
             );
             c2.setCoordinates(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y],
                 false,
                 true
@@ -816,7 +816,7 @@ export abstract class AbstractRenderer {
             // Handle touchlastpoint /touchfirstpoint
             if (a.evFirst && el.evalVisProp('touchfirstpoint') &&
                 el.point1.evalVisProp('visible')) {
-                d = c1.distance(JXG.COORDS_BY_SCREEN, c2);
+                d = c1.distance(COORDS_BY.SCREEN, c2);
                 //if (d > s) {
                 d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s1) / d;
                 d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s1) / d;
@@ -824,20 +824,20 @@ export abstract class AbstractRenderer {
             }
             if (a.evLast && el.evalVisProp('touchlastpoint') &&
                 el.point2.evalVisProp('visible')) {
-                d = c1.distance(JXG.COORDS_BY_SCREEN, c2);
+                d = c1.distance(COORDS_BY.SCREEN, c2);
                 //if (d > s) {
                 d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s2) / d;
                 d2y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s2) / d;
                 //}
             }
             c1.setCoordinates(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y],
                 false,
                 true
             );
             c2.setCoordinates(
-                JXG.COORDS_BY_SCREEN,
+                COORDS_BY.SCREEN,
                 [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y],
                 false,
                 true
@@ -1542,7 +1542,7 @@ export abstract class AbstractRenderer {
 
         this.setObjectTransition(el);
         if (!el.visProp.draft) {
-            if (el.type === Const.OBJECT_TYPE_POLYGON) {
+            if (el.type === OBJECT_TYPE.POLYGON) {
                 this.setObjectFillColor(el, el.evalVisProp('highlightfillcolor'), el.evalVisProp('highlightfillopacity'));
                 do_hl = el.evalVisProp('highlightbystrokewidth');
                 for (i = 0; i < el.borders.length; i++) {
@@ -1551,7 +1551,7 @@ export abstract class AbstractRenderer {
             } else {
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     this.updateTextStyle(el, true);
-                } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
+                } else if (el.type === OBJECT_TYPE.IMAGE) {
                     this.updateImageStyle(el, true);
                     this.setObjectFillColor(
                         el,
@@ -1606,7 +1606,7 @@ export abstract class AbstractRenderer {
 
         this.setObjectTransition(el);
         if (!el.evalVisProp('draft')) {
-            if (el.type === Const.OBJECT_TYPE_POLYGON) {
+            if (el.type === OBJECT_TYPE.POLYGON) {
                 this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                 for (i = 0; i < el.borders.length; i++) {
                     this.noHighlight(el.borders[i]);
@@ -1614,7 +1614,7 @@ export abstract class AbstractRenderer {
             } else {
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     this.updateTextStyle(el, false);
-                } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
+                } else if (el.type === OBJECT_TYPE.IMAGE) {
                     this.updateImageStyle(el, false);
                     this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                 } else {
@@ -1643,10 +1643,10 @@ export abstract class AbstractRenderer {
      */
     removeDraft(el) {
         this.setObjectTransition(el);
-        if (el.type === Const.OBJECT_TYPE_POLYGON) {
+        if (el.type === OBJECT_TYPE.POLYGON) {
             this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
         } else {
-            if (el.type === Const.OBJECT_CLASS_POINT) {
+            if (el.type === OBJECT_CLASS.POINT) {
                 this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
             }
             this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
@@ -1668,10 +1668,10 @@ export abstract class AbstractRenderer {
             draftOpacity = el.board.options.elements.draft.opacity;
 
         this.setObjectTransition(el);
-        if (el.type === Const.OBJECT_TYPE_POLYGON) {
+        if (el.type === OBJECT_TYPE.POLYGON) {
             this.setObjectFillColor(el, draftColor, draftOpacity);
         } else {
-            if (el.elementClass === Const.OBJECT_CLASS_POINT) {
+            if (el.elementClass === OBJECT_CLASS.POINT) {
                 this.setObjectFillColor(el, draftColor, draftOpacity);
             } else {
                 this.setObjectFillColor(el, "none", 0);

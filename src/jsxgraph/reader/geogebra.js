@@ -2160,7 +2160,7 @@
                     }
                 } else if (Data.getElementsByTagName("absoluteScreenLocation")[0]) {
                     tmp = new JXG.Coords(
-                        JXG.COORDS_BY_SCREEN,
+                        COORDS_BY.SCREEN,
                         [
                             parseFloat(
                                 Data.getElementsByTagName(
@@ -3687,7 +3687,7 @@
                                     .getAttribute("absoluteScreenLocation") === "true"
                             ) {
                                 tmp = new JXG.Coords(
-                                    JXG.COORDS_BY_SCREEN,
+                                    COORDS_BY.SCREEN,
                                     [sx, sy],
                                     this.board
                                 );

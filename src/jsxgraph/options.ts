@@ -120,6 +120,11 @@ import { MeasureMemoryOptions } from "vm";
 
 export class Options {
 
+    static dummyOption = {  // for debugging
+        dummy:true,
+        jc:{enabled:false}
+        }
+
     static layer: LayerOptions = {
         numlayers: 20, // only important in SVG
         unused9: 19,
@@ -273,7 +278,7 @@ export class Options {
         zoomY: 1,
     }
 
-    navbar: NavbarOptions = {
+    static navbar: NavbarOptions = {
         strokeColor: '#333333',
         fillColor: 'transparent', //#f5f5f5',
         highlightFillColor: '#aaaaaa',
@@ -1878,7 +1883,7 @@ export class Options {
      * which takes one parameter and returns true if the value is valid for the property,
      * or it is false if no validator is required.
      */
-    Validator() {
+    static Validator() {
         var i
         let validatePixel = function (v) { return (/^[0-9]+px$/).test(v); }
         let validateDisplay = function (v) { return (v === 'html' || v === 'internal'); }
@@ -2065,7 +2070,7 @@ export class Options {
        for (el in board.objects) {
            if (board.objects.hasOwnProperty(el)) {
                p = board.objects[el];
-               if (p.elementClass === Const.OBJECT_CLASS_POINT) {
+               if (p.elementClass === OBJECT_CLASS.POINT) {
                    copyProps(p, o.point);
                } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
                    copyProps(p, o.line);

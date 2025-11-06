@@ -4214,11 +4214,11 @@ export class TSXBoard {
 
     /** Constant: screen coordinates in pixel relative to the upper left corner of the div element. */
 
-    static get COORDS_BY_SCREEN() { return (window as any).JXG.COORDS_BY_SCREEN }
+    static get COORDS_BY_SCREEN() { return (window as any).COORDS_BY.SCREEN }
 
     /** Constant: user coordinates relative to the coordinates system defined by the bounding box. */
 
-    static get COORDS_BY_USER() { return (window as any).JXG.COORDS_BY_USER }
+    static get COORDS_BY_USER() { return (window as any).COORDS_BY.USER }
 
     /** Associative array that keeps track of all constructable elements registered via JXG.registerElement. */
 

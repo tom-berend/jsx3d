@@ -36,7 +36,7 @@ import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
 import { CoordsElement } from "./coordselement.js";
 import { JSXMath } from "../math/jsxmath.js";
-import {Statistics} from "../math/statistics.js";
+import { Statistics } from "../math/statistics.js";
 import { Options } from "../options.js";
 import { Events } from "../utils/event.js";
 import { Color } from "../utils/color.js";
@@ -534,9 +534,10 @@ export class GeometryElement extends Events {
             // */
             // this.id = attributes.id;
 
-            name = attributes.name;
-            /* If name is not set or null or even undefined, generate an unique name for this object */
-            if (!Type.exists(name)) {
+            if ('name' in attributes) {
+                name = attributes.name;
+            } else {
+                /* If name is not set or null or even undefined, generate an unique name for this object */
                 name = this.board.generateName(this);
             }
 

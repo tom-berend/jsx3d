@@ -7,7 +7,7 @@
     "type": "module",
     "scripts": {
         "build": "rimraf ./build && tsc -w",
-        "test": "tsc && jasmine-browser-runner runSpecs --verbose",
+        "test": "tsc --project ./tsconfig_for_jasmine.json && jasmine-browser-runner runSpecs --verbose",
         "test2": "jasmine-browser-runner runSpecs --verbose",
         "docs": "typedoc"
     },

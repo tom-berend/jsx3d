@@ -428,7 +428,7 @@ JXG.createGrid = function (board, parents, attributes) {
     Type.mergeAttr(attrMajor, attrGrid.major, true, true);
     majorGrid = board.create('curve', [[null], [null]], attrMajor);
     majorGrid.elType = 'grid';
-    majorGrid.type = Const.OBJECT_TYPE_GRID;
+    majorGrid.type = OBJECT_TYPE.GRID;
 
     // Create minorGrid
     attrMinor = {};
@@ -442,7 +442,7 @@ JXG.createGrid = function (board, parents, attributes) {
     }
     minorGrid = board.create('curve', [[null], [null]], attrMinor);
     minorGrid.elType = 'grid';
-    minorGrid.type = Const.OBJECT_TYPE_GRID;
+    minorGrid.type = OBJECT_TYPE.GRID;
 
     majorGrid.minorGrid = minorGrid;
     minorGrid.majorGrid = majorGrid;

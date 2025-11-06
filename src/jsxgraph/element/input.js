@@ -90,11 +90,11 @@ var priv = {
  *  var f = board.jc.snippet(input.Value(), true, 'x', false);
  *  var graph = board.create('functiongraph',[f,
  *          function() {
- *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
+ *            var c = new JXG.Coords(COORDS_BY.SCREEN,[0,0],board);
  *            return c.usrCoords[1];
  *          },
  *          function() {
- *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
+ *            var c = new JXG.Coords(COORDS_BY.SCREEN,[board.canvasWidth,0],board);
  *            return c.usrCoords[1];
  *          }
  *        ]);
@@ -113,11 +113,11 @@ var priv = {
  *   var f = t1_board.jc.snippet(input.Value(), true, 'x', false);
  *   var graph = t1_board.create('functiongraph',[f,
  *          function() {
- *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],t1_board);
+ *            var c = new JXG.Coords(COORDS_BY.SCREEN,[0,0],t1_board);
  *            return c.usrCoords[1];
  *          },
  *          function() {
- *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[t1_board.canvasWidth,0],t1_board);
+ *            var c = new JXG.Coords(COORDS_BY.SCREEN,[t1_board.canvasWidth,0],t1_board);
  *            return c.usrCoords[1];
  *          }
  *        ]);

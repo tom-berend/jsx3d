@@ -38,7 +38,7 @@
 
 import { JXG } from "../jxg.js";
 import { Type } from "./type.js";
-// import { Constants } from "../base/constants.js";
+import { COORDS_BY, OBJECT_CLASS } from "../base/constants.js";
 import { Coords } from "../base/coords.js";
 
 /**
@@ -56,7 +56,7 @@ export class Expect {
      *
      * @returns {Array}
      */
-    static each(a:any[], format:Function, copy:Boolean=false) {
+    static each(a: any[], format: Function, copy: Boolean = false) {
         var i,
             len,
             r = [];
@@ -79,17 +79,17 @@ export class Expect {
      *
      * @returns {JXG.Coords}
      */
-    static coords(c, copy:Boolean = false) {
+    static coords(c, copy: Boolean = false) {
         var coord = c;
 
-        if (c && c.elementClass === Const.OBJECT_CLASS_POINT) {
+        if (c && c.elementClass === OBJECT_CLASS.POINT) {
             coord = c.coords;
         } else if (c.usrCoords && c.scrCoords && c.usr2screen) {
             coord = c;
         }
 
         if (copy) {
-            coord = new Coords(JXG.COORDS_BY_USER, coord.usrCoords, coord.board);
+            coord = new Coords(COORDS_BY.USER, coord.usrCoords, coord.board);
         }
 
         return coord;
@@ -103,7 +103,7 @@ export class Expect {
      *
      * @returns {Array} Homogeneous coordinates
      */
-    static coordsArray(c, copy:boolean=false) {
+    static coordsArray(c, copy: boolean = false) {
         var coord;
 
         if (!Type.isArray(c)) {

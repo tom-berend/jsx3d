@@ -1112,7 +1112,7 @@ export class Geometry {
 
         if (Type.isArray(points)) {
             ps = Expect.each(points, Expect.coordsArray);
-        } else if (Type.exists(points.type) && points.type === Const.OBJECT_TYPE_POLYGON) {
+        } else if (Type.exists(points.type) && points.type === OBJECT_TYPE.POLYGON) {
             ps = Expect.each(points.vertices, Expect.coordsArray);
         }
         le = ps.length;
@@ -1784,9 +1784,9 @@ export class Geometry {
      * @param {Number} y_in y-coordinate (screen or user coordinates)
      * @param  {Array} path  Array of points / coords determining a path, i.e. the vertices of the polygon / path. The array elements
      * do not have to be full points, but have to have a subobject "coords" or should be of type JXG.Coords.
-     * @param {Number} [coord_type=JXG.COORDS_BY_SCREEN] Type of coordinates used here.
-     *   Possible values are <b>COORDS_BY.USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
-     *   Default value is JXG.COORDS_BY_SCREEN.
+     * @param {Number} [coord_type=COORDS_BY.SCREEN] Type of coordinates used here.
+     *   Possible values are <b>COORDS_BY.USER</b> and <b>COORDS_BY.SCREEN</b>.
+     *   Default value is COORDS_BY.SCREEN.
      * @param {JXG.Board} board Board object
      *
      * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
@@ -1879,12 +1879,12 @@ export class Geometry {
 
         el1_isArcType =
             el1.elementClass === OBJECT_CLASS.CURVE &&
-                (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
+                (el1.type === OBJECT_TYPE.ARC || el1.type === OBJECT_TYPE.SECTOR)
                 ? true
                 : false;
         el2_isArcType =
             el2.elementClass === OBJECT_CLASS.CURVE &&
-                (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
+                (el2.type === OBJECT_TYPE.ARC || el2.type === OBJECT_TYPE.SECTOR)
                 ? true
                 : false;
 
@@ -1918,8 +1918,8 @@ export class Geometry {
                 return that.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
             };
         } else if (
-            el1.type === Const.OBJECT_TYPE_POLYGON ||
-            el2.type === Const.OBJECT_TYPE_POLYGON
+            el1.type === OBJECT_TYPE.POLYGON ||
+            el2.type === OBJECT_TYPE.POLYGON
         ) {
             // polygon - other
             // Uses the Greiner-Hormann clipping algorithm
@@ -2247,8 +2247,8 @@ export class Geometry {
         }
 
         return [
-            new Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), board),
-            new Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), board)
+            new Coords(COORDS_BY.SCREEN, intersect1.slice(1), board),
+            new Coords(COORDS_BY.SCREEN, intersect2.slice(1), board)
         ];
     }
 
@@ -3190,11 +3190,11 @@ export class Geometry {
         lenRed = red.numberPoints - red.bezierDegree;
 
         // For sectors, we ignore the "legs"
-        if (red.type === Const.OBJECT_TYPE_SECTOR) {
+        if (red.type === OBJECT_TYPE.SECTOR) {
             startRed = 3;
             lenRed -= 3;
         }
-        if (blue.type === Const.OBJECT_TYPE_SECTOR) {
+        if (blue.type === OBJECT_TYPE.SECTOR) {
             startBlue = 3;
             lenBlue -= 3;
         }
@@ -3984,17 +3984,17 @@ export class Geometry {
         var func,
             that = this;
 
-        if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
-            if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+        if (el1.type === OBJECT_TYPE.PLANE3D) {
+            if (el2.type === OBJECT_TYPE.PLANE3D) {
                 // func = () => view.intersectionPlanePlane(el1, el2)[i];
                 func = view.intersectionPlanePlane(el1, el2);
-            } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+            } else if (el2.type === OBJECT_TYPE.SPHERE3D) {
                 func = that.meetPlaneSphere(el1, el2);
             }
-        } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
-            if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+        } else if (el1.type === OBJECT_TYPE.SPHERE3D) {
+            if (el2.type === OBJECT_TYPE.PLANE3D) {
                 func = that.meetPlaneSphere(el2, el1);
-            } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+            } else if (el2.type === OBJECT_TYPE.SPHERE3D) {
                 func = that.meetSphereSphere(el1, el2);
             }
         }

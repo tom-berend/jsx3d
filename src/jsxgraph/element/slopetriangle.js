@@ -125,10 +125,10 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         label, attr,
         isPrivateTangent = false;
 
-    if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
+    if (parents.length === 1 && parents[0].type === OBJECT_TYPE.TANGENT) {
         tangent = parents[0];
         tglide = tangent.glider;
-    } else if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_GLIDER) {
+    } else if (parents.length === 1 && parents[0].type === OBJECT_TYPE.GLIDER) {
         tglide = parents[0];
         attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "tangent");
         tangent = board.create("tangent", [tglide], attr);

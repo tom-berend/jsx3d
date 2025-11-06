@@ -862,7 +862,7 @@
                 oX = this.board.origin.scrCoords[1] * this.board.attr.zoom.factorx;
                 oY = this.board.origin.scrCoords[2] * this.board.attr.zoom.factory;
                 this.board.origin = new JXG.Coords(
-                    JXG.COORDS_BY_SCREEN,
+                    COORDS_BY.SCREEN,
                     [oX - 150, oY + 50],
                     this.board
                 );

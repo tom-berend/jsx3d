@@ -307,7 +307,7 @@ export class JSXGraph {
         ) {
             theme = JXG.themes[attributes.theme];
         }
-        options = Type.deepCopy(Options.board, theme);
+        options = Type.deepCopy(Options, theme);
         attr = this._setAttributes(attributes, options);
 
         dimensions = Env.getDimensions(box, attr.document);
@@ -319,17 +319,18 @@ export class JSXGraph {
             unitY = Type.def(attr.unity, 50);
         } else {
             bbox = attr.boundingbox;
-            if (bbox[0] < attr.maxBoundingBox[0]) {
-                bbox[0] = attr.maxBoundingBox[0];
+            console.log(attr)
+            if (bbox[0] < attr.maxboundingbox[0]) {
+                bbox[0] = attr.maxboundingbox[0];
             }
-            if (bbox[1] > attr.maxBoundingBox[1]) {
-                bbox[1] = attr.maxBoundingBox[1];
+            if (bbox[1] > attr.maxboundingbox[1]) {
+                bbox[1] = attr.maxboundingbox[1];
             }
-            if (bbox[2] > attr.maxBoundingBox[2]) {
-                bbox[2] = attr.maxBoundingBox[2];
+            if (bbox[2] > attr.maxboundingbox[2]) {
+                bbox[2] = attr.maxboundingbox[2];
             }
-            if (bbox[3] < attr.maxBoundingBox[3]) {
-                bbox[3] = attr.maxBoundingBox[3];
+            if (bbox[3] < attr.maxboundingbox[3]) {
+                bbox[3] = attr.maxboundingbox[3];
             }
 
             // Size of HTML div.

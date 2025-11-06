@@ -1,9 +1,3 @@
-// TODO: this needs to be replace with real types
-export interface LooseObject {
-    [key: string]: any
-}
-
-
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -59,6 +53,11 @@ export interface LooseObject {
  * Type is a static class
 */
 
+// TODO: this needs to be replace with real types
+export interface LooseObject {
+    [key: string]: any
+}
+
 
 // TS has strong types - get rid of whatever we can
 
@@ -77,8 +76,7 @@ export class Type {
      */
     static isBoard(v: any): boolean {
         return (
-            v !== null &&
-            typeof v === 'object' &&
+            this.isObject(v) &&
             this.isNumber(v.BOARD_MODE_NONE) &&
             this.isObject(v.objects) &&
             this.isObject(v.jc) &&
@@ -183,8 +181,9 @@ export class Type {
      * Tests if the input variable is an Object
      * @param v
      */
-    static isObject(v) {
-        return typeof v === 'object' && !this.isArray(v);
+    static isObject(v: any) {
+        // return typeof v === 'object' && !this.isArray(v);
+        return typeof v === 'object' && !Array.isArray(v) && v !== null
     }
 
 
@@ -193,12 +192,12 @@ export class Type {
      * Tests if the input variable is a DOM Document or DocumentFragment node
      * @param v A variable of any type
      */
-    static isDocumentOrFragment(v) {
+    static isDocumentOrFragment(v: Node): boolean {
         return (
             this.isObject(v) &&
-            (v.nodeType === 9 || // Node.DOCUMENT_NODE
-                v.nodeType === 11) // Node.DOCUMENT_FRAGMENT_NODE
-        );
+            (v.nodeType === Node.DOCUMENT_NODE ||
+                v.nodeType === Node.DOCUMENT_FRAGMENT_NODE
+            ))
     }
 
     /**
@@ -674,33 +673,6 @@ export class Type {
         return val;
     }
 
-    /**
-     * Search an array for a given value.
-     * @param {Array} array
-     * @param value
-     * @param {String} [sub] Use this property if the elements of the array are objects.
-     * @returns {Number} The index of the first appearance of the given value, or
-     * <tt>-1</tt> if the value was not found.
-     */
-    static indexOf(array, value, sub){
-        throw new Error('figure this out')
-    }
-    // static indexOf(array, value, sub) {
-    //     var i,
-    //         s = this.exists(sub);
-
-    //     if (Array.indexOf && !s) {
-    //         return array.indexOf(value);
-    //     }
-
-    //     for (i = 0; i < array.length; i++) {
-    //         if ((s && array[i][sub] === value) || (!s && array[i] === value)) {
-    //             return i;
-    //         }
-    //     }
-
-    //     return -1;
-    // }
 
     /**
      * Eliminates duplicate entries in an array consisting of numbers and strings.
@@ -710,7 +682,7 @@ export class Type {
     static eliminateDuplicates(a) {
         var i,
             len = a.length,
-            result:number[] = [],
+            result: number[] = [],
             obj = {};
 
         for (i = 0; i < len; i++) {
@@ -753,7 +725,7 @@ export class Type {
         var i,
             j,
             isArray,
-            ret:number[] = [];
+            ret: number[] = [];
 
         if (arr.length === 0) {
             return [];
@@ -793,15 +765,6 @@ export class Type {
         return ret;
     }
 
-    // /**
-    //  * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
-    //  * @param {Array} arr
-    //  * @param val
-    //  * @returns {Boolean}
-    //  */
-    // static isInArray(arr, val) {
-    //     return Type.indexOf(arr, val) > -1;
-    // }
 
     // /**
     //  * Converts an array of {@link JXG.Coords} objects into a coordinate matrix.
@@ -1109,7 +1072,7 @@ export class Type {
      * @returns {Object} An object with a base class reference to <tt>obj</tt>.
      */
     static clone(obj) {
-        var cObj:LooseObject = {};
+        var cObj: LooseObject = {};
 
         cObj.prototype = obj;
 
@@ -1249,7 +1212,7 @@ export class Type {
      * @param  [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
      * @returns {Object} copy of obj or merge of obj and obj2.
      */
-    static deepCopy(obj: Object, obj2: Object, toLower: boolean = false): Object {
+    static deepCopy(obj: Object, obj2: Object={}, toLower: boolean = false): Object {
         var c, i, prop, i2;
 
         toLower = toLower || false;
@@ -1329,30 +1292,31 @@ export class Type {
      * @see JXG.merge
      *
      */
-    static mergeAttr(attr:object, special:object, toLower:boolean=true, ignoreUndefinedSpecials:boolean = false) {
-        var e, e2, o;
+    static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false) {
+        attr = this.mergeAttrHelper(attr, special, toLower, ignoreUndefinedSpecials)
+    }
+    // the helper version is testable.
+    static mergeAttrHelper(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false): object {
 
-        // toLower = toLower || true;
-        // ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
+        let result: LooseObject = structuredClone(attr);         // deep copy
 
-        console.log('enter mergeAttr', attr, special)
-        for (e in special) {
-            if (special.hasOwnProperty(e)) {
-                e2 = toLower ? e.toLowerCase() : e;
+        for (let e in special) {
+            if (special.hasOwnProperty(e)) {    // only direct properties, not inherited ones
+                let e2 = toLower ? e.toLowerCase() : e;
                 // Key already exists, but not in lower case
-                if (e2 !== e && attr.hasOwnProperty(e)) {
-                    if (attr.hasOwnProperty(e2)) {
+                if (e2 !== e && result.hasOwnProperty(e)) {
+                    if (result.hasOwnProperty(e2)) {
                         // Lower case key already exists - this should not happen
                         // We have to unify the two key-value pairs
                         // It is not clear which has precedence.
-                        this.mergeAttr(attr[e2], attr[e], toLower);
+                        result = this.mergeAttrHelper(result[e2], result[e], toLower);
                     } else {
-                        attr[e2] = attr[e];
+                        result[e2] = result[e];
                     }
-                    delete attr[e];
+                    delete result[e];
                 }
 
-                o = special[e];
+                let o = special[e];
                 if (
                     this.isObject(o) &&
                     o !== null &&
@@ -1363,16 +1327,16 @@ export class Type {
                     typeof o.valueOf() !== 'string'
                 ) {
                     if (
-                        attr[e2] === undefined ||
-                        attr[e2] === null ||
-                        !this.isObject(attr[e2])
+                        result[e2] === undefined ||
+                        result[e2] === null ||
+                        !this.isObject(result[e2])
                     ) {
                         // The last test handles the case:
                         //   attr.draft = false;
                         //   special.draft = { strokewidth: 4}
-                        attr[e2] = {};
+                        result[e2] = {};
                     }
-                    this.mergeAttr(attr[e2], o, toLower);
+                    result[e2] = this.mergeAttrHelper(result[e2], o, toLower);
                 } else if (!ignoreUndefinedSpecials || this.exists(o)) {
                     // Flat copy
                     // This is also used in the cases
@@ -1380,12 +1344,12 @@ export class Type {
                     //   special.shadow = false;
                     // and
                     //   special.anchor is a JSXGraph element
-                    attr[e2] = o;
+                    result[e2] = o;
                 }
             }
         }
-        console.log('exit Merge', attr)
-        console.log('wai')
+        console.log('returns', result)
+        return result
     }
 
     /**
@@ -1399,38 +1363,10 @@ export class Type {
      *
      * // return {radiuspoint: {visible: false}}
      */
-    static keysToLowerCase(obj) {
-        var key,
-            val,
-            keys = Object.keys(obj),
-            n = keys.length,
-            newObj = {};
-
-        if (typeof obj !== 'object') {
-            return obj;
-        }
-
-        while (n--) {
-            key = keys[n];
-            if (obj.hasOwnProperty(key)) {
-                // We recurse into an object only if it is
-                // neither a DOM node nor an JSXGraph object
-                val = obj[key];
-                if (
-                    typeof val === 'object' &&
-                    val !== null &&
-                    !this.isArray(val) &&
-                    !this.exists(val.nodeType) &&
-                    !this.exists(val.board)
-                ) {
-                    newObj[key.toLowerCase()] = this.keysToLowerCase(val);
-                } else {
-                    newObj[key.toLowerCase()] = val;
-                }
-            }
-        }
-        return newObj;
+    static keysToLowerCase(obj:object):object {
+        return Type.mergeAttrHelper({}, obj)  // merge converts to lower by default
     }
+
 
     /**
      * Generates an attributes object that is filled with default values from the Options object
@@ -1446,8 +1382,8 @@ export class Type {
     // attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
     // attr_curve = Type.copyAttributes(attributes, board.options, "conic");
 
-    static copyAttributes(attributes: object, options: object, ...s:string[]) {
-        var a,
+    static copyAttributes(attributes: object, options: object, ...s: string[]) {
+        var defaultOptions:LooseObject,
             arg,
             i,
             len,
@@ -1469,14 +1405,14 @@ export class Type {
         len = arguments.length;
         if (len < 3 || primitives[s[0]]) {
             // Default options from Options.elements
-            a = this.deepCopy(Options.elements, {}, true);
+            defaultOptions = this.deepCopy(Options.elements, {}, true);
         } else {
-            a = {};
+            defaultOptions = {};
         }
 
         // Only the layer of the main element is set.
-        if (len < 4 && this.exists(s) && this.exists(Options.layer[s[3]])) {
-            a.layer = Options.layer[s[3]];
+        if (len < 4 && this.exists(s) && this.exists(Options.layer[s[2]])) {
+            defaultOptions.layer = Options.layer[s[2]];
         }
 
         // Default options from the specific element like 'line' in
@@ -1487,15 +1423,18 @@ export class Type {
         isAvail = true;
         for (i = 2; i < len; i++) {
             arg = arguments[i];
-            if (this.exists(o[arg])) {
-                o = o[arg];
+            console.log(o,arg)
+            let ff = Options.board
+            console.log(ff)
+            if (Options[arg]) {
+                o = Options[arg];
             } else {
                 isAvail = false;
                 break;
             }
         }
         if (isAvail) {
-            a = this.deepCopy(a, o, true);
+            defaultOptions = this.deepCopy(defaultOptions, o, true);
         }
 
         // Merge the specific options given in the parameter 'attributes'
@@ -1504,24 +1443,24 @@ export class Type {
         // in case it is supplied as in
         //     copyAttribute(attributes, board.options, 'line', 'point1')
         // In this case we would merge attributes.point1 into the global line.point1 attributes.
-        o = typeof attributes === 'object' ? this.keysToLowerCase(attributes) : {};
+        o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
         isAvail = true;
-        for (i = 3; i < len; i++) {
+        for (i = 2; i < len; i++) {
             arg = arguments[i].toLowerCase();
-            if (this.exists(o[arg])) {
-                o = o[arg];
+            if (Options[arg]) {
+                o = Options[arg];
             } else {
                 isAvail = false;
                 break;
             }
         }
         if (isAvail) {
-            this.mergeAttr(a, o, true);
+            this.mergeAttr(defaultOptions, o, true);
         }
 
         if (arguments[2] === 'board') {
             // For board attributes we are done now.
-            return a;
+            return defaultOptions;
         }
 
         // Special treatment of labels
@@ -1537,11 +1476,11 @@ export class Type {
             }
         }
         if (isAvail && this.exists(o.label)) {
-            a.label = this.deepCopy(o.label, a.label, true);
+            defaultOptions.label = this.deepCopy(o.label, defaultOptions.label, true);
         }
-        a.label = this.deepCopy(Options.label, a.label, true);
+        defaultOptions.label = this.deepCopy(Options.label, defaultOptions.label, true);
 
-        return a;
+        return defaultOptions;
     }
 
     /**
@@ -2008,4 +1947,53 @@ export class Type {
 
         return t;
     }
+
+    /**
+     * Simple DIFF for two objects, helpful for debugging
+     * @param a object
+     * @param b object
+     * @returns
+     */
+    static getObjectDiff(a: object, b: object): object {
+        const changes = {};
+
+        // Check current object's properties
+        for (const [key, value] of Object.entries(b)) {
+            if (!(key in a)) {
+                changes[key] = {
+                    expect: undefined,
+                    found: value
+                };
+                continue;
+            }
+
+            const originalValue = a[key];
+            const currentValue = value;
+
+            // Handle different types of comparisons
+            if (
+                originalValue !== currentValue &&
+                String(originalValue) !== String(currentValue) &&
+                JSON.stringify(originalValue) !== JSON.stringify(currentValue)
+            ) {
+                changes[key] = {
+                    expect: originalValue,
+                    found: currentValue
+                };
+            }
+        }
+
+        // Check for removed properties
+        for (const key of Object.keys(a)) {
+            if (!(key in b)) {
+                changes[key] = {
+                    expect: a[key],
+                    found: undefined
+                };
+            }
+        }
+
+        return changes;
+    }
+
 }

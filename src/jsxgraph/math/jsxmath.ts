@@ -159,7 +159,7 @@ export class JSXMath {
      * @returns  A <tt>n</tt> times <tt>m</tt>-matrix represented by a
      * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
      */
-    static matrix(n: number, m: number, init: number = 0): number[][] {
+    static matrix(n: number, m?: number, init: number = 0): number[][] {
 
         m = m || n;
         let r: number[][] = [];
@@ -426,8 +426,8 @@ export class JSXMath {
             ma, swp,
             n = Ain.length,
             A: number[][] = [],
-            p:number[]= [],
-            hv:number[] = [];
+            p: number[] = [],
+            hv: number[] = [];
 
         for (i = 0; i < n; i++) {
             A[i] = [];
@@ -530,7 +530,7 @@ export class JSXMath {
      * @param {Number} [n] Length of the Vectors. If not given the length of the first vector is taken.
      * @returns {Number} The inner product of a and b.
      */
-    static innerProduct(a, b, n) {
+    static innerProduct(a: number[], b: number[], n?: number) {
         var i,
             s = 0;
 

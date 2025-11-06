@@ -49,7 +49,7 @@ import {Type} from "../utils/type.js";
  * @see JXG.Board#generateName
  */
 JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
-    this.constructor(view.board, attributes, Const.OBJECT_TYPE_FACE3D, Const.OBJECT_CLASS_3D);
+    this.constructor(view.board, attributes, OBJECT_TYPE.FACE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "face3d");
 
     this.board.finalizeAdding(this);

@@ -245,8 +245,8 @@ JXG.extend(
                 y2 = 0;
             }
 
-            c1 = new Coords(JXG.COORDS_BY_USER, [bb[0], bb[1]], el.board);
-            c2 = new Coords(JXG.COORDS_BY_USER, [bb[2], bb[3]], el.board);
+            c1 = new Coords(COORDS_BY.USER, [bb[0], bb[1]], el.board);
+            c2 = new Coords(COORDS_BY.USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c2.scrCoords[2] - c1.scrCoords[2];
 
@@ -277,8 +277,8 @@ JXG.extend(
                 fxs, fys, frs,
                 dx, dy;
 
-            c1 = new Coords(JXG.COORDS_BY_USER, [bb[0], bb[1]], el.board);
-            c2 = new Coords(JXG.COORDS_BY_USER, [bb[2], bb[3]], el.board);
+            c1 = new Coords(COORDS_BY.USER, [bb[0], bb[1]], el.board);
+            c2 = new Coords(COORDS_BY.USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c1.scrCoords[2] - c2.scrCoords[2];
 
@@ -967,8 +967,8 @@ JXG.extend(
         drawLine: function (el) {
             var c1_org,
                 c2_org,
-                c1 = new Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-                c2 = new Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
+                c1 = new Coords(COORDS_BY.USER, el.point1.coords.usrCoords, el.board),
+                c2 = new Coords(COORDS_BY.USER, el.point2.coords.usrCoords, el.board),
                 margin = null,
                 hl,
                 w,
@@ -988,8 +988,8 @@ JXG.extend(
             Geometry.calcStraight(el, c1, c2, margin);
             this.handleTouchpoints(el, c1, c2, arrowData);
 
-            c1_org = new Coords(JXG.COORDS_BY_USER, c1.usrCoords, el.board);
-            c2_org = new Coords(JXG.COORDS_BY_USER, c2.usrCoords, el.board);
+            c1_org = new Coords(COORDS_BY.USER, c1.usrCoords, el.board);
+            c2_org = new Coords(COORDS_BY.USER, c2.usrCoords, el.board);
 
 
             this.getPositionArrowHead(el, c1, c2, arrowData);

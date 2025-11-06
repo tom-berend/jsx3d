@@ -48,9 +48,10 @@ export class Env {
      * @param evt {Event}
      * @returns {Boolean}
      */
-    static isTouchEvent(evt) {
-        return Type.exists(evt['touches']); // Old iOS touch events
+    static isTouchEvent(evt: Event): boolean {
+        return ['touchstart', 'touchend', 'touchmove', 'touchcancel'].includes(evt.type)
     }
+
 
     /**
      * Determines whether evt is a pointer event.
@@ -501,6 +502,8 @@ export class Env {
             return;
         }
 
+        // TODO:  Type.indexOf didn't work.  search aarray for object with key 'origin'
+        throw new Error('fix me')
         i = Type.indexOf(owner["x_internal" + type], fn, "origin");
 
         if (i === -1) {
