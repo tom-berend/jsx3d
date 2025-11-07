@@ -48,6 +48,7 @@ import { GeometryElement, GeometryElementAttributes } from "./element.js";
 
 import { Type } from "../utils/type.js";
 import { CoordsElement } from "./coordselement.js";
+import { Coords } from "./coords.js";
 import { Color } from "../utils/color.js"
 import { Options } from "../options.js"
 
@@ -75,7 +76,7 @@ export class Point extends CoordsElement {
 
 
     constructor(board: Board, coordinates: number[] | Object | Function, attributes: Object) {
-        super(board, coordinates, attributes, OBJECT_TYPE.POINT, OBJECT_CLASS.POINT, COORDS_BY.USER)
+        super(board, COORDS_BY.USER, coordinates, attributes)
 
         // this.element = this.board.select(attributes.anchor);   // tbtb only for text !?!
         // this.usrC coords = new Coords(coordinates);
@@ -90,6 +91,23 @@ export class Point extends CoordsElement {
         this.createGradient();
         this.createLabel();
     }
+
+
+    ////////////////// this was the original JSXGraph Point
+    // this.constructor(board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
+    // this.element = this.board.select(attributes.anchor);
+    // this.coordsConstructor(coordinates);
+
+    // this.elType = 'point';
+
+    // /* Register point at board. */
+    // this.id = this.board.setId(this, 'P');
+    // this.board.renderer.drawPoint(this);
+    // this.board.finalizeAdding(this);
+
+    // this.createGradient();
+    // this.createLabel();
+
 
     /**
      * Checks whether (x,y) is near the point.
@@ -496,7 +514,7 @@ export class Point extends CoordsElement {
 export function createPoint(board, parents, attributes) {
     var el, attr;
 
-    attr = Type.copyAttributes(attributes, board.options, "point");
+    attr = Type.copyAttributes(attributes, Options.board, "point");
     el = new Point(board, parents, attr);
     if (!el) {
         throw new Error(

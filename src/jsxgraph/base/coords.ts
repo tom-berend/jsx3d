@@ -82,8 +82,8 @@ export class Coords /*extends GeometryElement*/ {
      * @param {Boolean} [emitter=true]
      * @constructor
      */
-    constructor(method: COORDS_BY, coordinates: number[]|Object|Function, board: Board, emitter: boolean = true) {
-        if(board===undefined)
+    constructor(method: COORDS_BY, coordinates: number[], board: Board, emitter: boolean = true) {
+        if (board === undefined)
             throw new Error('who did not send Board??')
 
         // super(board,{})
@@ -91,10 +91,14 @@ export class Coords /*extends GeometryElement*/ {
         this.board = board
         this.method = method
 
-        this.usrCoords = [];
-        //this.usrCoords = new Float64Array(3);
+        if (method === COORDS_BY.USER) {
+            this.usrCoords = [1,coordinates[0],coordinates[1]]
+            this.usr2screen()
+        } else {
+            this.scrCoords =  [1,coordinates[0],coordinates[1]]
+            this.screen2usr()
+        }
 
-        this.scrCoords = [];
 
         // this.board = board;
         // this.method = method
@@ -128,16 +132,16 @@ export class Coords /*extends GeometryElement*/ {
      * Compute screen coordinates out of given user coordinates.
      * @private
      */
-    usr2screen(doRound) {
-        var mround = Math.round, // Is faster on IE, maybe slower with JIT compilers
-            b = this.board,
+    usr2screen(doRound:boolean=false) {
+        let b = this.board,
             uc = this.usrCoords,
             oc = b.origin.scrCoords;
 
+        this.scrCoords = []
         if (doRound === true) {
-            this.scrCoords[0] = mround(uc[0]);
-            this.scrCoords[1] = mround(uc[0] * oc[1] + uc[1] * b.unitX);
-            this.scrCoords[2] = mround(uc[0] * oc[2] - uc[2] * b.unitY);
+            this.scrCoords[0] = Math.round(uc[0]);
+            this.scrCoords[1] = Math.round(uc[0] * oc[1] + uc[1] * b.unitX);
+            this.scrCoords[2] = Math.round(uc[0] * oc[2] - uc[2] * b.unitY);
         } else {
             this.scrCoords[0] = uc[0];
             this.scrCoords[1] = uc[0] * oc[1] + uc[1] * b.unitX;
@@ -154,6 +158,7 @@ export class Coords /*extends GeometryElement*/ {
             sc = this.scrCoords,
             b = this.board;
 
+        this.usrCoords = []
         this.usrCoords[0] = 1.0;
         this.usrCoords[1] = (sc[1] - o[1]) / b.unitX;
         this.usrCoords[2] = (o[2] - sc[2]) / b.unitY;
@@ -196,7 +201,7 @@ export class Coords /*extends GeometryElement*/ {
      * @param {Boolean} [noevent=false]
      * @returns {JXG.Coords} Reference to the coords object.
      */
-    setCoordinates(coord_type: COORDS_BY, coordinates: number[], doRound: Boolean=true, noevent: Boolean=fals) {
+    setCoordinates(coord_type: COORDS_BY, coordinates: number[], doRound: Boolean = true, noevent: Boolean = false) {
         var uc = this.usrCoords,
             sc = this.scrCoords,
             // Original values

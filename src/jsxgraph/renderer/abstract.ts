@@ -324,6 +324,7 @@ export abstract class AbstractRenderer {
             prim = "path";
         }
 
+        console.log('drawPoint', this.createPrim(prim, el.id),)
         el.rendNode = this.appendChildPrim(
             this.createPrim(prim, el.id),
             el.evalVisProp('layer')

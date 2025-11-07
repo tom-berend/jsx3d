@@ -62,12 +62,24 @@
 
 import { Board } from "./base/board.js"
 import { JSXGraph } from "./jsxgraph.js";
-import { LooseObject } from "./utils/type.js";
+import { Type, LooseObject } from "./utils/type.js";
 
-// calling the files this way lets them register their element
-import './base/text.js'
-import './base/point.js'
+import {Text} from './base/text.js'
+import {Point} from './base/point.js'
 
+// // calling the files this way lets them register their element
+// import './base/text.js'
+// import './base/point.js'
+// import "./base/element.js";
+// import "./options.js";
+
+
+
+
+
+///////// start of global function that pollute the namespace
+///////// addresses 'temporal dead zone'
+///////// fix is to remove registration and  reference every possible class
 
 export var JXG_elements: LooseObject;
 
@@ -89,9 +101,27 @@ export function JXG_registerElement(element: string, creator: Function) {
     JXG_elements[element] = creator;
 }
 
+export function JXG_createElement(elementType: string,parents:any[],attributes:object) {
+    if (!JXG_elements.hasOwnProperty(elementType)) {
+        throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
+    }
+
+    let el: GeometryElement
+    if (Type.isFunction(JXG_elements[elementType])) {
+        el = JXG_elements[elementType](this, parents, attributes);
+    } else {
+        throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
+    }
+
+    if (!Type.exists(el)) {
+        throw new Error('JSXGraph: create: failure creating ' + elementType);
+        // JXG.debug('JSXGraph: create: failure creating ' + elementType);
+        return el;
+    }
+}
 
 
-
+///////// end of two global function that pollute the namespace
 
 
 
@@ -435,4 +465,14 @@ export class JXG extends JSXGraph {
             // this.debugInt.apply(this, arguments[i]);
         }
     }
+
+    static forcePreload(){
+        throw new Error('should NEVER call this, it just forces object loading')
+        let x:any
+
+        let b = new Board('j','svg','preload',[0,0],1,1,1,1,1000,1000,{})
+        x = new Text(b,[0,0],{},'preload')
+        x = new Point(b,[0,0],{})
+    }
+
 }

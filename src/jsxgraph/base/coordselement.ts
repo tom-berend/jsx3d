@@ -89,20 +89,9 @@ export class CoordsElement extends GeometryElement {
         //     coordinates[i] = parseFloat(coordinates[i]);
         // }
 
-
-        this.usrCoords = [];
-        //this.usrCoords = new Float64Array(3);
-
-        this.scrCoords = [];
-        //this.scrCoords = new Float64Array(3);
-
-        // if (this.emitter) {
-        // EventEmitter.eventify(this);  // tb now handled by class hierarchy
-        // }
-
-
-        //TODO -  MOVE THIS TO EACH ELEMENT CLASS (eg: Text, Line, )
-        // this.setCoordinates(this.method, coordinates, false, true);
+        // TODO - phase 2just set up object
+        this.usrCoords = new Coords(COORDS_BY.USER, coordinates, board).usrCoords
+        this.scrCoords = new Coords(COORDS_BY.SCREEN, coordinates, board).scrCoords
 
 
         /**

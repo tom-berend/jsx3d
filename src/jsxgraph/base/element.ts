@@ -30,7 +30,7 @@
  */
 
 
-import { JXG,JXG_elements } from "../jxg.js";
+import { JXG, JXG_elements } from "../jxg.js";
 import { Board } from "../base/board.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
@@ -402,6 +402,9 @@ export class GeometryElement extends Events {
     public label
     public needsRegularUpdate
 
+
+    public usrCoords = [];
+    public scrCoords = [];
 
     /**
      * Constructs a new GeometryElement object.
@@ -1859,7 +1862,7 @@ export class GeometryElement extends Events {
                         0,
                         0,],
                     attr,
-                    ():string => {
+                    (): string => {
                         if (Type.isFunction(that.name)) {
                             return that.name(that);
                         }

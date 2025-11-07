@@ -38,8 +38,8 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import { JXG, JXG_elements } from '../jxg.js';
-import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS,OBJECT_TYPE,COORDS_BY } from './constants.js';
+import { JXG, JXG_createElement } from '../jxg.js';
+import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
 import { Numerics } from '../math/numerics.js';
@@ -56,8 +56,8 @@ import { Env } from '../utils/env.js';
 import { GeometryElement } from 'element';
 import { SVGRenderer } from '../renderer/svg.js';
 import { JSXMath } from '../math/jsxmath.js';
-import {createText} from '../base/text.js'
-import {createPoint} from '../base/point.js'
+import { createText } from '../base/text.js'
+import { createPoint } from '../base/point.js'
 
 export class Board extends Events {
 
@@ -477,8 +477,9 @@ export class Board extends Events {
      */
     public options: Object
     public origin
-    public maxboundingbox:number[]
-
+    public maxboundingbox: number[]
+        public unitX:number
+        public unitY:number
 
     /**
      * Constructs a new Board object.
@@ -6541,7 +6542,7 @@ export class Board extends Events {
      * @returns {Object} Reference to the created element. This is usually a GeometryElement, but can be an array containing
      * two or more elements.
      */
-    create(elementType:string, parents:any[]=[], attributes:object={}) {
+    create(elementType: string, parents: any[] = [], attributes: object = {}) {
         var el, i;
 
         elementType = elementType.toLowerCase();
@@ -6580,16 +6581,10 @@ export class Board extends Events {
             el = createText(this, parents, attributes);
         } else {
 
+            switch (elementType) {
+                case 'text': el = createText(this, parents, attributes); break;
+                case 'point': el = createPoint(this, parents, attributes); break;
 
-            if (Type.isFunction(JXG_elements[elementType])) {
-                el = JXG_elements[elementType](this, parents, attributes);
-            } else {
-                throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
-            }
-
-            if (!Type.exists(el)) {
-                JXG.debug('JSXGraph: create: failure creating ' + elementType);
-                return el;
             }
 
             if (el.prepareUpdate && el.update && el.updateRenderer) {
@@ -7383,7 +7378,7 @@ export class Board extends Events {
      *   return true;
      * });
      */
-    select(str: string | Object | Function, onlyByIdOrName: Boolean=false) {
+    select(str: string | Object | Function, onlyByIdOrName: Boolean = false) {
         var flist,
             olist,
             i,

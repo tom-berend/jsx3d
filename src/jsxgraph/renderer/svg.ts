@@ -941,12 +941,19 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {Number} level The layer the node is attached to. This is the index of the layer in
      * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in SVGRenderer.
      */
-    appendChildPrim(node, level) {
+    appendChildPrim(node, level=0) {  // trace nodes have level not set
+        console.log('appendChildPrim',level,node)
         if (!Type.exists(level)) {
             // trace nodes have level not set
             level = 0;
         } else if (level >= Options.layer.numlayers) {
             level = Options.layer.numlayers - 1;
+        }
+        if(this.layer[level]===undefined){
+            console.warn('who?')
+        }
+        if(node===undefined){
+            console.warn('who?')
         }
         this.layer[level].appendChild(node);
 
