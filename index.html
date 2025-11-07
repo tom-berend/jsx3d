@@ -14,8 +14,8 @@
     <script type="module">
         console.log('start')
 
-        import { Type } from './build/jsxgraph/utils/type.js';
-        import { Options } from './build/jsxgraph/options.js';
+        // import { Type } from './build/jsxgraph/utils/type.js';
+        // import { Options } from './build/jsxgraph/options.js';
 
         // let lowerCaseLabelOptions = Type.keysToLowerCase(Options.label)  // merge converts to lower by default
         // let testAttributes = { test: true }
@@ -33,10 +33,13 @@
                     boundingbox: [-10, 10, 10, -10],
                     axis:true
                 });
+        // console.warn('about to create text')
+        // board.create('text',[0,0,'message from tom'],{strokeColor:'red'})
 
-        board.create('text',[[0,0],'message'],{strokeColor:'red'})
+        console.warn('about to create pointt')
+        board.create('point',[1,1])
 
-    </script>
+</script>
 </body>
 
 </html>

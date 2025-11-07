@@ -236,7 +236,7 @@ JXG.PrefixParser = {
             }
 
         } else if (method === 'exec') {
-            if (term[2].type === Type.OBJECT_TYPE_MEASUREMENT) {
+            if (term[2].type === OBJECT_TYPE.MEASUREMENT) {
                 res = term[2].Dimension();
                 // If attribute "dim" is set, this overrules anything else.
                 if (Type.exists(term[2].visProp.dim)) {
@@ -265,7 +265,7 @@ JXG.PrefixParser = {
                     res = 2;
                     break;
                 default: // 'V', 'Value'
-                    if (term[1].type === Type.OBJECT_TYPE_MEASUREMENT) {
+                    if (term[1].type === OBJECT_TYPE.MEASUREMENT) {
                         res = term[1].Dimension();
                         // If attribute "dim" is set, this overrules anything else.
                         if (Type.exists(term[1].visProp.dim)) {
@@ -335,7 +335,7 @@ JXG.PrefixParser = {
             if (Type.isInArray(['+', '-', '*', '/'], method)) {
                 res.push(this.toPrefix(term[i]));
             } else {
-                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
+                if (method === 'V' && term[i].type === OBJECT_TYPE.MEASUREMENT) {
                     res = term[i].toPrefix();
                 } else if (method === 'exec') {
                     if (i === 1) {
@@ -376,7 +376,7 @@ JXG.PrefixParser = {
             if (Type.isInArray(['+', '-', '*', '/'], method)) {
                 Type.concat(res, this.getParents(term[i]));
             } else {
-                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
+                if (method === 'V' && term[i].type === OBJECT_TYPE.MEASUREMENT) {
                     Type.concat(res, term[i].getParents());
                 } else if (method === 'exec') {
                     if (i > 1) {

@@ -699,6 +699,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     drawInternalText(el) {
+        console.log('drawInternalText',el)
         var node = this.createPrim("text", el.id);
 
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
@@ -710,6 +711,7 @@ export class SVGRenderer extends AbstractRenderer {
         node.appendChild(el.rendNodeText);
         this.appendChildPrim(node, el.evalVisProp('layer'));
 
+        console.log(node)
         return node;
     }
 

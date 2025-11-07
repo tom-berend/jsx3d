@@ -196,7 +196,7 @@ export class Coords /*extends GeometryElement*/ {
      * @param {Boolean} [noevent=false]
      * @returns {JXG.Coords} Reference to the coords object.
      */
-    setCoordinates(coord_type: COORDS_BY, coordinates: number[], doRound: Boolean, noevent: Boolean) {
+    setCoordinates(coord_type: COORDS_BY, coordinates: number[], doRound: Boolean=true, noevent: Boolean=fals) {
         var uc = this.usrCoords,
             sc = this.scrCoords,
             // Original values

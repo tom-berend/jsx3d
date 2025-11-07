@@ -47,7 +47,7 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import { JXG } from "../jxg.js";
+import { JXG, JXG_registerElement } from "../jxg.js";
 import { COORDS_BY, OBJECT_CLASS, OBJECT_TYPE } from "./constants.js";
 import { Geometry } from "../math/geometry.js"
 import { GeometryElement } from "./element.js";
@@ -72,7 +72,7 @@ var priv = {
         this.rendNodeOut.value = this.rendNodeRange.value;
         this.board.update();
     }
-};
+}
 
 /**
  * Construct and handle texts.
@@ -92,85 +92,6 @@ var priv = {
  *
  */
 
-/**
- * @class Constructs a text element.
- *
- * The coordinates can either be absolute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
- * given in {@link Text#anchor}.
- * <p>
- * HTML, MathJaX, KaTeX and GEONExT syntax can be handled.
- * <p>
- * There are two ways to display texts:
- * <ul>
- * <li> using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
- * However, advanced rendering like MathJax, KaTeX or HTML/CSS are not possible.
- * <li> using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
- * If HTML should be displayed in an inbetween layer, conder to use an element of type {@link ForeignObject} (available in svg renderer, only).
- * </ul>
- * @pseudo
- * @name Text
- * @augments JXG.Text
- * @constructor
- * @type JXG.Text
- *
- * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
- *                     <p>
- *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
- *   constraint, or a function which takes no parameter and returns a number. Every parent element beside the last determines one coordinate.
- *   If a coordinate is
- *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
- *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
- *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
- *   parent elements are given they will be interpreted as homogeneous coordinates.
- *                     <p>
- *                     The text to display may be given as string or as function returning a string.
- *
- * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
- * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
- * applied.
- * <p>
- * In case of 'internal', an SVG text element is used to display the text.
- * @see JXG.Text
- * @example
- * // Create a fixed text at position [0,1].
- *   var t1 = board.create('text',[0,1,"Hello World"]);
- * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
- * </script><pre>
- * @example
- * // Create a variable text at a variable position.
- *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var graph = board.create('text',
- *                        [function(x){ return s.Value();} 1,
- *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
- *                        ]
- *                     );
- * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var t2 = t2_board.create('text',[function(x){ return s.Value();} 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
- * </script><pre>
- * @example
- * // Create a text bound to the point A
- * var p = board.create('point',[0, 1]),
- *     t = board.create('text',[0, -1,"Hello World"], {anchor: p});
- *
- * </pre><div class="jxgbox" id="JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var p = board.create('point',[0, 1]),
- *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
- *
- *     })();
- *
- * </script><pre>
- *
- */
 export class Text extends CoordsElement {
 
     content = "";
@@ -178,7 +99,9 @@ export class Text extends CoordsElement {
     plaintextOld = null;
     orgText = "";
 
-    element: string | object
+    relativeCoords: Coords
+
+    element: string | Text | object
     needsSizeUpdate: boolean
     hiddenByParent: boolean
     size: number[] = [1.0, 1.0]
@@ -187,26 +110,53 @@ export class Text extends CoordsElement {
 
 
 
-    constructor(board, parents, attributes) {
-        super(board, COORDS_BY.USER, parents[1], attributes)
-        console.log('new Text', parents)
+    constructor(board: Board, coordinates: number[] | Object | Function, attributes: TextOptions, content: string|Function) {
+        super(board, COORDS_BY.USER, coordinates, attributes)
+        console.warn('new Text', coordinates, content)
 
-        let attr = Type.copyAttributes(attributes, board.options, "text")
-        let coords = parents.slice(0, -1)
-        let content = parents[parents.length - 1];
+        this.visProp = Type.merge(this.visProp, Options)
 
-        // TODO this should be merge i think
-        this.visProp = Options.elements
+
+        // this.setCoordinates(this.method, coordinates, false, true);
+
+        /**
+         * Type of the element.
+         * @constant
+         * @type Number
+            */
+        this.otype = OBJECT_TYPE.TEXT
+
+        /**
+         * Original type of the element at construction time. Used for removing glider property.
+         * @constant
+         * @type Number
+        */
+        this._org_type = OBJECT_TYPE.TEXT
+
+        /**
+         * The element's class.
+         * @constant
+         * @type Number
+        */
+        this.oclass = OBJECT_CLASS.TEXT
+
+
+
+
+
 
         let tmp;
 
         // this.constructor(board, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT);
-
         this.element = this.board.select(attributes.anchor);
 
-        // TODO :  what is this
+
         // this.coordsConstructor(coords, this.evalVisProp('islabel'));
 
+        this.content = "";
+        this.plaintext = "";
+        this.plaintextOld = null;
+        this.orgText = "";
 
         this.needsSizeUpdate = false;
         // Only used by infobox anymore
@@ -249,67 +199,7 @@ export class Text extends CoordsElement {
             setAutoPosition: "setAutoPosition"
         });
 
-
-
-        this.coords.setCoordinates(this.method, parents, false, true);
-
-        /**
-         * Type of the element.
-         * @constant
-         * @type Number
-            */
-        this.otype = OBJECT_TYPE.TEXT
-
-        /**
-         * Original type of the element at construction time. Used for removing glider property.
-         * @constant
-         * @type Number
-        */
-        this._org_type = OBJECT_TYPE.TEXT
-
-        /**
-         * The element's class.
-         * @constant
-         * @type Number
-        */
-        this.oclass = OBJECT_CLASS.TEXT
-
-
-
-        // Backwards compatibility
-        attr.anchor = attr.parent || attr.anchor;
-
-        // if (!t) {
-        //     throw new Error(
-        //         "JSXGraph: Can't create text with parent types '" +
-        //         typeof parents[0] +
-        //         "' and '" +
-        //         typeof parents[1] +
-        //         "'." +
-        //         "\nPossible parent types: [x,y], [z,x,y], [element,transformation]"
-        //     );
-        // }
-
-        if (attr.rotate !== 0) {
-            // This is the default value, i.e. no rotation
-            this.addRotation(attr.rotate);
-        }
-
-        // TODO  Tom added this....
-        this._createFctUpdateText(content);
-        this._setText(parent[1]);
-        this.updateText();
-
-
     }
-
-
-
-
-
-
-
-
     /**
      * @private
      * @param {Number} x
@@ -334,8 +224,8 @@ export class Text extends CoordsElement {
         if (this.transformations.length > 0) {
             //Transform the mouse/touch coordinates
             // back to the original position of the text.
-            lft = Mat.matVecMult(
-                Mat.inverse(this.board.renderer.joinTransforms(this, this.transformations)),
+            lft = JSXMath.matVecMult(
+                JSXMath.inverse(this.board.renderer.joinTransforms(this, this.transformations)),
                 [1, x, y]
             );
             x = lft[1];
@@ -974,7 +864,7 @@ export class Text extends CoordsElement {
      * "The x-coordinate of A is &lt;value&gt;X(A)&lt;/value&gt;"
      *
      */
-    valueTagToJessieCode(contentStr) {
+    valueTagToJessieCode(contentStr): string {
         var res, term,
             i, j,
             expandShortMath = true,
@@ -1744,6 +1634,116 @@ export class Text extends CoordsElement {
 }
 
 /**
+ * @class Constructs a text element.
+ *
+ * The coordinates can either be absolute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
+ * given in {@link Text#anchor}.
+ * <p>
+ * HTML, MathJaX, KaTeX and GEONExT syntax can be handled.
+ * <p>
+ * There are two ways to display texts:
+ * <ul>
+ * <li> using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
+ * However, advanced rendering like MathJax, KaTeX or HTML/CSS are not possible.
+ * <li> using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
+ * If HTML should be displayed in an inbetween layer, conder to use an element of type {@link ForeignObject} (available in svg renderer, only).
+ * </ul>
+ * @pseudo
+ * @name Text
+ * @augments JXG.Text
+ * @constructor
+ * @type JXG.Text
+ *
+ * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
+ *                     <p>
+ *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ *   constraint, or a function which takes no parameter and returns a number. Every parent element beside the last determines one coordinate.
+ *   If a coordinate is
+ *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
+ *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
+ *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
+ *   parent elements are given they will be interpreted as homogeneous coordinates.
+ *                     <p>
+ *                     The text to display may be given as string or as function returning a string.
+ *
+ * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
+ * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
+ * applied.
+ * <p>
+ * In case of 'internal', an SVG text element is used to display the text.
+ * @see JXG.Text
+ * @example
+ * // Create a fixed text at position [0,1].
+ *   var t1 = board.create('text',[0,1,"Hello World"]);
+ * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
+ * </script><pre>
+ * @example
+ * // Create a variable text at a variable position.
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var graph = board.create('text',
+ *                        [function(x){ return s.Value();} 1,
+ *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
+ *                        ]
+ *                     );
+ * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = t2_board.create('text',[function(x){ return s.Value();} 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
+ * </script><pre>
+ * @example
+ * // Create a text bound to the point A
+ * var p = board.create('point',[0, 1]),
+ *     t = board.create('text',[0, -1,"Hello World"], {anchor: p});
+ *
+ * </pre><div class="jxgbox" id="JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p = board.create('point',[0, 1]),
+ *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+export function createText(board, parents, attributes) {
+    var t,
+        attr = Type.copyAttributes(attributes, board.options, "text"),
+        coords = parents.slice(0, -1),
+        content = parents[parents.length - 1];
+    console.log('createText', coords, content, parents)
+
+    // Backwards compatibility
+    attr.anchor = attr.parent || attr.anchor;
+    t = new Text(board, coords, attr, content);
+
+    if (!t) {
+        throw new Error(
+            "JSXGraph: Can't create text with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [x,y], [z,x,y], [element,transformation]"
+        );
+    }
+
+    if (attr.rotate !== 0) {
+        // This is the default value, i.e. no rotation
+        t.addRotation(attr.rotate);
+    }
+
+    return t;
+};
+
+
+/**
  * @class Labels are text objects tied to other elements like points, lines and curves.
  * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
  *
@@ -1845,3 +1845,6 @@ export class HTMLSlider {
     };
 
 }
+
+
+JXG_registerElement("text", createText);

@@ -62,6 +62,37 @@
 
 import { Board } from "./base/board.js"
 import { JSXGraph } from "./jsxgraph.js";
+import { LooseObject } from "./utils/type.js";
+
+// calling the files this way lets them register their element
+import './base/text.js'
+import './base/point.js'
+
+
+export var JXG_elements: LooseObject;
+
+/**
+ * This registers a new construction element to JSXGraph for the construction via the {@link this.Board.create}
+ * interface.
+ * @param {String} element The elements name. This is case-insensitive, existing elements with the same name
+ * will be overwritten.
+ * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
+ * to be created on, a parent element array, and an attributes object. See {@link this.createPoint} or any other
+ * <tt>this.create...</tt> function for an example.
+ */
+export function JXG_registerElement(element: string, creator: Function) {
+    if (JXG_elements == undefined) {   // static so must intialize
+        JXG_elements = {}
+    }
+
+    element = element.toLowerCase();
+    JXG_elements[element] = creator;
+}
+
+
+
+
+
 
 
 
@@ -205,15 +236,11 @@ export class JXG extends JSXGraph {
      * to be created on, a parent element array, and an attributes object. See {@link this.createPoint} or any other
      * <tt>this.create...</tt> function for an example.
      */
-    // shouldn't be needed
-    static registerElement(element: any, creator: any) {
-        throw new Error("This shouldn't be necessary in ES6");
-    }
+    static registerElement(element: string, creator: function) {
 
-    // registerElement(element, creator) {
-    //     element = element.toLowerCase();
-    //     this.elements[element] = creator;
-    // }
+        element = element.toLowerCase();
+        this.elements[element] = creator;
+    }
 
     /**
      * Register a file reader.
@@ -401,8 +428,11 @@ export class JXG extends JSXGraph {
      * @see this.debugInt
      */
     static debug(...s: any[]) {
+        // TODO  This is opaque without knowing who 'this' is
+
         for (let i = 0; i < arguments.length; i++) {
-            this.debugInt.apply(this, arguments[i]);
+            console.warn(arguments[i])
+            // this.debugInt.apply(this, arguments[i]);
         }
     }
 }

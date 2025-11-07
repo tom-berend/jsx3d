@@ -931,11 +931,11 @@ define(["require", "exports", "../jxg.js", "../options.js", "../base/coords.js",
                     // Set the content
                     if (el.htmlStr !== content) {
                         try {
-                            if (el.type === type_js_1.Type.OBJECT_TYPE_BUTTON) {
+                            if (el.type === type_js_1.OBJECT_TYPE.BUTTON) {
                                 el.rendNodeButton.innerHTML = content;
                             }
-                            else if (el.type === type_js_1.Type.OBJECT_TYPE_CHECKBOX ||
-                                el.type === type_js_1.Type.OBJECT_TYPE_INPUT) {
+                            else if (el.type === type_js_1.OBJECT_TYPE.CHECKBOX ||
+                                el.type === type_js_1.OBJECT_TYPE.INPUT) {
                                 el.rendNodeLabel.innerHTML = content;
                             }
                             else {

@@ -515,10 +515,6 @@ export class Options {
         ]
     }
     static label: LabelOptions = {
-        /**#@+
-         * @visprop
-         */
-
         visible: 'inherit',
         strokeColor: '#000000',
         strokeOpacity: 1,
@@ -532,7 +528,8 @@ export class Options {
         autoPosition: false,
         autoPositionMinDistance: 12,
         autoPositionMaxDistance: 28,
-        autoPositionWhitelist: []
+        autoPositionWhitelist: [],
+    
     }
 
     /* special legend options */
@@ -2003,7 +2000,7 @@ export class Options {
      * @returns {String} Returns a normalized string or undefined if the given string is not a valid
      * point face.
      */
-    normalizePointFace(s) {
+    static normalizePointFace(s) {
         var map = {
             cross: 'x',
             x: 'x',

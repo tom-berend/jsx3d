@@ -30,7 +30,7 @@
  */
 
 
-import { JXG } from "../jxg.js";
+import { JXG,JXG_elements } from "../jxg.js";
 import { Board } from "../base/board.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
@@ -40,7 +40,8 @@ import { Statistics } from "../math/statistics.js";
 import { Options } from "../options.js";
 import { Events } from "../utils/event.js";
 import { Color } from "../utils/color.js";
-import { Type } from "../utils/type.js";
+import { LooseObject, Type } from "../utils/type.js";
+import { Text } from "../base/text.js";
 
 import { BoardOptions, GeometryElementOptions } from "../optionInterfaces.js";
 
@@ -215,7 +216,7 @@ export class GeometryElement extends Events {
     */
     public id: string
 
-
+    public hiddenByParent
     /**
      * Stores the SVG (or VML) rendering node for the element. This enables low-level
      * access to SVG nodes. The properties of such an SVG node can then be changed
@@ -323,7 +324,7 @@ export class GeometryElement extends Events {
      * the value of a property is the name of the method in JavaScript.
      * @type Object
      */
-    public methodMap = {
+    public methodMap: object = {
         setLabel: "setLabel",
         label: "label",
         setName: "setName",
@@ -359,7 +360,7 @@ export class GeometryElement extends Events {
      * @type Object
      * @default empty object
      */
-    public visProp = {};
+    public visProp: LooseObject = {};
 
     /**
      * An associative array containing visual properties which are calculated from
@@ -398,6 +399,7 @@ export class GeometryElement extends Events {
     public oclass
 
     public name
+    public label
     public needsRegularUpdate
 
 
@@ -414,7 +416,7 @@ export class GeometryElement extends Events {
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
-    constructor(board: Board, attributes: GeometryElementOptions) {
+    constructor(board: Board, attributes: object) {
         super() // eventify
 
         var name, key, attr;
@@ -422,6 +424,8 @@ export class GeometryElement extends Events {
         if (board == undefined) {
             throw new Error('who did not send Board??')
         }
+
+        this.visProp = Type.merge(this.visProp, Options.elements)
 
         this.board = board;
 
@@ -434,8 +438,8 @@ export class GeometryElement extends Events {
             // */
             // this.id = attributes.id;
 
-            if ('name' in attributes) {
-                name = attributes.name;
+            if (attributes.hasOwnProperty('name')) {
+                name = attributes['name'];
             } else {
                 /* If name is not set or null or even undefined, generate an unique name for this object */
                 name = this.board.generateName(this);
@@ -1841,27 +1845,27 @@ export class GeometryElement extends Events {
         // this is a dirty hack to resolve the text-dependency. If there is no text element available,
         // just don't create a label. This method is usually not called by a user, so we won't throw
         // an exception here and simply output a warning via JXG.debug.
-        if (JXG.elements.text) {
-            attr = Type.deepCopy(this.visProp.label, null);
+        if (JXG_elements['text']) {
+            attr = Type.deepCopy(Options.label, null);
             attr.id = this.id + "Label";
             attr.isLabel = true;
             attr.anchor = this;
             attr.priv = this.visProp.priv;
 
             if (this.visProp.withlabel) {
-                this.label = JXG.elements.text(
+                this.label = new Text(
                     this.board,
                     [
                         0,
-                        0,
-                        function () {
-                            if (Type.isFunction(that.name)) {
-                                return that.name(that);
-                            }
-                            return that.name;
+                        0,],
+                    attr,
+                    ():string => {
+                        if (Type.isFunction(that.name)) {
+                            return that.name(that);
                         }
-                    ],
-                    attr
+                        return that.name;
+                    }
+
                 );
                 this.label.needsUpdate = true;
                 this.label.dump = false;

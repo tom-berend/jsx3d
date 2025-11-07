@@ -157,7 +157,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         Type.isPoint = function (v) {
-            if (v !== null && typeof v === 'object' && this.exists(v.elementClass)) {
+            if (v !== null && typeof v === 'object' && Type.exists(v.elementClass)) {
                 return v.elementClass === constants_js_1.OBJECT_CLASS.POINT;
             }
             return false;
@@ -168,7 +168,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
          * @returns {Boolean} True, if v is of type JXG.Point3D.
          */
         Type.isPoint3D = function (v) {
-            if (v !== null && typeof v === 'object' && this.exists(v.type)) {
+            if (v !== null && typeof v === 'object' && Type.exists(v.type)) {
                 return v.type === constants_js_1.OBJECT_TYPE.POINT3D;
             }
             return false;
@@ -274,7 +274,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
          * @returns <tt>d</tt>, if <tt>v</tt> is undefined or null.
          */
         Type.def = function (v, d) {
-            if (this.exists(v)) {
+            if (Type.exists(v)) {
                 return v;
             }
             return d;
@@ -285,7 +285,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
          * @returns {Boolean} String typed boolean value converted to boolean.
          */
         Type.str2Bool = function (s) {
-            if (!this.exists(s)) {
+            if (!Type.exists(s)) {
                 return true;
             }
             if (typeof s === 'boolean') {
@@ -375,7 +375,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
          */
         // static createFunction(term, board, variableName?, evalGeonext?): function {
         //     let f = ()=>{}      // default empty function
-        //     // if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
+        //     // if ((!Type.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
         //     if (this.isString(term)) {
         //         // Convert GEONExT syntax into  JavaScript syntax
         //         //newTerm = JXG.GeonextParser.geonext2JS(term, board);
@@ -437,7 +437,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
         //         parents = [parents];
         //     }
         //     len = parents.length;
-        //     if (this.exists(attrArray)) {
+        //     if (Type.exists(attrArray)) {
         //         lenAttr = attrArray.length;
         //     }
         //     if (lenAttr === 0) {
@@ -504,7 +504,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
         //         parents = [parents];
         //     }
         //     len = parents.length;
-        //     if (this.exists(attrArray)) {
+        //     if (Type.exists(attrArray)) {
         //         lenAttr = attrArray.length;
         //     }
         //     if (lenAttr === 0) {
@@ -621,7 +621,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
             }
             for (i = 0; i < arr.length; i++) {
                 isArray = this.isArray(arr[i]);
-                if (!this.exists(arr[i])) {
+                if (!Type.exists(arr[i])) {
                     arr[i] = '';
                     continue;
                 }
@@ -1071,7 +1071,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
                         // We certainly do not want to recurse into a JSXGraph object.
                         // This would for sure result in an infinite recursion.
                         // As alternative we copy the id of the object.
-                        if (this.exists(prop.board)) {
+                        if (Type.exists(prop.board)) {
                             c[i] = prop.id;
                         }
                         else {
@@ -1090,7 +1090,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
                         i2 = toLower ? i.toLowerCase() : i;
                         prop = obj[i];
                         if (prop !== null && typeof prop === 'object') {
-                            if (this.exists(prop.board)) {
+                            if (Type.exists(prop.board)) {
                                 c[i2] = prop.id;
                             }
                             else {
@@ -1107,7 +1107,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
                         i2 = toLower ? i.toLowerCase() : i;
                         prop = obj2[i];
                         if (prop !== null && typeof prop === 'object') {
-                            if (this.isArray(prop) || !this.exists(c[i2])) {
+                            if (this.isArray(prop) || !Type.exists(c[i2])) {
                                 c[i2] = this.deepCopy(prop, {}, toLower);
                             }
                             else {
@@ -1167,7 +1167,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
                         o !== null &&
                         // Do not recurse into a document object or a JSXGraph object
                         !this.isDocumentOrFragment(o) &&
-                        !this.exists(o.board) &&
+                        !Type.exists(o.board) &&
                         // Do not recurse if a string is provided as "new String(...)"
                         typeof o.valueOf() !== 'string') {
                         if (result[e2] === undefined ||
@@ -1180,7 +1180,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
                         }
                         result[e2] = this.mergeAttrHelper(result[e2], o, toLower);
                     }
-                    else if (!ignoreUndefinedSpecials || this.exists(o)) {
+                    else if (!ignoreUndefinedSpecials || Type.exists(o)) {
                         // Flat copy
                         // This is also used in the cases
                         //   attr.shadow = { enabled: true ...}
@@ -1246,7 +1246,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
                 defaultOptions = {};
             }
             // Only the layer of the main element is set.
-            if (len < 4 && this.exists(s) && this.exists(options_js_1.Options.layer[s[2]])) {
+            if (len < 4 && Type.exists(s) && Type.exists(options_js_1.Options.layer[s[2]])) {
                 defaultOptions.layer = options_js_1.Options.layer[s[2]];
             }
             // Default options from the specific element like 'line' in
@@ -1301,7 +1301,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
             isAvail = true;
             for (i = 2; i < len; i++) {
                 arg = arguments[i];
-                if (this.exists(o[arg])) {
+                if (Type.exists(o[arg])) {
                     o = o[arg];
                 }
                 else {
@@ -1309,7 +1309,7 @@ define(["require", "exports", "../base/constants.js", "../options.js"], function
                     break;
                 }
             }
-            if (isAvail && this.exists(o.label)) {
+            if (isAvail && Type.exists(o.label)) {
                 defaultOptions.label = this.deepCopy(o.label, defaultOptions.label, true);
             }
             defaultOptions.label = this.deepCopy(options_js_1.Options.label, defaultOptions.label, true);

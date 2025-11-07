@@ -38,7 +38,7 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import { JXG } from '../jxg.js';
+import { JXG, JXG_elements } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS,OBJECT_TYPE,COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
@@ -56,7 +56,8 @@ import { Env } from '../utils/env.js';
 import { GeometryElement } from 'element';
 import { SVGRenderer } from '../renderer/svg.js';
 import { JSXMath } from '../math/jsxmath.js';
-import {Text} from '../base/text.js'
+import {createText} from '../base/text.js'
+import {createPoint} from '../base/point.js'
 
 export class Board extends Events {
 
@@ -6576,12 +6577,12 @@ export class Board extends Events {
 
         // TODO: main switch
         if (elementType == 'text') {
-            el = new Text(this, parents, attributes);
+            el = createText(this, parents, attributes);
         } else {
 
 
-            if (Type.isFunction(JXG.elements[elementType])) {
-                el = JXG.elements[elementType](this, parents, attributes);
+            if (Type.isFunction(JXG_elements[elementType])) {
+                el = JXG_elements[elementType](this, parents, attributes);
             } else {
                 throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
             }

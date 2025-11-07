@@ -331,7 +331,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     term = parents[2];
 
     el = board.create("text", [x, y, ''], attr);
-    el.type = Type.OBJECT_TYPE_MEASUREMENT;
+    el.type = OBJECT_TYPE.MEASUREMENT;
     el.elType = 'measurement';
 
     el.Value = function () {

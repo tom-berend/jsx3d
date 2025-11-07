@@ -64,7 +64,7 @@ export interface LooseObject {
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
 // import { Coords } from '../base/coords.js';
 // import { GeometryElement } from '../base/element.js';
-// import { JSXMath } from '../math/jsxmath.js';
+import { JSXMath } from '../math/jsxmath.js';
 import { Options } from '../options.js';
 // import { HtmlSanitizer } from './htmlsanitizer.js';
 
@@ -206,7 +206,7 @@ export class Type {
      * @returns {Boolean} True, if v is of type JXG.Point.
      */
     static isPoint(v) {
-        if (v !== null && typeof v === 'object' && this.exists(v.elementClass)) {
+        if (v !== null && typeof v === 'object' && Type.exists(v.elementClass)) {
             return v.elementClass === OBJECT_CLASS.POINT;
         }
 
@@ -219,7 +219,7 @@ export class Type {
      * @returns {Boolean} True, if v is of type JXG.Point3D.
      */
     static isPoint3D(v) {
-        if (v !== null && typeof v === 'object' && this.exists(v.type)) {
+        if (v !== null && typeof v === 'object' && Type.exists(v.type)) {
             return v.type === OBJECT_TYPE.POINT3D;
         }
 
@@ -336,7 +336,7 @@ export class Type {
      * @returns <tt>d</tt>, if <tt>v</tt> is undefined or null.
      */
     static def(v, d) {
-        if (this.exists(v)) {
+        if (Type.exists(v)) {
             return v;
         }
 
@@ -349,7 +349,7 @@ export class Type {
      * @returns {Boolean} String typed boolean value converted to boolean.
      */
     static str2Bool(s) {
-        if (!this.exists(s)) {
+        if (!Type.exists(s)) {
             return true;
         }
 
@@ -453,7 +453,7 @@ export class Type {
     // static createFunction(term, board, variableName?, evalGeonext?): function {
     //     let f = ()=>{}      // default empty function
 
-    //     // if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
+    //     // if ((!Type.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
     //     if (this.isString(term)) {
     //         // Convert GEONExT syntax into  JavaScript syntax
     //         //newTerm = JXG.GeonextParser.geonext2JS(term, board);
@@ -520,7 +520,7 @@ export class Type {
     //         parents = [parents];
     //     }
     //     len = parents.length;
-    //     if (this.exists(attrArray)) {
+    //     if (Type.exists(attrArray)) {
     //         lenAttr = attrArray.length;
     //     }
     //     if (lenAttr === 0) {
@@ -592,7 +592,7 @@ export class Type {
     //         parents = [parents];
     //     }
     //     len = parents.length;
-    //     if (this.exists(attrArray)) {
+    //     if (Type.exists(attrArray)) {
     //         lenAttr = attrArray.length;
     //     }
     //     if (lenAttr === 0) {
@@ -675,6 +675,33 @@ export class Type {
 
 
     /**
+     * Search an array for a given value.
+     * @param {Array} array
+     * @param value
+     * @param {String} [sub] Use this property if the elements of the array are objects.
+     * @returns {Number} The index of the first appearance of the given value, or
+     * <tt>-1</tt> if the value was not found.
+     */
+    static indexOf(array, value: any, sub: string) {
+        var i,
+            s = Type.exists(sub);
+
+        if (Array.prototype.indexOf(value) && !s) {
+            return array.prototype.indexOf(value);
+        }
+
+        for (i = 0; i < array.length; i++) {
+            if ((s && array[i][sub] === value) || (!s && array[i] === value)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+
+
+    /**
      * Eliminates duplicate entries in an array consisting of numbers and strings.
      * @param {Array} a An array of numbers and/or strings.
      * @returns {Array} The array with duplicate entries eliminated.
@@ -734,7 +761,7 @@ export class Type {
         for (i = 0; i < arr.length; i++) {
             isArray = this.isArray(arr[i]);
 
-            if (!this.exists(arr[i])) {
+            if (!Type.exists(arr[i])) {
                 arr[i] = '';
                 continue;
             }
@@ -1169,20 +1196,24 @@ export class Type {
             if (obj2.hasOwnProperty(i)) {
                 o = obj2[i];
                 if (this.isArray(o)) {
-                    if (!obj1[i]) {
+                    if (obj1[i] == undefined) {
                         obj1[i] = [];
                     }
 
                     for (j = 0; j < o.length; j++) {
                         oo = obj2[i][j];
                         if (typeof obj2[i][j] === 'object') {
-                            obj1[i][j] = this.merge(obj1[i][j], oo);
+                            if (obj1[i][j] == undefined) {
+                                obj1[i][j] = obj2[i][j]
+                            } else {
+                                obj1[i][j] = this.merge(obj1[i][j], oo);
+                            }
                         } else {
                             obj1[i][j] = obj2[i][j];
                         }
                     }
                 } else if (typeof o === 'object') {
-                    if (!obj1[i]) {
+                    if (typeof obj1[i] !== 'object') {
                         obj1[i] = {};
                     }
 
@@ -1212,7 +1243,7 @@ export class Type {
      * @param  [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
      * @returns {Object} copy of obj or merge of obj and obj2.
      */
-    static deepCopy(obj: Object, obj2: Object={}, toLower: boolean = false): Object {
+    static deepCopy(obj: Object, obj2: Object = {}, toLower: boolean = false): Object {
         var c, i, prop, i2;
 
         toLower = toLower || false;
@@ -1230,7 +1261,7 @@ export class Type {
                     // We certainly do not want to recurse into a JSXGraph object.
                     // This would for sure result in an infinite recursion.
                     // As alternative we copy the id of the object.
-                    if (this.exists(prop.board)) {
+                    if (Type.exists(prop.board)) {
                         c[i] = prop.id;
                     } else {
                         c[i] = this.deepCopy(prop, {}, toLower);
@@ -1246,7 +1277,7 @@ export class Type {
                     i2 = toLower ? i.toLowerCase() : i;
                     prop = obj[i];
                     if (prop !== null && typeof prop === 'object') {
-                        if (this.exists(prop.board)) {
+                        if (Type.exists(prop.board)) {
                             c[i2] = prop.id;
                         } else {
                             c[i2] = this.deepCopy(prop, {}, toLower);
@@ -1263,7 +1294,7 @@ export class Type {
 
                     prop = obj2[i];
                     if (prop !== null && typeof prop === 'object') {
-                        if (this.isArray(prop) || !this.exists(c[i2])) {
+                        if (this.isArray(prop) || !Type.exists(c[i2])) {
                             c[i2] = this.deepCopy(prop, {}, toLower);
                         } else {
                             c[i2] = this.deepCopy(c[i2], prop, toLower);
@@ -1322,7 +1353,7 @@ export class Type {
                     o !== null &&
                     // Do not recurse into a document object or a JSXGraph object
                     !this.isDocumentOrFragment(o) &&
-                    !this.exists(o.board) &&
+                    !Type.exists(o.board) &&
                     // Do not recurse if a string is provided as "new String(...)"
                     typeof o.valueOf() !== 'string'
                 ) {
@@ -1337,7 +1368,7 @@ export class Type {
                         result[e2] = {};
                     }
                     result[e2] = this.mergeAttrHelper(result[e2], o, toLower);
-                } else if (!ignoreUndefinedSpecials || this.exists(o)) {
+                } else if (!ignoreUndefinedSpecials || Type.exists(o)) {
                     // Flat copy
                     // This is also used in the cases
                     //   attr.shadow = { enabled: true ...}
@@ -1362,7 +1393,7 @@ export class Type {
      *
      * // return {radiuspoint: {visible: false}}
      */
-    static keysToLowerCase(obj:object):object {
+    static keysToLowerCase(obj: object): object {
         return Type.mergeAttrHelper({}, obj)  // merge converts to lower by default
     }
 
@@ -1382,7 +1413,7 @@ export class Type {
     // attr_curve = Type.copyAttributes(attributes, board.options, "conic");
 
     static copyAttributes(attributes: object, options: object, ...s: string[]) {
-        var defaultOptions:LooseObject,
+        var defaultOptions: LooseObject,
             arg,
             i,
             len,
@@ -1410,7 +1441,7 @@ export class Type {
         }
 
         // Only the layer of the main element is set.
-        if (len < 4 && this.exists(s) && this.exists(Options.layer[s[2]])) {
+        if (len < 4 && Type.exists(s) && Type.exists(Options.layer[s[2]])) {
             defaultOptions.layer = Options.layer[s[2]];
         }
 
@@ -1464,14 +1495,14 @@ export class Type {
         isAvail = true;
         for (i = 2; i < len; i++) {
             arg = arguments[i];
-            if (this.exists(o[arg])) {
+            if (Type.exists(o[arg])) {
                 o = o[arg];
             } else {
                 isAvail = false;
                 break;
             }
         }
-        if (isAvail && this.exists(o.label)) {
+        if (isAvail && Type.exists(o.label)) {
             defaultOptions.label = this.deepCopy(o.label, defaultOptions.label, true);
         }
         defaultOptions.label = this.deepCopy(Options.label, defaultOptions.label, true);
@@ -1803,48 +1834,48 @@ export class Type {
         return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
     }
 
-    // /**
-    //  * Convert a floating point number to a string integer + fraction.
-    //  * Returns either a string of the form '3 1/3' (in case of useTeX=false)
-    //  * or '3 \\frac{1}{3}' (in case of useTeX=true).
-    //  *
-    //  * @param {Number} x
-    //  * @param {Boolean} [useTeX=false]
-    //  * @param {Number} [order=0.001]
-    //  * @returns {String}
-    //  * @see JXG.Math.decToFraction
-    //  */
-    // static toFraction(x, useTeX, order) {
-    //     var arr = JSXMath.decToFraction(x, order),
-    //         str = '';
+    /**
+     * Convert a floating point number to a string integer + fraction.
+     * Returns either a string of the form '3 1/3' (in case of useTeX=false)
+     * or '3 \\frac{1}{3}' (in case of useTeX=true).
+     *
+     * @param {Number} x
+     * @param {Boolean} [useTeX=false]
+     * @param {Number} [order=0.001]
+     * @returns {String}
+     * @see JXG.Math.decToFraction
+     */
+    static toFraction(x:number, useTeX:boolean=false, order:number=0.001) {
+        var arr = JSXMath.decToFraction(x, order),
+            str = '';
 
-    //     if (arr[1] === 0 && arr[2] === 0) {
-    //         // 0
-    //         str += '0';
-    //     } else {
-    //         // Sign
-    //         if (arr[0] < 0) {
-    //             str += '-';
-    //         }
-    //         if (arr[2] === 0) {
-    //             // Integer
-    //             str += arr[1];
-    //         } else if (!(arr[2] === 1 && arr[3] === 1)) {
-    //             // Proper fraction
-    //             if (arr[1] !== 0) {
-    //                 // Absolute value larger than 1
-    //                 str += arr[1] + ' ';
-    //             }
-    //             // Add fractional part
-    //             if (useTeX === true) {
-    //                 str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
-    //             } else {
-    //                 str += arr[2] + '/' + arr[3];
-    //             }
-    //         }
-    //     }
-    //     return str;
-    // }
+        if (arr[1] === 0 && arr[2] === 0) {
+            // 0
+            str += '0';
+        } else {
+            // Sign
+            if (arr[0] < 0) {
+                str += '-';
+            }
+            if (arr[2] === 0) {
+                // Integer
+                str += arr[1];
+            } else if (!(arr[2] === 1 && arr[3] === 1)) {
+                // Proper fraction
+                if (arr[1] !== 0) {
+                    // Absolute value larger than 1
+                    str += arr[1] + ' ';
+                }
+                // Add fractional part
+                if (useTeX === true) {
+                    str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
+                } else {
+                    str += arr[2] + '/' + arr[3];
+                }
+            }
+        }
+        return str;
+    }
 
     /**
      * Concat array src to array dest.

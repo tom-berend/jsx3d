@@ -273,7 +273,7 @@ JXG.createInput = function (board, parents, attributes) {
 
     // 1. Create input element with empty label
     t = board.create("text", par, attr);
-    t.type = Type.OBJECT_TYPE_INPUT;
+    t.type = OBJECT_TYPE.INPUT;
 
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];

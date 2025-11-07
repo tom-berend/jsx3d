@@ -55,6 +55,7 @@ import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";
 import { Type } from "../utils/type.js";
 import { Env } from "../utils/env.js";
+import { OBJECT_TYPE } from "../base/constants.js";
 
 
 /**
@@ -307,10 +308,10 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#changePointStyle
      */
     drawPoint(el) {
-        var prim,
-            // Sometimes el is not a real point and lacks the methods of a JXG.Point instance,
-            // in these cases to not use el directly.
-            face = Options.normalizePointFace(el.evalVisProp('face'));
+        var prim
+        // Sometimes el is not a real point and lacks the methods of a JXG.Point instance,
+        // in these cases to not use el directly.
+        let face = Options.normalizePointFace(el.evalVisProp('face'));
 
         // Determine how the point looks like
         if (face === "o") {
@@ -1001,6 +1002,7 @@ export abstract class AbstractRenderer {
     drawText(el) {
         var node, z, level, ev_visible;
 
+        console.log('drawText', el, el.evalVisProp('display'))
         if (
             el.evalVisProp('display') === "html" &&
             Env.isBrowser &&
@@ -1055,6 +1057,7 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText(el) {
+        console.log('abstract: updating Text', el.content, el)
         var content = el.plaintext,
             v, c,
             parentNode, node,
@@ -1146,11 +1149,11 @@ export abstract class AbstractRenderer {
                 // Set the content
                 if (el.htmlStr !== content) {
                     try {
-                        if (el.type === Type.OBJECT_TYPE_BUTTON) {
+                        if (el.type === OBJECT_TYPE.BUTTON) {
                             el.rendNodeButton.innerHTML = content;
                         } else if (
-                            el.type === Type.OBJECT_TYPE_CHECKBOX ||
-                            el.type === Type.OBJECT_TYPE_INPUT
+                            el.type === OBJECT_TYPE.CHECKBOX ||
+                            el.type === OBJECT_TYPE.INPUT
                         ) {
                             el.rendNodeLabel.innerHTML = content;
                         } else {
@@ -1171,12 +1174,12 @@ export abstract class AbstractRenderer {
                     if (el.evalVisProp('usemathjax')) {
                         // Typesetting directly might not work because MathJax was not loaded completely
                         try {
-                            if (MathJax.typeset) {
+                            if ((Window as any).MathJax.typeset) {
                                 // Version 3
-                                MathJax.typeset([el.rendNode]);
+                                (Window as any).MathJax.typeset([el.rendNode]);
                             } else {
                                 // Version 2
-                                MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);
+                                (Window as any).MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);
                             }
 
                             // Obsolete:
@@ -1217,7 +1220,7 @@ export abstract class AbstractRenderer {
 
                             if (node) {
                                 /* eslint-disable no-undef */
-                                katex.render(content, node, {
+                                (window as any).katex.render(content, node, {
                                     macros: el.evalVisProp('katexmacros'),
                                     throwOnError: false
                                 });
@@ -1231,7 +1234,7 @@ export abstract class AbstractRenderer {
                         // See http://asciimath.org/ for more information
                         // about AsciiMathML and the project's source code.
                         try {
-                            AMprocessNode(el.rendNode, false);
+                            (window as any).AMprocessNode(el.rendNode, false);
                         } catch (e) {
                             JXG.debug("AsciiMathML not loaded (yet)");
                         }
@@ -1917,7 +1920,7 @@ export abstract class AbstractRenderer {
     abstract setDashStyle(el)
     abstract setGradient(el)
     abstract setLayer(el, level)
-    abstract setObjectFillColor(el, color, opacity, rendnodw)
+    abstract setObjectFillColor(el, color, opacity, rendnodw?)
     abstract setObjectStrokeColor(el, color, opacity)
     abstract setObjectStrokeWidth(el, width)
     abstract setObjectTransition(el, duration?)
