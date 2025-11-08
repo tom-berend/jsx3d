@@ -492,39 +492,38 @@ export class Statistics {
     /**
      * Subtracts two (sequences of) values. If two arrays are given and the lengths don't match the shortest
      * length is taken.
-     * @param {Array|Number} arr1 Minuend
-     * @param {Array|Number} arr2 Subtrahend
+     * @param {Array} arr1 Minuend
+     * @param {Array} arr2 Subtrahend
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    static subtract(arr1, arr2) {
+    static subtract(arr1: number[], arr2: number[]): number[] {
         var i,
             len,
-            res = [];
+            res: number[] = []
 
-        arr1 = Type.evalSlider(arr1);
-        arr2 = Type.evalSlider(arr2);
+        /////////////// the original allowed arr1 or arr2 to be numbers OR arrays.
+        // arr1 = Type.evalSlider(arr1);
+        // arr2 = Type.evalSlider(arr2);
 
-        if (Type.isArray(arr1) && Type.isNumber(arr2)) {
-            len = arr1.length;
+        // if (Type.isArray(arr1) && Type.isNumber(arr2)) {
+        //     len = arr1.length;
 
-            for (i = 0; i < len; i++) {
-                res[i] = arr1[i] - arr2;
-            }
-        } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
-            len = arr2.length;
+        //     for (i = 0; i < len; i++) {
+        //         res[i] = arr1[i] - arr2;
+        //     }
+        // } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
+        //     len = arr2.length;
 
-            for (i = 0; i < len; i++) {
-                res[i] = arr1 - arr2[i];
-            }
-        } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
-            len = Math.min(arr1.length, arr2.length);
+        //     for (i = 0; i < len; i++) {
+        //         res[i] = arr1 - arr2[i];
+        //     }
+        // } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
 
-            for (i = 0; i < len; i++) {
-                res[i] = arr1[i] - arr2[i];
-            }
-        } else {
-            res = arr1 - arr2;
+        len = Math.min(arr1.length, arr2.length);
+
+        for (i = 0; i < len; i++) {
+            res[i] = arr1[i] - arr2[i];
         }
 
         return res;
@@ -612,12 +611,16 @@ export class Statistics {
      * @returns {Number} value of a standard normal random variable
      * @memberof JXG.Math.Statistics
      */
+
+    private static spare: number
+    private static hasSpare: boolean = false;
+
     static generateGaussian(mean, stdDev) {
         var u, v, s;
 
-        if (this.hasSpare) {
-            this.hasSpare = false;
-            return this.spare * stdDev + mean;
+        if (Statistics.hasSpare) {
+            Statistics.hasSpare = false;
+            return Statistics.spare * stdDev + mean;
         }
 
         do {
@@ -628,8 +631,8 @@ export class Statistics {
 
         s = Math.sqrt((-2.0 * Math.log(s)) / s);
 
-        this.spare = v * s;
-        this.hasSpare = true;
+        Statistics.spare = v * s;
+        Statistics.hasSpare = true;
         return mean + stdDev * u * s;
     }
 
@@ -841,7 +844,7 @@ export class Statistics {
      * </script><pre>
      *
      */
-    static randomGamma(a, b, t) {
+    static randomGamma(a:number, b:number=1, t:number=0) {
         var u, v, x, y,
             p, q;
 
@@ -1389,7 +1392,7 @@ export class Statistics {
 
         // Normalize if density===true
         if (opt.density) {
-            s = JXG.Math.Statistics.sum(counts) + no_bin; // Normalize including long tail
+            s = Statistics.sum(counts) + no_bin; // Normalize including long tail
             for (i = 0; i < num_bins; i++) {
                 counts[i] /= (s * delta);
                 // counts[i] /= s;

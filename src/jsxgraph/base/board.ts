@@ -440,7 +440,7 @@ export class Board extends Events {
      * Pointer to the document element containing the board.
      * @type Object
      */
-    public document: Object
+    public document: Node
 
     /**
      * The html-id of the html element containing the board.
@@ -478,8 +478,8 @@ export class Board extends Events {
     public options: Object
     public origin
     public maxboundingbox: number[]
-        public unitX:number
-        public unitY:number
+    public unitX: number
+    public unitY: number
 
     /**
      * Constructs a new Board object.
@@ -507,13 +507,14 @@ export class Board extends Events {
      */
 
     public attr
+    public hasFullScreenEventHandlers: boolean = false
 
     constructor(container, renderer, id,
         origin, zoomX, zoomY, unitX, unitY,
         canvasWidth, canvasHeight, attributes) {
         super()
 
-        if (('document' in attributes) && attributes.document !== false) {
+        if (('document' in attributes) && attributes.document !== false && attributes.document !== null) {
             this.document = attributes.document;
         } else if (Env.isBrowser) {
             this.document = document;
@@ -734,7 +735,7 @@ export class Board extends Events {
          * </ul>
          * @type Number
          */
-        this.mode = this.BOARD_MODE_NONE;
+        this.mode = BOARD_MODE.NONE;
 
         /**
          * The update quality of the board. In most cases this is set to {@link JXG.Board#BOARD_QUALITY_HIGH}.
@@ -748,7 +749,7 @@ export class Board extends Events {
          * @type Number
          * @see JXG.Board#mode
          */
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
+        this.updateQuality = BOARD_QUALITY.HIGH;
 
         /**
          * If true updates are skipped.
@@ -1317,8 +1318,8 @@ export class Board extends Events {
          */
         if (
             this.cPos.length > 0 &&
-            (this.mode === this.BOARD_MODE_DRAG ||
-                this.mode === this.BOARD_MODE_MOVE_ORIGIN ||
+            (this.mode === BOARD_MODE.DRAG ||
+                this.mode === BOARD_MODE.MOVE_ORIGIN ||
                 new Date().getTime() - this.positionAccessLast < 1000)
         ) {
             return this.cPos;
@@ -1641,7 +1642,7 @@ export class Board extends Events {
 
         // Position relative to the top left corner
         v = [1, absPos[0] - cPos[0], absPos[1] - cPos[1]];
-        v = Mat.matVecMult(this.cssTransMat, v);
+        v = JSXMath.matVecMult(this.cssTransMat, v);
         v[1] /= v[0];
         v[2] /= v[0];
         return [v[1], v[2]];
@@ -1661,8 +1662,8 @@ export class Board extends Events {
         this.drag_dx = x - this.origin.scrCoords[1];
         this.drag_dy = y - this.origin.scrCoords[2];
 
-        this.mode = this.BOARD_MODE_MOVE_ORIGIN;
-        this.updateQuality = this.BOARD_QUALITY_LOW;
+        this.mode = BOARD_MODE.MOVE_ORIGIN;
+        this.updateQuality = BOARD_QUALITY.HIGHLOW;
     }
 
     /**
@@ -1754,7 +1755,7 @@ export class Board extends Events {
         }
 
         if (this.attr.drag.enabled && collect.length > 0) {
-            this.mode = this.BOARD_MODE_DRAG;
+            this.mode = BOARD_MODE.DRAG;
         }
 
         // A one-element array is returned.
@@ -1951,7 +1952,7 @@ export class Board extends Events {
         C = (dxx * dx + dyy * dy) / LL;
         S = (dyy * dx - dxx * dy) / LL;
         if (!scalable) {
-            lbda = Mat.hypot(C, S);
+            lbda = JSXMath.hypot(C, S);
             C /= lbda;
             S /= lbda;
         }
@@ -2101,7 +2102,7 @@ export class Board extends Events {
         var el,
             pEl,
             pId,
-            overObjects = {}
+            overObjects = {},
         len = this.objectsList.length;
 
         // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
@@ -2221,7 +2222,7 @@ export class Board extends Events {
     }
 
     mouseOriginMove(evt) {
-        var r = this.mode === this.BOARD_MODE_MOVE_ORIGIN,
+        var r = this.mode === BOARD_MODE.MOVE_ORIGIN,
             pos;
 
         if (r) {
@@ -2261,7 +2262,7 @@ export class Board extends Events {
      * @return {Boolean}     returns if the origin is moved.
      */
     touchOriginMove(evt) {
-        var r = this.mode === this.BOARD_MODE_MOVE_ORIGIN,
+        var r = this.mode === BOARD_MODE.MOVE_ORIGIN,
             pos;
 
         if (r) {
@@ -2278,8 +2279,8 @@ export class Board extends Events {
      * @private
      */
     originMoveEnd() {
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
-        this.mode = this.BOARD_MODE_NONE;
+        this.updateQuality = BOARD_QUALITY.HIGH;
+        this.mode = BOARD_MODE.NONE;
     }
 
     /**********************************************************
@@ -2455,20 +2456,22 @@ export class Board extends Events {
      * Registers pointer event handlers.
      */
     addPointerEventHandlers() {
+
+
         if (!this.hasPointerHandlers && Env.isBrowser) {
             var moveTarget = this.attr.movetarget || this.containerObj;
 
-            if (window.navigator.msPointerEnabled) {
-                // IE10-
-                Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
-            } else {
+            // if (window.navigator.msPointerEnabled) {
+            //     // IE10-
+            //     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+            //     Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
+            // } else {
                 Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                 Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                 Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);
                 Env.addEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
-            }
+            // }
 
             if (this.containerObj !== null) {
                 // This is needed for capturing touch events.
@@ -2761,7 +2764,7 @@ export class Board extends Events {
             doZoom = false,
             dx, dy, cx, cy;
 
-        if (this.mode !== this.BOARD_MODE_ZOOM) {
+        if (this.mode !== BOARD_MODE.ZOOM) {
             return true;
         }
         evt.preventDefault();
@@ -2908,7 +2911,7 @@ export class Board extends Events {
         pos = this.getMousePosition(evt, 0);
         this.initMoveOrigin(pos[0], pos[1]);
 
-        this.mode = this.BOARD_MODE_ZOOM;
+        this.mode = BOARD_MODE.ZOOM;
         return false;
     }
 
@@ -3036,8 +3039,8 @@ export class Board extends Events {
         if (this._board_touches.length > 0) {
             this.dehighlightAll();
         }
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
-        this.mode = this.BOARD_MODE_NONE;
+        this.updateQuality = BOARD_QUALITY.HIGH;
+        this.mode = BOARD_MODE.NONE;
         this._board_touches = [];
         this.touches = [];
     }
@@ -3165,7 +3168,7 @@ export class Board extends Events {
 
         if (this.attr.drag.enabled && object) {
             elements = [object];
-            this.mode = this.BOARD_MODE_DRAG;
+            this.mode = BOARD_MODE.DRAG;
         } else {
             elements = this.initMoveObject(pos[0], pos[1], evt, type);
         }
@@ -3232,7 +3235,7 @@ export class Board extends Events {
             return false;
         }
         if (this._getPointerInputDevice(evt) !== 'touch') {
-            if (this.mode === this.BOARD_MODE_NONE) {
+            if (this.mode === BOARD_MODE.NONE) {
                 this.mouseOriginMoveStart(evt);
             }
         } else {
@@ -3243,19 +3246,19 @@ export class Board extends Events {
             // 1. case: one finger. If allowed, this triggers pan with one finger
             if (
                 evt.touches.length === 1 &&
-                this.mode === this.BOARD_MODE_NONE &&
+                this.mode === BOARD_MODE.NONE &&
                 this.touchStartMoveOriginOneFinger(evt)
             ) {
                 // Empty by purpose
             } else if (
                 evt.touches.length === 2 &&
-                (this.mode === this.BOARD_MODE_NONE ||
-                    this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                (this.mode === BOARD_MODE.NONE ||
+                    this.mode === BOARD_MODE.MOVE_ORIGIN)
             ) {
                 // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
                 // This happens when the second finger hits the device. First, the
                 // 'one finger pan mode' has to be cancelled.
-                if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                if (this.mode === BOARD_MODE.MOVE_ORIGIN) {
                     this.originMoveEnd();
                 }
 
@@ -3267,7 +3270,7 @@ export class Board extends Events {
         // For this: pan by one finger has to be disabled
 
         ta = 'none';   // JSXGraph catches all user touch events
-        if (this.mode === this.BOARD_MODE_NONE &&
+        if (this.mode === BOARD_MODE.NONE &&
             (Type.evaluate(this.attr.browserpan) === true || Type.evaluate(this.attr.browserpan.enabled) === true) &&
             // One-finger pan has priority over browserPan
             (Type.evaluate(this.attr.pan.enabled) === false || Type.evaluate(this.attr.pan.needtwofingers) === true)
@@ -3417,7 +3420,7 @@ export class Board extends Events {
     //         (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
     //         this.pointerUpListener(evt);
     //     }
-    //     return this.mode === this.BOARD_MODE_NONE;
+    //     return this.mode === BOARD_MODE.NONE;
     // }
 
     /**
@@ -3437,24 +3440,24 @@ export class Board extends Events {
             // Test, if there was a previous down event of this _getPointerId
             // (in case it is a touch event).
             // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
-            return this.BOARD_MODE_NONE;
+            return BOARD_MODE.NONE;
         }
 
         if (!this.checkFrameRate(evt)) {
             return false;
         }
 
-        if (this.mode !== this.BOARD_MODE_DRAG) {
+        if (this.mode !== BOARD_MODE.DRAG) {
             this.dehighlightAll();
             this.displayInfobox(false);
         }
 
-        if (this.mode !== this.BOARD_MODE_NONE) {
+        if (this.mode !== BOARD_MODE.NONE) {
             evt.preventDefault();
             evt.stopPropagation();
         }
 
-        this.updateQuality = this.BOARD_QUALITY_LOW;
+        this.updateQuality = BOARD_QUALITY.HIGHLOW;
         // Mouse, touch or pen device
         this._inputDevice = this._getPointerInputDevice(evt);
         type = this._inputDevice;
@@ -3469,7 +3472,7 @@ export class Board extends Events {
             pos[0] >= this.canvasWidth - eps ||
             pos[1] >= this.canvasHeight - eps
         ) {
-            return this.mode === this.BOARD_MODE_NONE;
+            return this.mode === BOARD_MODE.NONE;
         }
 
         // selection
@@ -3480,7 +3483,7 @@ export class Board extends Events {
                 [evt, this.mode]
             );
         } else if (!this.mouseOriginMove(evt)) {
-            if (this.mode === this.BOARD_MODE_DRAG) {
+            if (this.mode === BOARD_MODE.DRAG) {
                 // Run through all jsxgraph elements which are touched by at least one finger.
                 for (i = 0; i < this.touches.length; i++) {
                     touchTargets = this.touches[i].targets;
@@ -3523,13 +3526,13 @@ export class Board extends Events {
 
         // Hiding the infobox is commented out, since it prevents showing the infobox
         // on IE 11+ on 'over'
-        //if (this.mode !== this.BOARD_MODE_DRAG) {
+        //if (this.mode !== BOARD_MODE.DRAG) {
         //this.displayInfobox(false);
         //}
         this.triggerEventHandlers(['pointermove', 'MSPointerMove', 'move'], [evt, this.mode]);
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
+        this.updateQuality = BOARD_QUALITY.HIGH;
 
-        return this.mode === this.BOARD_MODE_NONE;
+        return this.mode === BOARD_MODE.NONE;
     }
 
     /**
@@ -3863,18 +3866,18 @@ export class Board extends Events {
         // 1. case: one finger. If allowed, this triggers pan with one finger
         if (
             evtTouches.length === 1 &&
-            this.mode === this.BOARD_MODE_NONE &&
+            this.mode === BOARD_MODE.NONE &&
             this.touchStartMoveOriginOneFinger(evt)
         ) {
         } else if (
             evtTouches.length === 2 &&
-            (this.mode === this.BOARD_MODE_NONE ||
-                this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+            (this.mode === BOARD_MODE.NONE ||
+                this.mode === BOARD_MODE.MOVE_ORIGIN)
         ) {
             // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
             // This happens when the second finger hits the device. First, the
             // 'one finger pan mode' has to be cancelled.
-            if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+            if (this.mode === BOARD_MODE.MOVE_ORIGIN) {
                 this.originMoveEnd();
             }
             this.gestureStartListener(evt);
@@ -3903,19 +3906,19 @@ export class Board extends Events {
             return false;
         }
 
-        if (this.mode !== this.BOARD_MODE_NONE) {
+        if (this.mode !== BOARD_MODE.NONE) {
             evt.preventDefault();
             evt.stopPropagation();
         }
 
-        if (this.mode !== this.BOARD_MODE_DRAG) {
+        if (this.mode !== BOARD_MODE.DRAG) {
             this.dehighlightAll();
             this.displayInfobox(false);
         }
 
         this._inputDevice = 'touch';
         this.options.precision.hasPoint = this.options.precision.touch;
-        this.updateQuality = this.BOARD_QUALITY_LOW;
+        this.updateQuality = BOARD_QUALITY.HIGHLOW;
 
         // selection
         if (this.selectingMode) {
@@ -3932,7 +3935,7 @@ export class Board extends Events {
             }
         } else {
             if (!this.touchOriginMove(evt)) {
-                if (this.mode === this.BOARD_MODE_DRAG) {
+                if (this.mode === BOARD_MODE.DRAG) {
                     // Runs over through all elements which are touched
                     // by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
@@ -4014,15 +4017,15 @@ export class Board extends Events {
             }
         }
 
-        if (this.mode !== this.BOARD_MODE_DRAG) {
+        if (this.mode !== BOARD_MODE.DRAG) {
             this.displayInfobox(false);
         }
 
         this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
         this.options.precision.hasPoint = this.options.precision.mouse;
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
+        this.updateQuality = BOARD_QUALITY.HIGH;
 
-        return this.mode === this.BOARD_MODE_NONE;
+        return this.mode === BOARD_MODE.NONE;
     }
 
     /**
@@ -4166,7 +4169,7 @@ export class Board extends Events {
             }
 
             this.dehighlightAll();
-            this.updateQuality = this.BOARD_QUALITY_HIGH;
+            this.updateQuality = BOARD_QUALITY.HIGH;
 
             this.originMoveEnd();
             if (updateNeeded) {
@@ -4218,7 +4221,7 @@ export class Board extends Events {
 
         // if no draggable object can be found, get out here immediately
         if (elements.length === 0) {
-            this.mode = this.BOARD_MODE_NONE;
+            this.mode = BOARD_MODE.NONE;
             result = true;
         } else {
             this.mouse = {
@@ -4253,7 +4256,7 @@ export class Board extends Events {
             }
         }
 
-        if (this.mode === this.BOARD_MODE_NONE) {
+        if (this.mode === BOARD_MODE.NONE) {
             result = this.mouseOriginMoveStart(evt);
         }
 
@@ -4275,9 +4278,9 @@ export class Board extends Events {
 
         pos = this.getMousePosition(evt);
 
-        this.updateQuality = this.BOARD_QUALITY_LOW;
+        this.updateQuality = BOARD_QUALITY.HIGHLOW;
 
-        if (this.mode !== this.BOARD_MODE_DRAG) {
+        if (this.mode !== BOARD_MODE.DRAG) {
             this.dehighlightAll();
             this.displayInfobox(false);
         }
@@ -4297,7 +4300,7 @@ export class Board extends Events {
                 [evt, this.mode]
             );
         } else if (!this.mouseOriginMove(evt)) {
-            if (this.mode === this.BOARD_MODE_DRAG) {
+            if (this.mode === BOARD_MODE.DRAG) {
                 this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
             } else {
                 // BOARD_MODE_NONE
@@ -4306,7 +4309,7 @@ export class Board extends Events {
             }
             this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
         }
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
+        this.updateQuality = BOARD_QUALITY.HIGH;
     }
 
     /**
@@ -4321,7 +4324,7 @@ export class Board extends Events {
         }
 
         // redraw with high precision
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
+        this.updateQuality = BOARD_QUALITY.HIGH;
 
         if (this.mouse && this.mouse.obj) {
             if (!Type.exists(this.mouse.obj.coords)) {
@@ -4556,7 +4559,7 @@ export class Board extends Events {
                 ) || !this.geonextCompatibilityMode) &&
                 !el.evalVisProp('fixed')
             ) {
-                this.mode = this.BOARD_MODE_DRAG;
+                this.mode = BOARD_MODE.DRAG;
                 if (Type.exists(el.coords)) {
                     dir[0] += actPos[0];
                     dir[1] += actPos[1];
@@ -4577,7 +4580,7 @@ export class Board extends Events {
 
                 this.triggerEventHandlers(['keymove', 'move'], [evt, this.mode]);
                 el.triggerEventHandlers(['keydrag', 'drag'], [evt]);
-                this.mode = this.BOARD_MODE_NONE;
+                this.mode = BOARD_MODE.NONE;
             }
         }
 
@@ -5086,8 +5089,8 @@ export class Board extends Events {
     dehighlightAll() {
         var el,
             pEl,
-            stillHighlighted = {}
-        needsDeHighlight = false;
+            stillHighlighted = {},
+            needsDeHighlight = false;
 
         for (el in this.highlightedObjects) {
             if (this.highlightedObjects.hasOwnProperty(el)) {
@@ -6656,7 +6659,7 @@ export class Board extends Events {
             offX = 0,
             offY = 0,
             zoom_ratio = 1,
-            ratio, dx, dy, prev_w, prev_h,
+            ratio, dx: number, dy: number, prev_w, prev_h,
             dim = Env.getDimensions(this.containerObj, this.document);
 
         if (!Type.isArray(bbox)) {
@@ -6704,7 +6707,7 @@ export class Board extends Events {
                     this.unitX = this.unitY * ratio;
                 } else {
                     // Switch dominating interval
-                    this.unitY = h / Math.abs(dx) * Mat.sign(dy) / zoom_ratio;
+                    this.unitY = h / Math.abs(dx) * JSXMath.sign(dy) / zoom_ratio;
                     this.unitX = this.unitY * ratio;
                 }
             } else {
@@ -6713,7 +6716,7 @@ export class Board extends Events {
                     this.unitY = this.unitX / ratio;
                 } else {
                     // Switch dominating interval
-                    this.unitX = w / Math.abs(dy) * Mat.sign(dx) * zoom_ratio;
+                    this.unitX = w / Math.abs(dy) * JSXMath.sign(dx) * zoom_ratio;
                     this.unitY = this.unitX / ratio;
                 }
             }
@@ -7475,26 +7478,26 @@ export class Board extends Events {
         if (Type.exists(o.getRootNode)) {
             o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
             while (o) {
-                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
                 o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
             }
-            this.cssTransMat = Mat.inverse(this.cssTransMat);
+            this.cssTransMat = JSXMath.inverse(this.cssTransMat);
         } else {
             /*
              * This is necessary for IE11
              */
             o = o.offsetParent;
             while (o) {
-                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
 
                 o2 = o2.parentNode;
                 while (o2 !== o) {
-                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                    this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
                     o2 = o2.parentNode;
                 }
                 o = o.offsetParent;
             }
-            this.cssTransMat = Mat.inverse(this.cssTransMat);
+            this.cssTransMat = JSXMath.inverse(this.cssTransMat);
         }
         return this;
     }
@@ -8556,9 +8559,9 @@ export class Board extends Events {
                             cpyb = Numerics.D(c.Y)(b),
                             cpxab = Numerics.D(c.X)((a + b) * 0.5),
                             cpyab = Numerics.D(c.Y)((a + b) * 0.5),
-                            fa = Mat.hypot(cpxa, cpya),
-                            fb = Mat.hypot(cpxb, cpyb),
-                            fab = Mat.hypot(cpxab, cpyab);
+                            fa = JSXMath.hypot(cpxa, cpya),
+                            fb = JSXMath.hypot(cpxb, cpyb),
+                            fab = JSXMath.hypot(cpxab, cpyab);
 
                         return ((fa + 4 * fab + fb) * (b - a)) / 6;
                     }

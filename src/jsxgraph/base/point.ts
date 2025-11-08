@@ -82,6 +82,11 @@ export class Point extends CoordsElement {
         // this.usrC coords = new Coords(coordinates);
 
         this.elType = "point";
+        this.visProp = Type.merge(this.visProp, Options)
+
+        this.otype = OBJECT_TYPE.POINT
+        this.oclass = OBJECT_CLASS.POINT
+
 
         /* Register point at board. */
         this.id = this.board.setId(this, "P");

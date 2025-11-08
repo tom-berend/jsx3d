@@ -102,7 +102,7 @@ export class JSXGraph {
      * @returns {Object}           Reference to the rendering engine object.
      * @private
      */
-    static initRenderer(box, dim, doc, attrRenderer) {
+    static initRenderer(box:string, dim:number[], doc:any=null, attrRenderer:string='svg') {
         var boxid, renderer;
 
         // Former version:
@@ -115,7 +115,7 @@ export class JSXGraph {
             boxid = Type.isString(box) ? doc.getElementById(box) : box;
 
             // Remove everything from the container before initializing the renderer and the board
-            while (boxid.firstChild) {
+            while (boxid.fievenrstChild) {
                 boxid.removeChild(boxid.firstChild);
             }
         } else {

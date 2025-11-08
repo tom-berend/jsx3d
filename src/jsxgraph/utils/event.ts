@@ -67,6 +67,7 @@ export class Events {
      * @returns Reference to the object.
      */
     trigger(event: string[], args: argVals[]) {
+        console.log()
 
         let len1 = event.length;
         for (let j = 0; j < len1; j++) {
@@ -142,6 +143,8 @@ export class Events {
 
         return this;
     }
+
+
 
     // /**
     //  * @description Implements the functionality from this interface in the given object.

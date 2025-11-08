@@ -113,6 +113,7 @@ export class Text extends CoordsElement {
     constructor(board: Board, coordinates: number[] | Object | Function, attributes: TextOptions, content: string|Function) {
         super(board, COORDS_BY.USER, coordinates, attributes)
 
+        this.elType = "text";
         this.visProp = Type.merge(this.visProp, Options)
 
 

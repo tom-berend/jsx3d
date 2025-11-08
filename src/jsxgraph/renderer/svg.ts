@@ -86,7 +86,7 @@ export class SVGRenderer extends AbstractRenderer {
 
     foreignObjLayer: any
 
-    layer: any
+    layer: Node[]
 
 
     /**
@@ -96,7 +96,7 @@ export class SVGRenderer extends AbstractRenderer {
      */
     xlinkNamespace = "http://www.w3.org/1999/xlink";
 
-    constructor(container: HTMLDivElement | null, dim) {
+    constructor(container: HTMLDivElement, dim) {
         super()
         var i;
 
@@ -167,6 +167,14 @@ export class SVGRenderer extends AbstractRenderer {
 
 
     }
+
+    /** TypeScript magic - see https://mariusschulz.com/blog/assertion-functions-in-typescript */
+    assertNonNullish<TValue>(value: TValue, message: string): asserts value is NonNullable<TValue> {
+        if (value === null || value === undefined) {
+            throw Error(message);
+        }
+    }
+
     /**
      * Filters are used to apply shadows.
      * @type Node
@@ -251,7 +259,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @return {String}
      * @private
      */
-    uniqName(id: string) {
+    uniqName(id: string): string {
         return this.container.id + '_' +
             Array.prototype.slice.call(arguments).join('_');
     };
@@ -269,7 +277,7 @@ export class SVGRenderer extends AbstractRenderer {
      * // Output:
      * // xxx_bbbTriangleEnd
      */
-    toStr(...args) {
+    toStr(...args): string {
         // ES6 would be [...arguments].join()
         var str = Array.prototype.slice.call(arguments).join('');
         // Mask special symbols like '/' and '\' in id
@@ -293,7 +301,7 @@ export class SVGRenderer extends AbstractRenderer {
      * // Output:
      * // url(#xxx_bbbTriangleEnd)
      */
-    toURL(...args:string[]) {
+    toURL(...args: string[]) {
         return 'url(#' +
             this.toStr.apply(this, arguments) + // Pass the arguments to toStr
             ')';
@@ -699,7 +707,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     drawInternalText(el) {
-        console.log('drawInternalText',el)
+        console.log('drawInternalText', el)
         var node = this.createPrim("text", el.id);
 
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
@@ -941,19 +949,18 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {Number} level The layer the node is attached to. This is the index of the layer in
      * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in SVGRenderer.
      */
-    appendChildPrim(node, level=0) {  // trace nodes have level not set
-        console.log('appendChildPrim',level,node)
+    appendChildPrim(node: Node, level: number = 0) {  // trace nodes have level not set
+        console.log('appendChildPrim', level, node)
+
+        if (typeof level !== 'number') {      // someone is misbehaving
+            console.warn('level is not a number', level)
+            level = 0
+        }
+
         if (!Type.exists(level)) {
-            // trace nodes have level not set
             level = 0;
         } else if (level >= Options.layer.numlayers) {
             level = Options.layer.numlayers - 1;
-        }
-        if(this.layer[level]===undefined){
-            console.warn('who?')
-        }
-        if(node===undefined){
-            console.warn('who?')
         }
         this.layer[level].appendChild(node);
 
@@ -2529,7 +2536,7 @@ export class SVGRenderer extends AbstractRenderer {
      * 	board.renderer.dumpToCanvas('canvas');
      * 	setTimeout(function() { console.log('done'); } 400);
      */
-    dumpToCanvas(canvasId, w, h, ignoreTexts) {
+    dumpToCanvas(canvasId, w, h, ignoreTexts): Promise<unknown> {
         var svg, tmpImg,
             cv, ctx,
             doc = this.container.ownerDocument;
@@ -2695,6 +2702,8 @@ export class SVGRenderer extends AbstractRenderer {
             // Add all nodes
             node.appendChild(img);
             node.appendChild(button);
+
+            this.assertNonNullish(this.container, "Expected a container")
             parent.insertBefore(node, this.container.nextSibling);
         }
 
@@ -2711,7 +2720,7 @@ export class SVGRenderer extends AbstractRenderer {
             img.src = canvas.toDataURL("image/png");
 
             // Remove canvas node
-            if (!isDebug) {
+            if (!isDebug && parent !== null) {
                 parent.removeChild(canvas);
             }
         };

@@ -41,6 +41,10 @@
 
 // import { JXG } from "../Env.js";
 import { LooseObject, Type } from "./type.js";
+import { GeometryElement } from "../base/element.js";
+import { Board } from '../base/board.js'
+import { Events } from '../utils/event.js'
+
 
 export class Env {
     /**
@@ -111,7 +115,7 @@ export class Env {
      */
     static isBrowser() {
         console.log("isBrowser", window !== null && document !== null)
-
+        return true // TODO
         return (window !== null && document !== null)
     }
 
@@ -450,31 +454,31 @@ export class Env {
      * an options object or the useCapture Boolean.
      *
      */
-    static addEvent(obj, type, fn, owner, options?: object | boolean) {
+    static addEvent(obj: Node, type: string, fn: Function, owner: Board, options: object | boolean = false) {
 
+        console.log('addEvent', type)
 
-        // var el = function () {    /// TBTB ???
-        //     return fn.apply(owner, arguments);
-        // };
-        let el: LooseObject = {}
+        let callback = function () {
+            return fn.apply(owner, arguments);
+        };
 
-        el.origin = fn;
+        // callback.origin = fn;  // TBTB ????
+
         // Check if owner is a board
-        if (typeof owner === 'object' && Type.exists(owner.BOARD_MODE_NONE)) {
+        if (typeof owner === 'object' && Type.exists(owner.mode)) {
             owner['x_internal' + type] = owner['x_internal' + type] || [];
-            owner['x_internal' + type].push(el);
+            owner['x_internal' + type].push(callback);
         }
 
         // Non-IE browser
         if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
-            options = options || false;  // options or useCapture
-            obj.addEventListener(type, el, options);
+            obj.addEventListener(type, callback, options);
         }
 
-        // IE
-        if (Type.exists(obj) && Type.exists(obj.attachEvent)) {
-            obj.attachEvent("on" + type, el);
-        }
+        // // IE
+        // if (Type.exists(obj) && Type.exists(obj.attachEvent)) {
+        //     obj.attachEvent("on" + type, el);
+        // }
     }
 
     /**
@@ -486,6 +490,8 @@ export class Env {
      */
     static removeEvent(obj, type, fn, owner) {
         var i;
+
+        console.log('removeEvent', type)
 
         if (!Type.exists(owner)) {
             Env.debug("no such owner");
@@ -502,8 +508,6 @@ export class Env {
             return;
         }
 
-        // TODO:  Type.indexOf didn't work.  search aarray for object with key 'origin'
-        throw new Error('fix me')
         i = Type.indexOf(owner["x_internal" + type], fn, "origin");
 
         if (i === -1) {

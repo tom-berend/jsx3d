@@ -55,7 +55,7 @@ import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";
 import { Type } from "../utils/type.js";
 import { Env } from "../utils/env.js";
-import { OBJECT_TYPE } from "../base/constants.js";
+import { OBJECT_CLASS,OBJECT_TYPE } from "../base/constants.js";
 
 
 /**
@@ -325,6 +325,7 @@ export abstract class AbstractRenderer {
         }
 
         console.log('drawPoint', this.createPrim(prim, el.id),)
+        console.log( el.evalVisProp('layer'))
         el.rendNode = this.appendChildPrim(
             this.createPrim(prim, el.id),
             el.evalVisProp('layer')
@@ -527,9 +528,9 @@ export abstract class AbstractRenderer {
         this.makeArrows(el, arrowData);
 
         // Draw the paths with arrow heads
-        if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+        if (el.elementClass === OBJECT_CLASS.LINE) {
             this.updateLineWithEndings(el, arrowData);
-        } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
+        } else if (el.elementClass === OBJECT_CLASS.CURVE) {
             this.updatePath(el);
         }
 
@@ -573,7 +574,7 @@ export abstract class AbstractRenderer {
             if (Type.exists(ev_fa.type)) {
                 typeFirst = el.eval(ev_fa.type);
             } else {
-                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elementClass === OBJECT_CLASS.LINE) {
                     typeFirst = 1;
                 } else {
                     typeFirst = 7;
@@ -582,7 +583,7 @@ export abstract class AbstractRenderer {
             if (Type.exists(ev_la.type)) {
                 typeLast = el.eval(ev_la.type);
             } else {
-                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elementClass === OBJECT_CLASS.LINE) {
                     typeLast = 1;
                 } else {
                     typeLast = 7;
@@ -1058,7 +1059,7 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText(el) {
-        console.log('abstract: updating Text', el.content, el)
+        console.warn('abstract: updating Text', el.content, el)
         var content = el.plaintext,
             v, c,
             parentNode, node,
@@ -1553,7 +1554,7 @@ export abstract class AbstractRenderer {
                     this.highlight(el.borders[i], !do_hl);
                 }
             } else {
-                if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
+                if (el.elementClass === OBJECT_CLASS.TEXT) {
                     this.updateTextStyle(el, true);
                 } else if (el.type === OBJECT_TYPE.IMAGE) {
                     this.updateImageStyle(el, true);
@@ -1587,8 +1588,8 @@ export abstract class AbstractRenderer {
                 );
                 this.setObjectStrokeWidth(el, sw);
                 if (
-                    el.elementClass === Const.OBJECT_CLASS_LINE ||
-                    el.elementClass === Const.OBJECT_CLASS_CURVE
+                    el.elementClass === OBJECT_CLASS.LINE ||
+                    el.elementClass === OBJECT_CLASS.CURVE
                 ) {
                     this.updatePathWithArrowHeads(el, true);
                 }
@@ -1616,7 +1617,7 @@ export abstract class AbstractRenderer {
                     this.noHighlight(el.borders[i]);
                 }
             } else {
-                if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
+                if (el.elementClass === OBJECT_CLASS.TEXT) {
                     this.updateTextStyle(el, false);
                 } else if (el.type === OBJECT_TYPE.IMAGE) {
                     this.updateImageStyle(el, false);
@@ -1630,8 +1631,8 @@ export abstract class AbstractRenderer {
             sw = el.evalVisProp('strokewidth');
             this.setObjectStrokeWidth(el, sw);
             if (
-                el.elementClass === Const.OBJECT_CLASS_LINE ||
-                el.elementClass === Const.OBJECT_CLASS_CURVE
+                el.elementClass === OBJECT_CLASS.LINE ||
+                el.elementClass === OBJECT_CLASS.CURVE
             ) {
                 this.updatePathWithArrowHeads(el, false);
             }
