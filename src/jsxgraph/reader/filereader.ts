@@ -30,6 +30,7 @@
  */
 
 /*global JXG:true, define: true, ActiveXObject:true, jxgBinFileReader:true, DOMParser:true, XMLHttpRequest:true, document:true, navigator:true*/
+
 /*jslint nomen: true, plusplus: true*/
 
 import { JXG } from "../jxg.js";
@@ -44,7 +45,7 @@ import { Base64 } from "../utils/base64.js";
 
 //TODO ; is this file safe as static???
 
-export class FileReader {
+export class JSXFileReader {
     /**
      *
      * @param {String} url
@@ -55,78 +56,97 @@ export class FileReader {
      *
      * @private
      */
-    static handleRemoteFile(url, board, format, async, encoding, callback) {
-        let request: XMLHttpRequest
 
-        try {
-            request = new XMLHttpRequest();
-            if (format.toLowerCase() === "raw") {
-                request.overrideMimeType("text/plain; charset=" + encoding);
-            } else {
-                request.overrideMimeType("text/xml; charset=" + encoding);
-            }
-        } catch (e) {
-            try {
-                request = new ActiveXObject("Msxml2.XMLHTTP");
-            } catch (ex) {
-                try {
-                    request = new ActiveXObject("Microsoft.XMLHTTP");
-                } catch (exc) {
-                    request = false;
-                }
-            }
-        }
-        if (!request) {
-            JXG.debug("AJAX not activated!");
-            return;
-        }
+    public cbp: Function = ()=>{}
+    public cb
+    //    public ActiveXObject
+       public  jxgBinFileReader
+       public DOMParser
+       public  XMLHttpRequest
+    //    public document:true, navigator:true*/
 
-        request.open("GET", url, async);
-        if (format.toLowerCase() === "raw") {
-            this.cbp = function () {
-                var req = request;
-                if (req.readyState === 4) {
-                    board(req.responseText);
-                }
-            };
-        } else {
-            this.cbp = function () {
-                var req = request,
-                    text = "";
+    constructor(){
+        this.jxgBinFileReader = undefined
+       this.DOMParser = undefined
+       this.XMLHttpRequest = undefined
+    }
 
-                if (req.readyState === 4) {
-                    // Hack for ancient IEs:
-                    // We use the Visual Basic stuff from below.
-                    if (
-                        Type.exists(req.responseStream) &&
-                        // PK: zip, geogebra
-                        // 31: gzip, cinderella
-                        (req.responseText.slice(0, 2) === "PK" ||
-                            Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)
-                    ) {
-                        // After this, text contains the binary? zip-compressed string
-                        text = Base64.decode(jxgBinFileReader(req));
-                    } else {
-                        // This is for all browsers except ancient IEs.
-                        text = req.responseText;
-                        // console.log(text);
-                    }
-                    this.parseString(text, board, format, callback);
-                }
-            };
-        }
+    handleRemoteFile(url, board, format, async, encoding, callback) {
 
-        this.cb = Type.bind(this.cbp, this);
-        // Old style
-        request.onreadystatechange = this.cb;
+        // TODO: clean this up
 
-        try {
-            request.send(null);
-        } catch (ex2) {
-            throw new Error(
-                "JSXGraph: A problem occurred while trying to read remote file '" + url + "'."
-            );
-        }
+
+        // let request: XMLHttpRequest
+
+        // try {
+        //     request = new XMLHttpRequest();
+        //     if (format.toLowerCase() === "raw") {
+        //         request.overrideMimeType("text/plain; charset=" + encoding);
+        //     } else {
+        //         request.overrideMimeType("text/xml; charset=" + encoding);
+        //     }
+        // } catch (e) {
+        //     try {
+        //         request = new ActiveXObject("Msxml2.XMLHTTP");
+        //     } catch (ex) {
+        //         try {
+        //             request = new ActiveXObject("Microsoft.XMLHTTP");
+        //         } catch (exc) {
+        //             request = null;
+        //         }
+        //     }
+        // }
+        // if (!request) {
+        //     JXG.debug("AJAX not activated!");
+        //     return;
+        // }
+
+        // request.open("GET", url, async);
+        // if (format.toLowerCase() === "raw") {
+        //     this.cbp = function () {
+        //         var req = request;
+        //         if (req.readyState === 4) {
+        //             board(req.responseText);
+        //         }
+        //     };
+        // } else {
+        //     this.cbp = function () {
+        //         var req = request,
+        //             text = "";
+
+        //         if (req.readyState === 4) {
+        //             // Hack for ancient IEs:
+        //             // We use the Visual Basic stuff from below.
+        //             if (
+        //                 Type.exists(req.responseText) && //TODO: was  .responseStream) &&
+        //                 // PK: zip, geogebra
+        //                 // 31: gzip, cinderella
+        //                 (req.responseText.slice(0, 2) === "PK" ||
+        //                     Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)
+        //             ) {
+        //                 // After this, text contains the binary? zip-compressed string
+        //                 text = Base64.decode(this.jxgBinFileReader(req));
+        //             } else {
+        //                 // This is for all browsers except ancient IEs.
+        //                 text = req.responseText;
+        //                 // console.log(text);
+        //             }
+        //             this.parseString(text, board, format, callback);
+        //         }
+        //     };
+        // }
+
+        // this.cb = Type.bind(this.cbp, this);
+        // // Old style
+        // request.onreadystatechange = this.cb;
+
+        // try {
+        //     request.send(null);
+        // } catch (ex2) {
+        //     throw new Error(
+        //         "JSXGraph: A problem occurred while trying to read remote file '" + url + "'."
+        //     );
+        // }
     }
 
     /**
@@ -139,7 +159,7 @@ export class FileReader {
      *
      * @private
      */
-    static handleLocalFile(url, board, format, async, encoding, callback) {
+    handleLocalFile(url, board, format, async, encoding, callback) {
         if (!Type.exists(async)) {
             async = true;
         }
@@ -158,7 +178,7 @@ export class FileReader {
 
         this.cb = Type.bind(this.cbp, this);
 
-        var reader = new FileReader();
+        let reader = new FileReader();
         reader.onload = this.cb;
         if (format.toLowerCase() === "raw") {
             reader.readAsText(url);
@@ -184,7 +204,7 @@ export class FileReader {
      * @param {Boolean} async Call ajax asynchonously.
      * @param {function} callback A function that is run when the board is ready.
      */
-    static parseFileContent(url, board, format, async, encoding, callback) {
+    parseFileContent(url, board, format, async, encoding, callback) {
         if (Type.isString(url) || FileReader === undefined) {
             this.handleRemoteFile(url, board, format, async, encoding, callback);
         } else {
@@ -208,7 +228,7 @@ export class FileReader {
      * </dl>
      * @param {function} callback
      */
-    static parseString(str, board, format, callback) {
+    parseString(str, board, format, callback) {
         var Reader, read;
 
         format = format.toLowerCase();

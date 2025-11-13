@@ -90,6 +90,7 @@ export enum OBJECT_TYPE {
     POLYHEDRON3D,
     POLYGON3D,
 
+    NOTYETASSIGNED
 }
 
 // IMPORTANT:

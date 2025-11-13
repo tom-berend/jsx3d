@@ -49,13 +49,15 @@
 
 import { JXG } from "../jxg.js";
 import { Options } from "../options.js";
+// import { GeometryElementOptions } from "../optionInterfaces.js'
 import { Coords } from "../base/coords.js";
 // import { Constants } from "../base/constants.js";
 import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";
-import { Type } from "../utils/type.js";
+import { LooseObject, Type } from "../utils/type.js";
 import { Env } from "../utils/env.js";
-import { OBJECT_CLASS,OBJECT_TYPE } from "../base/constants.js";
+import { OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from "../base/constants.js";
+import { GeometryElement } from "../base/element.js";
 
 
 /**
@@ -138,7 +140,8 @@ export abstract class AbstractRenderer {
      * The HTML element that stores the JSXGraph board in it.
      * @type Node
      */
-    container = null;
+    container: HTMLDivElement | null = null
+
 
     /**
      * This is used to easily determine which renderer we are using
@@ -201,7 +204,7 @@ export abstract class AbstractRenderer {
      * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
      * @private
      */
-    _updateVisual(el, not, enhanced) {
+    _updateVisual(el:GeometryElement, not:LooseObject={}, enhanced:boolean = false) {
         if (enhanced || this.enhancedRendering) {
             not = not || {};
 
@@ -242,7 +245,7 @@ export abstract class AbstractRenderer {
                 }
 
                 if (!not.dash) {
-                    this.setDashStyle(el, el.visProp);
+                    this.setDashStyle(el);
                 }
 
                 if (!not.shadow) {
@@ -325,7 +328,7 @@ export abstract class AbstractRenderer {
         }
 
         console.log('drawPoint', this.createPrim(prim, el.id),)
-        console.log( el.evalVisProp('layer'))
+        console.log(el.evalVisProp('layer'))
         el.rendNode = this.appendChildPrim(
             this.createPrim(prim, el.id),
             el.evalVisProp('layer')
@@ -507,7 +510,7 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#makeArrows
      * @see JXG.AbstractRenderer#getArrowHeadData
      */
-    updatePathWithArrowHeads(el, doHighlight) {
+    updatePathWithArrowHeads(el, doHighlight?) {
         var hl = doHighlight ? 'highlight' : '',
             w,
             arrowData;
@@ -1005,47 +1008,53 @@ export abstract class AbstractRenderer {
         var node, z, level, ev_visible;
 
         console.log('drawText', el, el.evalVisProp('display'))
-        if (
-            el.evalVisProp('display') === "html" &&
-            Env.isBrowser &&
-            this.type !== "no"
-        ) {
-            node = this.container.ownerDocument.createElement("div");
-            //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
-            node.style.position = "absolute";
-            node.className = el.evalVisProp('cssclass');
+        if (this.container !== null) {
+            if (
+                el.evalVisProp('display') === "html" &&
+                Env.isBrowser() &&
+                this.type !== "no"
+            ) {
+                node = this.container.ownerDocument.createElement("div");
 
-            level = el.evalVisProp('layer');
-            if (!Type.exists(level)) {
-                // trace nodes have level not set
-                level = 0;
-            }
+                //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
+                node.style.position = "absolute";
+                node.className = el.evalVisProp('cssclass');
 
-            if (this.container.style.zIndex === "") {
-                z = 0;
+                level = el.evalVisProp('layer');
+                if (!Type.exists(level)) {
+                    // trace nodes have level not set
+                    level = 0;
+                }
+
+                if (this.container.style.zIndex === "") {
+                    z = 0;
+                } else {
+                    z = parseInt(this.container.style.zIndex, 10);
+                }
+
+                node.style.zIndex = z + level;
+                this.container.appendChild(node);
+                el.rendNode = node  // TODO tbtb - added but i think this is wrong
+
+                node.setAttribute("id", this.container.id + "_" + el.id);
             } else {
-                z = parseInt(this.container.style.zIndex, 10);
+                node = this.drawInternalText(el);
+
+                el.rendNode = node;
+                el.htmlStr = "";
+
+                // Set el.visPropCalc.visible
+                if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
+                    ev_visible = el.visProp.anchor.evalVisProp('visible');
+                    el.prepareUpdate().updateVisibility(ev_visible);
+                } else {
+                    el.prepareUpdate().updateVisibility();
+                }
+                this.updateText(el);
             }
-
-            node.style.zIndex = z + level;
-            this.container.appendChild(node);
-
-            node.setAttribute("id", this.container.id + "_" + el.id);
         } else {
-            node = this.drawInternalText(el);
+            throw new Error('container was null')
         }
-
-        el.rendNode = node;
-        el.htmlStr = "";
-
-        // Set el.visPropCalc.visible
-        if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
-            ev_visible = el.visProp.anchor.evalVisProp('visible');
-            el.prepareUpdate().updateVisibility(ev_visible);
-        } else {
-            el.prepareUpdate().updateVisibility();
-        }
-        this.updateText(el);
     }
 
     /**
@@ -1181,7 +1190,7 @@ export abstract class AbstractRenderer {
                                 (Window as any).MathJax.typeset([el.rendNode]);
                             } else {
                                 // Version 2
-                                (Window as any).MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);
+                                (Window as any).MathJax.Hub.Queue(["Typeset", (window as any).MathJax.Hub, el.rendNode]);
                             }
 
                             // Obsolete:
@@ -1274,7 +1283,7 @@ export abstract class AbstractRenderer {
      * @return {Array}           Array of CSS key-value pairs
      */
     _css2js(cssString) {
-        var pairs = [],
+        var pairs: object[] = [],
             i,
             len,
             key,
@@ -1316,7 +1325,7 @@ export abstract class AbstractRenderer {
             so, sc,
             css,
             node,
-            display = Env.isBrowser ? el.visProp.display : "internal",
+            display = Env.isBrowser() ? el.visProp.display : "internal",
             nodeList = ["rendNode", "rendNodeTag", "rendNodeLabel"],
             lenN = nodeList.length,
             fontUnit = el.evalVisProp('fontunit'),
@@ -1757,7 +1766,7 @@ export abstract class AbstractRenderer {
             Env.addEvent(button, "touchstart", cancelbubble, board);
         };
 
-        if (Env.isBrowser && this.type !== "no") {
+        if (Env.isBrowser() && this.type !== "no") {
             doc = board.containerObj.ownerDocument;
             node = doc.createElement("div");
 
@@ -1848,7 +1857,7 @@ export abstract class AbstractRenderer {
      */
     getElementById(id) {
         var str;
-        if (Type.exists(this.container)) {
+        if (Type.exists(this.container) && this.container !== null) {
             // Use querySelector over getElementById for compatibility with both 'regular' document
             // and ShadowDOM fragments.
             str = this.container.id + '_' + id;

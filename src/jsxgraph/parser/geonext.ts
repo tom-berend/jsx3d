@@ -242,7 +242,7 @@ replaceIf(te) {
  * @param {Boolean} [jc=false] If true, all id's will be surrounded by <tt>$('</tt> and <tt>')</tt>.
  * @returns {String} The same string with names replaced by ids.
  **/
-replaceNameById(term, board, jc) {
+replaceNameById(term, board, jc=false) {
     var end,
         elName,
         el,

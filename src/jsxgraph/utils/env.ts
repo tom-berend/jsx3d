@@ -456,8 +456,6 @@ export class Env {
      */
     static addEvent(obj: Node, type: string, fn: Function, owner: Board, options: object | boolean = false) {
 
-        console.log('addEvent', type)
-
         let callback = function () {
             return fn.apply(owner, arguments);
         };
@@ -511,7 +509,7 @@ export class Env {
         i = Type.indexOf(owner["x_internal" + type], fn, "origin");
 
         if (i === -1) {
-            Env.debug("removeEvent: no such event function in internal list: " + fn);
+            Env.debug("removeEvent: no such event function in internal list: " + type);
             return;
         }
 

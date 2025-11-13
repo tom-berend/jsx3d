@@ -38,19 +38,11 @@
 
 import { JXG } from "../jxg.js";
 import { Env } from "../utils/env.js";
-import { Type } from "../utils/type.js";
+import { LooseObject, Type } from "../utils/type.js";
 import { Board } from "../base/board.js"
 import { OBJECT_TYPE } from "../base/constants.js";
 import { ButtonOptions } from "../optionInterfaces.js";
 
-var priv = {
-    ButtonClickEventHandler: function () {
-        if (this._handler) {
-            this._handler();
-        }
-        this.board.update();
-    }
-};
 
 /**
  * @class A text element that contains an HTML button tag.
@@ -247,11 +239,11 @@ export function createButton(board: Board, parents: any[], attributes: ButtonOpt
         par,
         attr = Type.copyAttributes(attributes, board.options, "button");
 
-    //if (parents.length < 3) {
-    //throw new Error("JSXGraph: Can't create button with parent types '" +
-    //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-    //    "\nPossible parents are: [x, y, label, handler]");
-    //}
+    if (parents.length < 3) {
+        throw new Error("JSXGraph: Can't create button with parent types '" +
+            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+            "\nPossible parents are: [x, y, label, handler]");
+    }
 
     // 1. Create empty button
     par = [parents[0], parents[1], '<button type="button" style="width:100%; height:100%;" tabindex="0"></button>'];
@@ -274,49 +266,66 @@ export function createButton(board: Board, parents: any[], attributes: ButtonOpt
     board.renderer.updateTextStyle(t, false);
 
     if (parents[3]) {
-        if (Type.isString(parents[3])) {
-            t._jc = new JXG.JessieCode();
-            t._jc.use(board);
-            t._handler = function () {
-                t._jc.parse(parents[3]);
-            };
-        } else {
-            t._handler = parents[3];
-        }
+        // if (Type.isString(parents[3])) {
+        //     t._jc = new JXG.JessieCode();
+        //     t._jc.use(board);
+        //     t._handler = function () {
+        //         t._jc.parse(parents[3]);
+        //     };
+        // } else {
+        t._handler = parents[3];
+        // }
     }
 
-    Env.addEvent(t.rendNodeButton, "click", priv.ButtonClickEventHandler, t);
-    Env.addEvent(
-        t.rendNodeButton,
-        "mousedown",
-        function (evt) {
-            if (Type.exists(evt.stopPropagation)) {
-                evt.stopPropagation();
-            }
-        },
-        t
-    );
-    Env.addEvent(
-        t.rendNodeButton,
-        "touchstart",
-        function (evt) {
-            if (Type.exists(evt.stopPropagation)) {
-                evt.stopPropagation();
-            }
-        },
-        t
-    );
-    Env.addEvent(
-        t.rendNodeButton,
-        "pointerdown",
-        function (evt) {
-            if (Type.exists(evt.stopPropagation)) {
-                evt.stopPropagation();
-            }
-        },
-        t
-    );
 
-    return t;
+    // var priv: LooseObject = {
+    //     ButtonClickEventHandler: function () {
+    //         if (this._handler) {
+    //             this._handler();
+    //         }
+    //         this.board.update();
+    //     }
+    // };
+    // tom's version:
+    let ButtonClickEventHandler = () => {
+        if (t._handler)
+            t.handler();
+        this.board.update();
+}
+
+
+Env.addEvent(t.rendNodeButton, "click", ButtonClickEventHandler, t);
+Env.addEvent(
+    t.rendNodeButton,
+    "mousedown",
+    function (evt) {
+        if (Type.exists(evt.stopPropagation)) {
+            evt.stopPropagation();
+        }
+    },
+    t
+);
+Env.addEvent(
+    t.rendNodeButton,
+    "touchstart",
+    function (evt) {
+        if (Type.exists(evt.stopPropagation)) {
+            evt.stopPropagation();
+        }
+    },
+    t
+);
+Env.addEvent(
+    t.rendNodeButton,
+    "pointerdown",
+    function (evt) {
+        if (Type.exists(evt.stopPropagation)) {
+            evt.stopPropagation();
+        }
+    },
+    t
+);
+
+return t;
 };
 

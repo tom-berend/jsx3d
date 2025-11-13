@@ -1864,7 +1864,7 @@ export interface Polygon extends GeometryElement {   // fields and methods
     insertPoints(idx: number, p: Point): Polygon,
     /** Generic method for the intersection of this polygon with another polygon. The parent object is the clipping polygon, it expects as parameter a polygon to be clipped. Both polygons have to be convex. Calls the algorithm by Sutherland, Hodgman, {@link JXG.Polygon#sutherlandHodgman}. <p> An alternative is to use the methods from {@link JXG.Math.Clip}, where the algorithm by Greiner and Hormann is used.  */
     intersect(polygon: Polygon): number[],
-    /** Wrapper for JXG.Math.Geometry.pnpoly.  */
+    /** Wrapper for Geometry.pnpoly.  */
     pnpoly(x_in: number, y_in: number, coord_type: number): Boolean,
     /** Removes given set of vertices from the polygon  */
     removePoints(p: Point): Polygon,

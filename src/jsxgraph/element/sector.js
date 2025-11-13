@@ -1206,7 +1206,7 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  * var a = board.create('angle', [p1, p2, p3], {
  * 	 radius: 1,
  *   name: function() {
- *   	return JXG.Math.Geometry.trueAngle(p1, p2, p3).toFixed(1) + '°';
+ *   	return Geometry.trueAngle(p1, p2, p3).toFixed(1) + '°';
  *   }});
  *
  * </pre><div id="JXGc813f601-8dd3-4030-9892-25c6d8671512" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1222,7 +1222,7 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  *     var a = board.create('angle', [p1, p2, p3], {
  *     	radius: 1,
  *       name: function() {
- *       	return JXG.Math.Geometry.trueAngle(p1, p2, p3).toFixed(1) + '°';
+ *       	return Geometry.trueAngle(p1, p2, p3).toFixed(1) + '°';
  *       }});
  *
  *     })();

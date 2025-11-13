@@ -42,7 +42,7 @@ import { JXG, JXG_createElement } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
-import { Numerics } from '../math/numerics.js';
+import { Numerics } from '../math/numerics.js'
 //  import {JSXMath}  from '../math/jsxmath.js';
 import { Geometry } from '../math/geometry.js';
 import { Complex } from '../math/complex.js';
@@ -58,10 +58,15 @@ import { SVGRenderer } from '../renderer/svg.js';
 import { JSXMath } from '../math/jsxmath.js';
 import { createText } from '../base/text.js'
 import { createPoint } from '../base/point.js'
+import { BoardOptions } from '../optionInterfaces.js';
 
 export class Board extends Events {
 
     public containerObj: HTMLElement | null
+    public infobox
+    public dimension
+    public zoomX:number
+    public zoomY:number
 
 
 
@@ -440,7 +445,7 @@ export class Board extends Events {
      * Pointer to the document element containing the board.
      * @type Object
      */
-    public document: Node
+    public document: HTMLDocument
 
     /**
      * The html-id of the html element containing the board.
@@ -475,7 +480,9 @@ export class Board extends Events {
      * Copy of the default options
      * @type JXG.Options
      */
-    public options: Object
+    public options: BoardOptions
+
+
     public origin
     public maxboundingbox: number[]
     public unitX: number
@@ -6226,9 +6233,11 @@ export class Board extends Events {
         });
         */
 
-        if (this.renderer.type === 'canvas') {
-            this.updateRendererCanvas();
-        } else {
+        // TODO
+        // if (this.renderer.type === 'canvas') {
+            // this.updateRendererCanvas();
+        // } else {
+
             for (el = 0; el < len; el++) {
                 if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
                     autoPositionLabelList.push(el);
@@ -6254,7 +6263,7 @@ export class Board extends Events {
                 this.objectsList[autoPositionLabelList[el]].updateRenderer();
             }
             */
-        }
+        // }
         return this;
     }
 
@@ -8447,12 +8456,12 @@ export class Board extends Events {
      * // Circle defined as a curve. The circle 'starts' at P, i.e. circle(0) = P
      * var circle = board.create('curve',[
      *           function (t){var d = P.Dist(C),
-     *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
      *                       t += beta;
      *                       return C.X()+d*Math.cos(t);
      *           }
      *           function (t){var d = P.Dist(C),
-     *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
      *                       t += beta;
      *                       return C.Y()+d*Math.sin(t);
      *           }
@@ -8476,12 +8485,12 @@ export class Board extends Events {
      * // Circle defined as a curve. The circle 'starts' at P, i.e. circle(0) = P
      * var circle = brd.create('curve',[
      *           function (t){var d = P.Dist(C),
-     *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
      *                       t += beta;
      *                       return C.X()+d*Math.cos(t);
      *           }
      *           function (t){var d = P.Dist(C),
-     *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
      *                       t += beta;
      *                       return C.Y()+d*Math.sin(t);
      *           }

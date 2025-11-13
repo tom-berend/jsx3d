@@ -355,7 +355,7 @@ export class Interval {
      *
      */
 
-    Interval(lo, hi) {
+    Interval(lo, hi?) {
         return new Interval(lo, hi);
     }
 
@@ -1583,10 +1583,10 @@ export class Interval {
         return this.next(Math.acos(x));
     }
     acotLo(x) {
-        return this.prev(Mat.acot(x));
+        return this.prev(JSXMath.acot(x));
     }
     acotHi(x) {
-        return this.next(Mat.acot(x));
+        return this.next(JSXMath.acot(x));
     }
     atanLo(x) {
         return this.prev(Math.atan(x));
@@ -1595,22 +1595,22 @@ export class Interval {
         return this.next(Math.atan(x));
     }
     sinhLo(x) {
-        return this.prev(Mat.sinh(x));
+        return this.prev(JSXMath.sinh(x));
     }
     sinhHi(x) {
-        return this.next(Mat.sinh(x));
+        return this.next(JSXMath.sinh(x));
     }
     coshLo(x) {
-        return this.prev(Mat.cosh(x));
+        return this.prev(JSXMath.cosh(x));
     }
     coshHi(x) {
-        return this.next(Mat.cosh(x));
+        return this.next(JSXMath.cosh(x));
     }
     tanhLo(x) {
-        return this.prev(Mat.tanh(x));
+        return this.prev(JSXMath.tanh(x));
     }
     tanhHi(x) {
-        return this.next(Mat.tanh(x));
+        return this.next(JSXMath.tanh(x));
     }
     sqrtLo(x) {
         return this.prev(Math.sqrt(x));
@@ -1682,8 +1682,8 @@ export class Interval {
     /*
      * nextafter
      */
-    static SMALLEST_DENORM = Math.pow(2, -1074)
-    static UINT_MAX = -1 >>> 0
+    const SMALLEST_DENORM = Math.pow(2, -1074)
+    const UINT_MAX = -1 >>> 0
 
     nextafter(x, y) {
         var lo, hi;
@@ -1696,7 +1696,7 @@ export class Interval {
         }
         if (x === 0) {
             if (y < 0) {
-                return -this.SMALLEST_DENORM;
+                return this.SMALLEST_DENORM;
             }
             return this.SMALLEST_DENORM;
         }

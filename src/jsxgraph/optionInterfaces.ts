@@ -758,7 +758,7 @@ export interface BoardOptions {
      *
      * @see JXG.Board#userLog
      */
-    logging: {
+    logging?: {
         enabled: boolean
     }
 
@@ -782,7 +782,7 @@ export interface BoardOptions {
      * @name JXG.Board#minimizeReflow
      * @defaultValue 'none'
      */
-    minimizeReflow: 'none' | 'svg' | 'all'
+    minimizeReflow?: 'none' | 'svg' | 'all'
 
     /**
      * Maximal bounding box of the visible area in user coordinates.
@@ -820,7 +820,7 @@ export interface BoardOptions {
      * </script><pre>
      *
      */
-    maxBoundingBox: [number, number, number, number],
+    maxBoundingBox?: [number, number, number, number],
 
     /**
      * Maximum frame rate of the board, i.e. maximum number of updates per second
@@ -829,7 +829,7 @@ export interface BoardOptions {
      * @name JXG.Board#maxFrameRate
      * @defaultValue 40
      */
-    maxFrameRate: number
+    maxFrameRate?: number
 
     /**
      * Maximum number of digits in automatic label generation.
@@ -840,7 +840,7 @@ export interface BoardOptions {
      * @see JXG.Board#generateName
      * @defaultValue 1
      */
-    maxNameLength: number
+    maxNameLength?: number
 
     /**
      * Element which listens to move events of the pointing device.
@@ -860,7 +860,7 @@ export interface BoardOptions {
      * <li> document
      * </ul>
      * <p>
-     * Since the introduction of this attribute "moveTarget", the value "document" has become sort of
+     * Since the introduction of this attribute "", the value "document" has become sort of
      * default on touch devices like smartphones. However, it is no longer the case that the document listens to
      * move events, but there is the new feature "setPointerCapture", which is also implicitly enabled on certain devices.
      * In future versions, JSXGraph may adopt this new standard and distinguish only two cases:
@@ -903,7 +903,7 @@ export interface BoardOptions {
      *
      *
      */
-    moveTarget: HTMLElement | Node | null
+    moveTarget?: HTMLElement | Node | null
 
     /**
      * A number that will be added to the absolute position of the board used in mouse coordinate
@@ -913,7 +913,7 @@ export interface BoardOptions {
      * @see JXG.Board#offsetY
      * @defaultValue 0
      */
-    offsetX: number
+    offsetX?: number
 
     /**
      * A number that will be added to the absolute position of the board used in mouse coordinate
@@ -923,7 +923,7 @@ export interface BoardOptions {
      * @see JXG.Board#offsetX
      * @defaultValue 0
      */
-    offsetY: number
+    offsetY?: number
 
     /**
      * Control the possibilities for panning interaction (i.e. moving the origin).
@@ -1285,7 +1285,7 @@ export interface BoardOptions {
      * @name JXG.Board#takeFirst
      * @defaultValue false
      */
-    takeFirst: boolean
+    takeFirst?: boolean
 
     /**
     * If true when read from a file or string - the size of the div can be changed by the construction text.
@@ -1293,7 +1293,7 @@ export interface BoardOptions {
     * @name JXG.Board#takeSizeFromFile
     * @defaultValue false
     */
-    takeSizeFromFile: boolean
+    takeSizeFromFile?: boolean
 
     /**
      * Set a visual theme for a board. At the moment this attribute is immutable.
@@ -1398,19 +1398,19 @@ export interface BoardOptions {
      * @see JXG.Board#showZoom
      *
      */
-    zoom: {
-        enabled: boolean
-        factorX: number
-        factorY: number
-        wheel: boolean
-        needShift: boolean
-        center: 'auto' | 'board',
-        min: number
-        max: number
-        pinch: boolean
-        pinchHorizontal: boolean
-        pinchVertical: boolean
-        pinchSensitivity: number
+    zoom?: {
+        enabled?: boolean
+        factorX?: number
+        factorY?: number
+        wheel?: boolean
+        needShift?: boolean
+        center?: 'auto' | 'board',
+        min?: number
+        max?: number
+        pinch?: boolean
+        pinchHorizontal?: boolean
+        pinchVertical?: boolean
+        pinchSensitivity?: number
     }
 
     // /**
@@ -1429,7 +1429,7 @@ export interface BoardOptions {
      * @see JXG.Board#zoomY
      * @defaultValue 1.0
      */
-    zoomX: number,
+    zoomX?: number,
 
     /**
      * Zoom factor in vertical direction.
@@ -1438,7 +1438,8 @@ export interface BoardOptions {
      * @see JXG.Board#zoomX
      * @defaultValue 1.0
      */
-    zoomY: 1
+    zoomY?: number
+
 }
 
 /**
@@ -3581,7 +3582,7 @@ export interface LayerOptions {
      * @type Object
      * @name JXG.Options#layer
      */
-    numlayers?: number // only important in SVG
+    numlayers: number // NOT optional,  only important in SVG
     unused9?: number
     unused8?: number
     unused7?: number
@@ -5896,7 +5897,7 @@ export interface InfoboxOptions {
     fontSize?: number
     isLabel?: boolean
     strokeColor?: '#bbbbbb',
-    display: 'html',             // 'html' or 'internal'
+    display: 'html'|'internal',             // 'html' or 'internal'
     anchorX: 'left',             //  'left', 'middle', or 'right': horizontal alignment
     //  of the text.
     anchorY: 'middle',           //  'top', 'middle', or 'bottom': vertical alignment

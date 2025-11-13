@@ -63,7 +63,7 @@ export interface LooseObject {
 
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
 // import { Coords } from '../base/coords.js';
-// import { GeometryElement } from '../base/element.js';
+import { GeometryElement } from '../base/element.js';
 import { JSXMath } from '../math/jsxmath.js';
 import { Options } from '../options.js';
 // import { HtmlSanitizer } from './htmlsanitizer.js';
@@ -1531,60 +1531,61 @@ export class Type {
         }
     }
 
-    // /**
-    //  * Create a stripped down version of a JSXGraph element for cloning to the background.
-    //  * Used in {JXG.GeometryElement#cloneToBackground} for creating traces.
-    //  *
-    //  * @param {JXG.GeometryElement} el Element to be cloned
-    //  * @returns Object Cloned element
-    //  * @private
-    //  */
-    // static getCloneObject(el:GeometryElement) {
-    //     var obj,
-    //         key
+    /**
+     * Create a stripped down version of a JSXGraph element for cloning to the background.
+     * Used in {JXG.GeometryElement#cloneToBackground} for creating traces.
+     *
+     * @param {JXG.GeometryElement} el Element to be cloned
+     * @returns Object Cloned element
+     * @private
+     */
+    static getCloneObject(el:GeometryElement) {
+        var obj,
+            key
 
-    //     let copy:LooseObject = {}
+        let copy:LooseObject = {}
 
-    //     copy.id = el.id + 'T' + el.numTraces;
-    //     el.numTraces += 1;
+        copy.id = el.id + 'T' + el.numTraces;
+        el.numTraces += 1;
 
-    //     copy.coords = el.coords;
-    //     obj = this.deepCopy(el.visProp, el.visProp.traceattributes, true);
-    //     copy.visProp = {};
-    //     for (key in obj) {
-    //         if (obj.hasOwnProperty(key)) {
-    //             if (
-    //                 key.indexOf('aria') !== 0 &&
-    //                 key.indexOf('highlight') !== 0 &&
-    //                 key.indexOf('attractor') !== 0 &&
-    //                 key !== 'label' &&
-    //                 key !== 'needsregularupdate' &&
-    //                 key !== 'infoboxdigits'
-    //             ) {
-    //                 copy.visProp[key] = el.eval(obj[key]);
-    //             }
-    //         }
-    //     }
-    //     copy.evalVisProp = function (val) {
-    //         return copy.visProp[val];
-    //     };
-    //     copy.eval = function (val) {
-    //         return val;
-    //     };
+        copy.coords = el.coords;
+        obj = this.deepCopy(el.visProp, el.visProp.traceattributes, true);
+        copy.visProp = {};
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                if (
+                    key.indexOf('aria') !== 0 &&
+                    key.indexOf('highlight') !== 0 &&
+                    key.indexOf('attractor') !== 0 &&
+                    key !== 'label' &&
+                    key !== 'needsregularupdate' &&
+                    key !== 'infoboxdigits'
+                ) {
+                    copy.visProp[key] = el.eval(obj[key]);
+                }
+            }
+        }
+        copy.evalVisProp = function (val) {
+            return copy.visProp[val];
+        };
+        copy.eval = function (val) {
+            return val;
+        };
 
-    //     copy.visProp.layer = el.board.options.layer.trace;
-    //     copy.visProp.tabindex = null;
-    //     copy.visProp.highlight = false;
-    //     copy.board = el.board;
-    //     copy.elementClass = el.elementClass;
+        copy.visProp.layer = 0  // TODO: was     el.board.options.layer.trace;
 
-    //     this.clearVisPropOld(copy);
-    //     copy.visPropCalc = {
-    //         visible: el.evalVisProp('visible'),
-    //     };
+        copy.visProp.tabindex = null;
+        copy.visProp.highlight = false;
+        copy.board = el.board;
+        copy.elementClass = el.elementClass;
 
-    //     return copy;
-    // }
+        this.clearVisPropOld(copy);
+        copy.visPropCalc = {
+            visible: el.evalVisProp('visible'),
+        };
+
+        return copy;
+    }
 
     /**
      * Converts a JavaScript object into a JSON string.

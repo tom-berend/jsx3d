@@ -63,13 +63,17 @@ export class Complex {
     public real: number
     public imaginary: number
 
-    constructor(x, y) {
+    constructor(x: Complex | number, y: Complex | number = 0) {
         /* is the first argument a complex number? if it is,
          * extract real and imaginary part. */
-        if (x && x.isComplex) {
+        if (typeof x === 'object' && x.isComplex) {
             y = x.imaginary;
             x = x.real;
         }
+
+        // let TypeScript know x and y are definitely numbers now
+        this.assertIsNumber(x)
+        this.assertIsNumber(y)
 
         /**
          * Real part of the complex number.
@@ -97,6 +101,12 @@ export class Complex {
         //  */
         // this.angle = 0;
     };
+
+
+    /** TypeScript magic - see https://mariusschulz.com/blog/assertion-functions-in-typescript */
+    assertIsNumber(value: unknown): asserts value is number {
+        if (typeof value !== 'number') throw new Error('Not a number');
+    }
 
 
     /**
@@ -129,8 +139,8 @@ export class Complex {
      * @returns {JXG.Complex} Reference to this complex number
      */
 
-    sub(c: number|Complex): Complex {
-        if  (typeof c === 'number') {   //(Type.isNumber(c)) {
+    sub(c: number | Complex): Complex {
+        if (typeof c === 'number') {   //(Type.isNumber(c)) {
             this.real -= c;
         } else {
             this.real -= c.real;
@@ -234,117 +244,117 @@ export class Complex {
 }
 
 
-/// TODO:
 
-// /**
-//  * @namespace Namespace for the complex number arithmetic functions, see also {@link JXG.Complex}.
-//  * @description
-//  * JXG.C is the complex number (name)space. It provides functions to calculate with
-//  * complex numbers (defined in {@link JXG.Complex}). With this namespace you don't have to modify
-//  * your existing complex numbers, e.g. to add two complex numbers:
-//  * <pre class="code">   var z1 = new JXG.Complex(1, 0);
-//  *    var z2 = new JXG.Complex(0, 1);
-//  *    z = JXG.C.add(z1, z1);</pre>
-//  * z1 and z2 here remain unmodified. With the object oriented approach above this
-//  * section the code would look like:
-//  * <pre class="code">
-//  *    var z1 = new JXG.Complex(1, 0);
-//  *    var z2 = new JXG.Complex(0, 1);
-//  *    var z = new JXG.Complex(z1);
-//  *    z.add(z2);</pre>
-//  * @see JXG.Complex
-//  */
-// JXG.C = {};
+/**
+ * @namespace Namespace for the complex number arithmetic functions, see also {@link JXG.Complex}.
+ * @description
+ * JXG.C is the complex number (name)space. It provides functions to calculate with
+ * complex numbers (defined in {@link JXG.Complex}). With this namespace you don't have to modify
+ * your existing complex numbers, e.g. to add two complex numbers:
+ * <pre class="code">   var z1 = new JXG.Complex(1, 0);
+ *    var z2 = new JXG.Complex(0, 1);
+ *    z = JXG.C.add(z1, z1);</pre>
+ * z1 and z2 here remain unmodified. With the object oriented approach above this
+ * section the code would look like:
+ * <pre class="code">
+ *    var z1 = new JXG.Complex(1, 0);
+ *    var z2 = new JXG.Complex(0, 1);
+ *    var z = new JXG.Complex(z1);
+ *    z.add(z2);</pre>
+ * @see JXG.Complex
+ */
+export class C {
 
-// /**
-//  * Add two (complex) numbers z1 and z2 and return the result as a (complex) number.
-//  * @param {JXG.Complex|Number} z1 Summand
-//  * @param {JXG.Complex|Number} z2 Summand
-//  * @returns {JXG.Complex} A complex number equal to the sum of the given parameters.
-//  */
-// JXG.C.add = function (z1, z2) {
-//     var z = new JXG.Complex(z1);
-//     z.add(z2);
-//     return z;
-// };
+    /**
+     * Add two (complex) numbers z1 and z2 and return the result as a (complex) number.
+     * @param {JXG.Complex|Number} z1 Summand
+     * @param {JXG.Complex|Number} z2 Summand
+     * @returns {JXG.Complex} A complex number equal to the sum of the given parameters.
+     */
+    static add(z1, z2) {
+        var z = new Complex(z1);
+        z.add(z2);
+        return z;
+    };
 
-// /**
-//  * Subtract two (complex) numbers z1 and z2 and return the result as a (complex) number.
-//  * @param {JXG.Complex|Number} z1 Minuend
-//  * @param {JXG.Complex|Number} z2 Subtrahend
-//  * @returns {JXG.Complex} A complex number equal to the difference of the given parameters.
-//  */
-// JXG.C.sub = function (z1, z2) {
-//     var z = new JXG.Complex(z1);
-//     z.sub(z2);
-//     return z;
-// };
+    /**
+     * Subtract two (complex) numbers z1 and z2 and return the result as a (complex) number.
+     * @param {JXG.Complex|Number} z1 Minuend
+     * @param {JXG.Complex|Number} z2 Subtrahend
+     * @returns {JXG.Complex} A complex number equal to the difference of the given parameters.
+     */
+    static sub(z1, z2) {
+        var z = new Complex(z1);
+        z.sub(z2);
+        return z;
+    };
 
-// /**
-//  * Multiply two (complex) numbers z1 and z2 and return the result as a (complex) number.
-//  * @param {JXG.Complex|Number} z1 Factor
-//  * @param {JXG.Complex|Number} z2 Factor
-//  * @returns {JXG.Complex} A complex number equal to the product of the given parameters.
-//  */
-// JXG.C.mult = function (z1, z2) {
-//     var z = new JXG.Complex(z1);
-//     z.mult(z2);
-//     return z;
-// };
+    /**
+     * Multiply two (complex) numbers z1 and z2 and return the result as a (complex) number.
+     * @param {JXG.Complex|Number} z1 Factor
+     * @param {JXG.Complex|Number} z2 Factor
+     * @returns {JXG.Complex} A complex number equal to the product of the given parameters.
+     */
+    static mult(z1, z2) {
+        var z = new Complex(z1);
+        z.mult(z2);
+        return z;
+    };
 
-// /**
-//  * Divide two (complex) numbers z1 and z2 and return the result as a (complex) number.
-//  * @param {JXG.Complex|Number} z1 Dividend
-//  * @param {JXG.Complex|Number} z2 Divisor
-//  * @returns {JXG.Complex} A complex number equal to the quotient of the given parameters.
-//  */
-// JXG.C.div = function (z1, z2) {
-//     var z = new JXG.Complex(z1);
-//     z.div(z2);
-//     return z;
-// };
+    /**
+     * Divide two (complex) numbers z1 and z2 and return the result as a (complex) number.
+     * @param {JXG.Complex|Number} z1 Dividend
+     * @param {JXG.Complex|Number} z2 Divisor
+     * @returns {JXG.Complex} A complex number equal to the quotient of the given parameters.
+     */
+    static div(z1, z2) {
+        var z = new Complex(z1);
+        z.div(z2);
+        return z;
+    };
 
-// /**
-//  * Conjugate a complex number and return the result.
-//  * @param {JXG.Complex|Number} z1 Complex number
-//  * @returns {JXG.Complex} A complex number equal to the conjugate of the given parameter.
-//  */
-// JXG.C.conj = function (z1) {
-//     var z = new JXG.Complex(z1);
-//     z.conj();
-//     return z;
-// };
+    /**
+     * Conjugate a complex number and return the result.
+     * @param {JXG.Complex|Number} z1 Complex number
+     * @returns {JXG.Complex} A complex number equal to the conjugate of the given parameter.
+     */
+    static conj(z1) {
+        var z = new Complex(z1);
+        z.conj();
+        return z;
+    };
 
-// /**
-//  * Absolute value of a complex number.
-//  * @param {JXG.Complex|Number} z1 Complex number
-//  * @returns {Number} real number equal to the absolute value of the given parameter.
-//  */
-// JXG.C.abs = function (z1) {
-//     var z = new JXG.Complex(z1);
-//     // z.conj();
-//     // z.mult(z1);
-//     // return Math.sqrt(z.real);
-//     return z.abs();
-// };
+    /**
+     * Absolute value of a complex number.
+     * @param {JXG.Complex|Number} z1 Complex number
+     * @returns {Number} real number equal to the absolute value of the given parameter.
+     */
+    static abs(z1) {
+        var z = new Complex(z1);
+        // z.conj();
+        // z.mult(z1);
+        // return Math.sqrt(z.real);
+        return z.abs();
+    };
 
-// /**
-//  * Angle of a complex number (in radians).
-//  * @param {JXG.Complex|Number} z1 Complex number
-//  * @returns {Number} real number equal to the angle value of the given parameter.
-//  */
-// JXG.C.angle = function (z1) {
-//     var z = new JXG.Complex(z1);
-//     return z.angle();
-// };
+    /**
+     * Angle of a complex number (in radians).
+     * @param {JXG.Complex|Number} z1 Complex number
+     * @returns {Number} real number equal to the angle value of the given parameter.
+     */
+    static angle(z1) {
+        var z = new Complex(z1);
+        return z.angle();
+    };
 
-// /**
-//  * Create copy of complex number.
-//  *
-//  * @param {JXG.Complex|Number} z
-//  * @returns {JXG.Complex}
-//  */
-// JXG.C.copy = function (z) {
-//     return new JXG.Complex(z);
-// };
+    /**
+     * Create copy of complex number.
+     *
+     * @param {JXG.Complex|Number} z
+     * @returns {JXG.Complex}
+     */
+    static copy(z) {
+        return new Complex(z);
+    };
 
+}

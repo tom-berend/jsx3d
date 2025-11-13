@@ -98,7 +98,7 @@ export class Statistics {
      * @returns {Number}
      * @memberof JXG.Math.Statistics
      */
-    static median(arr) {
+    static median(arr: number[]) {
         var tmp, len;
 
         if (arr.length > 0) {
@@ -115,7 +115,7 @@ export class Statistics {
 
             if (len & 1) {
                 // odd
-                return tmp[parseInt(len * 0.5, 10)];
+                return tmp[len * 0.5];
             }
 
             return (tmp[len * 0.5 - 1] + tmp[len * 0.5]) * 0.5;
@@ -136,27 +136,27 @@ export class Statistics {
      * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentiles
      * is returned.
      */
-    static percentile(arr, percentile) {
-        var tmp,
+    static percentile(arr: number[], percentile: number):number[] {
+        var tmp: number[], //Float64Array,
             len,
             i,
             p,
-            res = [],
+            res:number[] = [],
             per;
 
         if (arr.length > 0) {
-            if (ArrayBuffer.isView(arr)) {
-                tmp = new Float64Array(arr);
-                tmp.sort();
-            } else {
+            // if (ArrayBuffer.isView(arr)) {
+            //     tmp = new Float64Array(arr);
+            //     tmp.sort();
+            // } else {
                 tmp = arr.slice(0);
                 tmp.sort(function (a, b) {
                     return a - b;
                 });
-            }
+            // }
             len = tmp.length;
 
-            if (Type.isArray(percentile)) {
+            if (Array.isArray(percentile)) {
                 p = percentile;
             } else {
                 p = [percentile];
@@ -171,14 +171,15 @@ export class Statistics {
                 }
             }
 
-            if (Type.isArray(percentile)) {
+            if (Array.isArray(percentile)) {
                 return res;
             } else {
-                return res[0];
+                throw new Error('simple number?')
+                // return res[0];
             }
         }
-
-        return 0.0;
+        throw new Error('percentileof empty array')
+        // return 0.0;
     }
 
     /**
@@ -281,24 +282,16 @@ export class Statistics {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    static abs(arr) {
-        var i, len, res;
+    static abs(arr:number[]):number[] {
+        let res:number[]
 
-        if (Type.isArray(arr)) {
-            if (arr.map) {
-                res = arr.map(Math.abs);
-            } else {
-                len = arr.length;
-                res = [];
-
-                for (i = 0; i < len; i++) {
-                    res[i] = Math.abs(arr[i]);
-                }
-            }
-        } else if (ArrayBuffer.isView(arr)) {
-            res = arr.map(Math.abs);
+        if (Array.isArray(arr)) {
+                res = arr.map((x)=>Math.abs(x));
+        // } else if (ArrayBuffer.isView(arr)) {
+        //     res = arr.map(Math.abs);
         } else {
-            res = Math.abs(arr);
+            throw new Error ('abs of simple number ?')
+            // res = Math.abs(arr);
         }
         return res;
     }
@@ -312,34 +305,35 @@ export class Statistics {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    static add(arr1, arr2) {
+    static add(arr1:number|number[], arr2:number|number[]):number[] {
         var i,
             len,
-            res = [];
+            res:number[] = [];
 
         arr1 = Type.evalSlider(arr1);
         arr2 = Type.evalSlider(arr2);
 
-        if (Type.isArray(arr1) && Type.isNumber(arr2)) {
+        if (Array.isArray(arr1) && typeof arr2 === 'number') {
             len = arr1.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] + arr2;
             }
-        } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
+        } else if (typeof arr1 === 'number' && Array.isArray(arr2)) {
             len = arr2.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1 + arr2[i];
             }
-        } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
+        } else if (Array.isArray(arr1) && Array.isArray(arr2)) {
             len = Math.min(arr1.length, arr2.length);
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] + arr2[i];
             }
         } else {
-            res = arr1 + arr2;
+            throw new Error('add of two simple numbers ?')
+            // res = arr1 + arr2;
         }
 
         return res;
@@ -353,34 +347,35 @@ export class Statistics {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    static div(arr1, arr2) {
+    static div(arr1:number|number[], arr2:number|number[]):number[] {
         var i,
             len,
-            res = [];
+            res: number[] = [];
 
         arr1 = Type.evalSlider(arr1);
         arr2 = Type.evalSlider(arr2);
 
-        if (Type.isArray(arr1) && Type.isNumber(arr2)) {
+        if (Array.isArray(arr1) && typeof arr2 === 'number') {
             len = arr1.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] / arr2;
             }
-        } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
+        } else if (typeof arr1 === 'number' && Array.isArray(arr2)) {
             len = arr2.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1 / arr2[i];
             }
-        } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
+        } else if (Array.isArray(arr1) && Array.isArray(arr2)) {
             len = Math.min(arr1.length, arr2.length);
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] / arr2[i];
             }
         } else {
-            res = arr1 / arr2;
+            throw new Error ('div of two simple numbers ?')
+            // res = arr1 / arr2;
         }
 
         return res;
@@ -392,8 +387,7 @@ export class Statistics {
      * @memberof JXG.Math.Statistics
      */
     static divide() {
-        JXG.deprecated("Statistics.divide()", "Statistics.div()");
-        Mat.Statistics.div.apply(Mat.Statistics, arguments);
+        throw new Error('deprecated, use Statistics.div instead')
     }
 
     /**
@@ -405,43 +399,42 @@ export class Statistics {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    static mod(arr1, arr2, math) {
+    static mod(arr1, arr2, math=false) {
         var i,
             len,
-            res = [],
+            res:number[] = [],
             mod = function (a, m) {
                 return a % m;
             };
 
-        math = Type.def(math, false);
-
         if (math) {
-            mod = Mat.mod;
+            mod = JSXMath.mod;    // the results differ if a or m < 0.
         }
 
         arr1 = Type.evalSlider(arr1);
         arr2 = Type.evalSlider(arr2);
 
-        if (Type.isArray(arr1) && Type.isNumber(arr2)) {
+        if (Array.isArray(arr1) && typeof arr2 === 'number') {
             len = arr1.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = mod(arr1[i], arr2);
             }
-        } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
+        } else if (typeof arr1 === 'number' && Array.isArray(arr2)) {
             len = arr2.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = mod(arr1, arr2[i]);
             }
-        } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
+        } else if (Array.isArray(arr1) && Array.isArray(arr2)) {
             len = Math.min(arr1.length, arr2.length);
 
             for (i = 0; i < len; i++) {
                 res[i] = mod(arr1[i], arr2[i]);
             }
         } else {
-            res = mod(arr1, arr2);
+            throw new Error ('Mod of a simple number?')
+            // res = mod(arr1, arr2);
         }
 
         return res;
@@ -456,34 +449,35 @@ export class Statistics {
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
-    static multiply(arr1, arr2) {
+    static multiply(arr1: number | number[], arr2: number | number[]) {
         var i,
             len,
-            res = [];
+            res: number[] = [];
 
         arr1 = Type.evalSlider(arr1);
         arr2 = Type.evalSlider(arr2);
 
-        if (Type.isArray(arr1) && Type.isNumber(arr2)) {
+        if (Array.isArray(arr1) && typeof arr2 == 'number') {
             len = arr1.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] * arr2;
             }
-        } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
+        } else if (typeof arr1 == 'number' && Array.isArray(arr2)) {
             len = arr2.length;
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1 * arr2[i];
             }
-        } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
+        } else if (Array.isArray(arr1) && Array.isArray(arr2)) {
             len = Math.min(arr1.length, arr2.length);
 
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] * arr2[i];
             }
         } else {
-            res = arr1 * arr2;
+            throw new Error('multipling to simple numbers ?')
+            // res = arr1 * arr2;
         }
 
         return res;
@@ -506,19 +500,19 @@ export class Statistics {
         // arr1 = Type.evalSlider(arr1);
         // arr2 = Type.evalSlider(arr2);
 
-        // if (Type.isArray(arr1) && Type.isNumber(arr2)) {
+        // if (Array.isArray(arr1) && typeof arr2 === 'number') {
         //     len = arr1.length;
 
         //     for (i = 0; i < len; i++) {
         //         res[i] = arr1[i] - arr2;
         //     }
-        // } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
+        // } else if (typeof arr1 === 'number' && Array.isArray(arr2)) {
         //     len = arr2.length;
 
         //     for (i = 0; i < len; i++) {
         //         res[i] = arr1 - arr2[i];
         //     }
-        // } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
+        // } else if (Array.isArray(arr1) && Array.isArray(arr2)) {
 
         len = Math.min(arr1.length, arr2.length);
 
@@ -579,9 +573,9 @@ export class Statistics {
     static TheilSenRegression(coords) {
         var i,
             j,
-            slopes = [],
-            tmpslopes = [],
-            yintercepts = [];
+            slopes: number[] = [],
+            tmpslopes: number[] = [],
+            yintercepts: number[] = [];
 
         for (i = 0; i < coords.length; i++) {
             tmpslopes.length = 0;
@@ -844,7 +838,7 @@ export class Statistics {
      * </script><pre>
      *
      */
-    static randomGamma(a:number, b:number=1, t:number=0) {
+    static randomGamma(a: number, b: number = 1, t: number = 0) {
         var u, v, x, y,
             p, q;
 
@@ -1348,8 +1342,8 @@ export class Statistics {
             mi, ma, num_bins, delta,
             range,
             s,
-            counts = [],
-            bins = [],
+            counts: number[] = [],
+            bins: number[] = [],
             no_bin = 0;        // Count of long tail elements not in histogram range
 
         // Evaluate number of bins

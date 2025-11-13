@@ -67,11 +67,6 @@ var priv = {
      * @class
      * @ignore
      */
-    HTMLSliderInputEventHandler() {
-        this._val = parseFloat(this.rendNodeRange.value);
-        this.rendNodeOut.value = this.rendNodeRange.value;
-        this.board.update();
-    }
 }
 
 /**
@@ -107,10 +102,11 @@ export class Text extends CoordsElement {
     size: number[] = [1.0, 1.0]
 
     updateText: Function = () => console.warn('updateText not set')
+    public rendNode: HTMLElement;
 
 
 
-    constructor(board: Board, coordinates: number[] | Object | Function, attributes: TextOptions, content: string|Function) {
+    constructor(board: Board, coordinates: number[] | Object | Function, attributes: TextOptions, content: string | Function) {
         super(board, COORDS_BY.USER, coordinates, attributes)
 
         this.elType = "text";
@@ -363,7 +359,7 @@ export class Text extends CoordsElement {
                     that = this;
                     for (i = 0; i < this.content.length; i++) {
                         if (this.content[i][0] !== '"') {
-                            this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
+                            // TODO: GEONEXT ??  // this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
                             for (e in this.content[i].deps) {
                                 this.addParents(this.content[i].deps[e]);
                                 this.content[i].deps[e].addChild(this);
@@ -399,11 +395,11 @@ export class Text extends CoordsElement {
                         return txt;
                     };
                 } else {
-                    updateText = this.board.jc.snippet(this.content, true, "", false);
-                    for (e in updateText.deps) {
-                        this.addParents(updateText.deps[e]);
-                        updateText.deps[e].addChild(this);
-                    }
+                    // TODO: GEONEXT ??  // updateText = this.board.jc.snippet(this.content, true, "", false);
+                    // for (e in updateText.deps) {
+                    //     this.addParents(updateText.deps[e]);
+                    //     updateText.deps[e].addChild(this);
+                    // }
                 }
 
                 // Ticks have been escaped in valueTagToJessieCode
@@ -493,7 +489,7 @@ export class Text extends CoordsElement {
     updateSize() {
         var tmp,
             that,
-            node,
+            node: HTMLElement,
             ev_d = this.evalVisProp('display');
 
         if (!Env.isBrowser || this.board.renderer.type === "no") {
@@ -501,10 +497,15 @@ export class Text extends CoordsElement {
         }
         node = this.rendNode;
 
-        /**
-         * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
-         */
-        if (ev_d === "html" || this.board.renderer.type === "vml") {
+        if (node === undefined) {
+            console.warn('Text node is undefined')
+            return this;
+        } else {
+            console.warn('node', node)
+        }
+
+        // offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
+        if (ev_d === "html") {
             if (Type.exists(node.offsetWidth)) {
                 that = this;
                 window.setTimeout(function () {
@@ -817,7 +818,7 @@ export class Text extends CoordsElement {
                 if (avoidGeonext2JS) {
                     res = term;
                 } else {
-                    res = GeonextParser.geonext2JS(term, this.board);
+                    // TODO: res = GeonextParser.geonext2JS(term, this.board);
                 }
                 res = res.replace(/\\"/g, "'");
                 res = res.replace(/\\'/g, "'");
@@ -827,7 +828,7 @@ export class Text extends CoordsElement {
                     // output of a value tag
                     if (
                         Type.isNumber(
-                            Type.bind(this.board.jc.snippet(res, true, '', false), this)()
+                            // TODO: GEONEXT ??  //  Type.bind(this.board.jc.snippet(res, true, '', false), this)()
                         )
                     ) {
                         // may also be a string
@@ -864,11 +865,11 @@ export class Text extends CoordsElement {
      * "The x-coordinate of A is &lt;value&gt;X(A)&lt;/value&gt;"
      *
      */
-    valueTagToJessieCode(contentStr): string {
+    valueTagToJessieCode(contentStr): string[] {
         var res, term,
             i, j,
             expandShortMath = true,
-            textComps = [],
+            textComps: string[] = [],
             tick = '"';
 
         contentStr = contentStr || "";
@@ -1045,7 +1046,7 @@ export class Text extends CoordsElement {
      * @see JXG.Text.convertGeonext2CSS
      * @see JXG.Text.convertSketchometry2CSS
      */
-    convertGeonextAndSketchometry2CSS(s, escape) {
+    convertGeonextAndSketchometry2CSS(s, escape = false) {   //TODO is false the right default?
         s = this.convertGeonext2CSS(s);
         s = this.convertSketchometry2CSS(s, escape);
         return s;
@@ -1061,20 +1062,22 @@ export class Text extends CoordsElement {
         var search,
             res = null;
 
-        // revert possible jc replacement
-        content = content.replace(/&lt;value&gt;/g, "<value>");
-        content = content.replace(/&lt;\/value&gt;/g, "</value>");
+        // TODO what is GEONEXT ??
 
-        do {
-            search = /<value>([\w\s*/^\-+()[\],<>=!]+)<\/value>/;
-            res = search.exec(content);
+        // // revert possible jc replacement
+        // content = content.replace(/&lt;value&gt;/g, "<value>");
+        // content = content.replace(/&lt;\/value&gt;/g, "</value>");
 
-            if (res !== null) {
-                GeonextParser.findDependencies(this, res[1], this.board);
-                content = content.slice(res.index);
-                content = content.replace(search, "");
-            }
-        } while (res !== null);
+        // do {
+        //     search = /<value>([\w\s*/^\-+()[\],<>=!]+)<\/value>/;
+        //     res = search.exec(content);
+
+        //     if (res !== null) {
+        //         GeonextParser.findDependencies(this, res[1], this.board);
+        //         content = content.slice(res.index);
+        //         content = content.replace(search, "");
+        //     }
+        // } while (res !== null);
 
         return this;
     }
@@ -1208,13 +1211,13 @@ export class Text extends CoordsElement {
             i, obj,
             coords,
             saveHasInnerPoints,
-            savePointPrecision = this.board.options.precision.hasPoint,
+            savePointPrecision = Options.precision.hasPoint,
             objCenterX, objCenterY,
             objWidth, objHeight;
 
         // set a new precision for hasPoint
         // this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
-        this.board.options.precision.hasPoint = (w + h) * 0.3;
+        Options.precision.hasPoint = (w + h) * 0.3;
 
         // loop over all objects
         for (i = 0; i < this.board.objectsList.length; i++) {
@@ -1234,7 +1237,7 @@ export class Text extends CoordsElement {
                 // If is label or point use other conflict detection
                 if (
                     obj.visProp.islabel ||
-                    obj.elementClass === Const.OBJECT_CLASS.POINT
+                    obj.elementClass === OBJECT_CLASS.POINT
                 ) {
                     // get coords and size of the object
                     coords = obj.coords.scrCoords;
@@ -1283,7 +1286,7 @@ export class Text extends CoordsElement {
         }
 
         // Restore original precision
-        this.board.options.precision.hasPoint = savePointPrecision;
+        Options.precision.hasPoint = savePointPrecision;
 
         return count;
     }
@@ -1630,6 +1633,13 @@ export class Text extends CoordsElement {
     //     return this;
     // }
 
+    HTMLSliderInputEventHandler() {
+        this._val = parseFloat(this.rendNodeRange.value);
+        this.rendNodeOut.value = this.rendNodeRange.value;
+        this.board.update();
+    }
+
+
 
 }
 
@@ -1712,7 +1722,7 @@ export class Text extends CoordsElement {
  * </script><pre>
  *
  */
-export function createText(board, parents, attributes) {
+export function createText(board, parents, attributes):Text {
     var t,
         attr = Type.copyAttributes(attributes, board.options, "text"),
         coords = parents.slice(0, -1),
@@ -1768,83 +1778,85 @@ export function createText(board, parents, attributes) {
  */
 //  See element.js#createLabel
 
-/**
- * [[x,y], [w px, h px], [range]
- */
-export class HTMLSlider {
-    constructor(board, parents, attributes) {
-        var t,
-            par,
-            attr = Type.copyAttributes(attributes, board.options, "htmlslider");
+// /**
+//  * [[x,y], [w px, h px], [range]
+//  */
+// export class HTMLSlider extends Text {
+//     constructor(board, parents, attributes) {
+//         super(board,parents[0],parents,attributes)
 
-        if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
-            throw new Error(
-                "JSXGraph: Can't create htmlslider with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parents are: [[x,y], [min, start, max]]"
-            );
-        }
+//         var t:Text,
+//             par,
+//             attr = Type.copyAttributes(attributes, board.options, "htmlslider");
 
-        // Backwards compatibility
-        attr.anchor = attr.parent || attr.anchor;
-        attr.fixed = attr.fixed || true;
+//         if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
+//             throw new Error(
+//                 "JSXGraph: Can't create htmlslider with parent types '" +
+//                 typeof parents[0] +
+//                 "' and '" +
+//                 typeof parents[1] +
+//                 "'." +
+//                 "\nPossible parents are: [[x,y], [min, start, max]]"
+//             );
+//         }
 
-        par = [
-            parents[0][0],
-            parents[0][1],
-            '<form style="display:inline">' +
-            '<input type="range" /><span></span><input type="text" />' +
-            "</form>"
-        ];
+//         // Backwards compatibility
+//         attr.anchor = attr.parent || attr.anchor;
+//         attr.fixed = attr.fixed || true;
 
-        t = JXG.createText(board, par, attr);
-        t.type = Type.OBJECT_TYPE.HTMLSLIDER;
+//         par = [
+//             parents[0][0],
+//             parents[0][1],
+//             '<form style="display:inline">' +
+//             '<input type="range" /><span></span><input type="text" />' +
+//             "</form>"
+//         ];
 
-        t.rendNodeForm = t.rendNode.childNodes[0];
+//         t = createText(board, par, attr);
+//         t.type = OBJECT_TYPE.HTMLSLIDER;
 
-        t.rendNodeRange = t.rendNodeForm.childNodes[0];
-        t.rendNodeRange.min = parents[1][0];
-        t.rendNodeRange.max = parents[1][2];
-        t.rendNodeRange.step = attr.step;
-        t.rendNodeRange.value = parents[1][1];
+//         t.rendNodeForm = t.rendNode.childNodes[0];
 
-        t.rendNodeLabel = t.rendNodeForm.childNodes[1];
-        t.rendNodeLabel.id = t.rendNode.id + "_label";
+//         t.rendNodeRange = t.rendNodeForm.childNodes[0];
+//         t.rendNodeRange.min = parents[1][0];
+//         t.rendNodeRange.max = parents[1][2];
+//         t.rendNodeRange.step = attr.step;
+//         t.rendNodeRange.value = parents[1][1];
 
-        if (attr.withlabel) {
-            t.rendNodeLabel.innerHTML = t.name + "=";
-        }
+//         t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+//         t.rendNodeLabel.id = t.rendNode.id + "_label";
 
-        t.rendNodeOut = t.rendNodeForm.childNodes[2];
-        t.rendNodeOut.value = parents[1][1];
+//         if (attr.withlabel) {
+//             t.rendNodeLabel.innerHTML = t.name + "=";
+//         }
 
-        try {
-            t.rendNodeForm.id = t.rendNode.id + "_form";
-            t.rendNodeRange.id = t.rendNode.id + "_range";
-            t.rendNodeOut.id = t.rendNode.id + "_out";
-        } catch (e) {
-            JXG.debug(e);
-        }
+//         t.rendNodeOut = t.rendNodeForm.childNodes[2];
+//         t.rendNodeOut.value = parents[1][1];
 
-        t.rendNodeRange.style.width = attr.widthrange + "px";
-        t.rendNodeRange.style.verticalAlign = "middle";
-        t.rendNodeOut.style.width = attr.widthout + "px";
+//         try {
+//             t.rendNodeForm.id = t.rendNode.id + "_form";
+//             t.rendNodeRange.id = t.rendNode.id + "_range";
+//             t.rendNodeOut.id = t.rendNode.id + "_out";
+//         } catch (e) {
+//             JXG.debug(e);
+//         }
 
-        t._val = parents[1][1];
+//         t.rendNodeRange.style.width = attr.widthrange + "px";
+//         t.rendNodeRange.style.verticalAlign = "middle";
+//         t.rendNodeOut.style.width = attr.widthout + "px";
 
-        Env.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
+//         t._val = parents[1][1];
 
-        t.Value = function () {
-            return this._val;
-        };
+//         Env.addEvent(t.rendNodeForm, "input", t.HTMLSliderInputEventHandler, t);
 
-        return t;
-    };
+//         t.Value = function () {
+//             return this._val;
+//         };
 
-}
+//         return t;
+//     };
+
+// }
 
 
 JXG_registerElement("text", createText);

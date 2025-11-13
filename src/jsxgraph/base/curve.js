@@ -1461,7 +1461,7 @@ JXG.extend(
             return [isTransformed, curve_org];
         }
 
-        // See JXG.Math.Geometry.pnpoly
+        // See Geometry.pnpoly
         // pnpoly: function (x_in, y_in, coord_type) {
         //     var i,
         //         j,

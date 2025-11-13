@@ -18,23 +18,7 @@
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
-    and <https://opensource.org/licenses/MIT/>.
- */
-
-/*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
-/*jslint nomen: true, plusplus: true, newcap:true*/
-
-import { JXG } from "../jxg.js";
-import { AbstractRenderer } from "./abstract.js";
-import { Constants } from "../base/constants.js";
+{canv}
 import { Env } from "../utils/env.js";
 import { Type } from "../utils/type.js";
 import { UUID } from "../utils/uuid.js";

@@ -175,7 +175,7 @@ JXG.extend(
     JXG.Polygon.prototype,
     /** @lends JXG.Polygon.prototype */ {
         /**
-         * Wrapper for JXG.Math.Geometry.pnpoly.
+         * Wrapper for Geometry.pnpoly.
          *
          * @param {Number} x_in x-coordinate (screen or user coordinates)
          * @param {Number} y_in y-coordinate (screen or user coordinates)
@@ -939,8 +939,8 @@ JXG.extend(
          */
         sutherlandHodgman: function (polygon) {
             // First the two polygons are sorted counter clockwise
-            var clip = JXG.Math.Geometry.sortVertices(this.vertices), // "this" is the clipping polygon
-                subject = JXG.Math.Geometry.sortVertices(polygon.vertices), // "polygon" is the subject polygon
+            var clip = Geometry.sortVertices(this.vertices), // "this" is the clipping polygon
+                subject = Geometry.sortVertices(polygon.vertices), // "polygon" is the subject polygon
                 lenClip = clip.length - 1,
                 lenSubject = subject.length - 1,
                 lenIn,
@@ -975,7 +975,7 @@ JXG.extend(
                     E = inputList[j];
                     if (isInside(clip[i], clip[i + 1], E)) {
                         if (!isInside(clip[i], clip[i + 1], S)) {
-                            cross = JXG.Math.Geometry.meetSegmentSegment(
+                            cross = Geometry.meetSegmentSegment(
                                 S,
                                 E,
                                 clip[i],
@@ -988,7 +988,7 @@ JXG.extend(
                         }
                         outputList.push(E);
                     } else if (isInside(clip[i], clip[i + 1], S)) {
-                        cross = JXG.Math.Geometry.meetSegmentSegment(
+                        cross = Geometry.meetSegmentSegment(
                             S,
                             E,
                             clip[i],

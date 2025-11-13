@@ -94,7 +94,7 @@ export class Point extends CoordsElement {
         this.board.finalizeAdding(this);
 
         this.createGradient();
-        this.createLabel();
+        // TODO  //this.createLabel();
     }
 
 
@@ -406,7 +406,7 @@ export class Point extends CoordsElement {
             return this.Dist(el) < tol;
         } else if (el.elementClass === OBJECT_CLASS.LINE) {
             if (el.elType === "segment" && !this.evalVisProp('alwaysintersect')) {
-                arr = JXG.Math.Geometry.projectCoordsToSegment(
+                arr = Geometry.projectCoordsToSegment(
                     this.coords.usrCoords,
                     el.point1.coords.usrCoords,
                     el.point2.coords.usrCoords

@@ -2841,7 +2841,7 @@ JXG.createInequality = function (board, parents, attributes) {
             while (last < len - 1) {
                 // Find the first point with real coordinates on this curve segment
                 for (i = last + 1, first = len; i < len; i++) {
-                    if (parents[0].points[i].isReal()) {
+                    if (parents[0].points[i].computeIsReal()) {
                         first = i;
                         break;
                     }
@@ -2853,7 +2853,7 @@ JXG.createInequality = function (board, parents, attributes) {
 
                 // Find the last point with real coordinates on this curve segment
                 for (i = first, last = len - 1; i < len - 1; i++) {
-                    if (!parents[0].points[i + 1].isReal()) {
+                    if (!parents[0].points[i + 1].computeIsReal()) {
                         last = i;
                         break;
                     }

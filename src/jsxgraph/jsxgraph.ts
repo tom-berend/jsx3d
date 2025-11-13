@@ -44,7 +44,7 @@ import { Env } from './utils/env.js';
 import { Type } from './utils/type.js';
 //  import {JSXMath}  from "./math/math.js";
 import { Board } from './base/board.js';
-import { FileReader } from './reader/filereader.js';
+import { JSXFileReader } from './reader/filereader.js';
 import { Options } from './options.js';
 import { SVGRenderer } from './renderer/svg.js';
 // import CanvasRenderer from './renderer/canvas.js';
@@ -82,7 +82,7 @@ export class JSXGraph {
             Options.board.renderer = 'canvas';
         }
 
-        if (Env.isNode() || Options.renderer === 'no') {
+        if (Env.isNode() || Options.board.renderer === 'no') {
             Options.text.display = 'internal';
             Options.infobox.display = 'internal';
         }
@@ -129,10 +129,10 @@ export class JSXGraph {
         // create the renderer
         if (attrRenderer === 'svg') {
             renderer = new SVGRenderer(boxid, dim);
-        } else if (attrRenderer === 'canvas') {
-            renderer = new CanvasRenderer(boxid, dim);
-        } else {
-            renderer = new NoRenderer();
+        // } else if (attrRenderer === 'canvas') {      // TODO
+        //     renderer = new CanvasRenderer(boxid, dim);
+        // } else {
+        //     renderer = new NoRenderer();
         }
 
         return renderer;
@@ -386,7 +386,7 @@ export class JSXGraph {
             attr,
         );
 
-        board.keepaspectratio = attr.keepaspectratio;
+        // TODO:  board.keepaspectratio = attr.keepaspectratio;
 
         this._fillBoard(board, attr, dimensions);
 
@@ -408,8 +408,8 @@ export class JSXGraph {
                 axattr_y = Type.deepCopy(axattr_y, attr.defaultaxes.y);
             }
 
-            board.defaultAxes = {};
-            board.defaultAxes.x = board.create(
+            Options.board.defaultAxes = {};
+            Options.board.defaultAxes.x = board.create(
                 'axis',
                 [
                     [0, 0],
@@ -417,7 +417,7 @@ export class JSXGraph {
                 ],
                 axattr_x,
             );
-            board.defaultAxes.y = board.create(
+            Options.board.defaultAxes.y = board.create(
                 'axis',
                 [
                     [0, 0],
@@ -496,7 +496,7 @@ export class JSXGraph {
         );
         this._fillBoard(board, attr, dimensions);
         encoding = attr.encoding || 'iso-8859-1';
-        FileReader.parseFileContent(file, board, format, true, encoding, callback);
+        JSXFileReader.parseFileContent(file, board, format, true, encoding, callback);
 
         return board;
     }
@@ -542,7 +542,7 @@ export class JSXGraph {
             attr,
         );
         this._fillBoard(board, attr, dimensions);
-        FileReader.parseString(string, board, format, true, callback);
+        JSXFileReader.parseString(string, board, format, true, callback);
 
         return board;
     }

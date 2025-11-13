@@ -121,9 +121,9 @@ import { MeasureMemoryOptions } from "vm";
 export class Options {
 
     static dummyOption = {  // for debugging
-        dummy:true,
-        jc:{enabled:false}
-        }
+        dummy: true,
+        jc: { enabled: false }
+    }
 
     static layer: LayerOptions = {
         numlayers: 20, // only important in SVG
@@ -158,10 +158,10 @@ export class Options {
     }
 
 
-    static jc: JcOptions = {
-        enabled: true,
-        compile: true,
-    }
+    // TODO: GEONEXT ??  // static jc: JcOptions = {
+    // TODO: GEONEXT ??  //     enabled: true,
+    // TODO: GEONEXT ??  //     compile: true,
+    // TODO: GEONEXT ??  // }
 
     /*
      * Options that are used directly within the board class
@@ -529,7 +529,7 @@ export class Options {
         autoPositionMinDistance: 12,
         autoPositionMaxDistance: 28,
         autoPositionWhitelist: [],
-    
+
     }
 
     /* special legend options */
@@ -793,7 +793,7 @@ export class Options {
     }
 
     /* special button options */
-    static button:ButtonOptions= {
+    static button: ButtonOptions = {
         disabled: false,
         display: 'html'
     }
@@ -829,7 +829,7 @@ export class Options {
     }
 
     /* special html slider options */
-    static checkbox:CheckboxOptions = {
+    static checkbox: CheckboxOptions = {
         disabled: false,
         checked: false,
         display: 'html'
@@ -991,7 +991,7 @@ export class Options {
     }
 
     /* special functiongraph options */
-    static functiongraph:FunctiongraphOptions = {
+    static functiongraph: FunctiongraphOptions = {
         /**#@+
          * @visprop
          */
@@ -1001,7 +1001,7 @@ export class Options {
     }
 
     /* special glider options */
-    static glider:GliderOptions = {
+    static glider: GliderOptions = {
         /**#@+
          * @visprop
          */
@@ -1089,7 +1089,7 @@ export class Options {
         inverse: false
     }
 
-    static infobox: InfoboxOptions ={
+    static infobox: InfoboxOptions = {
         distanceX: -20,
         distanceY: 25,
         intl: { enabled: 'inherit', options: {}, },
@@ -1421,7 +1421,7 @@ export class Options {
     }
 
     /* special reflexangle options */
-    static reflexangle:ReflexangleOptions = {
+    static reflexangle: ReflexangleOptions = {
         /**#@+
          * @visprop
          */
@@ -1502,7 +1502,7 @@ export class Options {
     }
 
     /* special segment options */
-    static segment:SegmentOptions = {
+    static segment: SegmentOptions = {
         /**#@+
          * @visprop
          */
@@ -1713,7 +1713,7 @@ export class Options {
     }
 
     /* special options for smartlabel of polygon */
-    static smartlabelpolygon: SmartlabelpolygonOptions= {
+    static smartlabelpolygon: SmartlabelpolygonOptions = {
         cssClass: 'smart-label-solid smart-label-polygon',
         highlightCssClass: 'smart-label-solid smart-label-polygon',
         anchorX: 'middle',
@@ -1725,7 +1725,7 @@ export class Options {
     }
 
     /* special options for step functions */
-    static stepfunction:StepfunctionOptions = {
+    static stepfunction: StepfunctionOptions = {
         /**#@+
          * @visprop
          */
@@ -1734,7 +1734,7 @@ export class Options {
     }
 
     /* special tangent options */
-    static tangent:TangentOptions = {
+    static tangent: TangentOptions = {
     }
 
     /* special tangent options */
@@ -1829,7 +1829,7 @@ export class Options {
     }
 
     /* special turtle options */
-    static turtle:TurtleOptions = {
+    static turtle: TurtleOptions = {
         strokeWidth: 1,
         fillColor: 'none',
         strokeColor: '#000000',
@@ -1885,7 +1885,7 @@ export class Options {
         let validatePixel = function (v) { return (/^[0-9]+px$/).test(v); }
         let validateDisplay = function (v) { return (v === 'html' || v === 'internal'); }
         let validateColor = function (v) { return Type.isString(v); }       // for now this should do it...
-        let validatePointFace =  (v)=> { return Type.exists(this.normalizePointFace(v)); }
+        let validatePointFace = (v) => { return Type.exists(this.normalizePointFace(v)); }
         let validateNumber = function (v) { return Type.isNumber(v, true, false); }
         let validateInteger = function (v) { return (Math.abs(v - Math.round(v)) < JSXMath.eps); }
         let validateNotNegativeInteger = function (v) { return validateInteger(v) && v >= 0; }

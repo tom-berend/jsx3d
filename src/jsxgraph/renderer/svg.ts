@@ -69,9 +69,8 @@ export class SVGRenderer extends AbstractRenderer {
 
     /**
      * SVG root node
-     * @type Node
      */
-    svgRoot = null;
+    svgRoot: Element | null = null;       // not SVGElement!
 
     /**
      * The SVG Namespace used in JSXGraph.
@@ -80,13 +79,14 @@ export class SVGRenderer extends AbstractRenderer {
      */
     svgNamespace = "http://www.w3.org/2000/svg";
 
-    container: HTMLDivElement | null
 
     defs: any
 
     foreignObjLayer: any
 
     layer: Node[]
+
+    touchpoints: HTMLElement[] = []
 
 
     /**
@@ -116,8 +116,8 @@ export class SVGRenderer extends AbstractRenderer {
         }
 
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
-        this.svgRoot.style.overflow = "hidden";
-        this.svgRoot.style.display = "block";
+        (this.svgRoot as SVGSVGElement).style.overflow = "hidden";
+        (this.svgRoot as SVGSVGElement).style.display = "block";
         this.resize(dim.width, dim.height);
 
         //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
@@ -197,9 +197,11 @@ export class SVGRenderer extends AbstractRenderer {
      * @private
      */
     createShadowFilter(id, rgb, opacity, blend, blur, offset) {
-        var filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter'),
-            feOffset, feColor, feGaussianBlur, feBlend,
-            mat;
+        var feOffset, feColor, feGaussianBlur, feBlend, mat;
+
+        this.assertNonNullish(this.container, 'expected container')
+
+        let filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter')
 
         filter.setAttributeNS(null, 'id', id);
         filter.setAttributeNS(null, 'width', '300%');
@@ -260,6 +262,8 @@ export class SVGRenderer extends AbstractRenderer {
      * @private
      */
     uniqName(id: string): string {
+        this.assertNonNullish(this.container, 'expected container')
+
         return this.container.id + '_' +
             Array.prototype.slice.call(arguments).join('_');
     };
@@ -301,9 +305,9 @@ export class SVGRenderer extends AbstractRenderer {
      * // Output:
      * // url(#xxx_bbbTriangleEnd)
      */
-    toURL(...args: string[]) {
+    toURL(...args: any[]) {
         return 'url(#' +
-            this.toStr.apply(this, arguments) + // Pass the arguments to toStr
+            this.toStr.apply(this, args) + // Pass the arguments to toStr
             ')';
     };
 
@@ -379,6 +383,8 @@ export class SVGRenderer extends AbstractRenderer {
            arrow head and line. This is not the case for curves, yet.
            Therefore, the offset refX has to be adapted to the path type.
         */
+        this.assertNonNullish(this.container, 'expected container')
+
         node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, "path");
         h = 5;
         if (idAppendix === "Start") {
@@ -656,6 +662,8 @@ export class SVGRenderer extends AbstractRenderer {
             y = 6 + fontsize,
             alpha = 0.2;
 
+        this.assertNonNullish(this.container, 'expected container')
+
         node = this.createPrim("text", 'licenseText');
         node.setAttributeNS(null, 'x', x + 'px');
         node.setAttributeNS(null, 'y', y + 'px');
@@ -709,6 +717,8 @@ export class SVGRenderer extends AbstractRenderer {
     drawInternalText(el) {
         console.log('drawInternalText', el)
         var node = this.createPrim("text", el.id);
+
+        this.assertNonNullish(this.container, 'expected container')
 
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         // Preserve spaces
@@ -974,6 +984,9 @@ export class SVGRenderer extends AbstractRenderer {
      * @returns {Node} Reference to the created node.
      */
     createPrim(type: string, id: string): HTMLElement {
+
+        this.assertNonNullish(this.container, 'expected container')
+
         let node = this.container.ownerDocument.createElementNS(this.svgNamespace, type) as HTMLElement
         node.setAttributeNS(null, "id", this.uniqName(id));
         node.style.position = "absolute";
@@ -1019,12 +1032,16 @@ export class SVGRenderer extends AbstractRenderer {
      * in any descendant renderer.
      * @param {JXG.GeometryElement} el The element the arrows are to be attached to.
      * @param {Object} arrowData Data concerning possible arrow heads
-     *
+    *
      */
     makeArrows(el: GeometryElement, a) {
         var node2, str,
             ev_fa = a.evFirst,
             ev_la = a.evLast;
+
+        this.assertNonNullish(el.rendNode, 'expected node')
+        this.assertNonNullish(el.rendNode.parentNode, 'expected node')
+        this.assertNonNullish(this.container, 'expected container')
 
         if (this.isSafari && el.visPropCalc.visible && (ev_fa || ev_la)) {
             // Necessary, since Safari is the new IE (11.2024)
@@ -1057,7 +1074,7 @@ export class SVGRenderer extends AbstractRenderer {
                 this.remove(node2);
                 el.rendNodeTriangleStart = null;
             }
-            el.rendNode.setAttributeNS(null, "marker-start", null);
+            el.rendNode.setAttributeNS(null, "marker-start", '');
         }
 
         node2 = el.rendNodeTriangleEnd;
@@ -1081,7 +1098,8 @@ export class SVGRenderer extends AbstractRenderer {
                 this.remove(node2);
                 el.rendNodeTriangleEnd = null;
             }
-            el.rendNode.setAttributeNS(null, "marker-end", null);
+
+            el.rendNode.setAttributeNS(null, "marker-end", '');
         }
     }
 
@@ -1660,6 +1678,7 @@ export class SVGRenderer extends AbstractRenderer {
             node, node2, node3,
             ev_g = el.evalVisProp('gradient');
 
+
         if (ev_g === "linear" || ev_g === "radial") {
             node = this.createPrim(ev_g + "Gradient", el.id + "_gradient");
             node2 = this.createPrim("stop", el.id + "_gradient1");
@@ -1667,6 +1686,8 @@ export class SVGRenderer extends AbstractRenderer {
             node.appendChild(node2);
             node.appendChild(node3);
             this.defs.appendChild(node);
+
+            this.assertNonNullish(this.container, 'expected container')
             fillNode.setAttributeNS(
                 null,
                 'style',
@@ -1731,7 +1752,7 @@ export class SVGRenderer extends AbstractRenderer {
         ) {
             return;
         }
-        if (Type.exists(rgba) && rgba !== false) {
+        if (Type.exists(rgba) && rgba !== 'none') {
             if (rgba.length !== 9) {
                 // RGB, not RGBA
                 c = rgba;
@@ -1905,7 +1926,7 @@ export class SVGRenderer extends AbstractRenderer {
      */
     setObjectTransition(el: GeometryElement, duration?: number) {
         var node, props,
-            transitionArr = [],
+            transitionArr: string[] = [],
             transitionStr,
             i,
             len = 0,
@@ -2001,6 +2022,7 @@ export class SVGRenderer extends AbstractRenderer {
 
         if (Type.exists(el.rendNode)) {
             if (show) {
+                this.assertNonNullish(this.container, 'expected container')
                 if (use_board_filter) {
                     el.rendNode.setAttributeNS(null, 'filter', this.toURL(this.container.id + '_' + 'f1'));
                     // 'url(#' + this.container.id + '_' + 'f1)');
@@ -2198,7 +2220,8 @@ export class SVGRenderer extends AbstractRenderer {
       */
     suspendRedraw() {
         // It seems to be important for the Linux version of firefox
-        this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+        console.warn('suspendRedraw is Depreciated')
+        // this.suspendHandle = this.svgRoot.suspendRedraw(10000);
     }
 
     /**
@@ -2206,9 +2229,9 @@ export class SVGRenderer extends AbstractRenderer {
      * @see JXG.AbstractRenderer#suspendRedraw
      */
     unsuspendRedraw() {
-        this.svgRoot.unsuspendRedraw(this.suspendHandle);
-        // this.svgRoot.unsuspendRedrawAll();
-        //this.svgRoot.forceRedraw();
+        console.warn('suspendRedraw is Depreciated')
+        // this.svgRoot.unsuspendRedraw(this.suspendHandle);
+
     }
 
     /**
@@ -2216,9 +2239,11 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {Number} w New width
      * @param {Number} h New height
      */
-    resize(w, h) {
-        this.svgRoot.setAttribute("width", parseFloat(w));
-        this.svgRoot.setAttribute("height", parseFloat(h));
+    resize(w: number, h: number) {
+        this.assertNonNullish(this.svgRoot, "Expected a node")
+
+        this.svgRoot.setAttribute("width", w.toString());
+        this.svgRoot.setAttribute("height", h.toString());
     }
 
     /**
@@ -2332,7 +2357,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @private
      */
     _getValuesOfDOMElements(node) {
-        var values = [];
+        var values: any[] = [];
         if (node.nodeType === 1) {
             node = node.firstChild;
             while (node) {
@@ -2436,16 +2461,21 @@ export class SVGRenderer extends AbstractRenderer {
      *
      */
     dumpToDataURI(ignoreTexts) {
-        var svgRoot = this.svgRoot,
+        let
             btoa = window.btoa || Base64.encode,
             svg, i, len,
             values = [];
+
+        var svgRoot = this.svgRoot
+        this.assertNonNullish(svgRoot, "Expected a node")
 
         // Move all HTML tags (beside the SVG root) of the container
         // to the foreignObject element inside of the svgRoot node
         // Problem:
         // input values are not copied. This can be verified by looking at an innerHTML output
         // of an input element. Therefore, we do it "by hand".
+
+        this.assertNonNullish(this.container, "Expected a node")
         if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
             if (!ignoreTexts) {
                 this.foreignObjLayer.setAttribute("display", "inline");
@@ -2458,6 +2488,7 @@ export class SVGRenderer extends AbstractRenderer {
         }
 
         this._getImgDataURL(svgRoot);
+
 
         // Convert the SVG graphic into a string containing SVG code
         svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -2501,6 +2532,7 @@ export class SVGRenderer extends AbstractRenderer {
         if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
             // Restore all HTML elements
             while (this.foreignObjLayer.firstChild) {
+                this.assertNonNullish(this.container, "Expected a node")
                 this.container.appendChild(this.foreignObjLayer.firstChild);
             }
             this.foreignObjLayer.setAttribute("display", "none");
@@ -2538,8 +2570,10 @@ export class SVGRenderer extends AbstractRenderer {
      */
     dumpToCanvas(canvasId, w, h, ignoreTexts): Promise<unknown> {
         var svg, tmpImg,
-            cv, ctx,
-            doc = this.container.ownerDocument;
+            cv, ctx
+
+        this.assertNonNullish(this.container, "Expected a node")
+        let doc = this.container.ownerDocument;
 
         // Prepare the canvas element
         cv = doc.getElementById(canvasId);
@@ -2588,7 +2622,7 @@ export class SVGRenderer extends AbstractRenderer {
                     }
                 }, 200);
             };
-            return this;
+            return new Promise(() => { });     // TODO:  this is wrong, but caller expects a promise...
         }
 
         return new Promise(function (resolve, reject) {
@@ -2626,8 +2660,6 @@ export class SVGRenderer extends AbstractRenderer {
      */
     screenshot(board, imgId, ignoreTexts) {
         var node,
-            doc = this.container.ownerDocument,
-            parent = this.container.parentNode,
             // cPos,
             // cssTxt,
             canvas, id, img,
@@ -2639,10 +2671,17 @@ export class SVGRenderer extends AbstractRenderer {
             _copyCanvasToImg,
             isDebug = false;
 
+        this.assertNonNullish(this.container, "Expected a node")
+        let doc = this.container.ownerDocument
+        this.assertNonNullish(doc, "Expected a node")
+        let parent = this.container.parentNode
+        this.assertNonNullish(parent, "Expected a node")
+
         if (this.type === "no") {
             return this;
         }
 
+        this.assertNonNullish(this.container.getBoundingClientRect(), "Expected a node")
         w = bas.scale * this.container.getBoundingClientRect().width;
         h = bas.scale * this.container.getBoundingClientRect().height;
 
@@ -2663,6 +2702,8 @@ export class SVGRenderer extends AbstractRenderer {
             node.style.cssText = bas.css;
             node.style.width = w + "px";
             node.style.height = h + "px";
+
+            this.assertNonNullish(this.container, "Expected a node")
             node.style.zIndex = this.container.style.zIndex + 120;
 
             // Try to position the div exactly over the JSXGraph board
@@ -2682,6 +2723,9 @@ export class SVGRenderer extends AbstractRenderer {
             canvas.style.width = w + "px";
             canvas.style.height = w + "px";
             canvas.style.display = "none";
+
+            this.assertNonNullish(parent, "Expected a node")
+            this.assertNonNullish(parent, "Expected a node")
             parent.appendChild(canvas);
         } else {
             // Debug: use canvas element 'jxgbox_canvas' from jsxdev/dump.html
@@ -2704,6 +2748,8 @@ export class SVGRenderer extends AbstractRenderer {
             node.appendChild(button);
 
             this.assertNonNullish(this.container, "Expected a container")
+            this.assertNonNullish(parent, "Expected a node")
+
             parent.insertBefore(node, this.container.nextSibling);
         }
 

@@ -44,6 +44,7 @@ import { LooseObject, Type } from "../utils/type.js";
 import { Text } from "../base/text.js";
 
 import { BoardOptions, GeometryElementOptions } from "../optionInterfaces.js";
+import { Ticks } from "../tsxgraph.js";
 
 interface ShortcutAttributes {
     // these are the 'shortcuts' in options.js.  we don't define them, but TypeScript needs to know they exist
@@ -86,8 +87,13 @@ export interface AriaAttributes {
 
 export class GeometryElement extends Events {
 
+    public coords: Coords
+    public initialCoords: Coords;
+    public actualCoords: Coords;
+
+
     /**
-     * Controls if updates are necessary
+     * Controls if updates are necessaryclass
      * @type Boolean
      * @default true
      */
@@ -100,12 +106,12 @@ export class GeometryElement extends Events {
      */
     public isDraggable = false;
 
-    /**
-     * If element is in two dimensional real space this is true, else false.
-     * @type Boolean
-     * @default true
-     */
-    public isReal = true;
+    // /**
+    //  * If element is in two dimensional real space this is true, else false.
+    //  * @type Boolean
+    //  * @default true
+    //  */
+    // public isReal = true;
 
     /**
      * Stores all dependent objects to be updated when this point is moved.
@@ -192,9 +198,9 @@ export class GeometryElement extends Events {
     public board: Board;
 
     /**  Type of the element.   */
-    public type: number
+    public type: OBJECT_TYPE = OBJECT_TYPE.NOTYETASSIGNED
     /**  Class of the element.   */
-    public class: number
+    public class: OBJECT_CLASS = OBJECT_CLASS.OTHER
 
     /**
      * Original type of the element at construction time. Used for removing glider property.
@@ -247,7 +253,7 @@ export class GeometryElement extends Events {
      *
      * @type Object
      */
-    public rendNode = null;
+    public rendNode : HTMLElement;
 
     /**
      * Storage for HTMLElements for arrows
@@ -406,6 +412,11 @@ export class GeometryElement extends Events {
     public usrCoords = [];
     public scrCoords = [];
 
+    public visPropOld: LooseObject = {};
+    public ticks: Ticks[]
+
+    public animationCallback:Function
+    public animationData:object = {}
     /**
      * Constructs a new GeometryElement object.
      * @class This is the parent class for all geometry elements like points, circles, lines, curves...
@@ -420,7 +431,7 @@ export class GeometryElement extends Events {
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
     constructor(board: Board, attributes: object) {
-        super() // eventify
+        super()
 
         var name, key, attr;
 
@@ -1096,7 +1107,7 @@ export class GeometryElement extends Events {
      * @return {JXG.GeometryElement} Reference to the element.
      * @private
      */
-    updateVisibility(parent_val) {
+    updateVisibility(parent_val=true) {
         var i, len, s, len_s, obj, val;
 
         if (this.needsUpdate) {
@@ -1405,7 +1416,7 @@ export class GeometryElement extends Events {
                             this.type === OBJECT_TYPE.TICKS &&
                             Type.isFunction(value)
                         ) {
-                            this.generateLabelValue = value;
+                            this.visProp.generatelabelvalue = value   // tbtb was this.generateLabelValue = value;
                         }
                         break;
                     case "gradient":
@@ -1564,10 +1575,10 @@ export class GeometryElement extends Events {
                         break;
                     default:
                         if (Type.exists(this.visProp[key]) &&
-                            (!JXG.Validator[key] ||                                   // No validator for this key => OK
-                                (JXG.Validator[key] && JXG.Validator[key](value)) ||  // Value passes the validator => OK
-                                (JXG.Validator[key] &&                                // Value is function, function value passes the validator => OK
-                                    Type.isFunction(value) && JXG.Validator[key](value(this))
+                            (!Options.Validator[key] ||                                   // No validator for this key => OK
+                                (Options.Validator[key] && Options.Validator[key](value)) ||  // Value passes the validator => OK
+                                (Options.Validator[key] &&                                // Value is function, function value passes the validator => OK
+                                    Type.isFunction(value) && Options.Validator[key](value(this))
                                 )
                             )
                         ) {
@@ -1715,40 +1726,40 @@ export class GeometryElement extends Events {
         return val;
     }
 
-    // /**
-    //  * Get value of a parameter. If the parameter is a function, call the function and return its value.
-    //  * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
-    //  * if the attribute "islabel" is true), the anchor element is supplied. The label of an element can be accessed as
-    //  * sub-object "label" then.
-    //  *
-    //  * @param {String|Number|Function|Object} val If not a function, it will be returned as is. If function it will be evaluated, where the GeometryElement is
-    //  * supplied as the (only) parameter of that function.
-    //  * @returns {String|Number|Object}
-    //  *
-    //  * @see GeometryElement#evalVisProp
-    //  * @see JXG#evaluate
-    //  */
-    // jsxEval(val) {
-    //     if (JXG.isFunction(val)) {
-    //         // For labels supply the anchor element as parameter.
-    //         if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
-    //             // 3D: supply the 3D element
-    //             if (this.visProp.anchor.visProp.element3d !== null) {
-    //                 return val(this.visProp.anchor.visProp.element3d);
-    //             }
-    //             // 2D: supply the 2D element
-    //             return val(this.visProp.anchor);
-    //         }
-    //         // For 2D elements representing 3D elements, return the 3D element.
-    //         if (this.visProp.element3d !== null) {
-    //             return val(this.visProp.element3d);
-    //         }
-    //         // In all other cases, return the element itself
-    //         return val(this);
-    //     }
-    //     // val is not of type function
-    //     return val;
-
+    /**
+     * Get value of a parameter. If the parameter is a function, call the function and return its value.
+     * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
+     * if the attribute "islabel" is true), the anchor element is supplied. The label of an element can be accessed as
+     * sub-object "label" then.
+     *
+     * @param {String|Number|Function|Object} val If not a function, it will be returned as is. If function it will be evaluated, where the GeometryElement is
+     * supplied as the (only) parameter of that function.
+     * @returns {String|Number|Object}
+     *
+     * @see GeometryElement#evalVisProp
+     * @see JXG#evaluate
+     */
+    eval(val) {
+        if (Type.isFunction(val)) {
+            // For labels supply the anchor element as parameter.
+            if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                // 3D: supply the 3D element
+                if (this.visProp.anchor.visProp.element3d !== null) {
+                    return val(this.visProp.anchor.visProp.element3d);
+                }
+                // 2D: supply the 2D element
+                return val(this.visProp.anchor);
+            }
+            // For 2D elements representing 3D elements, return the 3D element.
+            if (this.visProp.element3d !== null) {
+                return val(this.visProp.element3d);
+            }
+            // In all other cases, return the element itself
+            return val(this);
+        }
+        // val is not of type function
+        return val;
+    }
 
     /**
      * Set the dash style of an object. See {@link JXG.GeometryElement#dash}
@@ -1848,8 +1859,9 @@ export class GeometryElement extends Events {
         // this is a dirty hack to resolve the text-dependency. If there is no text element available,
         // just don't create a label. This method is usually not called by a user, so we won't throw
         // an exception here and simply output a warning via JXG.debug.
-        if (JXG_elements['text']) {
-            attr = Type.deepCopy(Options.label, null);
+
+        // if (JXG_elements['text']) { //tbtb
+            attr = Type.deepCopy(Options.label, {});
             attr.id = this.id + "Label";
             attr.isLabel = true;
             attr.anchor = this;
@@ -1876,11 +1888,11 @@ export class GeometryElement extends Events {
 
                 this.hasLabel = true;
             }
-        } else {
-            JXG.debug(
-                "JSXGraph: Can't create label: text element is not available. Make sure you include base/text"
-            );
-        }
+        // } else {
+        //     JXG.debug(
+        //         "JSXGraph: Can't create label: text element is not available. Make sure you include base/text"
+        //     );
+        // }
 
         return this;
     }
@@ -2299,7 +2311,7 @@ export class GeometryElement extends Events {
      * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
      * @returns {String} Id of the ticks object.
      */
-    addTicks(ticks) {
+    addTicks(ticks:Ticks) {
         if (ticks.id === "" || !Type.exists(ticks.id)) {
             ticks.id = this.id + "_ticks_" + (this.ticks.length + 1);
         }

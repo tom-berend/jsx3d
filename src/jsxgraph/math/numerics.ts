@@ -41,7 +41,9 @@
 import { JXG } from "../jxg.js";
 import { Type } from "../utils/type.js";
 import { Env } from "../utils/env.js";
+import { Coords } from "../base/coords.js";
 import { JSXMath } from "./jsxmath.js";
+import { Complex, C } from "./complex.js";
 
 // Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
 var predefinedButcher = {
@@ -76,11 +78,11 @@ var predefinedButcher = {
 /**
  * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
  * @name JXG.Math.Numerics
- * @exports Mat.Numerics as JXG.Math.Numerics
+ * @exports JSXMath.Numerics as JXG.Math.Numerics
  * @namespace
  */
 export class Numerics {
-    //JXG.extend(Mat.Numerics, /** @lends JXG.Math.Numerics */ {
+    //JXG.extend(JSXMath.Numerics, /** @lends JXG.Math.Numerics */ {
     /**
      * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
      * The algorithm runs in-place. I.e. the entries of A and b are changed.
@@ -422,15 +424,16 @@ export class Numerics {
             integral_value = 0.0,
             number_of_nodes =
                 config && Type.isNumber(config.number_of_nodes) ? config.number_of_nodes : 28,
-            available_types = { trapez: true, simpson: true, milne: true }
-        integration_type =
-            config &&
-                config.integration_type &&
-                available_types.hasOwnProperty(config.integration_type) &&
-                available_types[config.integration_type]
-                ? config.integration_type
-                : "milne",
-            step_size = (interval[1] - interval[0]) / number_of_nodes;
+            available_types = { trapez: true, simpson: true, milne: true },
+            integration_type =
+                config &&
+                    config.integration_type &&
+                    available_types.hasOwnProperty(config.integration_type) &&
+                    available_types[config.integration_type]
+                    ? config.integration_type
+                    : "milne"
+
+        let step_size = (interval[1] - interval[0]) / number_of_nodes;
 
         switch (integration_type) {
             case "trapez":
@@ -611,8 +614,8 @@ export class Numerics {
             xp,
             xm,
             result = 0.0,
-            table_xi = [],
-            table_w = [],
+            table_xi: number[][] = [],
+            table_w: number[][] = [],
             xi,
             w,
             n = config && Type.isNumber(config.n) ? config.n : 12;
@@ -809,7 +812,7 @@ export class Numerics {
         xm = 0.5 * (b - a);
         xp = 0.5 * (b + a);
 
-        if (n & (1 === 1)) {
+        if (n /*& (1 === 1)*/) {     // TODO ????? what was this?
             // n odd
             result = w[0] * f(xp);
             for (i = 1; i < m; ++i) {
@@ -1098,6 +1101,7 @@ export class Numerics {
         return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, resultObj);
     }
 
+
     /**
      * Generate workspace object for {@link JXG.Math.Numerics.Qag}.
      * @param {Array} interval The integration interval, e.g. [0, 3].
@@ -1108,163 +1112,163 @@ export class Numerics {
      * @memberof JXG.Math.Numerics
      */
     static _workspace(interval, n) {
-        return {
-            limit: n,
-            size: 0,
-            nrmax: 0,
-            i: 0,
-            alist: [interval[0]],
-            blist: [interval[1]],
-            rlist: [0.0],
-            elist: [0.0],
-            order: [0],
-            level: [0],
+        // return {
+        //     limit: n,
+        //     size: 0,
+        //     nrmax: 0,
+        //     i: 0,
+        //     alist: [interval[0]],
+        //     blist: [interval[1]],
+        //     rlist: [0.0],
+        //     elist: [0.0],
+        //     order: [0],
+        //     level: [0],
 
-            qpsrt() {
-                var last = this.size - 1,
-                    limit = this.limit,
-                    errmax,
-                    errmin,
-                    i,
-                    k,
-                    top,
-                    i_nrmax = this.nrmax,
-                    i_maxerr = this.order[i_nrmax];
+        //     qpsrt() {
+        //         var last = this.size - 1,
+        //             limit = this.limit,
+        //             errmax,
+        //             errmin,
+        //             i,
+        //             k,
+        //             top,
+        //             i_nrmax = this.nrmax,
+        //             i_maxerr = this.order[i_nrmax];
 
-                /* Check whether the list contains more than two error estimates */
-                if (last < 2) {
-                    this.order[0] = 0;
-                    this.order[1] = 1;
-                    this.i = i_maxerr;
-                    return;
-                }
+        //         /* Check whether the list contains more than two error estimates */
+        //         if (last < 2) {
+        //             this.order[0] = 0;
+        //             this.order[1] = 1;
+        //             this.i = i_maxerr;
+        //             return;
+        //         }
 
-                errmax = this.elist[i_maxerr];
+        //         errmax = this.elist[i_maxerr];
 
-                /* This part of the routine is only executed if, due to a difficult
-                        integrand, subdivision increased the error estimate. In the normal
-                        case the insert procedure should start after the nrmax-th largest
-                        error estimate. */
-                while (i_nrmax > 0 && errmax > this.elist[this.order[i_nrmax - 1]]) {
-                    this.order[i_nrmax] = this.order[i_nrmax - 1];
-                    i_nrmax--;
-                }
+        //         /* This part of the routine is only executed if, due to a difficult
+        //                 integrand, subdivision increased the error estimate. In the normal
+        //                 case the insert procedure should start after the nrmax-th largest
+        //                 error estimate. */
+        //         while (i_nrmax > 0 && errmax > this.elist[this.order[i_nrmax - 1]]) {
+        //             this.order[i_nrmax] = this.order[i_nrmax - 1];
+        //             i_nrmax--;
+        //         }
 
-                /* Compute the number of elements in the list to be maintained in
-                        descending order. This number depends on the number of
-                        subdivisions still allowed. */
-                if (last < limit / 2 + 2) {
-                    top = last;
-                } else {
-                    top = limit - last + 1;
-                }
+        //         /* Compute the number of elements in the list to be maintained in
+        //                 descending order. This number depends on the number of
+        //                 subdivisions still allowed. */
+        //         if (last < limit / 2 + 2) {
+        //             top = last;
+        //         } else {
+        //             top = limit - last + 1;
+        //         }
 
-                /* Insert errmax by traversing the list top-down, starting
-                        comparison from the element elist(order(i_nrmax+1)). */
-                i = i_nrmax + 1;
+        //         /* Insert errmax by traversing the list top-down, starting
+        //                 comparison from the element elist(order(i_nrmax+1)). */
+        //         i = i_nrmax + 1;
 
-                /* The order of the tests in the following line is important to
-                        prevent a segmentation fault */
-                while (i < top && errmax < this.elist[this.order[i]]) {
-                    this.order[i - 1] = this.order[i];
-                    i++;
-                }
+        //         /* The order of the tests in the following line is important to
+        //                 prevent a segmentation fault */
+        //         while (i < top && errmax < this.elist[this.order[i]]) {
+        //             this.order[i - 1] = this.order[i];
+        //             i++;
+        //         }
 
-                this.order[i - 1] = i_maxerr;
+        //         this.order[i - 1] = i_maxerr;
 
-                /* Insert errmin by traversing the list bottom-up */
-                errmin = this.elist[last];
-                k = top - 1;
+        //         /* Insert errmin by traversing the list bottom-up */
+        //         errmin = this.elist[last];
+        //         k = top - 1;
 
-                while (k > i - 2 && errmin >= this.elist[this.order[k]]) {
-                    this.order[k + 1] = this.order[k];
-                    k--;
-                }
+        //         while (k > i - 2 && errmin >= this.elist[this.order[k]]) {
+        //             this.order[k + 1] = this.order[k];
+        //             k--;
+        //         }
 
-                this.order[k + 1] = last;
+        //         this.order[k + 1] = last;
 
-                /* Set i_max and e_max */
-                i_maxerr = this.order[i_nrmax];
-                this.i = i_maxerr;
-                this.nrmax = i_nrmax;
-            },
+        //         /* Set i_max and e_max */
+        //         i_maxerr = this.order[i_nrmax];
+        //         this.i = i_maxerr;
+        //         this.nrmax = i_nrmax;
+        //     },
 
-            set_initial_result(result, error) {
-                this.size = 1;
-                this.rlist[0] = result;
-                this.elist[0] = error;
-            },
+        //     set_initial_result(result, error) {
+        //         this.size = 1;
+        //         this.rlist[0] = result;
+        //         this.elist[0] = error;
+        //     },
 
-            update(a1, b1, area1, error1, a2, b2, area2, error2) {
-                var i_max = this.i,
-                    i_new = this.size,
-                    new_level = this.level[this.i] + 1;
+        //     update(a1, b1, area1, error1, a2, b2, area2, error2) {
+        //         var i_max = this.i,
+        //             i_new = this.size,
+        //             new_level = this.level[this.i] + 1;
 
-                /* append the newly-created intervals to the list */
+        //         /* append the newly-created intervals to the list */
 
-                if (error2 > error1) {
-                    this.alist[i_max] = a2; /* blist[maxerr] is already == b2 */
-                    this.rlist[i_max] = area2;
-                    this.elist[i_max] = error2;
-                    this.level[i_max] = new_level;
+        //         if (error2 > error1) {
+        //             this.alist[i_max] = a2; /* blist[maxerr] is already == b2 */
+        //             this.rlist[i_max] = area2;
+        //             this.elist[i_max] = error2;
+        //             this.level[i_max] = new_level;
 
-                    this.alist[i_new] = a1;
-                    this.blist[i_new] = b1;
-                    this.rlist[i_new] = area1;
-                    this.elist[i_new] = error1;
-                    this.level[i_new] = new_level;
-                } else {
-                    this.blist[i_max] = b1; /* alist[maxerr] is already == a1 */
-                    this.rlist[i_max] = area1;
-                    this.elist[i_max] = error1;
-                    this.level[i_max] = new_level;
+        //             this.alist[i_new] = a1;
+        //             this.blist[i_new] = b1;
+        //             this.rlist[i_new] = area1;
+        //             this.elist[i_new] = error1;
+        //             this.level[i_new] = new_level;
+        //         } else {
+        //             this.blist[i_max] = b1; /* alist[maxerr] is already == a1 */
+        //             this.rlist[i_max] = area1;
+        //             this.elist[i_max] = error1;
+        //             this.level[i_max] = new_level;
 
-                    this.alist[i_new] = a2;
-                    this.blist[i_new] = b2;
-                    this.rlist[i_new] = area2;
-                    this.elist[i_new] = error2;
-                    this.level[i_new] = new_level;
-                }
+        //             this.alist[i_new] = a2;
+        //             this.blist[i_new] = b2;
+        //             this.rlist[i_new] = area2;
+        //             this.elist[i_new] = error2;
+        //             this.level[i_new] = new_level;
+        //         }
 
-                this.size++;
+        //         this.size++;
 
-                if (new_level > this.maximum_level) {
-                    this.maximum_level = new_level;
-                }
+        //         if (new_level > this.maximum_level) {
+        //             this.maximum_level = new_level;
+        //         }
 
-                this.qpsrt();
-            },
+        //         this.qpsrt();
+        //     },
 
-            retrieve() {
-                var i = this.i;
-                return {
-                    a: this.alist[i],
-                    b: this.blist[i],
-                    r: this.rlist[i],
-                    e: this.elist[i]
-                };
-            },
+        //     retrieve() {
+        //         var i = this.i;
+        //         return {
+        //             a: this.alist[i],
+        //             b: this.blist[i],
+        //             r: this.rlist[i],
+        //             e: this.elist[i]
+        //         };
+        //     },
 
-            sum_results() {
-                var nn = this.size,
-                    k,
-                    result_sum = 0.0;
+        //     sum_results() {
+        //         var nn = this.size,
+        //             k,
+        //             result_sum = 0.0;
 
-                for (k = 0; k < nn; k++) {
-                    result_sum += this.rlist[k];
-                }
+        //         for (k = 0; k < nn; k++) {
+        //             result_sum += this.rlist[k];
+        //         }
 
-                return result_sum;
-            },
+        //         return result_sum;
+        //     },
 
-            subinterval_too_small(a1, a2, b2) {
-                var e = 2.2204460492503131e-16,
-                    u = 2.2250738585072014e-308,
-                    tmp = (1 + 100 * e) * (Math.abs(a2) + 1000 * u);
+        //     subinterval_too_small(a1, a2, b2) {
+        //         var e = 2.2204460492503131e-16,
+        //             u = 2.2250738585072014e-308,
+        //             tmp = (1 + 100 * e) * (Math.abs(a2) + 1000 * u);
 
-                return Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
-            },
-        };
+        //         return Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
+        //     },
+        // };
     }
 
     /**
@@ -1307,8 +1311,13 @@ export class Numerics {
             epsrel = config && Type.isNumber(config.epsrel) ? config.epsrel : 0.0000001,
             epsabs = config && Type.isNumber(config.epsabs) ? config.epsabs : 0.0000001,
             q = config && Type.isFunction(config.q) ? config.q : this.GaussKronrod15,
-            resultObj = {}
-        area,
+            resultObj: {
+                limit: number,
+                abserr: number,
+                resabs: number,
+                resasc: number,
+            },
+            area,
             errsum,
             result0,
             abserr0,
@@ -1341,148 +1350,150 @@ export class Numerics {
             wsObj,
             delta;
 
-        if (limit > ws.limit) {
-            JXG.warn("iteration limit exceeds available workspace");
-        }
-        if (epsabs <= 0 && (epsrel < 50 * JSXMath.eps || epsrel < 0.5e-28)) {
-            JXG.warn("tolerance cannot be acheived with given epsabs and epsrel");
-        }
+        // TODO: // tbtb - this is a mess
+        //
+        //         if (limit > ws.limit) {
+        //             JXG.warn("iteration limit exceeds available workspace");
+        //         }
+        //         if (epsabs <= 0 && (epsrel < 50 * JSXMath.eps || epsrel < 0.5e-28)) {
+        //             JXG.warn("tolerance cannot be acheived with given epsabs and epsrel");
+        //         }
 
-        result0 = q.apply(this, [interval, f, resultObj]);
-        abserr0 = resultObj.abserr;
-        resabs0 = resultObj.resabs;
-        resasc0 = resultObj.resasc;
+        //         result0 = q.apply(this, [interval, f, resultObj]);
+        //         abserr0 = resultObj.abserr;
+        //         resabs0 = resultObj.resabs;
+        //         resasc0 = resultObj.resasc;
 
-        ws.set_initial_result(result0, abserr0);
-        tolerance = Math.max(epsabs, epsrel * Math.abs(result0));
-        round_off = 50 * DBL_EPS * resabs0;
+        //         ws.set_initial_result(result0, abserr0);
+        //         tolerance = Math.max(epsabs, epsrel * Math.abs(result0));
+        //         round_off = 50 * DBL_EPS * resabs0;
 
-        if (abserr0 <= round_off && abserr0 > tolerance) {
-            result = result0;
-            // abserr = abserr0;
+        //         if (abserr0 <= round_off && abserr0 > tolerance) {
+        //             result = result0;
+        //             // abserr = abserr0;
 
-            JXG.warn("cannot reach tolerance because of roundoff error on first attempt");
-            return -Infinity;
-        }
+        //             JXG.warn("cannot reach tolerance because of roundoff error on first attempt");
+        //             return -Infinity;
+        //         }
 
-        if ((abserr0 <= tolerance && abserr0 !== resasc0) || abserr0 === 0.0) {
-            result = result0;
-            // abserr = abserr0;
+        //         if ((abserr0 <= tolerance && abserr0 !== resasc0) || abserr0 === 0.0) {
+        //             result = result0;
+        //             // abserr = abserr0;
 
-            return result;
-        }
+        //             return result;
+        //         }
 
-        if (limit === 1) {
-            result = result0;
-            // abserr = abserr0;
+        //         if (limit === 1) {
+        //             result = result0;
+        //             // abserr = abserr0;
 
-            JXG.warn("a maximum of one iteration was insufficient");
-            return -Infinity;
-        }
+        //             JXG.warn("a maximum of one iteration was insufficient");
+        //             return -Infinity;
+        //         }
 
-        area = result0;
-        errsum = abserr0;
-        iteration = 1;
+        //         area = result0;
+        //         errsum = abserr0;
+        //         iteration = 1;
 
-        do {
-            area1 = 0;
-            area2 = 0;
-            area12 = 0;
-            error1 = 0;
-            error2 = 0;
-            error12 = 0;
+        //         do {
+        //             area1 = 0;
+        //             area2 = 0;
+        //             area12 = 0;
+        //             error1 = 0;
+        //             error2 = 0;
+        //             error12 = 0;
 
-            /* Bisect the subinterval with the largest error estimate */
-            wsObj = ws.retrieve();
-            a_i = wsObj.a;
-            b_i = wsObj.b;
-            r_i = wsObj.r;
-            e_i = wsObj.e;
+        //             /* Bisect the subinterval with the largest error estimate */
+        //             wsObj = ws.retrieve();
+        //             a_i = wsObj.a;
+        //             b_i = wsObj.b;
+        //             r_i = wsObj.r;
+        //             e_i = wsObj.e;
 
-            a1 = a_i;
-            b1 = 0.5 * (a_i + b_i);
-            a2 = b1;
-            b2 = b_i;
+        //             a1 = a_i;
+        //             b1 = 0.5 * (a_i + b_i);
+        //             a2 = b1;
+        //             b2 = b_i;
 
-            area1 = q.apply(this, [[a1, b1], f, resultObj]);
-            error1 = resultObj.abserr;
-            // resabs1 = resultObj.resabs;
-            resasc1 = resultObj.resasc;
+        //             area1 = q.apply(this, [[a1, b1], f, resultObj]);
+        //             error1 = resultObj.abserr;
+        //             // resabs1 = resultObj.resabs;
+        //             resasc1 = resultObj.resasc;
 
-            area2 = q.apply(this, [[a2, b2], f, resultObj]);
-            error2 = resultObj.abserr;
-            // resabs2 = resultObj.resabs;
-            resasc2 = resultObj.resasc;
+        //             area2 = q.apply(this, [[a2, b2], f, resultObj]);
+        //             error2 = resultObj.abserr;
+        //             // resabs2 = resultObj.resabs;
+        //             resasc2 = resultObj.resasc;
 
-            area12 = area1 + area2;
-            error12 = error1 + error2;
+        //             area12 = area1 + area2;
+        //             error12 = error1 + error2;
 
-            errsum += error12 - e_i;
-            area += area12 - r_i;
+        //             errsum += error12 - e_i;
+        //             area += area12 - r_i;
 
-            if (resasc1 !== error1 && resasc2 !== error2) {
-                delta = r_i - area12;
-                if (Math.abs(delta) <= 1.0e-5 * Math.abs(area12) && error12 >= 0.99 * e_i) {
-                    roundoff_type1++;
-                }
-                if (iteration >= 10 && error12 > e_i) {
-                    roundoff_type2++;
-                }
-            }
+        //             if (resasc1 !== error1 && resasc2 !== error2) {
+        //                 delta = r_i - area12;
+        //                 if (Math.abs(delta) <= 1.0e-5 * Math.abs(area12) && error12 >= 0.99 * e_i) {
+        //                     roundoff_type1++;
+        //                 }
+        //                 if (iteration >= 10 && error12 > e_i) {
+        //                     roundoff_type2++;
+        //                 }
+        //             }
 
-            tolerance = Math.max(epsabs, epsrel * Math.abs(area));
+        //             tolerance = Math.max(epsabs, epsrel * Math.abs(area));
 
-            if (errsum > tolerance) {
-                if (roundoff_type1 >= 6 || roundoff_type2 >= 20) {
-                    error_type = 2; /* round off error */
-                }
+        //             if (errsum > tolerance) {
+        //                 if (roundoff_type1 >= 6 || roundoff_type2 >= 20) {
+        //                     error_type = 2; /* round off error */
+        //                 }
 
-                /* set error flag in the case of bad integrand behaviour at
-                    a point of the integration range */
+        //                 /* set error flag in the case of bad integrand behaviour at
+        //                     a point of the integration range */
 
-                if (ws.subinterval_too_small(a1, a2, b2)) {
-                    error_type = 3;
-                }
-            }
+        //                 if (ws.subinterval_too_small(a1, a2, b2)) {
+        //                     error_type = 3;
+        //                 }
+        //             }
 
-            ws.update(a1, b1, area1, error1, a2, b2, area2, error2);
-            wsObj = ws.retrieve();
-            a_i = wsObj.a_i;
-            b_i = wsObj.b_i;
-            r_i = wsObj.r_i;
-            e_i = wsObj.e_i;
+        //             ws.update(a1, b1, area1, error1, a2, b2, area2, error2);
+        //             wsObj = ws.retrieve();
+        //             a_i = wsObj.a_i;
+        //             b_i = wsObj.b_i;
+        //             r_i = wsObj.r_i;
+        //             e_i = wsObj.e_i;
 
-            iteration++;
-        } while (iteration < limit && !error_type && errsum > tolerance);
+        //             iteration++;
+        //         } while (iteration < limit && !error_type && errsum > tolerance);
 
-        result = ws.sum_results();
-        // abserr = errsum;
-        /*
-  if (errsum <= tolerance)
-    {
-      return GSL_SUCCESS;
-    }
-  else if (error_type == 2)
-    {
-      GSL_ERROR ("roundoff error prevents tolerance from being achieved",
-                 GSL_EROUND);
-    }
-  else if (error_type == 3)
-    {
-      GSL_ERROR ("bad integrand behavior found in the integration interval",
-                 GSL_ESING);
-    }
-  else if (iteration == limit)
-    {
-      GSL_ERROR ("maximum number of subdivisions reached", GSL_EMAXITER);
-    }
-  else
-    {
-      GSL_ERROR ("could not integrate function", GSL_EFAILED);
-    }
-*/
+        //         result = ws.sum_results();
+        //         // abserr = errsum;
+        //         /*
+        //   if (errsum <= tolerance)
+        //     {
+        //       return GSL_SUCCESS;
+        //     }
+        //   else if (error_type == 2)
+        //     {
+        //       GSL_ERROR ("roundoff error prevents tolerance from being achieved",
+        //                  GSL_EROUND);
+        //     }
+        //   else if (error_type == 3)
+        //     {
+        //       GSL_ERROR ("bad integrand behavior found in the integration interval",
+        //                  GSL_ESING);
+        //     }
+        //   else if (iteration == limit)
+        //     {
+        //       GSL_ERROR ("maximum number of subdivisions reached", GSL_EMAXITER);
+        //     }
+        //   else
+        //     {
+        //       GSL_ERROR ("could not integrate function", GSL_EFAILED);
+        //     }
+        // */
 
-        return result;
+        //         return result;
     }
 
     /**
@@ -1564,7 +1575,7 @@ export class Numerics {
      * @see JXG.Math.Numerics.Newton
      * @memberof JXG.Math.Numerics
      */
-    static root(f, x, context) {
+    static root(f: Function, x: number | number[], context?) {
         //return this.fzero(f, x, context);
         return this.chandrupatla(f, x, context);
     }
@@ -1613,7 +1624,7 @@ export class Numerics {
      * @returns {JXG.Coords} intersection point
      * @memberof JXG.Math.Numerics
      */
-    static generalizedNewton(c1, c2, t1ini, t2ini) {
+    static generalizedNewton(c1, c2, t1ini: number, t2ini: number) {
         var t1, t2,
             a, b, c, d, e, f,
             disc,
@@ -1621,45 +1632,48 @@ export class Numerics {
             D00, D01, D10, D11,
             count = 0;
 
-        if (this.generalizedNewton.t1memo) {
-            t1 = this.generalizedNewton.t1memo;
-            t2 = this.generalizedNewton.t2memo;
-        } else {
-            t1 = t1ini;
-            t2 = t2ini;
-        }
 
-        e = c1.X(t1) - c2.X(t2);
-        f = c1.Y(t1) - c2.Y(t2);
-        F = e * e + f * f;
+        // TODO: tbtb this algorithm doesn't seem to be recursive - it must be missing something
 
-        D00 = this.D(c1.X, c1);
-        D01 = this.D(c2.X, c2);
-        D10 = this.D(c1.Y, c1);
-        D11 = this.D(c2.Y, c2);
+        // if (this.generalizedNewton.t1memo) {
+        //     t1 = this.generalizedNewton.t1memo;
+        //     t2 = this.generalizedNewton.t2memo;
+        // } else {
+        //     t1 = t1ini;
+        //     t2 = t2ini;
+        // }
 
-        while (F > JSXMath.eps && count < 10) {
-            a = D00(t1);
-            b = -D01(t2);
-            c = D10(t1);
-            d = -D11(t2);
-            disc = a * d - b * c;
-            t1 -= (d * e - b * f) / disc;
-            t2 -= (a * f - c * e) / disc;
-            e = c1.X(t1) - c2.X(t2);
-            f = c1.Y(t1) - c2.Y(t2);
-            F = e * e + f * f;
-            count += 1;
-        }
+        // e = c1.X(t1) - c2.X(t2);
+        // f = c1.Y(t1) - c2.Y(t2);
+        // F = e * e + f * f;
 
-        this.generalizedNewton.t1memo = t1;
-        this.generalizedNewton.t2memo = t2;
+        // D00 = this.D(c1.X, c1);
+        // D01 = this.D(c2.X, c2);
+        // D10 = this.D(c1.Y, c1);
+        // D11 = this.D(c2.Y, c2);
 
-        if (Math.abs(t1) < Math.abs(t2)) {
-            return [c1.X(t1), c1.Y(t1)];
-        }
+        // while (F > JSXMath.eps && count < 10) {
+        //     a = D00(t1);
+        //     b = -D01(t2);
+        //     c = D10(t1);
+        //     d = -D11(t2);
+        //     disc = a * d - b * c;
+        //     t1 -= (d * e - b * f) / disc;
+        //     t2 -= (a * f - c * e) / disc;
+        //     e = c1.X(t1) - c2.X(t2);
+        //     f = c1.Y(t1) - c2.Y(t2);
+        //     F = e * e + f * f;
+        //     count += 1;
+        // }
 
-        return [c2.X(t2), c2.Y(t2)];
+        // this.generalizedNewton.t1memo = t1;
+        // this.generalizedNewton.t2memo = t2;
+
+        // if (Math.abs(t1) < Math.abs(t2)) {
+        //     return [c1.X(t1), c1.Y(t1)];
+        // }
+
+        // return [c2.X(t2), c2.Y(t2)];
     }
 
     /**
@@ -1714,7 +1728,7 @@ export class Numerics {
                 var i,
                     d,
                     s,
-                    bin = Mat.binomial,
+                    bin = JSXMath.binomial,
                     len = p.length,
                     len1 = len - 1,
                     num = 0.0,
@@ -1768,12 +1782,12 @@ export class Numerics {
             i,
             l,
             n = Math.min(x.length, y.length),
-            diag = [],
-            z = [],
-            data = [],
-            dx = [],
-            delta = [],
-            F = [];
+            diag: number[] = [],
+            z: number[] = [],
+            data: number[] = [],
+            dx: number[] = [],
+            delta: number[] = [],
+            F: number[] = [];
 
         if (n === 2) {
             return [0, 0];
@@ -2177,7 +2191,7 @@ export class Numerics {
 
         return function () {
             var len = points.length,
-                coeffs = [],
+                coeffs: number[] = [],
                 isLeading = true,
                 n, t, j, c;
 
@@ -2195,8 +2209,8 @@ export class Numerics {
                 if (Math.abs(c) < JSXMath.eps) {
                     continue;
                 }
-                if (JXG.exists(digits)) {
-                    c = Env._round10(c, -digits);
+                if (Type.exists(digits)) {
+                    c = Type._round10(c, -digits);
                 }
                 if (isLeading) {
                     t += c > 0 ? c : "-" + -c;
@@ -2261,9 +2275,9 @@ export class Numerics {
     static lagrangePolynomialCoefficients(points) {
         return function () {
             var len = points.length,
-                zeroes = [],
-                coeffs = [],
-                coeffs_sum = [],
+                zeroes: number[] = [],
+                coeffs: number[] = [],
+                coeffs_sum: number[] = [],
                 i, j, c, p;
 
             // n = len - 1; // (Max) degree of the polynomial
@@ -2281,7 +2295,7 @@ export class Numerics {
                         zeroes.push(points[j].X());
                     }
                 }
-                coeffs = [1].concat(Mat.Vieta(zeroes));
+                coeffs = [1].concat(JSXMath.Vieta(zeroes));
                 for (j = 0; j < coeffs.length; j++) {
                     coeffs_sum[j] += (j % 2 === 1 ? -1 : 1) * coeffs[j] * c;
                 }
@@ -2301,7 +2315,7 @@ export class Numerics {
      * @return {Array}    coefficents array c for the polynomial t maps to
      * c[0] + c[1]*t + c[2]*t*t + c[3]*t*t*t
      */
-    static _initCubicPoly(x1, x2, t1, t2) {
+    static _initCubicPoly(x1: number, x2: number, t1: number, t2: number): number[] {
         return [x1, t1, -3 * x1 + 3 * x2 - 2 * t1 - t2, 2 * x1 - 2 * x2 + t1 + t2];
     }
 
@@ -2325,7 +2339,7 @@ export class Numerics {
      */
     static CardinalSpline(points, tau_param, type) {
         var p,
-            coeffs = [],
+            coeffs: number[][][] = [],
             makeFct,
             tau, _tau,
             that = this;
@@ -2376,7 +2390,7 @@ export class Numerics {
                         Dist(p) {
                             var dx = this.X() - p.X(),
                                 dy = this.Y() - p.Y();
-                            return Mat.hypot(dx, dy);
+                            return JSXMath.hypot(dx, dy);
                         },
                     };
 
@@ -2396,7 +2410,7 @@ export class Numerics {
                         Dist(p) {
                             var dx = this.X() - p.X(),
                                 dy = this.Y() - p.Y();
-                            return Mat.hypot(dx, dy);
+                            return JSXMath.hypot(dx, dy);
                         },
                     };
 
@@ -2731,7 +2745,7 @@ export class Numerics {
         var knots,
             _knotVector = function (n, k) {
                 var j,
-                    kn:number[] = [];
+                    kn: number[] = [];
 
                 for (j = 0; j < n + k + 1; j++) {
                     if (j < k) {
@@ -2751,7 +2765,7 @@ export class Numerics {
                 a,
                 b,
                 den,
-                N:number[] = [];
+                N: number[] = [];
 
             if (kn[s] <= t && t < kn[s + 1]) {
                 N[s] = 1;
@@ -2796,7 +2810,7 @@ export class Numerics {
                 var y,
                     j,
                     s,
-                    N:number[] = [],
+                    N: number[] = [],
                     len = points.length,
                     n = len - 1,
                     k = order;
@@ -2852,9 +2866,9 @@ export class Numerics {
      * @returns {function} Derivative function of a given function f.
      * @memberof JXG.Math.Numerics
      */
-    static D(f, obj) {
+    static D(f: Function, obj?: object) {
         if (!Type.exists(obj)) {
-            return function (x, suspendedUpdate) {
+            return function (x, suspendedUpdate?) {
                 var h = 0.00001,
                     h2 = h * 2.0;
 
@@ -3190,8 +3204,8 @@ export class Numerics {
     static rungeKutta(butcher, x0, I, N, f) {
         var e,
             i, j, k, l, s,
-            x:number[]= [],
-            y:number[] = [],
+            x: number[] = [],
+            y: number[] = [],
             h = (I[1] - I[0]) / N,
             t = I[0],
             dim = x0.length,
@@ -3262,7 +3276,7 @@ export class Numerics {
      * @default 80
      * @memberof JXG.Math.Numerics
      */
-    public maxIterationsRoot = 80;
+    static maxIterationsRoot = 80;
 
     /**
      * Maximum number of iterations in {@link JXG.Math.Numerics.fminbr}
@@ -3270,7 +3284,7 @@ export class Numerics {
      * @default 500
      * @memberof JXG.Math.Numerics
      */
-    public maxIterationsMinimize = 500;
+    static maxIterationsMinimize = 500;
 
     /**
      * Given a number x_0, this function tries to find a second number x_1 such that
@@ -3684,7 +3698,7 @@ export class Numerics {
      *
      * // Output: [ 0.00020428174562965915, 5 ]
      */
-    static findDomain(f, x0, context, outer) {
+    static findDomain(f, x0, context, outer = true) {
         var a, b, c, fc,
             x,
             gr = 1 - 1 / 1.61803398875,
@@ -3770,7 +3784,7 @@ export class Numerics {
      * @returns {Number} the approximation of the minimum value position
      * @memberof JXG.Math.Numerics
      **/
-    static fminbr(f, x0, context) {
+    static fminbr(f, x0, context?) {
         var a, b, x, v, w,
             fx, fv, fw,
             x00,
@@ -3779,7 +3793,7 @@ export class Numerics {
             r = (3.0 - Math.sqrt(5.0)) * 0.5,      // Golden section ratio
             tol = JSXMath.eps,
             sqrteps = JSXMath.eps, // Math.sqrt(JSXMath.eps),
-            maxiter = this.maxIterationsMinimize,
+            maxiter = Numerics.maxIterationsMinimize,
             niter = 0;
         // nfev = 0;
 
@@ -4159,7 +4173,7 @@ export class Numerics {
      * the iteration method with cubic convergence is used that is usually attributed to Ehrlich-Aberth.
      * <p>
      * The returned roots are sorted with respect to their real values.
-     * <p> This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
+     * <p> This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link C. to handle
      * complex numbers.
      *
      * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
@@ -4232,15 +4246,15 @@ export class Numerics {
                 derivative = derivative || false;
                 if (derivative) {
                     // s = n * a_n
-                    s = JXG.C.mult(n, a[n]);
+                    s = C.mult(n, a[n]);
                     for (i = n - 1; i > 0; i--) {
                         // s = s * z + i * a_i
                         s.mult(z);
-                        s.add(JXG.C.mult(a[i], i));
+                        s.add(C.mult(a[i], i));
                     }
                 } else {
                     // s = a_n
-                    s = JXG.C.copy(a[n]);
+                    s = C.copy(a[n]);
                     for (i = n - 1; i >= 0; i--) {
                         // s = s * z + a_i
                         s.mult(z);
@@ -4249,267 +4263,275 @@ export class Numerics {
                 }
                 return s;
             }
+    }
 
-        /**
-         * Horner method to evaluate reciprocal polynomial or the derivative thereof for complex numbers,
-         * i.e. coefficients and variable are complex.
-         * @function
-         * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
-         * @param {JXG.Complex} z Value for which the reciprocal polynomial will be evaluated.
-         * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
-         * @ignore
-         */
-        hornerRec = function (a, x, derivative) {
-            var i, s,
-                n = a.length - 1;
+    /**
+     * Horner method to evaluate reciprocal polynomial or the derivative thereof for complex numbers,
+     * i.e. coefficients and variable are complex.
+     * @function
+     * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+     * @param {JXG.Complex} z Value for which the reciprocal polynomial will be evaluated.
+     * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
+     * @ignore
+     */
+    static hornerRec(a, x, derivative) {
+        var i, s,
+            n = a.length - 1;
 
-            derivative = derivative || false;
-            if (derivative) {
-                // s = n * a_0
-                s = JXG.C.mult(n, a[0]);
-                for (i = n - 1; i > 0; i--) {
-                    // s = s * x + i * a_{n-i}
-                    s.mult(x);
-                    s.add(JXG.C.mult(a[n - i], i));
-                }
-            } else {
-                // s = a_0
-                s = JXG.C.copy(a[0]);
-                for (i = n - 1; i >= 0; i--) {
-                    // s = s * x + a_{n-i}
-                    s.mult(x);
-                    s.add(a[n - i]);
-                }
-            }
-            return s;
-        }
-
-        /**
-         * Horner method to evaluate real polynomial at a real value.
-         * @function
-         * @param {Array} a Array of real coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
-         * @param {Number} z Value for which the polynomial will be evaluated.
-         * @ignore
-         */
-        horner = function (a, x) {
-            var i, s,
-                n = a.length - 1;
-
-            s = a[n];
-            for (i = n - 1; i >= 0; i--) {
-                s = s * x + a[i];
-            }
-            return s;
-        }
-
-        /**
-         * Determine start values for the Aberth iteration, see
-         * Ozawa, "An experimental study of the starting values
-         * of the Durand-Kerner-Aberth iteration" (1995).
-         *
-         * @function
-         * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
-         * @returns {Array} Array Initial values for the roots.
-         * @ignore
-         */
-        initial_guess = function (a) {
-            var i, r,
-                n = a.length - 1, // degree
-                alpha1 = Math.PI * 2 / n,
-                alpha0 = Math.PI / n * 0.5,
-                b, z,
-                init = [];
-
-
-            // From Ozawa, "An experimental study of the starting values
-            // of the Durand-Kerner-Aberth iteration" (1995)
-
-            // b is the arithmetic mean of the roots.
-            // With is Vieta's formula <https://en.wikipedia.org/wiki/Vieta%27s_formulas>
-            //   b = -a_{n-1} / (n * a_n)
-            b = JXG.C.mult(-1, a[n - 1]);
-            b.div(JXG.C.mult(n, a[n]));
-
-            // r is the geometric mean of the deviations |b - root_i|.
-            // Using
-            //   p(z) = a_n prod(z - root_i)
-            // and therefore
-            //   |p(b)| = |a_n| prod(|b - root_i|)
-            // we arrive at:
-            //   r = |p(b)/a_n|^(1/n)
-            z = JXG.C.div(hornerComplex(a, b), a[n]);
-            r = Math.pow(JXG.C.abs(z), 1 / n);
-            if (r === 0) { r = 1; }
-
-            for (i = 0; i < n; i++) {
-                a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0));
-                init[i] = JXG.C.add(b, a);
-            }
-
-            return init;
-        }
-
-        /**
-         * Ehrlich-Aberth iteration. The stopping criterion is from
-         * D.A. Bini, "Numerical computation of polynomial zeros
-         * by means of Aberths's method", Numerical Algorithms (1996).
-         *
-         * @function
-         * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
-         * @param {Number} mu Machine precision
-         * @param {Number} max_it Maximum number of iterations
-         * @param {Array} z Initial guess for the roots. Will be changed in place.
-         * @returns {Number} Number of iterations
-         * @ignore
-         */
-        aberthIteration = function (cc, mu, max_it, z) {
-            var k, i, j,
-                done = [],
-                cr = [],
-                gamma, x,
-                done_sum = 0,
-                num, denom, s, pp,
-                n = z.length;
-
-            for (i = 0; i < n; i++) {
-                done.push(false);
-            }
-            for (i = 0; i < cc.length; i++) {
-                cr.push(JXG.C.abs(cc[i]) * (4 * i + 1));
-            }
-            for (k = 0; k < max_it && done_sum < n; k++) {
-                for (i = 0; i < n; i++) {
-                    if (done[i]) {
-                        continue;
-                    }
-                    num = hornerComplex(cc, z[i]);
-                    x = JXG.C.abs(z[i]);
-
-                    // Stopping criterion by D.A. Bini
-                    // "Numerical computation of polynomial zeros
-                    // by means of Aberths's method", Numerical Algorithms (1996).
-                    //
-                    if (JXG.C.abs(num) < mu * horner(cr, x)) {
-                        done[i] = true;
-                        done_sum++;
-                        if (done_sum === n) {
-                            break;
-                        }
-                        continue;
-                    }
-
-                    // num = P(z_i) / P'(z_i)
-                    if (x > 1) {
-                        gamma = JXG.C.div(1, z[i]);
-                        pp = hornerRec(cc, gamma, true);
-                        pp.div(hornerRec(cc, gamma));
-                        pp.mult(gamma);
-                        num = JXG.C.sub(n, pp);
-                        num = JXG.C.div(z[i], num);
-                    } else {
-                        num.div(hornerComplex(cc, z[i], true));
-                    }
-
-                    // denom = sum_{i\neq j} 1 / (z_i  - z_j)
-                    denom = new JXG.Complex(0);
-                    for (j = 0; j < n; j++) {
-                        if (j === i) {
-                            continue;
-                        }
-                        s = JXG.C.sub(z[i], z[j]);
-                        s = JXG.C.div(1, s);
-                        denom.add(s);
-                    }
-
-                    // num = num / 1 - num * sum_{i\neq j} 1 / (z_i - z_j)
-                    denom.mult(num);
-                    denom = JXG.C.sub(1, denom);
-                    num.div(denom);
-                    // z_i = z_i - num
-                    z[i].sub(num);
-                }
-            }
-
-            return k;
-        };
-
-
-        tol = tol || Number.EPSILON;
-        max_it = max_it || 30;
-
-        le = coeffs.length;
-        if (JXG.isNumber(deg) && deg >= 0 && deg < le - 1) {
-            le = deg + 1;
-        }
-
-        // Convert coefficient array to complex numbers
-        for (i = 0; i < le; i++) {
-            cc.push(new JXG.Complex(coeffs[i]));
-        }
-
-        // Search for (multiple) roots at x=0
-        for (i = 0; i < le; i++) {
-            if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
-                off = i;
-                break;
-            }
-        }
-
-        // Deflate root x=0, store roots at x=0 in obvious
-        for (i = 0; i < off; i++) {
-            obvious.push(new JXG.Complex(0));
-        }
-        cc = cc.slice(off);
-        le = cc.length;
-
-        // Remove leading zeros from the coefficient array
-        for (i = le - 1; i >= 0; i--) {
-            if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
-                break;
-            }
-            cc.pop();
-        }
-        le = cc.length;
-        if (le === 0) {
-            return [];
-        }
-
-        // From now on we can assume that the
-        // constant coefficient and the leading coefficient
-        // are not zero.
-        if (initial_values) {
-            for (i = 0; i < le - 1; i++) {
-                roots.push(new JXG.Complex(initial_values[i]));
+        derivative = derivative || false;
+        if (derivative) {
+            // s = n * a_0
+            s = C.mult(n, a[0]);
+            for (i = n - 1; i > 0; i--) {
+                // s = s * x + i * a_{n-i}
+                s.mult(x);
+                s.add(C.mult(a[n - i], i));
             }
         } else {
-            roots = initial_guess(cc);
-        }
-        it = aberthIteration(cc, tol, max_it, roots);
-
-        // Append the roots at x=0
-        roots = obvious.concat(roots);
-
-        if (debug) {
-            console.log("Iterations:", it);
-            console.log('Roots:');
-            for (i = 0; i < roots.length; i++) {
-                console.log(i, roots[i].toString(), JXG.C.abs(hornerComplex(cc, roots[i])));
+            // s = a_0
+            s = C.copy(a[0]);
+            for (i = n - 1; i >= 0; i--) {
+                // s = s * x + a_{n-i}
+                s.mult(x);
+                s.add(a[n - i]);
             }
         }
-
-        // Sort roots according to their real part
-        roots.sort(function (a, b) {
-            if (a.real < b.real) {
-                return -1;
-            }
-            if (a.real > b.real) {
-                return 1;
-            }
-            return 0;
-        });
-
-        return roots;
+        return s;
     }
+
+    /**
+     * Horner method to evaluate real polynomial at a real value.
+     * @function
+     * @param {Array} a Array of real coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+     * @param {Number} z Value for which the polynomial will be evaluated.
+     * @ignore
+     */
+    static horner = function (a, x) {
+        var i, s,
+            n = a.length - 1;
+
+        s = a[n];
+        for (i = n - 1; i >= 0; i--) {
+            s = s * x + a[i];
+        }
+        return s;
+    }
+
+
+    ///////////// references HornerComplex which is not independent
+    // /**
+    //  * Determine start values for the Aberth iteration, see
+    //  * Ozawa, "An experimental study of the starting values
+    //  * of the Durand-Kerner-Aberth iteration" (1995).
+    //  *
+    //  * @function
+    //  * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+    //  * @returns {Array} Array Initial values for the roots.
+    //  * @ignore
+    //  */
+    // static initial_guess = function (a) {
+    //     var i, r,
+    //         n = a.length - 1, // degree
+    //         alpha1 = Math.PI * 2 / n,
+    //         alpha0 = Math.PI / n * 0.5,
+    //         b, z,
+    //         init = [];
+
+
+    //     // From Ozawa, "An experimental study of the starting values
+    //     // of the Durand-Kerner-Aberth iteration" (1995)
+
+    //     // b is the arithmetic mean of the roots.
+    //     // With is Vieta's formula <https://en.wikipedia.org/wiki/Vieta%27s_formulas>
+    //     //   b = -a_{n-1} / (n * a_n)
+    //     b = C.mult(-1, a[n - 1]);
+    //     b.div(C.mult(n, a[n]));
+
+    //     // r is the geometric mean of the deviations |b - root_i|.
+    //     // Using
+    //     //   p(z) = a_n prod(z - root_i)
+    //     // and therefore
+    //     //   |p(b)| = |a_n| prod(|b - root_i|)
+    //     // we arrive at:
+    //     //   r = |p(b)/a_n|^(1/n)
+    //     z = C.div(hornerComplex(a, b), a[n]);
+    //     r = Math.pow(C.abs(z), 1 / n);
+    //     if (r === 0) { r = 1; }
+
+    //     for (i = 0; i < n; i++) {
+    //         a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0));
+    //         init[i] = C.add(b, a);
+    //     }
+
+    //     return init;
+    // }
+
+
+    ////////////// reference horner, which is not an independent function
+    // /**
+    //  * Ehrlich-Aberth iteration. The stopping criterion is from
+    //  * D.A. Bini, "Numerical computation of polynomial zeros
+    //  * by means of Aberths's method", Numerical Algorithms (1996).
+    //  *
+    //  * @function
+    //  * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+    //  * @param {Number} mu Machine precision
+    //  * @param {Number} max_it Maximum number of iterations
+    //  * @param {Array} z Initial guess for the roots. Will be changed in place.
+    //  * @returns {Number} Number of iterations
+    //  * @ignore
+    //  */
+    // static aberthIteration = (cc, mu, max_it, z)=> {
+    //     var k, i, j,
+    //         done:boolean[] = [],
+    //         cr:number[] = [],
+    //         gamma, x,
+    //         done_sum = 0,
+    //         num, denom, s, pp,
+    //         n = z.length;
+
+    //     for (i = 0; i < n; i++) {
+    //         done.push(false);
+    //     }
+    //     for (i = 0; i < cc.length; i++) {
+    //         cr.push(C.abs(cc[i]) * (4 * i + 1));
+    //     }
+    //     for (k = 0; k < max_it && done_sum < n; k++) {
+    //         for (i = 0; i < n; i++) {
+    //             if (done[i]) {
+    //                 continue;
+    //             }
+    //             num = this.hornerComplex(cc, z[i]);
+    //             x = C.abs(z[i]);
+
+    //             // Stopping criterion by D.A. Bini
+    //             // "Numerical computation of polynomial zeros
+    //             // by means of Aberths's method", Numerical Algorithms (1996).
+    //             //
+    //             if (C.abs(num) < mu * this.horner(cr, x)) {
+    //                 done[i] = true;
+    //                 done_sum++;
+    //                 if (done_sum === n) {
+    //                     break;
+    //                 }
+    //                 continue;
+    //             }
+
+    //             // num = P(z_i) / P'(z_i)
+    //             if (x > 1) {
+    //                 gamma = C.div(1, z[i]);
+    //                 pp = this.hornerRec(cc, gamma, true);
+    //                 pp.div(this.hornerRec(cc, gamma));
+    //                 pp.mult(gamma);
+    //                 num = C.sub(n, pp);
+    //                 num = C.div(z[i], num);
+    //             } else {
+    //                 num.div(this.hornerComplex(cc, z[i], true));
+    //             }
+
+    //             // denom = sum_{i\neq j} 1 / (z_i  - z_j)
+    //             denom = new Complex(0);
+    //             for (j = 0; j < n; j++) {
+    //                 if (j === i) {
+    //                     continue;
+    //                 }
+    //                 s = C.sub(z[i], z[j]);
+    //                 s = C.div(1, s);
+    //                 denom.add(s);
+    //             }
+
+    //             // num = num / 1 - num * sum_{i\neq j} 1 / (z_i - z_j)
+    //             denom.mult(num);
+    //             denom = C.sub(1, denom);
+    //             num.div(denom);
+    //             // z_i = z_i - num
+    //             z[i].sub(num);
+    //         }
+    //     }
+
+    //     return k;
+    // };
+
+
+
+    /////////////////// TODO:  WHAT IS THIS ???
+
+    //     tol = tol || Number.EPSILON;
+    //     max_it = max_it || 30;
+
+    //     le = coeffs.length;
+    //     if(JXG.isNumber(deg) && deg >= 0 && deg < le - 1) {
+    //     le = deg + 1;
+    // }
+
+    // // Convert coefficient array to complex numbers
+    // for (i = 0; i < le; i++) {
+    //     cc.push(new JXG.Complex(coeffs[i]));
+    // }
+
+    // // Search for (multiple) roots at x=0
+    // for (i = 0; i < le; i++) {
+    //     if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
+    //         off = i;
+    //         break;
+    //     }
+    // }
+
+    // // Deflate root x=0, store roots at x=0 in obvious
+    // for (i = 0; i < off; i++) {
+    //     obvious.push(new JXG.Complex(0));
+    // }
+    // cc = cc.slice(off);
+    // le = cc.length;
+
+    // // Remove leading zeros from the coefficient array
+    // for (i = le - 1; i >= 0; i--) {
+    //     if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
+    //         break;
+    //     }
+    //     cc.pop();
+    // }
+    // le = cc.length;
+    // if (le === 0) {
+    //     return [];
+    // }
+
+    // // From now on we can assume that the
+    // // constant coefficient and the leading coefficient
+    // // are not zero.
+    // if (initial_values) {
+    //     for (i = 0; i < le - 1; i++) {
+    //         roots.push(new JXG.Complex(initial_values[i]));
+    //     }
+    // } else {
+    //     roots = initial_guess(cc);
+    // }
+    // it = aberthIteration(cc, tol, max_it, roots);
+
+    // // Append the roots at x=0
+    // roots = obvious.concat(roots);
+
+    // if (debug) {
+    //     console.log("Iterations:", it);
+    //     console.log('Roots:');
+    //     for (i = 0; i < roots.length; i++) {
+    //         console.log(i, roots[i].toString(), C.abs(hornerComplex(cc, roots[i])));
+    //     }
+    // }
+
+    // // Sort roots according to their real part
+    // roots.sort(function (a, b) {
+    //     if (a.real < b.real) {
+    //         return -1;
+    //     }
+    //     if (a.real > b.real) {
+    //         return 1;
+    //     }
+    //     return 0;
+    // });
+
+    // return roots;
+    //     }
 
     /**
      * Implements the Ramer-Douglas-Peucker algorithm.
@@ -4522,88 +4544,88 @@ export class Numerics {
      * @memberof JXG.Math.Numerics
      */
     static RamerDouglasPeucker(pts, eps) {
-        var allPts = [],
-            newPts = [],
+        var allPts: Coords[] = [],
+            newPts: Coords[] = [],
             i, k, len,
-            endless = true,
+            endless = true
 
-            /**
-             * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
-             * It searches for the point between index i and j which
-             * has the largest distance from the line between the points i and j.
-             * @param {Array} pts Array of {@link JXG.Coords}
-             * @param {Number} i Index of a point in pts
-             * @param {Number} j Index of a point in pts
-             * @ignore
-             * @private
-             */
-            findSplit = function (pts, i, j) {
-                var d, k, ci, cj, ck,
-                    x0, y0, x1, y1,
-                    den, lbda,
-                    eps = JSXMath.eps * JSXMath.eps,
-                    huge = 10000,
-                    dist = 0,
-                    f = i;
+        /**
+         * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
+         * It searches for the point between index i and j which
+         * has the largest distance from the line between the points i and j.
+         * @param {Array} pts Array of {@link JXG.Coords}
+         * @param {Number} i Index of a point in pts
+         * @param {Number} j Index of a point in pts
+         * @ignore
+         * @private
+         */
+        let findSplit = function (pts, i, j) {
+            var d, k, ci, cj, ck,
+                x0, y0, x1, y1,
+                den, lbda,
+                eps = JSXMath.eps * JSXMath.eps,
+                huge = 10000,
+                dist = 0,
+                f = i;
 
-                if (j - i < 2) {
-                    return [-1.0, 0];
-                }
-
-                ci = pts[i].scrCoords;
-                cj = pts[j].scrCoords;
-
-                if (isNaN(ci[1]) || isNaN(ci[2])) {
-                    return [NaN, i];
-                }
-                if (isNaN(cj[1]) || isNaN(cj[2])) {
-                    return [NaN, j];
-                }
-
-                for (k = i + 1; k < j; k++) {
-                    ck = pts[k].scrCoords;
-                    if (isNaN(ck[1]) || isNaN(ck[2])) {
-                        return [NaN, k];
-                    }
-
-                    x0 = ck[1] - ci[1];
-                    y0 = ck[2] - ci[2];
-                    x1 = cj[1] - ci[1];
-                    y1 = cj[2] - ci[2];
-                    x0 = x0 === Infinity ? huge : x0;
-                    y0 = y0 === Infinity ? huge : y0;
-                    x1 = x1 === Infinity ? huge : x1;
-                    y1 = y1 === Infinity ? huge : y1;
-                    x0 = x0 === -Infinity ? -huge : x0;
-                    y0 = y0 === -Infinity ? -huge : y0;
-                    x1 = x1 === -Infinity ? -huge : x1;
-                    y1 = y1 === -Infinity ? -huge : y1;
-                    den = x1 * x1 + y1 * y1;
-
-                    if (den > eps) {
-                        lbda = (x0 * x1 + y0 * y1) / den;
-
-                        if (lbda < 0.0) {
-                            lbda = 0.0;
-                        } else if (lbda > 1.0) {
-                            lbda = 1.0;
-                        }
-
-                        x0 = x0 - lbda * x1;
-                        y0 = y0 - lbda * y1;
-                        d = x0 * x0 + y0 * y0;
-                    } else {
-                        lbda = 0.0;
-                        d = x0 * x0 + y0 * y0;
-                    }
-
-                    if (d > dist) {
-                        dist = d;
-                        f = k;
-                    }
-                }
-                return [Math.sqrt(dist), f];
+            if (j - i < 2) {
+                return [-1.0, 0];
             }
+
+            ci = pts[i].scrCoords;
+            cj = pts[j].scrCoords;
+
+            if (isNaN(ci[1]) || isNaN(ci[2])) {
+                return [NaN, i];
+            }
+            if (isNaN(cj[1]) || isNaN(cj[2])) {
+                return [NaN, j];
+            }
+
+            for (k = i + 1; k < j; k++) {
+                ck = pts[k].scrCoords;
+                if (isNaN(ck[1]) || isNaN(ck[2])) {
+                    return [NaN, k];
+                }
+
+                x0 = ck[1] - ci[1];
+                y0 = ck[2] - ci[2];
+                x1 = cj[1] - ci[1];
+                y1 = cj[2] - ci[2];
+                x0 = x0 === Infinity ? huge : x0;
+                y0 = y0 === Infinity ? huge : y0;
+                x1 = x1 === Infinity ? huge : x1;
+                y1 = y1 === Infinity ? huge : y1;
+                x0 = x0 === -Infinity ? -huge : x0;
+                y0 = y0 === -Infinity ? -huge : y0;
+                x1 = x1 === -Infinity ? -huge : x1;
+                y1 = y1 === -Infinity ? -huge : y1;
+                den = x1 * x1 + y1 * y1;
+
+                if (den > eps) {
+                    lbda = (x0 * x1 + y0 * y1) / den;
+
+                    if (lbda < 0.0) {
+                        lbda = 0.0;
+                    } else if (lbda > 1.0) {
+                        lbda = 1.0;
+                    }
+
+                    x0 = x0 - lbda * x1;
+                    y0 = y0 - lbda * y1;
+                    d = x0 * x0 + y0 * y0;
+                } else {
+                    lbda = 0.0;
+                    d = x0 * x0 + y0 * y0;
+                }
+
+                if (d > dist) {
+                    dist = d;
+                    f = k;
+                }
+            }
+            return [Math.sqrt(dist), f];
+        }
         /**
          * RDP() is a private subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
          * It runs recursively through the point set and searches the
@@ -4620,7 +4642,7 @@ export class Numerics {
          * @ignore
          * @private
          */
-        RDP = function (pts, i, j, eps, newPts) {
+        let RDP = function (pts, i, j, eps, newPts: Coords[]) {
             var result = findSplit(pts, i, j),
                 k = result[1];
 
@@ -4765,18 +4787,29 @@ export class Numerics {
      *
      */
     static Visvalingam(pts, numPoints) {
+        interface nodeObj {
+            v: number,
+            idx: number
+        }
+        interface link {
+            used: boolean,
+            lft: number | null,
+            node: nodeObj | null,
+            rt: number | null
+        }
+
         var i,
             len,
             vol,
             lastVol,
-            linkedList = [],
-            heap = [],
-            points = [],
+            linkedList: link[] = [],
+            heap: nodeObj[] = [],
+            points: number[] = [],
             lft,
             rt,
             lft2,
             rt2,
-            obj;
+            nodeObj;
 
         len = pts.length;
 
@@ -4790,7 +4823,8 @@ export class Numerics {
         linkedList[0] = {
             used: true,
             lft: null,
-            node: null
+            node: null,
+            rt: null
         };
 
         // Add all intermediate points to the linked list,
@@ -4798,22 +4832,23 @@ export class Numerics {
         lft = 0;
         for (i = 1; i < len - 1; i++) {
             vol = Math.abs(
-                JXG.Math.Numerics.det([
+                Numerics.det([
                     pts[i - 1].usrCoords,
                     pts[i].usrCoords,
                     pts[i + 1].usrCoords
                 ])
             );
             if (!isNaN(vol)) {
-                obj = {
+                nodeObj = {
                     v: vol,
                     idx: i
                 };
-                heap.push(obj);
+                heap.push(nodeObj);
                 linkedList[i] = {
                     used: true,
                     lft: lft,
-                    node: obj
+                    node: nodeObj,
+                    rt: null
                 };
                 linkedList[lft].rt = i;
                 lft = i;
@@ -4833,15 +4868,15 @@ export class Numerics {
         lastVol = -Infinity;
         while (heap.length > numPoints) {
             // Sort the heap with the updated volume values
-            heap.sort(function (a, b) {
+            heap.sort((a, b) => {
                 // descending sort
                 return b.v - a.v;
             });
 
             // Remove the point with the smallest triangle
-            i = heap.pop().idx;
+            i = heap.pop()!.idx;    // we guarantee not null
             linkedList[i].used = false;
-            lastVol = linkedList[i].node.v;
+            lastVol = linkedList[i].node!.v;   // we guarantee not null
 
             // Update the pointers of the linked list
             lft = linkedList[i].lft;
@@ -4853,26 +4888,26 @@ export class Numerics {
             lft2 = linkedList[lft].lft;
             if (lft2 !== null) {
                 vol = Math.abs(
-                    JXG.Math.Numerics.det([
+                    Numerics.det([
                         pts[lft2].usrCoords,
                         pts[lft].usrCoords,
                         pts[rt].usrCoords
                     ])
                 );
 
-                linkedList[lft].node.v = vol >= lastVol ? vol : lastVol;
+                linkedList[lft].node!.v = vol >= lastVol ? vol : lastVol;  // we guarantee not nulll
             }
             rt2 = linkedList[rt].rt;
             if (rt2 !== null) {
                 vol = Math.abs(
-                    JXG.Math.Numerics.det([
+                    Numerics.det([
                         pts[lft].usrCoords,
                         pts[rt].usrCoords,
                         pts[rt2].usrCoords
                     ])
                 );
 
-                linkedList[rt].node.v = vol >= lastVol ? vol : lastVol;
+                linkedList[rt].node!.v = vol >= lastVol ? vol : lastVol;  // we guarantee not null
             }
         }
 
