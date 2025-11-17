@@ -88,7 +88,7 @@ import {JXG} from"../jxg.js";
  * @namespace
  *
  */
-JXG.Math.Nlp = {
+export const Nlp = {
     arr: function (n) {
         // Is 0 initialized
         return new Float64Array(n);
@@ -1393,4 +1393,3 @@ JXG.Math.Nlp = {
     }
 };
 
-export default JXG.Math.Nlp;

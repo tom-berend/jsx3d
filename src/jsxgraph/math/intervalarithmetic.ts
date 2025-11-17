@@ -30,7 +30,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import { JXG } from "../jxg.js";
+// import { JXG } from "../jxg.js";
 import { JSXMath } from "./jsxmath.js";
 import { Type } from "../utils/type.js";
 
@@ -258,17 +258,17 @@ export class Interval {
         // - Interval(Interval(1, 1), Interval(2, 2))     // singletons are required
         if (hi instanceof Interval) {  // (this.isInterval(lo)) {
 
-            if (!this.isSingleton(lo)) {
+            if (!this.isSingleton(hi)) {
                 throw new TypeError(
                     "JXG.Math.IntervalArithmetic: interval `lo` must be a singleton"
                 );
             }
 
-            this.lo = lo.lo;
-        } else if (typeof lo == 'number') {
-            this.lo = lo;
+            this.hi = (hi as Interval).hi;
+        } else if (typeof hi == 'number') {
+            this.hi = hi;
         } else {
-            this.lo = 0
+            this.hi = 0
         }
 
     }
@@ -1607,10 +1607,10 @@ export class Interval {
         return this.next(JSXMath.cosh(x));
     }
     tanhLo(x) {
-        return this.prev(JSXMath.tanh(x));
+        return this.prev(Math.tanh(x));
     }
     tanhHi(x) {
-        return this.next(JSXMath.tanh(x));
+        return this.next(Math.tanh(x));
     }
     sqrtLo(x) {
         return this.prev(Math.sqrt(x));
@@ -1682,8 +1682,8 @@ export class Interval {
     /*
      * nextafter
      */
-    const SMALLEST_DENORM = Math.pow(2, -1074)
-    const UINT_MAX = -1 >>> 0
+    public SMALLEST_DENORM = Math.pow(2, -1074)
+    public UINT_MAX = -1 >>> 0
 
     nextafter(x, y) {
         var lo, hi;

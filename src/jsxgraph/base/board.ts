@@ -38,7 +38,7 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import { JXG, JXG_createElement } from '../jxg.js';
+import { JXG } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
@@ -49,7 +49,7 @@ import { Complex } from '../math/complex.js';
 // import {Statistics} from '../math/statistics.js';
 // import {JessieCode} from '../parser/jessiecode.js';
 import { Color } from '../utils/color.js';
-import { Type } from '../utils/type.js';
+import { LooseObject, Type } from '../utils/type.js';
 import { Events } from '../utils/event.js';
 import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
@@ -65,10 +65,22 @@ export class Board extends Events {
     public containerObj: HTMLElement | null
     public infobox
     public dimension
-    public zoomX:number
-    public zoomY:number
+    public zoomX: number
+    public zoomY: number
 
+    public defaultAxes: any
+    public defaultTicks: any
 
+    public selectionPolygon
+    public cssTransMat
+    public isSuspendedUpdate = false
+    public _preventSingleClick
+
+    // gestures
+    public prevScale
+    public prevDist
+    public prevCoords
+    public isPreviousGesture
 
 
     /**
@@ -432,7 +444,7 @@ export class Board extends Events {
      * For the time being (i.e. v1.5.0) the only supported type is 'drag'.
      * @type Array
      */
-    public userLog = [];
+    public userLog: LooseObject[] = [];
 
 
     // never referenced
@@ -514,7 +526,9 @@ export class Board extends Events {
      */
 
     public attr
-    public hasFullScreenEventHandlers: boolean = false
+    public hasFullscreenEventHandlers: boolean = false
+    public hasKeyboardHandlers: boolean = false
+    public _fullscreen_inner_id: string = ''
 
     constructor(container, renderer, id,
         origin, zoomX, zoomY, unitX, unitY,
@@ -1626,7 +1640,7 @@ export class Board extends Events {
      * for mouseevents.
      * @returns {Array} Contains the mouse coordinates in screen coordinates, ready for {@link JXG.Coords}
      */
-    getMousePosition(e, i) {
+    getMousePosition(e:Event, i?:number) {
         var cPos = this.getCoordsTopLeftCorner(),
             absPos,
             v;
@@ -1835,9 +1849,10 @@ export class Board extends Events {
         this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
         this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
 
-        // Store status of key presses for 3D movement
-        this._shiftKey = evt.shiftKey;
-        this._ctrlKey = evt.ctrlKey;
+        // TODO: never used
+        // // Store status of key presses for 3D movement
+        // this._shiftKey = evt.shiftKey;
+        // this._ctrlKey = evt.ctrlKey;
 
         //
         // We have to distinguish between CoordsElements and other elements like lines.
@@ -2110,7 +2125,7 @@ export class Board extends Events {
             pEl,
             pId,
             overObjects = {},
-        len = this.objectsList.length;
+            len = this.objectsList.length;
 
         // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
         for (el = 0; el < len; el++) {
@@ -2362,6 +2377,10 @@ export class Board extends Events {
         // }
     }
 
+    // TODO: Tom added this
+    resizeObserver() { console.warn('resize observer') }
+
+
     /**
      * Add resize related event handlers
      *
@@ -2473,11 +2492,11 @@ export class Board extends Events {
             //     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
             //     Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
             // } else {
-                Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
-                Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
-                Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);
-                Env.addEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
+            Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+            Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
+            Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+            Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);
+            Env.addEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
             // }
 
             if (this.containerObj !== null) {
@@ -2514,7 +2533,7 @@ export class Board extends Events {
      *
      * Since iOS 13, touch events were abandoned in favour of pointer events
      */
-    addTouchEventHandlers(appleGestures) {
+    addTouchEventHandlers(appleGestures:boolean = true) {
         if (!this.hasTouchHandlers && Env.isBrowser) {
             var moveTarget = this.attr.movetarget || this.containerObj;
 
@@ -3071,8 +3090,8 @@ export class Board extends Events {
         if (Env.isBrowser) {
             if (
                 evt.pointerType === 'touch' || // New
-                (window.navigator.msMaxTouchPoints && // Old
-                    window.navigator.msMaxTouchPoints > 1)
+                (window.navigator.maxTouchPoints && // Old
+                    window.navigator.maxTouchPoints > 1)
             ) {
                 return 'touch';
             }
@@ -3116,14 +3135,14 @@ export class Board extends Events {
         }
 
         if (!this.hasPointerUp) {
-            if (window.navigator.msPointerEnabled) {
-                // IE10-
-                Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-            } else {
+            // if (window.navigator.msPointerEnabled) {
+            //     // IE10-
+            //     Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+            // } else {
                 // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
                 Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
                 Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
-            }
+            // }
             this.hasPointerUp = true;
         }
 
@@ -3150,7 +3169,7 @@ export class Board extends Events {
         // Mouse, touch or pen device
         this._inputDevice = this._getPointerInputDevice(evt);
         type = this._inputDevice;
-        this.options.precision.hasPoint = this.options.precision[type];
+        Options.precision.hasPoint = Options.precision[type];
 
         // Handling of multi touch with pointer events should be easier than with touch events.
         // Every pointer device has its own pointerId, e.g. the mouse
@@ -3468,8 +3487,8 @@ export class Board extends Events {
         // Mouse, touch or pen device
         this._inputDevice = this._getPointerInputDevice(evt);
         type = this._inputDevice;
-        this.options.precision.hasPoint = this.options.precision[type];
-        eps = this.options.precision.hasPoint * 0.3333;
+        Options.precision.hasPoint = Options.precision[type];
+        eps = Options.precision.hasPoint * 0.3333;
 
         pos = this.getMousePosition(evt);
         // Ignore pointer move event if too close at the border
@@ -3677,7 +3696,7 @@ export class Board extends Events {
     touchStartListener(evt) {
         var i, j, k,
             pos, elements, obj,
-            eps = this.options.precision.touch,
+            eps = Options.precision.touch,
             evtTouches = evt['touches'],
             found,
             targets, target,
@@ -3700,7 +3719,7 @@ export class Board extends Events {
 
         // multitouch
         this._inputDevice = 'touch';
-        this.options.precision.hasPoint = this.options.precision.touch;
+        Options.precision.hasPoint = Options.precision.touch;
 
         // This is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
         // previous touches. once this is done we run through the existing touches again and watch out for free touches that can be attached to our existing
@@ -3732,7 +3751,7 @@ export class Board extends Events {
             touchTargets = this.touches[i].targets;
             for (j = 0; j < touchTargets.length; j++) {
                 touchTargets[j].num = -1;
-                eps = this.options.precision.touch;
+                eps = Options.precision.touch
 
                 do {
                     for (k = 0; k < evtTouches.length; k++) {
@@ -3755,7 +3774,7 @@ export class Board extends Events {
                     eps *= 2;
                 } while (
                     touchTargets[j].num === -1 &&
-                    eps < this.options.precision.touchMax
+                    eps < Options.precision.touchMax
                 );
 
                 if (touchTargets[j].num === -1) {
@@ -3791,7 +3810,7 @@ export class Board extends Events {
                     );
                     evt.preventDefault();
                     evt.stopPropagation();
-                    this.options.precision.hasPoint = this.options.precision.mouse;
+                    Options.precision.hasPoint = Options.precision.mouse;
                     return this.touches.length > 0; // don't continue as a normal click
                 }
 
@@ -3890,7 +3909,7 @@ export class Board extends Events {
             this.gestureStartListener(evt);
         }
 
-        this.options.precision.hasPoint = this.options.precision.mouse;
+        Options.precision.hasPoint = Options.precision.mouse;
         this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 
         return false;
@@ -3924,7 +3943,7 @@ export class Board extends Events {
         }
 
         this._inputDevice = 'touch';
-        this.options.precision.hasPoint = this.options.precision.touch;
+        Options.precision.hasPoint = Options.precision.touch;
         this.updateQuality = BOARD_QUALITY.HIGHLOW;
 
         // selection
@@ -4029,7 +4048,7 @@ export class Board extends Events {
         }
 
         this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
-        this.options.precision.hasPoint = this.options.precision.mouse;
+        Options.precision.hasPoint = Options.precision.mouse;
         this.updateQuality = BOARD_QUALITY.HIGH;
 
         return this.mode === BOARD_MODE.NONE;
@@ -4044,7 +4063,7 @@ export class Board extends Events {
         var i,
             j,
             k,
-            eps = this.options.precision.touch,
+            eps = Options.precision.touch,
             tmpTouches = [],
             found,
             foundNumber,
@@ -4213,7 +4232,7 @@ export class Board extends Events {
         }
 
         this._inputDevice = 'mouse';
-        this.options.precision.hasPoint = this.options.precision.mouse;
+        Options.precision.hasPoint = Options.precision.mouse;
         pos = this.getMousePosition(evt);
 
         // selection
@@ -4668,7 +4687,7 @@ export class Board extends Events {
      * @see JXG.Board#setBoundingBox
      *
      */
-    updateContainerDims(width, height) {
+    updateContainerDims(width?:number, height?:number) {
         var w = width,
             h = height,
             // bb,
@@ -5501,7 +5520,7 @@ export class Board extends Events {
             gridY = Type.evaluate(this.options.grid.gridY),
             x, y;
 
-        if (!Type.isArray(gridStep)) {
+        if (!Array.isArray(gridStep)) {
             gridStep = [gridStep, gridStep];
         }
         if (gridStep.length < 2) {
@@ -5534,17 +5553,19 @@ export class Board extends Events {
         x = p1.scrCoords[1] - p2.scrCoords[1];
         y = p1.scrCoords[2] - p2.scrCoords[2];
 
-        this.options.grid.snapSizeX = gridStep[0];
-        while (Math.abs(x) > 25) {
-            this.options.grid.snapSizeX *= 2;
-            x /= 2;
-        }
 
-        this.options.grid.snapSizeY = gridStep[1];
-        while (Math.abs(y) > 25) {
-            this.options.grid.snapSizeY *= 2;
-            y /= 2;
-        }
+        // TODO: move upwards?
+        // this.options.grid.snapSizeX = gridStep[0];
+        // while (Math.abs(x) > 25) {
+        //     this.options.grid.snapSizeX *= 2;
+        //     x /= 2;
+        // }
+
+        // this.options.grid.snapSizeY = gridStep[1];
+        // while (Math.abs(y) > 25) {
+        //     this.options.grid.snapSizeY *= 2;
+        //     y /= 2;
+        // }
 
         return this;
     }
@@ -5566,7 +5587,7 @@ export class Board extends Events {
      * @param {Number} [y]
      * @returns {JXG.Board} Reference to the board
      */
-    zoomIn(x, y) {
+    zoomIn(x?:number, y?:number) {
         var bb = this.getBoundingBox(),
             zX = Type.evaluate(this.attr.zoom.factorx),
             zY = Type.evaluate(this.attr.zoom.factory),
@@ -5733,7 +5754,7 @@ export class Board extends Events {
             dx, dy,
             d;
 
-        if (!Type.isArray(elements) || elements.length === 0) {
+        if (!Array.isArray(elements) || elements.length === 0) {
             return this;
         }
 
@@ -5741,7 +5762,7 @@ export class Board extends Events {
             e = this.select(elements[i]);
 
             box = e.bounds();
-            if (Type.isArray(box)) {
+            if (Array.isArray(box)) {
                 if (box[0] < newBBox[0]) {
                     newBBox[0] = box[0];
                 }
@@ -5757,7 +5778,7 @@ export class Board extends Events {
             }
         }
 
-        if (Type.isArray(newBBox)) {
+        if (Array.isArray(newBBox)) {
             cx = 0.5 * (newBBox[0] + newBBox[2]);
             cy = 0.5 * (newBBox[1] + newBBox[3]);
             dx = 1.5 * (newBBox[2] - newBBox[0]) * 0.5;
@@ -5810,7 +5831,7 @@ export class Board extends Events {
     _removeObj(object, saveMethod) {
         var el, i;
 
-        if (Type.isArray(object)) {
+        if (Array.isArray(object)) {
             for (i = 0; i < object.length; i++) {
                 this._removeObj(object[i], saveMethod);
             }
@@ -5921,11 +5942,11 @@ export class Board extends Events {
      * This should be much faster.
      * @returns {JXG.Board} Reference to the board
      */
-    removeObject(object, saveMethod) {
+    removeObject(object, saveMethod: boolean = false) {
         var i;
 
         this.renderer.suspendRedraw(this);
-        if (Type.isArray(object)) {
+        if (Array.isArray(object)) {
             for (i = 0; i < object.length; i++) {
                 this._removeObj(object[i], saveMethod);
             }
@@ -6235,34 +6256,34 @@ export class Board extends Events {
 
         // TODO
         // if (this.renderer.type === 'canvas') {
-            // this.updateRendererCanvas();
+        // this.updateRendererCanvas();
         // } else {
 
-            for (el = 0; el < len; el++) {
-                if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
-                    autoPositionLabelList.push(el);
-                } else {
-                    this.objectsList[el].updateRenderer();
-                }
+        for (el = 0; el < len; el++) {
+            if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
+                autoPositionLabelList.push(el);
+            } else {
+                this.objectsList[el].updateRenderer();
             }
+        }
 
-            currentIndex = autoPositionLabelList.length;
+        currentIndex = autoPositionLabelList.length;
 
-            // Randomize the order of the labels
-            while (currentIndex !== 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [autoPositionLabelList[currentIndex], autoPositionLabelList[randomIndex]] = [autoPositionLabelList[randomIndex], autoPositionLabelList[currentIndex]];
-            }
+        // Randomize the order of the labels
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [autoPositionLabelList[currentIndex], autoPositionLabelList[randomIndex]] = [autoPositionLabelList[randomIndex], autoPositionLabelList[currentIndex]];
+        }
 
-            for (el = 0; el < autoPositionLabelList.length; el++) {
-                this.objectsList[autoPositionLabelList[el]].updateRenderer();
-            }
-            /*
-            for (el = autoPositionLabelList.length - 1; el >= 0; el--) {
-                this.objectsList[autoPositionLabelList[el]].updateRenderer();
-            }
-            */
+        for (el = 0; el < autoPositionLabelList.length; el++) {
+            this.objectsList[autoPositionLabelList[el]].updateRenderer();
+        }
+        /*
+        for (el = autoPositionLabelList.length - 1; el >= 0; el--) {
+            this.objectsList[autoPositionLabelList[el]].updateRenderer();
+        }
+        */
         // }
         return this;
     }
@@ -6450,7 +6471,7 @@ export class Board extends Events {
      * @param {JXG.GeometryElement} [drag] Element that caused the update.
      * @returns {JXG.Board} Reference to the board
      */
-    update(drag) {
+    update(drag:Boolean=true) {
         var i, len, b, insert, storeActiveEl;
 
         if (this.inUpdate || this.isSuspendedUpdate) {
@@ -6671,7 +6692,7 @@ export class Board extends Events {
             ratio, dx: number, dy: number, prev_w, prev_h,
             dim = Env.getDimensions(this.containerObj, this.document);
 
-        if (!Type.isArray(bbox)) {
+        if (!Array.isArray(bbox)) {
             return this;
         }
 
@@ -6937,7 +6958,7 @@ export class Board extends Events {
                 // pairRaw is string of the form 'key:value'
                 pair = arg.split(":");
                 attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
-            } else if (!Type.isArray(arg)) {
+            } else if (!Array.isArray(arg)) {
                 // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
                 JXG.extend(attributes, arg);
             } else {
@@ -7156,7 +7177,7 @@ export class Board extends Events {
 
                     if (
                         !Type.exists(newCoords) ||
-                        (!Type.isArray(newCoords) && isNaN(newCoords))
+                        (!Array.isArray(newCoords) && isNaN(newCoords))
                     ) {
                         delete o.animationPath;
                     } else {
@@ -7390,15 +7411,16 @@ export class Board extends Events {
      *   return true;
      * });
      */
-    select(str: string | Object | Function, onlyByIdOrName: Boolean = false) {
+    select(str: GeometryElement | null | undefined, onlyByIdOrName: Boolean = false): Object {
         var flist,
             olist,
             i,
             l,
             s = str;
 
-        if (s === null) {
-            return s;
+        if (s === null || s === undefined) {
+            throw new Error('what??')  // TODO
+            return {};   // was x
         }
 
         // It's a string, most likely an id or a name.
@@ -7426,7 +7448,7 @@ export class Board extends Events {
             for (i = 0; i < l; i++) {
                 olist[flist[i].id] = flist[i];
             }
-            s = new Composition(olist);
+            // TODO  s = new Composition(olist);
 
             // It's an element which has been deleted (and still hangs around, e.g. in an attractor list
         } else if (
@@ -7451,7 +7473,7 @@ export class Board extends Events {
             py = y,
             bbox = this.getBoundingBox();
 
-        if (Type.exists(x) && Type.isArray(x.usrCoords)) {
+        if (Type.exists(x) && Array.isArray(x.usrCoords)) {
             px = x.usrCoords[1];
             py = x.usrCoords[2];
         }
@@ -7476,8 +7498,8 @@ export class Board extends Events {
      */
     updateCSSTransforms() {
         var obj = this.containerObj,
-            o = obj,
-            o2 = obj;
+            o: HTMLElement = obj,
+            o2: HTMLElement = obj;
 
         this.cssTransMat = Env.getCSSTransformMatrix(o);
 
@@ -7495,16 +7517,16 @@ export class Board extends Events {
             /*
              * This is necessary for IE11
              */
-            o = o.offsetParent;
+            o = (o.offsetParent) as HTMLElement;
             while (o) {
                 this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
 
-                o2 = o2.parentNode;
+                o2 = (o2.parentNode) as HTMLElement;
                 while (o2 !== o) {
                     this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                    o2 = o2.parentNode;
+                    o2 = (o2.parentNode) as HTMLElement;
                 }
-                o = o.offsetParent;
+                o = (o.offsetParent) as HTMLElement;
             }
             this.cssTransMat = JSXMath.inverse(this.cssTransMat);
         }
@@ -8349,8 +8371,8 @@ export class Board extends Events {
                         inner_id = that._fullscreen_inner_id;
                         if (doc.fullscreenElement !== undefined) {
                             fullscreenElement = doc.fullscreenElement;
-                        } else if (doc.webkitFullscreenElement !== undefined) {
-                            fullscreenElement = doc.webkitFullscreenElement;
+                        } else if (doc.fullscreenElement !== undefined) {
+                            fullscreenElement = doc.fullscreenElement;
                         } else {
                             fullscreenElement = doc.msFullscreenElement;
                         }
@@ -8505,7 +8527,7 @@ export class Board extends Events {
      */
     createRoulette(c1, c2, start_c1, stepsize, direction, time, pointlist) {
         var brd = this,
-            Roulette = function () {
+            Roulette = () => {
                 var alpha = 0,
                     Tx = 0,
                     Ty = 0,

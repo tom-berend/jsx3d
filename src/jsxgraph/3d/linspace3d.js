@@ -569,7 +569,7 @@ JXG.createLine3D = function (board, parents, attributes) {
 
     if (base === null &&   // No transformation
         (Type.isPoint3D(parents[2]) ||
-            ( parents.length === 3 && (Type.isArray(parents[2]) || Type.isFunction(parents[2])) )
+            ( parents.length === 3 && (Array.isArray(parents[2]) || Type.isFunction(parents[2])) )
         )
     ) {
         // Line defined by two points; [view, point1, point2]

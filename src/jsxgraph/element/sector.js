@@ -201,8 +201,8 @@ JXG.createSector = function (board, parents, attributes) {
     if (
         parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
         parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-        (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-        (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
+        (Array.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+        (Array.isArray(parents[3]) || Type.isNumber(parents[3])) &&
         (Type.isNumber(parents[4]) || Type.isFunction(parents[4]) || Type.isString(parents[4]))
     ) {
         type = "2lines";
@@ -297,7 +297,7 @@ JXG.createSector = function (board, parents, attributes) {
             }
         }
 
-        if (Type.isArray(parents[2])) {
+        if (Array.isArray(parents[2])) {
             /* project p1 to l1 */
             if (parents[2].length === 2) {
                 parents[2] = [1].concat(parents[2]);
@@ -321,7 +321,7 @@ JXG.createSector = function (board, parents, attributes) {
             el.direction1 = parents[2] >= 0 ? 1 : -1;
         }
 
-        if (Type.isArray(parents[3])) {
+        if (Array.isArray(parents[3])) {
             /* project p2 to l2 */
             if (parents[3].length === 2) {
                 parents[3] = [1].concat(parents[3]);
@@ -1260,8 +1260,8 @@ JXG.createAngle = function (board, parents, attributes) {
     if (
         parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
         parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-        (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-        (Type.isArray(parents[3]) || Type.isNumber(parents[3]))
+        (Array.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+        (Array.isArray(parents[3]) || Type.isNumber(parents[3]))
     ) {
         type = "2lines";
     } else {

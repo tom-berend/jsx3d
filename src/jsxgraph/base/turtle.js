@@ -146,7 +146,7 @@ JXG.Turtle = function (board, parents, attributes) {
             dir = parents[2];
         } else if (parents.length === 2) {
             // [[x,y],dir]
-            if (Type.isArray(parents[0])) {
+            if (Array.isArray(parents[0])) {
                 x = parents[0][0];
                 y = parents[0][1];
                 dir = parents[1];
@@ -441,7 +441,7 @@ JXG.extend(
         setPos: function (x, y) {
             var t;
 
-            if (Type.isArray(x)) {
+            if (Array.isArray(x)) {
                 this.pos = x;
             } else {
                 this.pos = [x, y];
@@ -676,7 +676,7 @@ JXG.extend(
         lookTo: function (target) {
             var ax, ay, bx, by, beta;
 
-            if (Type.isArray(target)) {
+            if (Array.isArray(target)) {
                 ax = this.pos[0];
                 ay = this.pos[1];
                 bx = target[0];
@@ -700,7 +700,7 @@ JXG.extend(
         moveTo: function (target) {
             var dx, dy, t;
 
-            if (Type.isArray(target)) {
+            if (Array.isArray(target)) {
                 dx = target[0] - this.pos[0];
                 dy = target[1] - this.pos[1];
 

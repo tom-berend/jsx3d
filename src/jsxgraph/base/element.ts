@@ -34,6 +34,7 @@ import { JXG, JXG_elements } from "../jxg.js";
 import { Board } from "../base/board.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
+import { Transformation } from "./transformation.js";
 import { CoordsElement } from "./coordselement.js";
 import { JSXMath } from "../math/jsxmath.js";
 import { Statistics } from "../math/statistics.js";
@@ -45,6 +46,7 @@ import { Text } from "../base/text.js";
 
 import { BoardOptions, GeometryElementOptions } from "../optionInterfaces.js";
 import { Ticks } from "../tsxgraph.js";
+import { Point } from "./point.js";
 
 interface ShortcutAttributes {
     // these are the 'shortcuts' in options.js.  we don't define them, but TypeScript needs to know they exist
@@ -65,7 +67,7 @@ interface ShortcutAttributes {
     /** size of the element in px */
     size?: number | Function  // CAN'T FIND THIS for POINT3D - not on inheritance path
     /** label attributes eg:  {position: 'top', offset: 10}  */
-    label?: LabelAttributes
+    label?: string | Function
     /** use Katex for math notation */
     useKatex?: Boolean
     // /** why is this not in Line3D ?? */
@@ -85,11 +87,18 @@ export interface AriaAttributes {
     ignore?: Boolean
 }
 
+
 export class GeometryElement extends Events {
 
     public coords: Coords
     public initialCoords: Coords;
     public actualCoords: Coords;
+
+    public defaultTicks: any // TODO why ticks on GeometryElement ?
+    public borders: GeometryElement[] = []  //  renderers want this
+
+    public infoboxText
+    // public updateSize:Function
 
 
     /**
@@ -111,7 +120,7 @@ export class GeometryElement extends Events {
     //  * @type Boolean
     //  * @default true
     //  */
-    // public isReal = true;
+    public isReal = true;
 
     /**
      * Stores all dependent objects to be updated when this point is moved.
@@ -161,7 +170,7 @@ export class GeometryElement extends Events {
      * @type Array
      * @see JXG.Transformation
      */
-    public transformations = [];
+    public transformations: Transformation[] = [];
 
     /**
      * @type JXG.GeometryElement
@@ -186,7 +195,7 @@ export class GeometryElement extends Events {
      * Ids of elements on which this element depends directly are stored here.
      * @type Object
      */
-    public parents = [];
+    public parents: any[] = [];
 
     /**
      * Stores variables for symbolic computations
@@ -253,7 +262,7 @@ export class GeometryElement extends Events {
      *
      * @type Object
      */
-    public rendNode : HTMLElement;
+    public rendNode: HTMLElement;
 
     /**
      * Storage for HTMLElements for arrows
@@ -398,25 +407,39 @@ export class GeometryElement extends Events {
     */
     public lastDragTime = new Date();
 
-    public view = null;
+    public view: GeometryElement | null = null;
 
     // TODO - where do these actuall belong?
     public otype
     public oclass
+    public element
+
+    public rendNodeCheckbox // put this in checkbox !
 
     public name
     public label
+    public labels
     public needsRegularUpdate
 
 
     public usrCoords = [];
     public scrCoords = [];
 
-    public visPropOld: LooseObject = {};
-    public ticks: Ticks[]
+    // TODO does this belong here?
+    public point1: Point | null = null // used by line
+    public point2: Point | null = null
+    public points: Point[] = []  // used by curve
+    public center: Point | null = null  // used by circle
+    public radius: number = 1
+    public vertices: Point[] = []// used by polygon
+    public onPolygon: any  // used by Glider
 
-    public animationCallback:Function
-    public animationData:object = {}
+
+    public visPropOld: LooseObject = {};
+    public ticks: Ticks[] = []
+
+    public animationCallback: Function = () => { }
+    public animationData: object = {}
     /**
      * Constructs a new GeometryElement object.
      * @class This is the parent class for all geometry elements like points, circles, lines, curves...
@@ -430,7 +453,7 @@ export class GeometryElement extends Events {
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
-    constructor(board: Board, attributes: object) {
+    constructor(board: Board, attributes: BoardOptions) {
         super()
 
         var name, key, attr;
@@ -471,7 +494,8 @@ export class GeometryElement extends Events {
             */
             this.name = name;
 
-            this.needsRegularUpdate = attributes.needsRegularUpdate;
+            // TODO - needsRegularUpdates is a GeometryElement value
+            // this.needsRegularUpdate = attributes.needsRegularUpdate;
 
             // create this.visPropOld and set default values
             Type.clearVisPropOld(this);
@@ -588,13 +612,14 @@ export class GeometryElement extends Events {
      * </script><pre>
      *
      **/
-    addParents(parents) {
-        var i, len, par;
+    addParents(parents: any[]) {
+        var i, len, par: any[];
 
-        if (Type.isArray(parents)) {
+        if (Array.isArray(parents)) {
             par = parents;
         } else {
-            par = arguments;
+            throw new Error('parents should be an array')
+            par = [] //arguments;
         }
 
         len = par.length;
@@ -732,7 +757,8 @@ export class GeometryElement extends Events {
      * or an array of {@link JXG.Transformation}s.
      * @returns {JXG.GeometryElement} Reference to the element.
      */
-    addTransform(transform) {
+    addTransform(el, transform) {
+        console.error('addTransform abstract method')
         return this;
     }
 
@@ -763,7 +789,7 @@ export class GeometryElement extends Events {
      * @see JXG.GeometryElement3D#setPosition2D
      */
     setPosition(method, coords) {
-        var parents = [],
+        var parents: any[] = [],
             el,
             i, len, t;
 
@@ -799,16 +825,17 @@ export class GeometryElement extends Events {
         if (len > 0) {
             t.applyOnce(parents);
 
-            // Handle dragging of a 3D element
-            if (Type.exists(this.view) && this.view.elType === 'view3d') {
-                for (i = 0; i < this.parents.length; ++i) {
-                    // Search for the parent 3D element
-                    el = this.view.select(this.parents[i]);
-                    if (Type.exists(el.setPosition2D)) {
-                        el.setPosition2D(t);
-                    }
-                }
-            }
+            // TODO: defer 3D
+            // // Handle dragging of a 3D element
+            // if (this.view !== null && this.view.elType === 'view3d') {
+            //     for (i = 0; i < this.parents.length; ++i) {
+            //         // Search for the parent 3D element
+            //         el = this.view.select(this.parents[i]);
+            //         if (Type.exists(el.setPosition2D)) {
+            //             el.setPosition2D(t);
+            //         }
+            //     }
+            // }
 
         } else {
             if (
@@ -817,7 +844,7 @@ export class GeometryElement extends Events {
             ) {
                 this.transformations[this.transformations.length - 1].melt(t);
             } else {
-                this.addTransform(t);
+                this.addTransform(el, t);
             }
         }
 
@@ -858,8 +885,9 @@ export class GeometryElement extends Events {
      * @returns {Array} An array containing polynomials describing the locus of the current object.
      * @public
      */
-    generatePolynomial() {
-        return [];
+    generatePolynomial(): number[] {
+        console.error('what does this expect?')
+        return [1, 2, 3];
     }
 
     /**
@@ -956,12 +984,14 @@ export class GeometryElement extends Events {
      * Can be used sometimes to commit changes to the object.
      * @return {JXG.GeometryElement} Reference to the element
      */
-    update() {
+    update(fromParent: boolean = true) {
         if (this.evalVisProp('trace')) {
             this.cloneToBackground();
         }
         return this;
     }
+    // TODO:  require all classes to have 'implements CoordsInterface' with methods like 'update'
+
 
     /**
      * Provide updateRenderer method.
@@ -979,7 +1009,7 @@ export class GeometryElement extends Events {
      * @private
      */
     fullUpdate(visible: 'inherit' | boolean = 'inherit') {
-        return this.prepareUpdate().update().updateVisibility(visible).updateRenderer();
+        return this.prepareUpdate().update(true).updateVisibility(visible).updateRenderer();
     }
 
     /**
@@ -1012,7 +1042,7 @@ export class GeometryElement extends Events {
         len = this.inherits.length;
         for (s = 0; s < len; s++) {
             obj = this.inherits[s];
-            if (Type.isArray(obj)) {
+            if (Array.isArray(obj)) {
                 len_s = obj.length;
                 for (i = 0; i < len_s; i++) {
                     if (
@@ -1107,18 +1137,18 @@ export class GeometryElement extends Events {
      * @return {JXG.GeometryElement} Reference to the element.
      * @private
      */
-    updateVisibility(parent_val=true) {
+    updateVisibility(parent_val: boolean | 'inherit' = true) {
         var i, len, s, len_s, obj, val;
 
         if (this.needsUpdate) {
-            if (Type.exists(this.view) && this.view.evalVisProp('visible') === false) {
+            if (this.view !== null && this.view.evalVisProp('visible') === false) {
                 // Handle hiding of view3d
                 this.visPropCalc.visible = false;
 
             } else {
                 // Handle the element
                 if (parent_val !== undefined) {
-                    this.visPropCalc.visible = parent_val;
+                    this.visPropCalc.visible = Boolean(parent_val);  // TODO test this
                 } else {
                     val = this.evalVisProp('visible');
 
@@ -1135,7 +1165,7 @@ export class GeometryElement extends Events {
                 len = this.inherits.length;
                 for (s = 0; s < len; s++) {
                     obj = this.inherits[s];
-                    if (Type.isArray(obj)) {
+                    if (Array.isArray(obj)) {
                         len_s = obj.length;
                         for (i = 0; i < len_s; i++) {
                             if (
@@ -1285,14 +1315,14 @@ export class GeometryElement extends Events {
         this.setAttribute({ name: str });
     }
 
-    /**
-     * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
-     */
-    setProperty() {
-        JXG.deprecated("setProperty()", "setAttribute()");
-        this.setAttribute.apply(this, arguments);
-    }
+    // /**
+    //  * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
+    //  * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
+    //  */
+    // setProperty() {
+    //     JXG.deprecated("setProperty()", "setAttribute()");
+    //     this.setAttribute.apply(this, arguments);
+    // }
 
     /**
      * Sets an arbitrary number of attributes. This method has one or more
@@ -1329,9 +1359,9 @@ export class GeometryElement extends Events {
                 // pairRaw is string of the form 'key:value'
                 pair = arg.split(":");
                 attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
-            } else if (!Type.isArray(arg)) {
+            } else if (!Array.isArray(arg)) {
                 // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-                JXG.extend(attributes, arg);
+                // TODO ?? // JXG.extend(attributes, arg);
             } else {
                 // pairRaw consists of array [key,value]
                 attributes[arg[0]] = arg[1];
@@ -1376,7 +1406,7 @@ export class GeometryElement extends Events {
                     } else if (Type.exists(this[key])) {
                         // Attribute looks like: point1: {...}
                         // Handle this in the sub-element: this.point1.setAttribute({...})
-                        if (Type.isArray(this[key])) {
+                        if (Array.isArray(this[key])) {
                             for (j = 0; j < this[key].length; j++) {
                                 this[key][j].setAttribute(value);
                             }
@@ -1402,7 +1432,7 @@ export class GeometryElement extends Events {
                     case "disabled":
                         // button, checkbox, input. Is not available on initial call.
                         if (Type.exists(this.rendNode)) {
-                            this.rendNode.disabled = !!value;
+                            (this.rendNode as HTMLTextAreaElement).disabled = !!value;
                         }
                         break;
                     case "face":
@@ -1467,12 +1497,15 @@ export class GeometryElement extends Events {
                         this.board.renderer.setLayer(this, this.eval(value));
                         this._set(key, value);
                         break;
-                    case "maxlength":
-                        // input. Is not available on initial call.
-                        if (Type.exists(this.rendNode)) {
-                            this.rendNode.maxlength = !!value;
-                        }
-                        break;
+
+                    // TODO: only a few HTMLElements support this
+                    // case "maxlength":
+                    //     // input. Is not available on initial call.
+                    //     if (Type.exists(this.rendNode)) {
+                    //         this.rendNode.maxlength = !!value;
+                    //     }
+                    //     break;
+
                     case "name":
                         oldvalue = this.name;
                         delete this.board.elementsByName[this.name];
@@ -1539,12 +1572,15 @@ export class GeometryElement extends Events {
                         }
 
                         this.setDisplayRendNode(this.evalVisProp('visible'));
-                        if (
-                            this.evalVisProp('visible') &&
-                            Type.exists(this.updateSize)
-                        ) {
-                            this.updateSize();
-                        }
+                        // if (
+                        //     this.evalVisProp('visible') &&
+                        //     Type.exists(this.updateSize)
+                        // ) {
+                        // TODO: this is a Text function
+                        // if (this.elementClass === OBJECT_CLASS.TEXT) {
+                        //     this.updateSize();
+                        // }
+                        // }
 
                         break;
                     case "withlabel":
@@ -1602,23 +1638,25 @@ export class GeometryElement extends Events {
         if (!this.evalVisProp('needsregularupdate')) {
             this.board.fullUpdate();
         } else {
-            this.board.update(this);
+            this.board.update();
         }
-        if (this.elementClass === OBJECT_CLASS.TEXT) {
-            this.updateSize();
-        }
+
+        // TODO: this is a Text function
+        // if (this.elementClass === OBJECT_CLASS.TEXT) {
+        //     this.updateSize();
+        // }
 
         return this;
     }
 
-    /**
-     * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
-     * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
-     */
-    getProperty() {
-        JXG.deprecated("getProperty()", "getAttribute()");
-        this.getProperty.apply(this, arguments);
-    }
+    // /**
+    //  * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
+    //  * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
+    //  */
+    // getProperty() {
+    //     JXG.deprecated("getProperty()", "getAttribute()");
+    //     this.getProperty.apply(this, arguments);
+    // }
 
     /**
      * Get the value of the property <tt>key</tt>.
@@ -1778,7 +1816,7 @@ export class GeometryElement extends Events {
      * Notify all child elements for updates.
      * @private
      */
-    prepareUpdate() {
+    prepareUpdate(): GeometryElement {
         this.needsUpdate = true;
         return this;
     }
@@ -1832,7 +1870,7 @@ export class GeometryElement extends Events {
             this.elType = "arrow";
         }
 
-        this.prepareUpdate().update().updateVisibility().updateRenderer();
+        this.prepareUpdate().update(true).updateVisibility().updateRenderer();
         return this;
     }
 
@@ -1861,33 +1899,33 @@ export class GeometryElement extends Events {
         // an exception here and simply output a warning via JXG.debug.
 
         // if (JXG_elements['text']) { //tbtb
-            attr = Type.deepCopy(Options.label, {});
-            attr.id = this.id + "Label";
-            attr.isLabel = true;
-            attr.anchor = this;
-            attr.priv = this.visProp.priv;
+        attr = Type.deepCopy(Options.label, {});
+        attr.id = this.id + "Label";
+        attr.isLabel = true;
+        attr.anchor = this;
+        attr.priv = this.visProp.priv;
 
-            if (this.visProp.withlabel) {
-                this.label = new Text(
-                    this.board,
-                    [
-                        0,
-                        0,],
-                    attr,
-                    (): string => {
-                        if (Type.isFunction(that.name)) {
-                            return that.name(that);
-                        }
-                        return that.name;
+        if (this.visProp.withlabel) {
+            this.label = new Text(
+                this.board,
+                [
+                    0,
+                    0,],
+                attr,
+                (): string => {
+                    if (Type.isFunction(that.name)) {
+                        return that.name(that);
                     }
+                    return that.name;
+                }
 
-                );
-                this.label.needsUpdate = true;
-                this.label.dump = false;
-                this.label.fullUpdate();
+            );
+            this.label.needsUpdate = true;
+            this.label.dump = false;
+            this.label.fullUpdate();
 
-                this.hasLabel = true;
-            }
+            this.hasLabel = true;
+        }
         // } else {
         //     JXG.debug(
         //         "JSXGraph: Can't create label: text element is not available. Make sure you include base/text"
@@ -1982,7 +2020,7 @@ export class GeometryElement extends Events {
      * @private
      */
     normalize() {
-        this.stdform = Mat.normalize(this.stdform);
+        this.stdform = JSXMath.normalize(this.stdform);
         return this;
     }
 
@@ -2244,7 +2282,7 @@ export class GeometryElement extends Events {
      * @returns {Array}
      */
     getParents() {
-        return Type.isArray(this.parents) ? this.parents : [];
+        return Array.isArray(this.parents) ? this.parents : [];
     }
 
     /**
@@ -2311,7 +2349,7 @@ export class GeometryElement extends Events {
      * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
      * @returns {String} Id of the ticks object.
      */
-    addTicks(ticks:Ticks) {
+    addTicks(ticks: Ticks) {
         if (ticks.id === "" || !Type.exists(ticks.id)) {
             ticks.id = this.id + "_ticks_" + (this.ticks.length + 1);
         }
@@ -2404,7 +2442,7 @@ export class GeometryElement extends Events {
      *    the visible board, but the distance between the two points stays constant.
      * @returns {JXG.GeometryElement} Reference to this element
      */
-    handleSnapToGrid(force, fromParent) {
+    handleSnapToGrid(force:boolean=false, fromParent:boolean=false) {
         var x, y, rx, ry, rcoords,
             mi, ma,
             boardBB, res, sX, sY,
@@ -2433,7 +2471,7 @@ export class GeometryElement extends Events {
                 rx = Math.round(x / sX) * sX;
                 ry = Math.round(y / sY) * sY;
 
-                rcoords = new JXG.Coords(COORDS_BY.USER, [rx, ry], this.board);
+                rcoords = new Coords(COORDS_BY.USER, [rx, ry], this.board);
                 if (
                     !attractToGrid ||
                     rcoords.distance(
@@ -2471,60 +2509,61 @@ export class GeometryElement extends Events {
     }
 
     getBoundingBox() {
-        var i, le, v,
-            x, y, r,
-            bb = [Infinity, Infinity, -Infinity, -Infinity];
+        // TODO: this has stuff that needs to get moved up the tree
+        // var i, le, v,
+        //     x, y, r,
+        let bb = [Infinity, Infinity, -Infinity, -Infinity];
 
-        if (this.type === OBJECT_TYPE.POLYGON) {
-            le = this.vertices.length - 1;
-            if (le <= 0) {
-                return bb;
-            }
-            for (i = 0; i < le; i++) {
-                v = this.vertices[i].X();
-                bb[0] = v < bb[0] ? v : bb[0];
-                bb[2] = v > bb[2] ? v : bb[2];
-                v = this.vertices[i].Y();
-                bb[1] = v < bb[1] ? v : bb[1];
-                bb[3] = v > bb[3] ? v : bb[3];
-            }
-        } else if (this.elementClass === OBJECT_CLASS.CIRCLE) {
-            x = this.center.X();
-            y = this.center.Y();
-            bb = [x - this.radius, y + this.radius, x + this.radius, y - this.radius];
-        } else if (this.elementClass === OBJECT_CLASS.CURVE) {
-            le = this.points.length;
-            if (le === 0) {
-                return bb;
-            }
-            for (i = 0; i < le; i++) {
-                v = this.points[i].usrCoords[1];
-                bb[0] = v < bb[0] ? v : bb[0];
-                bb[2] = v > bb[2] ? v : bb[2];
-                v = this.points[i].usrCoords[2];
-                bb[1] = v < bb[1] ? v : bb[1];
-                bb[3] = v > bb[3] ? v : bb[3];
-            }
-        } else if (this.elementClass === OBJECT_CLASS.POINT) {
-            x = this.X();
-            y = this.Y();
-            r = this.evalVisProp('size');
-            bb = [x - r / this.board.unitX, y - r / this.board.unitY, x + r / this.board.unitX, y + r / this.board.unitY];
-        } else if (this.elementClass === OBJECT_CLASS.LINE) {
-            v = this.point1.coords.usrCoords[1];
-            bb[0] = v < bb[0] ? v : bb[0];
-            bb[2] = v > bb[2] ? v : bb[2];
-            v = this.point1.coords.usrCoords[2];
-            bb[1] = v < bb[1] ? v : bb[1];
-            bb[3] = v > bb[3] ? v : bb[3];
+        // if (this.type === OBJECT_TYPE.POLYGON) {
+        //     le = this.vertices.length - 1;
+        //     if (le <= 0) {
+        //         return bb;
+        //     }
+        //     for (i = 0; i < le; i++) {
+        //         v = this.vertices[i].X();
+        //         bb[0] = v < bb[0] ? v : bb[0];
+        //         bb[2] = v > bb[2] ? v : bb[2];
+        //         v = this.vertices[i].Y();
+        //         bb[1] = v < bb[1] ? v : bb[1];
+        //         bb[3] = v > bb[3] ? v : bb[3];
+        //     }
+        // } else if (this.elementClass === OBJECT_CLASS.CIRCLE) {
+        //     x = this.center.X();
+        //     y = this.center.Y();
+        //     bb = [x - this.radius, y + this.radius, x + this.radius, y - this.radius];
+        // } else if (this.elementClass === OBJECT_CLASS.CURVE) {
+        //     le = this.points.length;
+        //     if (le === 0) {
+        //         return bb;
+        //     }
+        //     for (i = 0; i < le; i++) {
+        //         v = this.points[i].usrCoords[1];
+        //         bb[0] = v < bb[0] ? v : bb[0];
+        //         bb[2] = v > bb[2] ? v : bb[2];
+        //         v = this.points[i].usrCoords[2];
+        //         bb[1] = v < bb[1] ? v : bb[1];
+        //         bb[3] = v > bb[3] ? v : bb[3];
+        //     }
+        // } else if (this.elementClass === OBJECT_CLASS.POINT) {
+        //     x = this.X();
+        //     y = this.Y();
+        //     r = this.evalVisProp('size');
+        //     bb = [x - r / this.board.unitX, y - r / this.board.unitY, x + r / this.board.unitX, y + r / this.board.unitY];
+        // } else if (this.elementClass === OBJECT_CLASS.LINE) {
+        //     v = this.point1.coords.usrCoords[1];
+        //     bb[0] = v < bb[0] ? v : bb[0];
+        //     bb[2] = v > bb[2] ? v : bb[2];
+        //     v = this.point1.coords.usrCoords[2];
+        //     bb[1] = v < bb[1] ? v : bb[1];
+        //     bb[3] = v > bb[3] ? v : bb[3];
 
-            v = this.point2.coords.usrCoords[1];
-            bb[0] = v < bb[0] ? v : bb[0];
-            bb[2] = v > bb[2] ? v : bb[2];
-            v = this.point2.coords.usrCoords[2];
-            bb[1] = v < bb[1] ? v : bb[1];
-            bb[3] = v > bb[3] ? v : bb[3];
-        }
+        //     v = this.point2.coords.usrCoords[1];
+        //     bb[0] = v < bb[0] ? v : bb[0];
+        //     bb[2] = v > bb[2] ? v : bb[2];
+        //     v = this.point2.coords.usrCoords[2];
+        //     bb[1] = v < bb[1] ? v : bb[1];
+        //     bb[3] = v > bb[3] ? v : bb[3];
+        // }
 
         return bb;
     }
@@ -2890,6 +2929,16 @@ export class GeometryElement extends Events {
     //  */
     // __evt__attribute_(val, nval, el) { }
 
+
+
+
+    X(any?: any): number { if (any) { console.warn('what is?', any) } return this.usrCoords[0] }
+    Y(any?: any): number { if (any) { console.warn('what is?', any) } return this.usrCoords[1] }
+    Z(any?: any): number { if (any) { console.warn('what is?', any) } return this.usrCoords[2] }
+
+    setRadius(value: number) {
+        this.radius = value
+    }
 
 
 }

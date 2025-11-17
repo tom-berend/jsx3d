@@ -357,7 +357,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
             dim = el.Dimension();
         }
 
-        if (Type.isArray(dimension)) {
+        if (Array.isArray(dimension)) {
             for (i = 0; i < dimension.length; i++) {
                 dims['dim' + dimension[i]] = el.Unit(dimension[i]);
             }
@@ -442,7 +442,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
                     val = Type.toFixed(val, digits);
                 }
             }
-        } else if (Type.isArray(val)) {
+        } else if (Array.isArray(val)) {
             for (i = 0; i < val.length; i++) {
                 if (!Type.isNumber(val[i])) {
                     continue;
@@ -465,14 +465,14 @@ JXG.createMeasurement = function (board, parents, attributes) {
             }
         }
 
-        if (dim === 'coords' && Type.isArray(val)) {
+        if (dim === 'coords' && Array.isArray(val)) {
             if (val.length === 2) {
                 val.unshift(undefined);
             }
             val = el.visProp.formatcoords(el, val[1], val[2], val[0]);
         }
 
-        if (dim === 'direction' && Type.isArray(val)) {
+        if (dim === 'direction' && Array.isArray(val)) {
             val = el.visProp.formatdirection(el, val[0], val[1]);
         }
 

@@ -204,7 +204,7 @@ export abstract class AbstractRenderer {
      * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
      * @private
      */
-    _updateVisual(el:GeometryElement, not:LooseObject={}, enhanced:boolean = false) {
+    _updateVisual(el: GeometryElement, not: LooseObject = {}, enhanced: boolean = false) {
         if (enhanced || this.enhancedRendering) {
             not = not || {};
 
@@ -1004,8 +1004,8 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#updateInternalText
      * @see JXG.AbstractRenderer#updateTextStyle
      */
-    drawText(el) {
-        var node, z, level, ev_visible;
+    drawText(el): HTMLElement {
+        var node:HTMLElement, z, level, ev_visible;
 
         console.log('drawText', el, el.evalVisProp('display'))
         if (this.container !== null) {
@@ -1055,6 +1055,7 @@ export abstract class AbstractRenderer {
         } else {
             throw new Error('container was null')
         }
+        return node
     }
 
     /**
@@ -1551,7 +1552,7 @@ export abstract class AbstractRenderer {
      * @returns {JXG.AbstractRenderer} Reference to the renderer
      * @see JXG.AbstractRenderer#updateTextStyle
      */
-    highlight(el, suppressHighlightStrokeWidth) {
+    highlight(el:GeometryElement, suppressHighlightStrokeWidth:boolean = false) {
         var i, do_hl, sw;
 
         this.setObjectTransition(el);
@@ -1723,7 +1724,7 @@ export abstract class AbstractRenderer {
                     e.cancelBubble = true;
                 }
             }
-        let createButton = function (label, handler, board_id, type) {
+        let createNavButton = (label, handler, board_id, type) => {
             var button;
 
             board_id = board_id || "";
@@ -1791,7 +1792,7 @@ export abstract class AbstractRenderer {
             // For XHTML we need unicode instead of HTML entities
 
             if (board.attr.showfullscreen) {
-                createButton(
+                createNavButton(
                     board.attr.fullscreen.symbol,
                     function () {
                         board.toFullscreen(board.attr.fullscreen.id);
@@ -1801,7 +1802,7 @@ export abstract class AbstractRenderer {
             }
 
             if (board.attr.showscreenshot) {
-                createButton(
+                createNavButton(
                     board.attr.screenshot.symbol,
                     function () {
                         window.setTimeout(function () {
@@ -1816,7 +1817,7 @@ export abstract class AbstractRenderer {
                 // full reload circle: \u27F2
                 // the board.reload() method does not exist during the creation
                 // of this button. That's why this anonymous function wrapper is required.
-                createButton(
+                createNavButton(
                     "\u21BB",
                     function () {
                         board.reload();
@@ -1827,7 +1828,7 @@ export abstract class AbstractRenderer {
 
             if (board.attr.showcleartraces) {
                 // clear traces symbol (otimes): \u27F2
-                createButton("\u2297",
+                createNavButton("\u2297",
                     function () {
                         board.clearTraces();
                     },
@@ -1837,14 +1838,14 @@ export abstract class AbstractRenderer {
 
             if (board.attr.shownavigation) {
                 if (board.attr.showzoom) {
-                    createButton("\u2013", board.zoomOut, board.container, "out");
-                    createButton("o", board.zoom100, board.container, "100");
-                    createButton("+", board.zoomIn, board.container, "in");
+                    createNavButton("\u2013", board.zoomOut, board.container, "out");
+                    createNavButton("o", board.zoom100, board.container, "100");
+                    createNavButton("+", board.zoomIn, board.container, "in");
                 }
-                createButton("\u2190", board.clickLeftArrow, board.container, "left");
-                createButton("\u2193", board.clickUpArrow, board.container, "down"); // Down arrow
-                createButton("\u2191", board.clickDownArrow, board.container, "up"); // Up arrow
-                createButton("\u2192", board.clickRightArrow, board.container, "right");
+                createNavButton("\u2190", board.clickLeftArrow, board.container, "left");
+                createNavButton("\u2193", board.clickUpArrow, board.container, "down"); // Down arrow
+                createNavButton("\u2191", board.clickDownArrow, board.container, "up"); // Up arrow
+                createNavButton("\u2192", board.clickRightArrow, board.container, "right");
             }
         }
     }

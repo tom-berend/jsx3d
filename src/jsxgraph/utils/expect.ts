@@ -106,7 +106,7 @@ export class Expect {
     static coordsArray(c, copy: boolean = false) {
         var coord;
 
-        if (!Type.isArray(c)) {
+        if (!Array.isArray(c)) {
             coord = this.coords(c).usrCoords;
         } else {
             coord = c;

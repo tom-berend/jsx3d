@@ -63,7 +63,7 @@
 import { Board } from "./base/board.js"
 import { JSXGraph } from "./jsxgraph.js";
 import { Type, LooseObject } from "./utils/type.js";
-
+import { GeometryElement } from "./base/element.js";
 import {Text} from './base/text.js'
 import {Point} from './base/point.js'
 
@@ -101,24 +101,24 @@ export function JXG_registerElement(element: string, creator: Function) {
     JXG_elements[element] = creator;
 }
 
-export function JXG_createElement(elementType: string,parents:any[],attributes:object) {
-    if (!JXG_elements.hasOwnProperty(elementType)) {
-        throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
-    }
+// export function JXG_createElement(elementType: string,parents:any[],attributes:object) {
+//     if (!JXG_elements.hasOwnProperty(elementType)) {
+//         throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
+//     }
 
-    let el: GeometryElement
-    if (Type.isFunction(JXG_elements[elementType])) {
-        el = JXG_elements[elementType](this, parents, attributes);
-    } else {
-        throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
-    }
+//     let el: GeometryElement
+//     if (Type.isFunction(JXG_elements[elementType])) {
+//         el = JXG_elements[elementType](this, parents, attributes);
+//     } else {
+//         throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
+//     }
 
-    if (!Type.exists(el)) {
-        throw new Error('JSXGraph: create: failure creating ' + elementType);
-        // JXG.debug('JSXGraph: create: failure creating ' + elementType);
-        return el;
-    }
-}
+//     if (!Type.exists(el)) {
+//         throw new Error('JSXGraph: create: failure creating ' + elementType);
+//         // JXG.debug('JSXGraph: create: failure creating ' + elementType);
+//         return el;
+//     }
+// }
 
 
 ///////// end of two global function that pollute the namespace
@@ -266,7 +266,7 @@ export class JXG extends JSXGraph {
      * to be created on, a parent element array, and an attributes object. See {@link this.createPoint} or any other
      * <tt>this.create...</tt> function for an example.
      */
-    static registerElement(element: string, creator: function) {
+    static registerElement(element: string, creator: Function) {
 
         element = element.toLowerCase();
         this.elements[element] = creator;

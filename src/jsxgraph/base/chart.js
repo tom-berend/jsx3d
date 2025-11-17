@@ -70,7 +70,7 @@ JXG.Chart = function (board, parents, attributes) {
 
     var x, y, i, c, style, len;
 
-    if (!Type.isArray(parents) || parents.length === 0) {
+    if (!Array.isArray(parents) || parents.length === 0) {
         throw new Error("JSXGraph: Can't create a chart without data");
     }
 
@@ -88,7 +88,7 @@ JXG.Chart = function (board, parents, attributes) {
         for (i = 0; i < y.length; i++) {
             x[i] = i + 1;
         }
-    } else if (parents.length === 1 && Type.isArray(parents[0])) {
+    } else if (parents.length === 1 && Array.isArray(parents[0])) {
         // parents looks like [[a,b,c,..]]
         // x has to be filled
 
@@ -106,7 +106,7 @@ JXG.Chart = function (board, parents, attributes) {
         y = parents[1].slice(0, len);
     }
 
-    if (Type.isArray(y) && y.length === 0) {
+    if (Array.isArray(y) && y.length === 0) {
         throw new Error("JSXGraph: Can't create charts without data.");
     }
 
@@ -315,7 +315,7 @@ JXG.extend(
                     }
                 }
 
-                if (Type.isArray(attr.colors)) {
+                if (Array.isArray(attr.colors)) {
                     colors = attr.colors;
                     attr.fillcolor = colors[i % colors.length];
                 }
@@ -457,7 +457,7 @@ JXG.extend(
                     name: ""
                 };
 
-            if (!Type.isArray(labelArray)) {
+            if (!Array.isArray(labelArray)) {
                 labelArray = [];
                 for (i = 0; i < y.length; i++) {
                     labelArray[i] = "";
@@ -1237,7 +1237,7 @@ JXG.createChart = function (board, parents, attributes) {
 
             len = data.length;
             showRows = [];
-            if (attr.rows && Type.isArray(attr.rows)) {
+            if (attr.rows && Array.isArray(attr.rows)) {
                 for (i = 0; i < len; i++) {
                     for (j = 0; j < attr.rows.length; j++) {
                         if (

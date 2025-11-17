@@ -113,7 +113,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term) || Type.isString(term)) {
             return term;
         }
-        if (!Type.isArray(term) || term.length < 2) {
+        if (!Array.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.parse: term is not an array, number or string');
         }
 
@@ -202,7 +202,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term)) {
             return 0;
         }
-        if (!Type.isArray(term) || term.length < 2) {
+        if (!Array.isArray(term) || term.length < 2) {
             throw new Error('PrefixParser.dimension: term is not an array');
         }
 
@@ -323,7 +323,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term)) {
             return term;
         }
-        if (!Type.isArray(term) || term.length < 2) {
+        if (!Array.isArray(term) || term.length < 2) {
             throw new Error('PrefixParser.toPrefix: term is not an array');
         }
 
@@ -364,7 +364,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term)) {
             return [];
         }
-        if (!Type.isArray(term) || term.length < 2) {
+        if (!Array.isArray(term) || term.length < 2) {
             throw new Error('PrefixParser.getParents: term is not an array');
         }
 

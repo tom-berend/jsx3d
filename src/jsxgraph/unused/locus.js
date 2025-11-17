@@ -74,7 +74,7 @@ import {Type} from "../utils/type.js";
 JXG.createLocus = function (board, parents, attributes) {
     var c, p;
 
-    if (Type.isArray(parents) && parents.length === 1 && Type.isPoint(parents[0])) {
+    if (Array.isArray(parents) && parents.length === 1 && Type.isPoint(parents[0])) {
         p = parents[0];
     } else {
         throw new Error(

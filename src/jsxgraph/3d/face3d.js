@@ -126,7 +126,7 @@ JXG.extend(
                 p = def.vertices[i];
                 if (Type.isFunction(p)) {
                     def.coords[i] = Type.evaluate(p);
-                } else if (Type.isArray(p)) {
+                } else if (Array.isArray(p)) {
                     def.coords[i] = [];
                     le = p.length;
                     for (j = 0; j < le; j++) {

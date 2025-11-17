@@ -41,10 +41,10 @@
 import { JXG } from "../jxg.js";
 import { Board } from "../base/board.js"
 import { JSXMath } from "../math/jsxmath.js";
+import { Numerics } from "../math/numerics.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 
 import { Geometry } from "../math/geometry.js"
-import { GeometryElement, GeometryElementAttributes } from "./element.js";
 
 import { Type } from "../utils/type.js";
 import { CoordsElement } from "./coordselement.js";
@@ -134,7 +134,7 @@ export class Point extends CoordsElement {
         } else {
             // 'inherit'
             let crud =
-                prec = this.board.options.precision.hasPoint;
+                prec = Options.precision.hasPoint;
         }
         r = parseFloat(this.evalVisProp('size'));
         if (unit === "user") {
@@ -160,7 +160,7 @@ export class Point extends CoordsElement {
         this.updateCoords(fromParent);
 
         if (this.evalVisProp('trace')) {
-            this.cloneToBackground(true);
+            this.cloneToBackground();
         }
 
         return this;
@@ -190,7 +190,7 @@ export class Point extends CoordsElement {
         }
         for (i = 1; i < this.transformations.length; i++) {
             this.transformations[i].update();
-            c = Mat.matVecMult(this.transformations[i].matrix, c);
+            c = JSXMath.matVecMult(this.transformations[i].matrix, c);
         }
         this.coords.setCoordinates(COORDS_BY.USER, c);
 
@@ -258,7 +258,7 @@ export class Point extends CoordsElement {
             return [poly1[0], poly2[0]];
         };
 
-        this.prepareUpdate().update();
+        this.prepareUpdate().update(true);
     }
 
     /**
@@ -456,10 +456,10 @@ export class Point extends CoordsElement {
 
     // Already documented in GeometryElement
     cloneToBackground() {
-        var copy = Type.getCloneObject(this);
+        // TODO used for tracingn  // var copy = Type.getCloneObject(this);
 
-        this.board.renderer.drawPoint(copy);
-        this.traces[copy.id] = copy.rendNode;
+        // this.board.renderer.drawPoint(copy);
+        // this.traces[copy.id] = copy.rendNode;
 
         return this;
     }
@@ -830,7 +830,7 @@ export function createOtherIntersectionPoint(board, parents, attributes) {
     } else {
         el1 = board.select(parents[0]);
         el2 = board.select(parents[1]);
-        if (Type.isArray(parents[2])) {
+        if (Array.isArray(parents[2])) {
             others = parents[2];
         } else {
             others = [parents[2]];
@@ -1018,9 +1018,9 @@ export function createPolePoint(board, parents, attributes) {
                     s = el2.stdform.slice(0, 3);
 
                 return [
-                    JXG.Math.Numerics.det([s, q[1], q[2]]),
-                    JXG.Math.Numerics.det([q[0], s, q[2]]),
-                    JXG.Math.Numerics.det([q[0], q[1], s])
+                    Numerics.det([s, q[1], q[2]]),
+                    Numerics.det([q[0], s, q[2]]),
+                    Numerics.det([q[0], q[1], s])
                 ];
             }
         ],

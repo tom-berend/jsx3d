@@ -826,7 +826,7 @@ JXG.extend(
          */
         addTransform: function (transform) {
             var i,
-                list = Type.isArray(transform) ? transform : [transform],
+                list = Array.isArray(transform) ? transform : [transform],
                 len = list.length;
 
             for (i = 0; i < len; i++) {
@@ -836,7 +836,7 @@ JXG.extend(
 
             // Why not like this?
             // The difference is in setting baseElement
-            // var list = Type.isArray(transform) ? transform : [transform];
+            // var list = Array.isArray(transform) ? transform : [transform];
             // this.point1.addTransform(this, list);
             // this.point2.addTransform(this, list);
 
@@ -1178,7 +1178,7 @@ JXG.createLine = function (board, parents, attributes) {
         // The line is defined by two points or coordinates of two points.
         // In the latter case, the points are created.
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
-        if (Type.isArray(parents[0]) && parents[0].length > 1) {
+        if (Array.isArray(parents[0]) && parents[0].length > 1) {
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
             p1 = board.select(parents[0]);
@@ -1210,7 +1210,7 @@ JXG.createLine = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, "line", "point2");
         if (doTransform) {
             p2 = board.create("point", [parents[0].point2, parents[1]], attr);
-        } else if (Type.isArray(parents[1]) && parents[1].length > 1) {
+        } else if (Array.isArray(parents[1]) && parents[1].length > 1) {
             p2 = board.create("point", parents[1], attr);
         } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
             p2 = board.select(parents[1]);
@@ -1666,7 +1666,7 @@ JXG.createAxis = function (board, parents, attributes) {
     // attrTicks = attr.ticks;
     if (Type.exists(attr.ticks.ticksdistance)) {
         ticksDist = attr.ticks.ticksdistance;
-    } else if (Type.isArray(attr.ticks.ticks)) {
+    } else if (Array.isArray(attr.ticks.ticks)) {
         ticksDist = attr.ticks.ticks;
     } else {
         ticksDist = 1.0;

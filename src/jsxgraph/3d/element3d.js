@@ -105,7 +105,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
                 // pairRaw is string of the form 'key:value'
                 pair = arg.split(":");
                 attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
-            } else if (!Type.isArray(arg)) {
+            } else if (!Array.isArray(arg)) {
                 // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
                 JXG.extend(attributes, arg);
             } else {
@@ -196,7 +196,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     //  */
     addTransformGeneric: function (el, transform) {
         var i,
-            list = Type.isArray(transform) ? transform : [transform],
+            list = Array.isArray(transform) ? transform : [transform],
             len = list.length;
 
         // There is only one baseElement possible

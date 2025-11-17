@@ -125,6 +125,12 @@ export class Options {
         jc: { enabled: false }
     }
 
+        static jc:JcOptions = {
+        enabled: true,
+        compile: true,
+    }
+
+
     static layer: LayerOptions = {
         numlayers: 20, // only important in SVG
         unused9: 19,

@@ -475,7 +475,7 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // set global majorStep
         majorStep = this.evalVisProp('majorstep');
-        if (!Type.isArray(majorStep)) {
+        if (!Array.isArray(majorStep)) {
             majorStep = [majorStep, majorStep];
         }
         if (majorStep.length < 2) {
@@ -534,7 +534,7 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // Set global majorSize
         majorSize = this.evalVisProp('size');
-        if (!Type.isArray(majorSize)) {
+        if (!Array.isArray(majorSize)) {
             majorSize = [majorSize, majorSize];
         }
         if (majorSize.length < 2) {
@@ -671,7 +671,7 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // set minorStep
         // minorElements can be 'auto' or a number (also a number like '20')
-        if (!Type.isArray(minorElements)) {
+        if (!Array.isArray(minorElements)) {
             minorElements = [minorElements, minorElements];
         }
         if (minorElements.length < 2) {
@@ -701,7 +701,7 @@ JXG.createGrid = function (board, parents, attributes) {
         minorStep[1] = majorStep[1] / (minorElements[1] + 1);
 
         // set global minorSize
-        if (!Type.isArray(minorSize)) {
+        if (!Array.isArray(minorSize)) {
             minorSize = [minorSize, minorSize];
         }
         if (minorSize.length < 2) {

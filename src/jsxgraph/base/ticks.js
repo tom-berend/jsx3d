@@ -110,7 +110,7 @@ JXG.Ticks = function (line, ticks, attributes) {
         throw new Error("Function arguments are no longer supported.");
     }
 
-    if (Type.isArray(ticks)) {
+    if (Array.isArray(ticks)) {
         this.fixedTicks = ticks;
     } else {
         // Obsolete:
@@ -1010,7 +1010,7 @@ JXG.extend(
                 y,
                 eps2 = JSXMath.eps,
                 fixedTick,
-                hasLabelOverrides = Type.isArray(this.visProp.labels),
+                hasLabelOverrides = Array.isArray(this.visProp.labels),
                 deltas,
                 ev_dl = this.evalVisProp('drawlabels');
 

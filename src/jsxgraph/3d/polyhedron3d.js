@@ -641,7 +641,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         polyhedron.faces = base.def.faces;
     } else {
         // Copy vertices into a dict
-        if (Type.isArray(parents[1])) {
+        if (Array.isArray(parents[1])) {
             le = parents[1].length;
             for (i = 0; i < le; i++) {
                 polyhedron.vertices[i] = parents[1][i];
@@ -670,7 +670,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         }
         f = polyhedron.faces[i];
 
-        if (Type.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Type.isArray(f[0])) {
+        if (Array.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Array.isArray(f[0])) {
             // Handle case that face is of type [[points], {attr}]
             Type.mergeAttr(attr, f[1]);
             // Normalize face array, i.e. don't store attributes of that face in polyhedron

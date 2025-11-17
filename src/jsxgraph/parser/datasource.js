@@ -54,12 +54,12 @@ JXG.extend(
         loadFromArray: function (table, columnHeader, rowHeader) {
             var i, j, cell;
 
-            if (Type.isArray(columnHeader)) {
+            if (Array.isArray(columnHeader)) {
                 this.columnHeaders = columnHeader;
                 columnHeader = false;
             }
 
-            if (Type.isArray(rowHeader)) {
+            if (Array.isArray(rowHeader)) {
                 this.rowHeaders = rowHeader;
                 rowHeader = false;
             }
@@ -113,12 +113,12 @@ JXG.extend(
         loadFromTable: function (table, columnHeader, rowHeader) {
             var row, i, j, col, cell;
 
-            if (Type.isArray(columnHeader)) {
+            if (Array.isArray(columnHeader)) {
                 this.columnHeaders = columnHeader;
                 columnHeader = false;
             }
 
-            if (Type.isArray(rowHeader)) {
+            if (Array.isArray(rowHeader)) {
                 this.rowHeaders = rowHeader;
                 rowHeader = false;
             }

@@ -986,7 +986,7 @@ JXG.extend(
         var i, el;
 
         // this.board.removeObject(object, saveMethod);
-        if (Type.isArray(object)) {
+        if (Array.isArray(object)) {
             for (i = 0; i < object.length; i++) {
                 this.removeObject(object[i]);
             }
@@ -2638,14 +2638,14 @@ JXG.createView3D = function (board, parents, attributes) {
     attr_bank.name = 'bank';
 
     v = Type.evaluate(attr_az.point1.pos);
-    if (!Type.isArray(v)) {
+    if (!Array.isArray(v)) {
         // 'auto'
         p1 = [x - 1, y - 2];
     } else {
         p1 = v;
     }
     v = Type.evaluate(attr_az.point2.pos);
-    if (!Type.isArray(v)) {
+    if (!Array.isArray(v)) {
         // 'auto'
         p2 = [x + w + 1, y - 2];
     } else {
@@ -2673,14 +2673,14 @@ JXG.createView3D = function (board, parents, attributes) {
     view.az_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     v = Type.evaluate(attr_el.point1.pos);
-    if (!Type.isArray(v)) {
+    if (!Array.isArray(v)) {
         // 'auto'
         p1 = [x - 1, y];
     } else {
         p1 = v;
     }
     v = Type.evaluate(attr_el.point2.pos);
-    if (!Type.isArray(v)) {
+    if (!Array.isArray(v)) {
         // 'auto'
         p2 = [x - 1, y + h];
     } else {
@@ -2708,14 +2708,14 @@ JXG.createView3D = function (board, parents, attributes) {
     view.el_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     v = Type.evaluate(attr_bank.point1.pos);
-    if (!Type.isArray(v)) {
+    if (!Array.isArray(v)) {
         // 'auto'
         p1 = [x - 1, y + h + 2];
     } else {
         p1 = v;
     }
     v = Type.evaluate(attr_bank.point2.pos);
-    if (!Type.isArray(v)) {
+    if (!Array.isArray(v)) {
         // 'auto'
         p2 = [x + w + 1, y + h + 2];
     } else {

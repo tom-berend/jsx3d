@@ -1653,13 +1653,13 @@ Mat.Clip = {
                     i
                 );
             }
-        } else if (Type.isArray(obj)) {
+        } else if (Array.isArray(obj)) {
             len = obj.length;
             for (i = 0; i < len; i++) {
                 if (Type.exists(obj[i].coords)) {
                     // Point type
                     this._addToList(S, obj[i].coords, i);
-                } else if (Type.isArray(obj[i])) {
+                } else if (Array.isArray(obj[i])) {
                     // Coordinate pair
                     this._addToList(S, new Coords(COORDS_BY.USER, obj[i], board), i);
                 } else if (Type.exists(obj[i].usrCoords)) {

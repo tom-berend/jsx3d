@@ -2291,11 +2291,11 @@ JXG.createIntegral = function (board, parents, attributes) {
         txt_fun,
         t = null, p;
 
-    if (Type.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
+    if (Array.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
         interval = parents[0];
         curve = parents[1];
     } else if (
-        Type.isArray(parents[1]) &&
+        Array.isArray(parents[1]) &&
         parents[0].elementClass === Const.OBJECT_CLASS_CURVE
     ) {
         interval = parents[1];

@@ -356,7 +356,7 @@ JXG.extend(
 
             if (this.needsUpdate) {
                 if (this.evalVisProp('trace')) {
-                    this.cloneToBackground(true);
+                    this.cloneToBackground();
                 }
 
                 if (this.method === "pointLine") {
@@ -705,7 +705,7 @@ JXG.extend(
          */
         addTransform: function (transform) {
             var i,
-                list = Type.isArray(transform) ? transform : [transform],
+                list = Array.isArray(transform) ? transform : [transform],
                 len = list.length;
 
             for (i = 0; i < len; i++) {

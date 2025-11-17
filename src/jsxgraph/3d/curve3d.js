@@ -147,7 +147,7 @@ JXG.extend(
                 for (u = 0; u < steps; u++) {
                     this.points.push([1, this.dataX[u], this.dataY[u], this.dataZ[u]]);
                 }
-            } else if (Type.isArray(this._X)) {
+            } else if (Array.isArray(this._X)) {
                 steps = this._X.length;
                 for (u = 0; u < steps; u++) {
                     this.points.push([1, this._X[u], this._Y[u], this._Z[u]]);
@@ -406,7 +406,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
             Y = null;
             Z = null;
         }
-    } else if (parents.length === 2 && Type.isArray(parents[1])) {
+    } else if (parents.length === 2 && Array.isArray(parents[1])) {
         mat = Mat.transpose(parents[1]);
         X = mat[0];
         Y = mat[1];
@@ -533,10 +533,10 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         el, attr;
 
     if (!(parents.length >= 5 &&
-        (Type.isArray(parents[1]) || Type.isFunction(parents[1]) || Type.isString(parents[1])) &&
-        (Type.isArray(parents[2]) && parents[1].length === 3) &&
-        (Type.isArray(parents[3]) && parents[2].length === 3) &&
-        (Type.isArray(parents[4]) && parents[3].length === 3)
+        (Array.isArray(parents[1]) || Type.isFunction(parents[1]) || Type.isString(parents[1])) &&
+        (Array.isArray(parents[2]) && parents[1].length === 3) &&
+        (Array.isArray(parents[3]) && parents[2].length === 3) &&
+        (Array.isArray(parents[4]) && parents[3].length === 3)
     )) {
         throw new Error(
             "JSXGraph: Can't create vector field 3D with parent types " +
@@ -566,7 +566,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
      */
     el.setF = function (func, varnames) {
         var f0, f1, f2;
-        if (Type.isArray(func)) {
+        if (Array.isArray(func)) {
             f0 = Type.createFunction(func[0], this.board, varnames);
             f1 = Type.createFunction(func[1], this.board, varnames);
             f2 = Type.createFunction(func[2], this.board, varnames);

@@ -125,7 +125,7 @@ JXG.createComb = function (board, parents, attributes) {
 
     if (parents.length === 2) {
         // point 1 given by coordinates
-        if (Type.isArray(parents[0]) && parents[0].length > 1) {
+        if (Array.isArray(parents[0]) && parents[0].length > 1) {
             attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
@@ -151,7 +151,7 @@ JXG.createComb = function (board, parents, attributes) {
         }
 
         // point 2 given by coordinates
-        if (Type.isArray(parents[1]) && parents[1].length > 1) {
+        if (Array.isArray(parents[1]) && parents[1].length > 1) {
             attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
             p2 = board.create("point", parents[1], attr);
         } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {

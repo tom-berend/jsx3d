@@ -105,7 +105,7 @@ JXG.Polygon = function (board, vertices, attributes) {
             attr_line.id = attr_line.ids && attr_line.ids[i];
             attr_line.name = attr_line.names && attr_line.names[i];
             attr_line.strokecolor =
-                (Type.isArray(attr_line.colors) &&
+                (Array.isArray(attr_line.colors) &&
                     attr_line.colors[i % attr_line.colors.length]) ||
                 attr_line.strokecolor;
             attr_line.visible = Type.exists(attributes.borders.visible)
@@ -1378,7 +1378,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
             p[i].addTransform(p[i - 2], rot);
             p[i].fullUpdate();
         } else {
-            if (Type.isArray(attr.ids) && attr.ids.length >= n - 2) {
+            if (Array.isArray(attr.ids) && attr.ids.length >= n - 2) {
                 attr.id = attr.ids[i - 2];
             }
             p[i] = board.create("point", [p[i - 2], rot], attr);

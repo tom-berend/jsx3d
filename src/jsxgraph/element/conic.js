@@ -631,7 +631,7 @@ JXG.createParabola = function (board, parents, attributes) {
     }
 
     // Create line if given as array of two points.
-    if (Type.isArray(l) && l.length === 2) {
+    if (Array.isArray(l) && l.length === 2) {
         attr_line = Type.copyAttributes(attributes, board.options, "conic", "line");
         l = board.create("line", l, attr_line);
     }

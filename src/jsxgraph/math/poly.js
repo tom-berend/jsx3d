@@ -85,7 +85,7 @@ Mat.Poly.Monomial = function (ring, coefficient, exponents) {
         throw new Error("JSXGraph error: In JXG.Math.Poly.monomial missing parameter 'ring'.");
     }
 
-    if (!Type.isArray(exponents)) {
+    if (!Array.isArray(exponents)) {
         exponents = [];
     }
 
@@ -235,7 +235,7 @@ JXG.extend(
             var i;
 
             if (Type.exists(mp) && mp.ring === this.ring) {
-                if (Type.isArray(mp.exponents)) {
+                if (Array.isArray(mp.exponents)) {
                     // mp is a monomial
                     this.addSubMonomial(mp, 1);
                 } else {
@@ -261,7 +261,7 @@ JXG.extend(
             var i;
 
             if (Type.exists(mp) && mp.ring === this.ring) {
-                if (Type.isArray(mp.exponents)) {
+                if (Array.isArray(mp.exponents)) {
                     // mp is a monomial
                     this.addSubMonomial(mp, -1);
                 } else {

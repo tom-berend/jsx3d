@@ -894,7 +894,7 @@ JXG.extend(
          */
         addTransform: function (transform) {
             var i,
-                list = Type.isArray(transform) ? transform : [transform],
+                list = Array.isArray(transform) ? transform : [transform],
                 len = list.length;
 
             for (i = 0; i < len; i++) {
@@ -1007,7 +1007,7 @@ JXG.extend(
             var fx, fy, mat;
 
             // Generate the methods X() and Y()
-            if (Type.isArray(xterm)) {
+            if (Array.isArray(xterm)) {
                 // Discrete data
                 this.dataX = xterm;
 
@@ -1027,7 +1027,7 @@ JXG.extend(
                 this.isDraggable = true;
             }
 
-            if (Type.isArray(yterm)) {
+            if (Array.isArray(yterm)) {
                 this.dataY = yterm;
                 this.Y = this.interpolationFunctionFromArray.apply(this, ["Y"]);
             } else if (!Type.exists(yterm)) {
@@ -1046,7 +1046,7 @@ JXG.extend(
              * Polar form
              * Input data is function xterm() and offset coordinates yterm
              */
-            if (Type.isFunction(xterm) && Type.isArray(yterm)) {
+            if (Type.isFunction(xterm) && Array.isArray(yterm)) {
                 // Xoffset, Yoffset
                 fx = Type.createFunction(yterm[0], this.board, "");
                 fy = Type.createFunction(yterm[1], this.board, "");
@@ -1843,8 +1843,8 @@ JXG.createSpline = function (board, parents, attributes) {
                     // given as [x[], y[]]
                     if (
                         parents.length === 2 &&
-                        Type.isArray(parents[0]) &&
-                        Type.isArray(parents[1]) &&
+                        Array.isArray(parents[0]) &&
+                        Array.isArray(parents[1]) &&
                         parents[0].length === parents[1].length
                     ) {
                         for (i = 0; i < parents[0].length; i++) {
@@ -1866,7 +1866,7 @@ JXG.createSpline = function (board, parents, attributes) {
                                 x.push(parents[i].X());
                                 y.push(parents[i].Y());
                                 // given as [[x1,y1], [x2, y2], ...]
-                            } else if (Type.isArray(parents[i]) && parents[i].length === 2) {
+                            } else if (Array.isArray(parents[i]) && parents[i].length === 2) {
                                 for (j = 0; j < parents.length; j++) {
                                     if (Type.isFunction(parents[j][0])) {
                                         x.push(parents[j][0]());
@@ -1996,7 +1996,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
         splineArr,
         errStr = "\nPossible parent types: [points:array, tau:number|function, type:string]";
 
-    if (!Type.exists(parents[0]) || !Type.isArray(parents[0])) {
+    if (!Type.exists(parents[0]) || !Array.isArray(parents[0])) {
         throw new Error(
             "JSXGraph: JXG.createCardinalSpline: argument 1 'points' has to be array of points or coordinate pairs" +
             errStr
@@ -2032,8 +2032,8 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
     if (
         !attributes.isarrayofcoordinates &&
         p.length === 2 &&
-        Type.isArray(p[0]) &&
-        Type.isArray(p[1]) &&
+        Array.isArray(p[0]) &&
+        Array.isArray(p[1]) &&
         p[0].length === p[1].length
     ) {
         for (i = 0; i < p[0].length; i++) {
@@ -2058,7 +2058,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
             } else if (Type.isPoint(p[i])) {
                 q.push(p[i]);
                 // given as [[x0,y0], [x1, y2], ...]
-            } else if (Type.isArray(p[i]) && p[i].length === 2) {
+            } else if (Array.isArray(p[i]) && p[i].length === 2) {
                 q[i] = [];
                 if (Type.isFunction(p[i][0])) {
                     q[i].push(p[i][0]());
@@ -2245,7 +2245,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
         le,
         errStr = "\nPossible parent types: [points:array, controls:object";
 
-    if (!Type.exists(parents[0]) || !Type.isArray(parents[0])) {
+    if (!Type.exists(parents[0]) || !Array.isArray(parents[0])) {
         throw new Error(
             "JSXGraph: JXG.createMetapostSpline: argument 1 'points' has to be array of points or coordinate pairs" +
             errStr
@@ -2269,8 +2269,8 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
     if (
         !attributes.isarrayofcoordinates &&
         p.length === 2 &&
-        Type.isArray(p[0]) &&
-        Type.isArray(p[1]) &&
+        Array.isArray(p[0]) &&
+        Array.isArray(p[1]) &&
         p[0].length === p[1].length
     ) {
         for (i = 0; i < p[0].length; i++) {
@@ -2295,7 +2295,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
             } else if (Type.isPoint(p[i])) {
                 q.push(p[i]);
                 // given as [[x0,y0], [x1, y2], ...]
-            } else if (Type.isArray(p[i]) && p[i].length === 2) {
+            } else if (Array.isArray(p[i]) && p[i].length === 2) {
                 q[i] = [];
                 if (Type.isFunction(p[i][0])) {
                     q[i].push(p[i][0]());
@@ -3378,7 +3378,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
     }
 
     // if (parents.length === 3) {
-    //     if (!Type.isArray(parents[1]) && !Type.isArray(parents[2])) {
+    //     if (!Array.isArray(parents[1]) && !Array.isArray(parents[2])) {
     //         throw new Error(
     //             "JSXGraph: Can't create curve implicitCurve with given parent'" +
     //             "\nPossible parent types: [f], [f, rangex, rangey], [f, dfx, dfy] or [f, dfx, dfy, rangex, rangey]" +
@@ -3387,7 +3387,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
     //     }
     // }
     // if (parents.length === 5) {
-    //     if (!Type.isArray(parents[3]) && !Type.isArray(parents[4])) {
+    //     if (!Array.isArray(parents[3]) && !Array.isArray(parents[4])) {
     //         throw new Error(
     //             "JSXGraph: Can't create curve implicitCurve with given parent'" +
     //             "\nPossible parent types: [f], [f, rangex, rangey], [f, dfx, dfy] or [f, dfx, dfy, rangex, rangey]" +

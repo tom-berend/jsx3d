@@ -150,9 +150,9 @@ JXG.createVectorField = function (board, parents, attributes) {
     var el, attr;
 
     if (!(parents.length >= 3 &&
-        (Type.isArray(parents[0]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
-        (Type.isArray(parents[1]) && parents[1].length === 3) &&
-        (Type.isArray(parents[2]) && parents[2].length === 3)
+        (Array.isArray(parents[0]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
+        (Array.isArray(parents[1]) && parents[1].length === 3) &&
+        (Array.isArray(parents[2]) && parents[2].length === 3)
     )) {
         throw new Error(
             "JSXGraph: Can't create vector field with parent types " +
@@ -186,7 +186,7 @@ JXG.createVectorField = function (board, parents, attributes) {
      */
     el.setF = function (func, varnames) {
         var f0, f1;
-        if (Type.isArray(func)) {
+        if (Array.isArray(func)) {
             f0 = Type.createFunction(func[0], this.board, varnames);
             f1 = Type.createFunction(func[1], this.board, varnames);
             /**
@@ -363,8 +363,8 @@ JXG.createSlopeField = function (board, parents, attributes) {
 
     if (!(parents.length >= 3 &&
         (Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
-        (Type.isArray(parents[1]) && parents[1].length === 3) &&
-        (Type.isArray(parents[2]) && parents[2].length === 3)
+        (Array.isArray(parents[1]) && parents[1].length === 3) &&
+        (Array.isArray(parents[2]) && parents[2].length === 3)
     )) {
         throw new Error(
             "JSXGraph: Can't create slope field with parent types " +

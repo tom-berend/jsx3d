@@ -53,7 +53,6 @@
  */
 // import { JXG } from "../jxg.js";
 import { Type } from "../utils/type.js";
-import { Env } from "../utils/env.js"
 import { ProbFuncs } from "./probfuncs.js"
 
 
@@ -451,7 +450,7 @@ export class JSXMath {
 
             // Singular matrix
             if (ma <= eps) {
-                Env.warn('JXG.Math.inverse: singular matrix');
+                console.warn('JXG.Math.inverse: singular matrix');
                 return [];
             }
 

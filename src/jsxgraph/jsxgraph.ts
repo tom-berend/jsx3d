@@ -56,6 +56,7 @@ import { SVGRenderer } from './renderer/svg.js';
  * to load, save, create and free a board.
  */
 export class JSXGraph {
+
     /**
      * Stores the renderer that is used to draw the boards.
      * @type String
@@ -146,7 +147,7 @@ export class JSXGraph {
      *
      * @private
      */
-    static _setAttributes(attributes, options) {
+    static _setAttributes(attributes, options={}):object {
         // merge attributes
         let attr = Type.copyAttributes(attributes, options, 'board'),
             // These attributes - which are objects - have to be copied separately.
@@ -542,7 +543,7 @@ export class JSXGraph {
             attr,
         );
         this._fillBoard(board, attr, dimensions);
-        JSXFileReader.parseString(string, board, format, true, callback);
+        JSXFileReader.parseString(string, board, format, callback);
 
         return board;
     }

@@ -57,21 +57,16 @@ export class JSXFileReader {
      * @private
      */
 
-    public cbp: Function = ()=>{}
-    public cb
+    public static cbp: Function = () => { }
+    public static cb
     //    public ActiveXObject
-       public  jxgBinFileReader
-       public DOMParser
-       public  XMLHttpRequest
+    public static jxgBinFileReader = undefined
+    public static DOMParser = undefined
+    public static XMLHttpRequest = undefined
     //    public document:true, navigator:true*/
 
-    constructor(){
-        this.jxgBinFileReader = undefined
-       this.DOMParser = undefined
-       this.XMLHttpRequest = undefined
-    }
 
-    handleRemoteFile(url, board, format, async, encoding, callback) {
+    static handleRemoteFile(url, board, format, async, encoding, callback) {
 
         // TODO: clean this up
 
@@ -159,7 +154,7 @@ export class JSXFileReader {
      *
      * @private
      */
-    handleLocalFile(url, board, format, async, encoding, callback) {
+    static handleLocalFile(url, board, format, async, encoding, callback) {
         if (!Type.exists(async)) {
             async = true;
         }
@@ -204,7 +199,7 @@ export class JSXFileReader {
      * @param {Boolean} async Call ajax asynchonously.
      * @param {function} callback A function that is run when the board is ready.
      */
-    parseFileContent(url, board, format, async, encoding, callback) {
+    static parseFileContent(url, board, format, async, encoding, callback) {
         if (Type.isString(url) || FileReader === undefined) {
             this.handleRemoteFile(url, board, format, async, encoding, callback);
         } else {
@@ -228,7 +223,7 @@ export class JSXFileReader {
      * </dl>
      * @param {function} callback
      */
-    parseString(str, board, format, callback) {
+    static parseString(str, board, format:string='', callback?) {
         var Reader, read;
 
         format = format.toLowerCase();

@@ -720,7 +720,7 @@ JXG.extend(
             for (i = 0; i < len; ++i) {
                 if (node.children[i] && node.children[i].type) {
                     node.children[i] = this.expandDerivatives(node.children[i], node, ast);
-                } else if (Type.isArray(node.children[i])) {
+                } else if (Array.isArray(node.children[i])) {
                     for (j = 0; j < node.children[i].length; ++j) {
                         if (node.children[i][j] && node.children[i][j].type) {
                             node.children[i][j] = this.expandDerivatives(
@@ -847,7 +847,7 @@ JXG.extend(
             var i, len, n0, n1, swap;
 
             // In case of 'op_execfun' the children[1] node is an array.
-            if (Type.isArray(node)) {
+            if (Array.isArray(node)) {
                 len = node.length;
                 for (i = 0; i < len; ++i) {
                     node[i] = this.removeTrivialNodes(node[i]);

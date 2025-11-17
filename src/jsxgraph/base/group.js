@@ -101,7 +101,7 @@ JXG.Group = function (board, id, name, objects, attributes) {
 
     this.parents = [];
 
-    if (Type.isArray(objects)) {
+    if (Array.isArray(objects)) {
         objArray = objects;
     } else {
         objArray = Array.prototype.slice.call(arguments, 3);
@@ -140,7 +140,7 @@ JXG.extend(
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
                     p = this.objects[el].point;
-                    if (Type.isArray(p.groups)) {
+                    if (Array.isArray(p.groups)) {
                         i = Type.indexOf(p.groups, this.id);
                         if (i >= 0) {
                             delete p.groups[i];
@@ -163,7 +163,7 @@ JXG.extend(
         addParents: function (parents) {
             var i, len, par;
 
-            if (Type.isArray(parents)) {
+            if (Array.isArray(parents)) {
                 par = parents;
             } else {
                 par = arguments;
@@ -200,7 +200,7 @@ JXG.extend(
          * @returns {Array}
          */
         getParents: function () {
-            return Type.isArray(this.parents) ? this.parents : [];
+            return Array.isArray(this.parents) ? this.parents : [];
         },
 
         /**
@@ -282,7 +282,7 @@ JXG.extend(
                     center = this[actionCenter].coords.usrCoords.slice(1);
                 } else if (this[actionCenter] === "centroid") {
                     center = this._update_centroid_center();
-                } else if (Type.isArray(this[actionCenter])) {
+                } else if (Array.isArray(this[actionCenter])) {
                     center = this[actionCenter];
                 } else if (Type.isFunction(this[actionCenter])) {
                     center = this[actionCenter]();
@@ -663,7 +663,7 @@ JXG.extend(
          */
         setScalePoints: function (objects, direction) {
             var objs, i, len;
-            if (Type.isArray(objects)) {
+            if (Array.isArray(objects)) {
                 objs = objects;
             } else {
                 objs = arguments;
@@ -705,7 +705,7 @@ JXG.extend(
          */
         _setActionPoints: function (action, objects) {
             var objs, i, len;
-            if (Type.isArray(objects)) {
+            if (Array.isArray(objects)) {
                 objs = objects;
             } else {
                 objs = arguments;

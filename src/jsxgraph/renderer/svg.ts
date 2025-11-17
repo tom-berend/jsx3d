@@ -220,7 +220,7 @@ export class SVGRenderer extends AbstractRenderer {
         feColor.setAttributeNS(null, 'result', 'colorOut');
         feColor.setAttributeNS(null, 'type', 'matrix');
         // See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix
-        if (rgb === 'none' || !Type.isArray(rgb) || rgb.length < 3) {
+        if (rgb === 'none' || !Array.isArray(rgb) || rgb.length < 3) {
             feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 0  0 0 0 ' + opacity + ' 0');
         } else {
             rgb[0] /= 255;

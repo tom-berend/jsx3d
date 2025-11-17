@@ -1,3 +1,25 @@
+// some dummies for testing
+class Board {
+}
+class Coords {
+    public usrCoords: number[] = [1, 1]
+    public scrCoords: number[] = [100, 100]
+    constructor(by: COORDS_BY, coordinates: number[], board: any) {
+
+    }
+}
+class Point {
+    public board: Board
+    // TODO - phase 2just set up object
+    public usrCoords: number[]
+    public scrCoords: number[]
+
+    constructor() {
+        this.board = new Board()
+        this.usrCoords = new Coords(COORDS_BY.USER, [1, 1], this.board).usrCoords
+        this.scrCoords = new Coords(COORDS_BY.SCREEN, [100, 100], this.board).scrCoords
+    }
+}
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -38,15 +60,18 @@
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-import { JXG } from "../jxg.js";
+// import { JXG } from "../jxg.js";
 
 import { COORDS_BY, OBJECT_CLASS, OBJECT_TYPE } from "../base/constants.js";
-import { Coords } from "../base/coords.js";
+// import { Coords } from "../base/coords.js";
 import { JSXMath } from "./jsxmath.js";
-// import { Stat } from "./statistics.js";
+import { Statistics } from "./statistics.js";
 import { Numerics } from './numerics.js'
 import { Type } from "../utils/type.js";
 import { Expect } from "../utils/expect.js";
+import { Nlp } from "./nlp.js"
+
+
 
 /**
  * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
@@ -64,58 +89,9 @@ export class Geometry {
 
 
 
-
-    // /**
-    //  * Calculates the angle defined by the points A, B, C.
-    //  * @param {JXG.Point|Array} A A point  or [x,y] array.
-    //  * @param {JXG.Point|Array} B Another point or [x,y] array.
-    //  * @param {JXG.Point|Array} C A circle - no, of course the third point or [x,y] array.
-    //  * @deprecated Use {@link Geometry.rad} instead.
-    //  * @see Geometry.rad
-    //  * @see Geometry.trueAngle
-    //  * @returns {Number} The angle in radian measure.
-    //  */
-    // angle(A, B, C) {
-    //     var u,
-    //         v,
-    //         s,
-    //         t,
-    //         a = [],
-    //         b = [],
-    //         c = [];
-
-    //     JXG.deprecated("Geometry.angle()", "Geometry.rad()");
-    //     if (A.coords) {
-    //         a[0] = A.coords.usrCoords[1];
-    //         a[1] = A.coords.usrCoords[2];
-    //     } else {
-    //         a[0] = A[0];
-    //         a[1] = A[1];
-    //     }
-
-    //     if (B.coords) {
-    //         b[0] = B.coords.usrCoords[1];
-    //         b[1] = B.coords.usrCoords[2];
-    //     } else {
-    //         b[0] = B[0];
-    //         b[1] = B[1];
-    //     }
-
-    //     if (C.coords) {
-    //         c[0] = C.coords.usrCoords[1];
-    //         c[1] = C.coords.usrCoords[2];
-    //     } else {
-    //         c[0] = C[0];
-    //         c[1] = C[1];
-    //     }
-
-    //     u = a[0] - b[0];
-    //     v = a[1] - b[1];
-    //     s = c[0] - b[0];
-    //     t = c[1] - b[1];
-
-    //     return Math.atan2(u * t - v * s, u * s + v * t);
-    // }
+    static angle(A, B, C) {
+        throw new Error('deprecated, use Geometry.rad()');
+    }
 
     /**
      * Calculates the angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
@@ -125,7 +101,7 @@ export class Geometry {
      * @see Geometry.rad
      * @returns {Number} The angle in degrees.
      */
-    static trueAngle(A, B, C) {
+    static trueAngle(A: Point | number[], B: Point | number[], C: Point | number[]): number {
         return this.rad(A, B, C) * 57.295779513082323; // *180.0/Math.PI;
     }
 
@@ -137,28 +113,28 @@ export class Geometry {
      * @see Geometry.trueAngle
      * @returns {Number} Angle in radians.
      */
-    static rad(A, B, C) {
+    static rad(A: Point | number[], B: Point | number[], C: Point | number[]): number {
         var ax, ay, bx, by, cx, cy, phi;
 
-        if (A.coords) {
-            ax = A.coords.usrCoords[1];
-            ay = A.coords.usrCoords[2];
+        if (!Array.isArray(A)) {
+            ax = (A as Point).usrCoords[1];
+            ay = (A as Point).usrCoords[2];
         } else {
             ax = A[0];
             ay = A[1];
         }
 
-        if (B.coords) {
-            bx = B.coords.usrCoords[1];
-            by = B.coords.usrCoords[2];
+        if (!Array.isArray(B)) {
+            bx = (B as Point).usrCoords[1];
+            by = (B as Point).usrCoords[2];
         } else {
             bx = B[0];
             by = B[1];
         }
 
-        if (C.coords) {
-            cx = C.coords.usrCoords[1];
-            cy = C.coords.usrCoords[2];
+        if (!Array.isArray(C)) {
+            cx = (C as Point).usrCoords[1];
+            cy = (C as Point).usrCoords[2];
         } else {
             cx = C[0];
             cy = C[1];
@@ -184,27 +160,23 @@ export class Geometry {
      * @param [board=A.board] Reference to the board
      * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
      */
-    static angleBisector(A, B, C, board) {
+    static angleBisector(A: Point, B: Point, C: Point, board: Board) {
+        return new Coords(COORDS_BY.USER, this.angleBisector2(A, B, C), board);
+    }
+    static angleBisector2(A: Point, B: Point, C: Point): number[] {
         var phiA,
             phiC,
             phi,
-            Ac = A.coords.usrCoords,
-            Bc = B.coords.usrCoords,
-            Cc = C.coords.usrCoords,
+            Ac = (A as Point).usrCoords,
+            Bc = (B as Point).usrCoords,
+            Cc = (C as Point).usrCoords,
             x,
             y;
 
-        if (!Type.exists(board)) {
-            board = A.board;
-        }
 
         // Parallel lines
         if (Bc[0] === 0) {
-            return new Coords(
-                COORDS_BY.USER,
-                [1, (Ac[1] + Cc[1]) * 0.5, (Ac[2] + Cc[2]) * 0.5],
-                board
-            );
+            return [1, (Ac[1] + Cc[1]) * 0.5, (Ac[2] + Cc[2]) * 0.5]
         }
 
         // Non-parallel lines
@@ -225,60 +197,59 @@ export class Geometry {
         x = Math.cos(phi) + Bc[1];
         y = Math.sin(phi) + Bc[2];
 
+        return [1, x, y]
+    }
+    /**
+     * Calculates a point on the m-section line between the three points A, B, C.
+     * As a result, the m-section line is defined by two points:
+     * Parameter B and the point with the coordinates calculated in this function.
+     * The m-section generalizes the bisector to any real number.
+     * For example, the trisectors of an angle are simply the 1/3-sector and the 2/3-sector.
+     * Does not work for ideal points.
+     * @param {JXG.Point} A Point
+     * @param {JXG.Point} B Point
+     * @param {JXG.Point} C Point
+     * @param {Number} m Number
+     * @param [board=A.board] Reference to the board
+     * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
+     */
+    static angleMsector(A, B, C, m, board) {
+        var phiA, phiC, phi,
+            Ac = A.coords.usrCoords,
+            Bc = B.coords.usrCoords,
+            Cc = C.coords.usrCoords,
+            x, y;
+
+        if (!Type.exists(board)) {
+            board = A.board;
+        }
+
+        // Parallel lines
+        if (Bc[0] === 0) {
+            return new Coords(COORDS_BY.USER,
+                [1, (Ac[1] + Cc[1]) * m, (Ac[2] + Cc[2]) * m], board);
+        }
+
+        // Non-parallel lines
+        x = Ac[1] - Bc[1];
+        y = Ac[2] - Bc[2];
+        phiA = Math.atan2(y, x);
+
+        x = Cc[1] - Bc[1];
+        y = Cc[2] - Bc[2];
+        phiC = Math.atan2(y, x);
+
+        phi = phiA + ((phiC - phiA) * m);
+
+        if (phiA - phiC > Math.PI) {
+            phi += 2 * m * Math.PI;
+        }
+
+        x = Math.cos(phi) + Bc[1];
+        y = Math.sin(phi) + Bc[2];
+
         return new Coords(COORDS_BY.USER, [1, x, y], board);
     }
-
-    // /**
-    //  * Calculates a point on the m-section line between the three points A, B, C.
-    //  * As a result, the m-section line is defined by two points:
-    //  * Parameter B and the point with the coordinates calculated in this function.
-    //  * The m-section generalizes the bisector to any real number.
-    //  * For example, the trisectors of an angle are simply the 1/3-sector and the 2/3-sector.
-    //  * Does not work for ideal points.
-    //  * @param {JXG.Point} A Point
-    //  * @param {JXG.Point} B Point
-    //  * @param {JXG.Point} C Point
-    //  * @param {Number} m Number
-    //  * @param [board=A.board] Reference to the board
-    //  * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
-    //  */
-    // angleMsector(A, B, C, m, board) {
-    //     var phiA, phiC, phi,
-    //         Ac = A.coords.usrCoords,
-    //         Bc = B.coords.usrCoords,
-    //         Cc = C.coords.usrCoords,
-    //         x, y;
-
-    //     if (!Type.exists(board)) {
-    //         board = A.board;
-    //     }
-
-    //     // Parallel lines
-    //     if (Bc[0] === 0) {
-    //         return new Coords(COORDS_BY.USER,
-    //             [1, (Ac[1] + Cc[1]) * m, (Ac[2] + Cc[2]) * m], board);
-    //     }
-
-    //     // Non-parallel lines
-    //     x = Ac[1] - Bc[1];
-    //     y = Ac[2] - Bc[2];
-    //     phiA =  Math.atan2(y, x);
-
-    //     x = Cc[1] - Bc[1];
-    //     y = Cc[2] - Bc[2];
-    //     phiC =  Math.atan2(y, x);
-
-    //     phi = phiA + ((phiC - phiA) * m);
-
-    //     if (phiA - phiC > Math.PI) {
-    //         phi += 2*m*Math.PI;
-    //     }
-
-    //     x = Math.cos(phi) + Bc[1];
-    //     y = Math.sin(phi) + Bc[2];
-
-    //     return new Coords(COORDS_BY.USER, [1, x, y], board);
-    // }
 
     /**
      * Reflects the point along the line.
@@ -623,7 +594,7 @@ export class Geometry {
      *
      * @returns {Number}
      */
-    static signedTriangle(p1, p2, p3) {
+    static signedTriangle(p1, p2, p3): number {
         var A = Expect.coordsArray(p1),
             B = Expect.coordsArray(p2),
             C = Expect.coordsArray(p3);
@@ -726,6 +697,8 @@ export class Geometry {
      *
      */
     static GrahamScan(points) {
+        interface idx { i: number, c: number[] }
+
         var i, M, o,
             mi_idx,
             mi_x, mi_y, ma_x, ma_y,
@@ -735,8 +708,8 @@ export class Geometry {
             v, c: number[],
             eps = JSXMath.eps * JSXMath.eps,
             that = this,
-            ps_idx: { i: Number, c: number[] }[] = [],
-            stack = [],
+            ps_idx: idx[] = [],
+            stack: idx[] = [],
             ps = Expect.each(points, Expect.coordsArray), // New array object, i.e. a copy of the input array.
             N,
             AklToussaint = 1024;  // This is a rough threshold where the heuristic pays off.
@@ -1011,7 +984,7 @@ export class Geometry {
      */
     static convexHull(points, returnCoords) {
         var i, hull,
-            res = [];
+            res: number[] = [];
 
         hull = this.GrahamScan(points);
         for (i = 0; i < hull.length; i++) {
@@ -1111,7 +1084,7 @@ export class Geometry {
             orient,
             angle_sum = 0.0;
 
-        if (Type.isArray(points)) {
+        if (Array.isArray(points)) {
             ps = Expect.each(points, Expect.coordsArray);
         } else if (Type.exists(points.type) && points.type === OBJECT_TYPE.POLYGON) {
             ps = Expect.each(points.vertices, Expect.coordsArray);
@@ -2175,9 +2148,9 @@ export class Geometry {
      * @param  {Number}    margin optional margin, to avoid the display of the small sides of lines.
      * @returns {Array}            [intersection coords 1, intersection coords 2]
      */
-    static meetLineBoard(line, board, margin) {
+    static meetLineBoard(line, board, margin): Coords[] {
         // Intersect the line with the four borders of the board.
-        var s = [],
+        var s: number[][] = [],
             intersect1,
             intersect2,
             i, j;
@@ -2472,7 +2445,7 @@ export class Geometry {
      * line defined by the segment
      * @returns {JXG.Coords} Coords object containing the intersection.
      */
-    static meetCurveLineContinuous(cu, li, nr, board, testSegment) {
+    static meetCurveLineContinuous(cu, li, nr, board, testSegment: Boolean = false) {
         var func0, func1,
             t, v, x, y, z,
             eps = JSXMath.eps,
@@ -2857,11 +2830,11 @@ export class Geometry {
     static meetPolygonLine(path, line, nr, board, alwaysIntersect) {
         var i,
             n = Type.evaluate(nr),
-            res,
+            res: number[],
             border,
             crds = [0, 0, 0],
             len = path.borders.length,
-            intersections = [];
+            intersections:number[] = [];
 
         for (i = 0; i < len; i++) {
             border = path.borders[i];
@@ -2882,7 +2855,7 @@ export class Geometry {
         }
 
         if (n >= 0 && n < intersections.length) {
-            crds = intersections[n];
+            crds = intersections;
         }
         return new Coords(COORDS_BY.USER, crds, board);
     }
@@ -2924,7 +2897,7 @@ export class Geometry {
      * @returns {Array} Bounding box [minX, maxY, maxX, minY]
      */
     static _bezierBbox(curve) {
-        var bb :number[]= [];
+        var bb: number[] = [];
 
         if (curve.length === 4) {
             // bezierDegree == 3
@@ -3075,7 +3048,7 @@ export class Geometry {
     /**
      * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
      */
-    static _bezierLineMeetSubdivision(red, blue, level, testSegment:boolean = false) {
+    static _bezierLineMeetSubdivision(red, blue, level, testSegment: boolean = false) {
         var bbb, bbr, ar,
             r0, r1,
             m,
@@ -3137,7 +3110,7 @@ export class Geometry {
      * preimages [x,y], t_1, t_2] of the two Bezier curve segments.
      *
      */
-    static meetBeziersegmentBeziersegment(red, blue, testSegment) {
+    static meetBeziersegmentBeziersegment(red: number[][], blue: number[][], testSegment: boolean = false) {
         var L, L2, i;
 
         if (red.length === 4 && blue.length === 4) {
@@ -3179,7 +3152,7 @@ export class Geometry {
             startRed = 0,
             startBlue = 0,
             lenBlue, lenRed,
-            L = [];
+            L: number[] = [];
 
         if (blue.numberPoints < blue.bezierDegree + 1 || red.numberPoints < red.bezierDegree + 1) {
             return [0, NaN, NaN];
@@ -3298,8 +3271,8 @@ export class Geometry {
             x = B[1],
             y = B[2],
             z = B[0],
-            dataX:number[] = [],
-            dataY:number[] = [],
+            dataX: number[] = [],
+            dataY: number[] = [],
             co, si,
             ax, ay,
             bx, by,
@@ -3546,7 +3519,7 @@ export class Geometry {
      * @returns {Array} [JXG.Coords, position] The coordinates of the projection of the given
      * point on the given graph and the relative position on the curve (real number).
      */
-    static projectPointToCurve(point, curve, board) {
+    static projectPointToCurve(point, curve, board?: Board) {
         if (!Type.exists(board)) {
             board = point.board;
         }
@@ -4105,7 +4078,7 @@ export class Geometry {
             },
             // Normal
             function () {
-                return Stat.subtract(el2.center.coords, el1.center.coords);
+                return Statistics.subtract(el2.center.coords, el1.center.coords);
             },
             // Radius
             function () {
@@ -4205,7 +4178,7 @@ export class Geometry {
             params[0] = f * (r_u[0] + r_u[1]);
             if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
         }
-        JSXMath.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+        Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
         // Update p which is used subsequently in _minFunc
         p = [target.X.apply(target, params),
         target.Y.apply(target, params),
@@ -4220,7 +4193,7 @@ export class Geometry {
             params[0] = f * (r_u[0] + r_u[1]);
             if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
 
-            JSXMath.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+            Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
         }
 
         return [1,

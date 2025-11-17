@@ -501,7 +501,7 @@ export class Env {
             return;
         }
 
-        if (!Type.isArray(owner["x_internal" + type])) {
+        if (!Array.isArray(owner["x_internal" + type])) {
             Env.debug("owner[x_internal + " + type + "] is not an array");
             return;
         }

@@ -82,7 +82,7 @@ export class Coords {
      * @param {Boolean} [emitter=true]
      * @constructor
      */
-    constructor(method: COORDS_BY, coordinates: number[], board: Board, emitter: boolean = true) {
+    constructor(method: COORDS_BY, coordinates: number[] | Object | Function, board: Board, emitter: boolean = true) {
         if (board === undefined)
             throw new Error('who did not send Board??')
 
@@ -92,10 +92,10 @@ export class Coords {
         this.method = method
 
         if (method === COORDS_BY.USER) {
-            this.usrCoords = [1,coordinates[0],coordinates[1]]
+            this.usrCoords = [1, coordinates[0], coordinates[1]]
             this.usr2screen()
         } else {
-            this.scrCoords =  [1,coordinates[0],coordinates[1]]
+            this.scrCoords = [1, coordinates[0], coordinates[1]]
             this.screen2usr()
         }
 
@@ -132,7 +132,7 @@ export class Coords {
      * Compute screen coordinates out of given user coordinates.
      * @private
      */
-    usr2screen(doRound:boolean=false) {
+    usr2screen(doRound: boolean = false) {
         let b = this.board,
             uc = this.usrCoords,
             oc = b.origin.scrCoords;
@@ -201,7 +201,7 @@ export class Coords {
      * @param {Boolean} [noevent=false]
      * @returns {JXG.Coords} Reference to the coords object.
      */
-    setCoordinates(coord_type: COORDS_BY, coordinates: number[], doRound: Boolean = true, noevent: Boolean = false) {
+    setCoordinates(coord_type: COORDS_BY, coordinates: number[], doRound: boolean = true, noevent: boolean = false) {
         var uc = this.usrCoords,
             sc = this.scrCoords,
             // Original values
@@ -236,7 +236,9 @@ export class Coords {
         }
 
         if (this.emitter && !noevent && (os[1] !== sc[1] || os[2] !== sc[2])) {
-            this.triggerEventHandlers(["update"], [ou, os]);
+            // TODO: move triggerEventHandlers out of Coords !!
+            // this.triggerEventHandlers(["update"], [ou, os]);
+            throw new Error('move triggerEventHandlers out of Coords !!')
         }
 
         return this;

@@ -63,6 +63,7 @@ export interface LooseObject {
 
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
 // import { Coords } from '../base/coords.js';
+import { Board } from '../base/board.js';
 import { GeometryElement } from '../base/element.js';
 import { JSXMath } from '../math/jsxmath.js';
 import { Options } from '../options.js';
@@ -132,7 +133,7 @@ export class Type {
      * @param {Boolean} [acceptNaN=true] If set to false, the function returns false for v=NaN.
      * @returns {Boolean} True, if v is of type number.
      */
-    static isNumber(v, acceptStringNumber = false, acceptNaN = true) {
+    static isNumber(v:any, acceptStringNumber = false, acceptNaN = true) {
         var result =
             typeof v === 'number' ||
             Object.prototype.toString.call(v) === '[Object Number]';
@@ -155,34 +156,13 @@ export class Type {
         return typeof v === 'function';
     }
 
-    /**
-     * Checks if a given variable references an array.
-     * @param v A variable of any type.
-     * @returns {Boolean} True, if v is of type array.
-     */
-    static isArray(v) {
-        var r;
-
-        // use the ES5 isArray() method and if that doesn't exist use a fallback.
-        if (Array.isArray) {
-            r = Array.isArray(v);
-        } else {
-            r =
-                v !== null &&
-                typeof v === 'object' &&
-                typeof v.splice === 'function' &&
-                typeof v.join === 'function';
-        }
-
-        return r;
-    }
 
     /**
      * Tests if the input variable is an Object
      * @param v
      */
     static isObject(v: any) {
-        // return typeof v === 'object' && !this.isArray(v);
+        // return typeof v === 'object' && !Array.isArray(v);
         return typeof v === 'object' && !Array.isArray(v) && v !== null
     }
 
@@ -236,12 +216,12 @@ export class Type {
     static isPointType(board, v) {
         var val, p;
 
-        if (this.isArray(v)) {
+        if (Array.isArray(v)) {
             return true;
         }
-        if (this.isFunction(v)) {
+        if (typeof v === 'function') {
             val = v();
-            if (this.isArray(val) && val.length > 1) {
+            if (Array.isArray(val) && val.length > 1) {
                 return true;
             }
         }
@@ -260,12 +240,12 @@ export class Type {
     static isPointType3D(board, v) {
         var val, p;
 
-        if (this.isArray(v) && v.length >= 3) {
+        if (Array.isArray(v) && v.length >= 3) {
             return true;
         }
-        if (this.isFunction(v)) {
+        if (typeof v === 'function') {
             val = v();
-            if (this.isArray(val) && val.length >= 3) {
+            if (Array.isArray(val) && val.length >= 3) {
                 return true;
             }
         }
@@ -281,7 +261,7 @@ export class Type {
      */
     static isTransformationOrArray(v) {
         if (v !== null) {
-            if (this.isArray(v) && v.length > 0) {
+            if (Array.isArray(v) && v.length > 0) {
                 return this.isTransformationOrArray(v[0]);
             }
             if (typeof v === 'object') {
@@ -405,6 +385,8 @@ export class Type {
         return str;
     }
 
+
+    // only used by transformations, move it there if necessary
     // /**
     //  * Convert a String, a number or a function into a function. This method is used in Transformation.js
     //  * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
@@ -415,7 +397,7 @@ export class Type {
     //  * @returns {Function} A function taking one parameter k which specifies the index of the param element
     //  * to evaluate.
     //  */
-    // static createEvalFunction(board, param, n) {
+    // static createEvalFunction(board, param, n):Function {
     //     var f: Function[] = [],
     //         func,
     //         i,
@@ -450,41 +432,34 @@ export class Type {
      * @returns {Function} A function evaluating the value given by term or null if term is not of type string,
      * function or number.
      */
-    // static createFunction(term, board, variableName?, evalGeonext?): function {
-    //     let f = ()=>{}      // default empty function
+    static createFunction(term:number|Function, board:Board,variableName?:string): Function {
+        console.error('what do we use this for (other than jessiecode)?')
 
-    //     // if ((!Type.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
-    //     if (this.isString(term)) {
-    //         // Convert GEONExT syntax into  JavaScript syntax
-    //         //newTerm = JXG.GeonextParser.geonext2JS(term, board);
-    //         //return new Function(variableName,'return ' + newTerm + ';');
-    //         //term = JXG.GeonextParser.replaceNameById(term, board);
-    //         //term = JXG.GeonextParser.geonext2JS(term, board);
+        let f:Function = ()=>{}      // default empty function
+        return f
 
-    //         f = board.jc.snippet(term, true, variableName, false);
-    //     } else if (this.isFunction(term)) {
-    //         f = term;
-    //         if (f)
-    //             f.deps = this.isObject(term.deps) ? term.deps : {};
-    //     } else if (this.isNumber(term) || this.isArray(term)) {
-    //         /** @ignore */
-    //         f = function () {
-    //             return term;
-    //         };
-    //         f.deps = {};
-    //         // } else if (this.isString(term)) {
-    //         //     // In case of string function like fontsize
-    //         //     /** @ignore */
-    //         //     f = function () { return term; };
-    //         //     f.deps = {};
-    //     }
+        // if (typeof term === 'function'){
+        //     f = term;
+        //         f.deps = this.isObject(term.deps) ? term.deps : {};
+        // } else if (this.isNumber(term) || Array.isArray(term)) {
+        //     /** @ignore */
+        //     f = function () {
+        //         return term;
+        //     };
+        //     f.deps = {};
+        //     // } else if (this.isString(term)) {
+        //     //     // In case of string function like fontsize
+        //     //     /** @ignore */
+        //     //     f = function () { return term; };
+        //     //     f.deps = {};
+        // }
 
-    //     if (f !== null) {
-    //         f.origin = term;
-    //     }
+        // if (f !== null) {
+        //     f.origin = term;
+        // }
 
-    //     return f;
-    // }
+        // return f;
+    }
 
     /**
      *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
@@ -516,7 +491,7 @@ export class Type {
     //         attr,
     //         val;
 
-    //     if (!this.isArray(parents)) {
+    //     if (!Array.isArray(parents)) {
     //         parents = [parents];
     //     }
     //     len = parents.length;
@@ -537,12 +512,12 @@ export class Type {
     //                 attrArray[j].toLowerCase(),
     //             );
     //         }
-    //         if (this.isArray(parents[i]) && parents[i].length > 1) {
+    //         if (Array.isArray(parents[i]) && parents[i].length > 1) {
     //             points.push(board.create('point', parents[i], attr));
     //             points[points.length - 1]._is_new = true;
     //         } else if (this.isFunction(parents[i])) {
     //             val = parents[i]();
-    //             if (this.isArray(val) && val.length > 1) {
+    //             if (Array.isArray(val) && val.length > 1) {
     //                 points.push(board.create('point', [parents[i]], attr));
     //                 points[points.length - 1]._is_new = true;
     //             }
@@ -588,7 +563,7 @@ export class Type {
     //         attr,
     //         val;
 
-    //     if (!this.isArray(parents)) {
+    //     if (!Array.isArray(parents)) {
     //         parents = [parents];
     //     }
     //     len = parents.length;
@@ -611,9 +586,9 @@ export class Type {
     //         }
 
     //         if (
-    //             this.isArray(parents[i]) &&
+    //             Array.isArray(parents[i]) &&
     //             parents[i].length > 0 &&
-    //             parents[i].every((x) => this.isArray(x) && this.isNumber(x[0]))
+    //             parents[i].every((x) => Array.isArray(x) && this.isNumber(x[0]))
     //         ) {
     //             // Testing for array-of-arrays-of-numbers, like [[1,2,3],[2,3,4]]
     //             for (j = 0; j < parents[i].length; j++) {
@@ -621,7 +596,7 @@ export class Type {
     //                 points[points.length - 1]._is_new = true;
     //             }
     //         } else if (
-    //             this.isArray(parents[i]) &&
+    //             Array.isArray(parents[i]) &&
     //             parents[i].every((x) => this.isNumber(x) || this.isFunction(x))
     //         ) {
     //             // Single array [1,2,3]
@@ -631,7 +606,7 @@ export class Type {
     //             points.push(parents[i]);
     //         } else if (this.isFunction(parents[i])) {
     //             val = parents[i]();
-    //             if (this.isArray(val) && val.length > 1) {
+    //             if (Array.isArray(val) && val.length > 1) {
     //                 points.push(view.create('point3d', [parents[i]], attr));
     //                 points[points.length - 1]._is_new = true;
     //             }
@@ -759,7 +734,7 @@ export class Type {
         }
 
         for (i = 0; i < arr.length; i++) {
-            isArray = this.isArray(arr[i]);
+            isArray = Array.isArray(arr[i]);
 
             if (!Type.exists(arr[i])) {
                 arr[i] = '';
@@ -777,7 +752,7 @@ export class Type {
         j = 0;
 
         for (i = 0; i < arr.length; i++) {
-            isArray = this.isArray(arr[i]);
+            isArray = Array.isArray(arr[i]);
 
             if (!isArray && arr[i] !== '') {
                 ret[j] = arr[i];
@@ -839,7 +814,7 @@ export class Type {
         }
 
         for (i = 0; i < a1.length; i++) {
-            if (this.isArray(a1[i]) && this.isArray(a2[i])) {
+            if (Array.isArray(a1[i]) && Array.isArray(a2[i])) {
                 if (!this.cmpArrays(a1[i], a2[i])) {
                     return false;
                 }
@@ -1195,7 +1170,7 @@ export class Type {
         for (i in obj2) {
             if (obj2.hasOwnProperty(i)) {
                 o = obj2[i];
-                if (this.isArray(o)) {
+                if (Array.isArray(o)) {
                     if (obj1[i] == undefined) {
                         obj1[i] = [];
                     }
@@ -1243,7 +1218,7 @@ export class Type {
      * @param  [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
      * @returns {Object} copy of obj or merge of obj and obj2.
      */
-    static deepCopy(obj: Object, obj2: Object = {}, toLower: boolean = false): Object {
+    static deepCopy(obj: Object, obj2: Object = {}, toLower: boolean = false): LooseObject {
         var c, i, prop, i2;
 
         toLower = toLower || false;
@@ -1252,7 +1227,7 @@ export class Type {
         }
 
         // Missing hasOwnProperty is on purpose in this function
-        if (this.isArray(obj)) {
+        if (Array.isArray(obj)) {
             c = [];
             for (i = 0; i < Object.keys(obj).length; i++) {  // warning: Object.keys() can be slow!
                 prop = obj[i];
@@ -1294,7 +1269,7 @@ export class Type {
 
                     prop = obj2[i];
                     if (prop !== null && typeof prop === 'object') {
-                        if (this.isArray(prop) || !Type.exists(c[i2])) {
+                        if (Array.isArray(prop) || !Type.exists(c[i2])) {
                             c[i2] = this.deepCopy(prop, {}, toLower);
                         } else {
                             c[i2] = this.deepCopy(c[i2], prop, toLower);
@@ -1539,7 +1514,7 @@ export class Type {
      * @returns Object Cloned element
      * @private
      */
-    static getCloneObject(el:GeometryElement) {
+    static getCloneObject(el:GeometryElement):LooseObject {
         var obj,
             key
 
@@ -1615,7 +1590,7 @@ export class Type {
                 if (obj) {
                     list = [];
 
-                    if (this.isArray(obj)) {
+                    if (Array.isArray(obj)) {
                         for (i = 0; i < obj.length; i++) {
                             list.push(this.toJSON(obj[i], noquote));
                         }

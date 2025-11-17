@@ -53,11 +53,11 @@ JXG.Dump = {
     addMarkers: function (board, markers, values) {
         var e, l, i;
 
-        if (!Type.isArray(markers)) {
+        if (!Array.isArray(markers)) {
             markers = [markers];
         }
 
-        if (!Type.isArray(values)) {
+        if (!Array.isArray(values)) {
             values = [values];
         }
 
@@ -83,7 +83,7 @@ JXG.Dump = {
     deleteMarkers: function (board, markers) {
         var e, l, i;
 
-        if (!Type.isArray(markers)) {
+        if (!Array.isArray(markers)) {
             markers = [markers];
         }
 
@@ -228,7 +228,7 @@ JXG.Dump = {
                         element.parents[s][0] !== '"'
                     ) {
                         element.parents[s] = '"' + element.parents[s] + '"';
-                    } else if (Type.isArray(element.parents[s])) {
+                    } else if (Array.isArray(element.parents[s])) {
                         element.parents[s] = "[" + element.parents[s].toString() + "]";
                     }
                 }
@@ -286,7 +286,7 @@ JXG.Dump = {
                 if (obj) {
                     list = [];
 
-                    if (Type.isArray(obj)) {
+                    if (Array.isArray(obj)) {
                         for (i = 0; i < obj.length; i++) {
                             list.push(this.toJCAN(obj[i]));
                         }

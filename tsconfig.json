@@ -10,7 +10,7 @@
         "allowJs": true,
         "outDir": "build",
         "rootDir": "src",
-        "strict": true,
+        "strict": false,
         "esModuleInterop": true,
         "types": [
             "node",

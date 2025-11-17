@@ -270,7 +270,7 @@ export class Color {
         color_string = values;
 
         testFloat = false;
-        if (Type.isArray(color_string)) {
+        if (Array.isArray(color_string)) {
             for (i = 0; i < 3; i++) {
                 testFloat = testFloat || /\./.test(values[i].toString());
             }
@@ -498,7 +498,7 @@ export class Color {
      * @returns {Array} Contains the h, s, and v value in this order.
      *
      */
-    static rgb2hsv(color, ag, ab) {
+    static rgb2hsv(color, ag?, ab?) {
         var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min;
 
         r = this.rgbParser(color, ag, ab);

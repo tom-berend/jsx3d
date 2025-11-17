@@ -166,7 +166,7 @@ JXG.createPolygon3D = function (board, parents, attributes) {
             }
             points.push(board.create('point3d', [obj.vertices[i], parents[2]], attr_points));
         }
-    } else if (Type.isArray(parents[1]) && parents[1].every((x) => Type.isPoint3D(x))) {
+    } else if (Array.isArray(parents[1]) && parents[1].every((x) => Type.isPoint3D(x))) {
         // array of points [A, B, C]
         // TODO mixing points and coords arrays
         points = parents[1];

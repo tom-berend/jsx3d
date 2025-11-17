@@ -274,7 +274,7 @@ JXG.extend(
         addTransform: function (transform) {
             var i;
 
-            if (Type.isArray(transform)) {
+            if (Array.isArray(transform)) {
                 for (i = 0; i < transform.length; i++) {
                     this.transformations.push(transform[i]);
                 }

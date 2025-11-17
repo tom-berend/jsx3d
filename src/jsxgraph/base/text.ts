@@ -89,14 +89,14 @@ var priv = {
 
 export class Text extends CoordsElement {
 
-    content = "";
+    content:string = "";
     plaintext = "";
-    plaintextOld = null;
+    plaintextOld = '';
     orgText = "";
 
     relativeCoords: Coords
 
-    element: string | Text | object
+    element: object
     needsSizeUpdate: boolean
     hiddenByParent: boolean
     size: number[] = [1.0, 1.0]
@@ -105,13 +105,13 @@ export class Text extends CoordsElement {
     public rendNode: HTMLElement;
 
 
-
     constructor(board: Board, coordinates: number[] | Object | Function, attributes: TextOptions, content: string | Function) {
         super(board, COORDS_BY.USER, coordinates, attributes)
 
         this.elType = "text";
         this.visProp = Type.merge(this.visProp, Options)
 
+        this.relativeCoords = new Coords(COORDS_BY.USER,coordinates,board)
 
         // this.setCoordinates(this.method, coordinates, false, true);
 
@@ -151,7 +151,7 @@ export class Text extends CoordsElement {
 
         this.content = "";
         this.plaintext = "";
-        this.plaintextOld = null;
+        this.plaintextOld = "";
         this.orgText = "";
 
         this.needsSizeUpdate = false;
@@ -167,7 +167,7 @@ export class Text extends CoordsElement {
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, "T");
 
-        this.board.renderer.drawText(this);
+        this.rendNode = this.board.renderer.drawText(this);
         this.board.finalizeAdding(this);
 
         // Set text before drawing
@@ -215,7 +215,7 @@ export class Text extends CoordsElement {
             r = this.evalVisProp('precision.' + type);
         } else {
             // 'inherit'
-            r = this.board.options.precision.hasPoint;
+            r = Options.precision.hasPoint;
         }
         if (this.transformations.length > 0) {
             //Transform the mouse/touch coordinates
@@ -325,8 +325,8 @@ export class Text extends CoordsElement {
                     // MathJax or KaTeX
                     // Replace value-tags by functions
                     // sketchofont is ignored
-                    this.content = this.valueTagToJessieCode(text);
-                    if (!Type.isArray(this.content)) {
+                    this.content = 'Find this error! 328' // TODO: this.valueTagToJessieCode(text);
+                    if (!Array.isArray(this.content)) {
                         // For some reason we don't have to mask backslashes in an array of strings
                         // anymore.
                         //
@@ -349,68 +349,68 @@ export class Text extends CoordsElement {
                 this.content = text;
             }
 
-            // Generate function which returns the text to be displayed
-            if (convertJessieCode) {
-                // Convert JessieCode to JS function
-                if (Type.isArray(this.content)) {
-                    // This is the case if the text contained value-tags.
-                    // These value-tags consist of JessieCode snippets
-                    // which are now replaced by JavaScript functions
-                    that = this;
-                    for (i = 0; i < this.content.length; i++) {
-                        if (this.content[i][0] !== '"') {
-                            // TODO: GEONEXT ??  // this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
-                            for (e in this.content[i].deps) {
-                                this.addParents(this.content[i].deps[e]);
-                                this.content[i].deps[e].addChild(this);
-                            }
-                        }
-                    }
+            // // Generate function which returns the text to be displayed
+            // if (convertJessieCode) {
+            //     // Convert JessieCode to JS function
+            //     if (Array.isArray(this.content)) {
+            //         // This is the case if the text contained value-tags.
+            //         // These value-tags consist of JessieCode snippets
+            //         // which are now replaced by JavaScript functions
+            //         that = this;
+            //         for (i = 0; i < this.content.length; i++) {
+            //             if (this.content[i][0] !== '"') {
+            //                 // TODO: GEONEXT ??  // this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
+            //                 for (e in this.content[i].deps) {
+            //                     this.addParents(this.content[i].deps[e]);
+            //                     this.content[i].deps[e].addChild(this);
+            //                 }
+            //             }
+            //         }
 
-                    updateText = function () {
-                        var i, t,
-                            digits = that.evalVisProp('digits'),
-                            txt = '';
+            //         updateText = function () {
+            //             var i, t,
+            //                 digits = that.evalVisProp('digits'),
+            //                 txt = '';
 
-                        for (i = 0; i < that.content.length; i++) {
-                            if (Type.isFunction(that.content[i])) {
-                                t = that.content[i]();
-                                if (that.useLocale()) {
-                                    t = that.formatNumberLocale(t, digits);
-                                } else {
-                                    t = Type.toFixed(t, digits);
-                                }
-                            } else {
-                                t = that.content[i];
-                                // Instead of 't.at(t.length - 1)' also 't.(-1)' should work.
-                                // However in Moodle 4.2 't.(-1)' returns an empty string.
-                                // In plain HTML pages it works.
-                                if (t[0] === '"' && t[t.length - 1] === '"') {
-                                    t = t.slice(1, -1);
-                                }
-                            }
+            //             for (i = 0; i < that.content.length; i++) {
+            //                 if (Type.isFunction(that.content[i])) {
+            //                     t = that.content[i]();
+            //                     if (that.useLocale()) {
+            //                         t = that.formatNumberLocale(t, digits);
+            //                     } else {
+            //                         t = Type.toFixed(t, digits);
+            //                     }
+            //                 } else {
+            //                     t = that.content[i];
+            //                     // Instead of 't.at(t.length - 1)' also 't.(-1)' should work.
+            //                     // However in Moodle 4.2 't.(-1)' returns an empty string.
+            //                     // In plain HTML pages it works.
+            //                     if (t[0] === '"' && t[t.length - 1] === '"') {
+            //                         t = t.slice(1, -1);
+            //                     }
+            //                 }
 
-                            txt += t;
-                        }
-                        return txt;
-                    };
-                } else {
-                    // TODO: GEONEXT ??  // updateText = this.board.jc.snippet(this.content, true, "", false);
-                    // for (e in updateText.deps) {
-                    //     this.addParents(updateText.deps[e]);
-                    //     updateText.deps[e].addChild(this);
-                    // }
-                }
+            //                 txt += t;
+            //             }
+            //             return txt;
+            //         };
+            //     } else {
+            //         // TODO: GEONEXT ??  // updateText = this.board.jc.snippet(this.content, true, "", false);
+            //         // for (e in updateText.deps) {
+            //         //     this.addParents(updateText.deps[e]);
+            //         //     updateText.deps[e].addChild(this);
+            //         // }
+            //     }
 
-                // Ticks have been escaped in valueTagToJessieCode
-                this.updateText = function () {
-                    this.plaintext = this.unescapeTicks(updateText());
-                };
-            } else {
+            //     // Ticks have been escaped in valueTagToJessieCode
+            //     this.updateText = function () {
+            //         this.plaintext = this.unescapeTicks(updateText());
+            //     };
+            // } else {
                 this.updateText = function () {
                     this.plaintext = this.content; // text;
                 };
-            }
+            // }
         }
     }
 
@@ -534,7 +534,7 @@ export class Text extends CoordsElement {
                 that = this;
                 window.setTimeout(function () {
                     try {
-                        tmp = node.getBBox();
+                        // TODO ?? tmp = node.getBBox();
                         that.size = [tmp.width, tmp.height];
                         that.needsUpdate = true;
                         that.updateRenderer();
@@ -652,13 +652,13 @@ export class Text extends CoordsElement {
      */
     setCoords(x, y) {
         var coordsAnchor, dx, dy;
-        if (Type.isArray(x) && x.length > 1) {
+        if (Array.isArray(x) && x.length > 1) {
             y = x[1];
             x = x[0];
         }
 
         if (this.evalVisProp('islabel') && Type.exists(this.element)) {
-            coordsAnchor = this.element.getLabelAnchor();
+            coordsAnchor = this.getLabelAnchor();
             dx = (x - coordsAnchor.usrCoords[1]) * this.board.unitX;
             dy = -(y - coordsAnchor.usrCoords[2]) * this.board.unitY;
 
@@ -679,7 +679,7 @@ export class Text extends CoordsElement {
      * Then, the update function of the renderer
      * is called.
      */
-    update(fromParent) {
+    update(fromParent:boolean) {
         if (!this.needsUpdate) {
             return this;
         }
@@ -826,16 +826,16 @@ export class Text extends CoordsElement {
                 // GEONExT-Hack: apply rounding once only.
                 if (res.indexOf("toFixed") < 0) {
                     // output of a value tag
-                    if (
-                        Type.isNumber(
-                            // TODO: GEONEXT ??  //  Type.bind(this.board.jc.snippet(res, true, '', false), this)()
-                        )
-                    ) {
-                        // may also be a string
-                        plaintext += '+(' + res + ').toFixed(' + this.evalVisProp('digits') + ')';
-                    } else {
+                    // if (
+                    //     Type.isNumber(
+                    //         // TODO: GEONEXT ??  //  Type.bind(this.board.jc.snippet(res, true, '', false), this)()
+                    //     )
+                    // ) {
+                    //     // may also be a string
+                    //     plaintext += '+(' + res + ').toFixed(' + this.evalVisProp('digits') + ')';
+                    // } else {
                         plaintext += '+(' + res + ')';
-                    }
+                    // }
                 } else {
                     plaintext += '+(' + res + ')';
                 }
@@ -946,7 +946,7 @@ export class Text extends CoordsElement {
      */
     poorMansTeX(s) {
         var i, a;
-        if (Type.isArray(s)) {
+        if (Array.isArray(s)) {
             a = [];
             for (i = 0; i < s.length; i++) {
                 a.push(this.poorMansTeX(s[i]));
@@ -1315,7 +1315,7 @@ export class Text extends CoordsElement {
             boundingBox = this.board.getBoundingBox();
 
         if (this.evalVisProp('islabel') && Type.exists(this.element)) {
-            anchorCoords = this.element.getLabelAnchor().scrCoords;
+            anchorCoords = this.getLabelAnchor().scrCoords;
         } else {
             return 0;
         }
@@ -1633,11 +1633,12 @@ export class Text extends CoordsElement {
     //     return this;
     // }
 
-    HTMLSliderInputEventHandler() {
-        this._val = parseFloat(this.rendNodeRange.value);
-        this.rendNodeOut.value = this.rendNodeRange.value;
-        this.board.update();
-    }
+    // TODO:  what is ??  ////// seems to be unused
+    // HTMLSliderInputEventHandler() {
+    //     this._val = parseFloat(this.rendNodeRange.value);
+    //     this.rendNodeOut.value = this.rendNodeRange.value;
+    //     this.board.update();
+    // }
 
 
 

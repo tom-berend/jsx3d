@@ -103,7 +103,7 @@ export class Events {
      */
     on(event: string, handler: Function, context: Object = this) {
         // have we initialized this event yet?
-        if (!Type.isArray(this.eventHandlers[event])) {
+        if (!Array.isArray(this.eventHandlers[event])) {
             this.eventHandlers[event] = [];
         }
 
@@ -123,7 +123,7 @@ export class Events {
     off(event: string, handler: Function): Object {
 
         // if eventhandler not initialized we can quick-exit
-        if (!event || !Type.isArray(this.eventHandlers[event])) {
+        if (!event || !Array.isArray(this.eventHandlers[event])) {
             return this;
         }
 

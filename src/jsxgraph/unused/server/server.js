@@ -117,7 +117,7 @@ JXG.Server = {
             var str, data, tmp, inject, paramlist, id, i, j;
 
             str = new Zip.Unzip(Base64.decodeAsArray(d)).unzip();
-            if (Type.isArray(str) && str.length > 0) {
+            if (Array.isArray(str) && str.length > 0) {
                 str = str[0][0];
             }
 

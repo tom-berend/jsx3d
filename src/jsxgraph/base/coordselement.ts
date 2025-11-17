@@ -43,24 +43,38 @@ import { Numerics } from "../math/numerics.js";
 import { Statistics } from "../math/statistics.js";
 import { Coords } from "./coords.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
-import { Type } from "../utils/type.js";
+import { LooseObject, Type } from "../utils/type.js";
 import { GeometryElement } from "../base/element.js";
 import { Options } from "../options.js"
+import { Transformation } from "./transformation.js";
 
 
+export interface CoordsMethods {
+    addTransform: Function
+}
 
-export class CoordsElement extends GeometryElement {
+
+export class CoordsElement extends GeometryElement implements CoordsMethods {
 
     public usrCoords: number[] = [];
     public scrCoords: number[] = [];
     public method: COORDS_BY;
+    public relativeCoords: Coords
+    public slideObject: GeometryElement // TODO really
+    public slideObjects: GeometryElement[] // TODO really
+    public needsUpdateFromParent: boolean = false
 
+    Xjc
+    Yjc
 
 
     /** used by animation */
     private _roundsCount: number = 0
     private _intervalCode: number = 0
     private _intervalCount: number = 0
+    private isConstrained: boolean = false
+    public animationPath
+    public animationStart
 
     /**
      * An element containing coords is a basic geometric element.
@@ -78,7 +92,7 @@ export class CoordsElement extends GeometryElement {
      */
     // constructor(board: Board, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS, method: COORDS_BY) {
     constructor(board: Board, method: COORDS_BY, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object /*, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS*/) {
-        super(board,attributes)
+        super(board, attributes)
 
 
         // for (let i = 0; i < coordinates.length; ++i) {
@@ -111,7 +125,7 @@ export class CoordsElement extends GeometryElement {
          * @type Number
          * @private
          */
-        this.position = null;
+        //TODO: slide must move higher //this.position = null;
 
         /**
          * True if there the method this.updateConstraint() has been set. It is
@@ -146,7 +160,8 @@ export class CoordsElement extends GeometryElement {
          * Only the last entry is active.
          * Use {@link JXG.Point#popSlideObject} to remove the currently active slideObject.
          */
-        this.slideObjects = [];
+        //TODO: slide must move higher //     this.slideObjects = [];
+
 
         /**
          * A {@link JXG.CoordsElement#updateGlider} call is usually followed
@@ -165,13 +180,13 @@ export class CoordsElement extends GeometryElement {
          * @see JXG.Group
          * @private
          */
-        this.groups = [];
+        //TODO: groups must move higher // this.groups = [];
 
         /*
          * Do we need this?
-         */
-        this.Xjc = null;
-        this.Yjc = null;
+        // TODO          */
+        // this.Xjc = null;
+        // this.Yjc = null;
 
         // documented in GeometryElement
         this.methodMap = Type.deepCopy(this.methodMap, {
@@ -210,7 +225,7 @@ export class CoordsElement extends GeometryElement {
      * Dummy function for unconstrained points or gliders.
      * @private
      */
-    updateConstraint() {
+    updateConstraint(): CoordsElement {
         return this;
     }
 
@@ -272,313 +287,314 @@ export class CoordsElement extends GeometryElement {
      *
      * @private
      */
-    updateGlider() {
-        var i, d, v,
-            p1c, p2c, poly, cc, pos,
-            angle, sgn, alpha, beta,
-            delta = 2.0 * Math.PI,
-            cp, c, invMat,
-            newCoords, newPos,
-            doRound = false,
-            ev_sw,
-            snappedTo, snapValues,
-            slide = this.slideObject,
-            res, cu,
-            slides = [],
-            isTransformed;
+    // TODO: this should be moved to Glider (above line, curve, circle, etc)
+    // updateGlider() {
+    //     var i, d, v,
+    //         p1c, p2c, poly, cc, pos,
+    //         angle, sgn, alpha, beta,
+    //         delta = 2.0 * Math.PI,
+    //         cp, c, invMat,
+    //         newCoords, newPos,
+    //         doRound = false,
+    //         ev_sw,
+    //         snappedTo, snapValues,
+    //         slide = this.slideObject,
+    //         res, cu,
+    //         slides = [],
+    //         isTransformed;
 
-        this.needsUpdateFromParent = false;
-        if (slide.elementClass === OBJECT_CLASS.CIRCLE) {
-            if (this.evalVisProp('isgeonext')) {
-                delta = 1.0;
-            }
-            newCoords = Geometry.projectPointToCircle(this, slide, this.board);
-            newPos =
-                Geometry.rad(
-                    [slide.center.X() + 1.0, slide.center.Y()],
-                    slide.center,
-                    this
-                ) / delta;
-        } else if (slide.elementClass === OBJECT_CLASS.LINE) {
-            /*
-             * onPolygon==true: the point is a slider on a segment and this segment is one of the
-             * "borders" of a polygon.
-             * This is a GEONExT feature.
-             */
-            if (this.onPolygon) {
-                p1c = slide.point1.coords.usrCoords;
-                p2c = slide.point2.coords.usrCoords;
-                i = 1;
-                d = p2c[i] - p1c[i];
+    //     this.needsUpdateFromParent = false;
+    //     if (slide.elementClass === OBJECT_CLASS.CIRCLE) {
+    //         if (this.evalVisProp('isgeonext')) {
+    //             delta = 1.0;
+    //         }
+    //         newCoords = Geometry.projectPointToCircle(this, slide, this.board);
+    //         newPos =
+    //             Geometry.rad(
+    //                 [slide.center.X() + 1.0, slide.center.Y()],
+    //                 slide.center,
+    //                 this
+    //             ) / delta;
+    //     } else if (slide.elementClass === OBJECT_CLASS.LINE) {
+    //         /*
+    //          * onPolygon==true: the point is a slider on a segment and this segment is one of the
+    //          * "borders" of a polygon.
+    //          * This is a GEONExT feature.
+    //          */
+    //         if (this.onPolygon) {
+    //             p1c = slide.point1.coords.usrCoords;
+    //             p2c = slide.point2.coords.usrCoords;
+    //             i = 1;
+    //             d = p2c[i] - p1c[i];
 
-                if (Math.abs(d) < JSXMath.eps) {
-                    i = 2;
-                    d = p2c[i] - p1c[i];
-                }
+    //             if (Math.abs(d) < JSXMath.eps) {
+    //                 i = 2;
+    //                 d = p2c[i] - p1c[i];
+    //             }
 
-                cc = Geometry.projectPointToLine(this, slide, this.board);
-                pos = (cc.usrCoords[i] - p1c[i]) / d;
-                poly = slide.parentPolygon;
+    //             cc = Geometry.projectPointToLine(this, slide, this.board);
+    //             pos = (cc.usrCoords[i] - p1c[i]) / d;
+    //             poly = slide.parentPolygon;
 
-                if (pos < 0) {
-                    for (i = 0; i < poly.borders.length; i++) {
-                        if (slide === poly.borders[i]) {
-                            slide =
-                                poly.borders[
-                                (i - 1 + poly.borders.length) % poly.borders.length
-                                ];
-                            break;
-                        }
-                    }
-                } else if (pos > 1.0) {
-                    for (i = 0; i < poly.borders.length; i++) {
-                        if (slide === poly.borders[i]) {
-                            slide =
-                                poly.borders[
-                                (i + 1 + poly.borders.length) % poly.borders.length
-                                ];
-                            break;
-                        }
-                    }
-                }
+    //             if (pos < 0) {
+    //                 for (i = 0; i < poly.borders.length; i++) {
+    //                     if (slide === poly.borders[i]) {
+    //                         slide =
+    //                             poly.borders[
+    //                             (i - 1 + poly.borders.length) % poly.borders.length
+    //                             ];
+    //                         break;
+    //                     }
+    //                 }
+    //             } else if (pos > 1.0) {
+    //                 for (i = 0; i < poly.borders.length; i++) {
+    //                     if (slide === poly.borders[i]) {
+    //                         slide =
+    //                             poly.borders[
+    //                             (i + 1 + poly.borders.length) % poly.borders.length
+    //                             ];
+    //                         break;
+    //                     }
+    //                 }
+    //             }
 
-                // If the slide object has changed, save the change to the glider.
-                if (slide.id !== this.slideObject.id) {
-                    this.slideObject = slide;
-                }
-            }
+    //             // If the slide object has changed, save the change to the glider.
+    //             if (slide.id !== this.slideObject.id) {
+    //                 this.slideObject = slide;
+    //             }
+    //         }
 
-            p1c = slide.point1.coords;
-            p2c = slide.point2.coords;
+    //         p1c = slide.point1.coords;
+    //         p2c = slide.point2.coords;
 
-            // Distance between the two defining points
-            d = p1c.distance(COORDS_BY.USER, p2c);
+    //         // Distance between the two defining points
+    //         d = p1c.distance(COORDS_BY.USER, p2c);
 
-            // The defining points are identical
-            if (d < JSXMath.eps) {
-                //this.coords.setCoordinates(COORDS_BY.USER, p1c);
-                newCoords = p1c;
-                doRound = true;
-                newPos = 0.0;
-            } else {
-                newCoords = Geometry.projectPointToLine(this, slide, this.board);
-                p1c = p1c.usrCoords.slice(0);
-                p2c = p2c.usrCoords.slice(0);
+    //         // The defining points are identical
+    //         if (d < JSXMath.eps) {
+    //             //this.coords.setCoordinates(COORDS_BY.USER, p1c);
+    //             newCoords = p1c;
+    //             doRound = true;
+    //             newPos = 0.0;
+    //         } else {
+    //             newCoords = Geometry.projectPointToLine(this, slide, this.board);
+    //             p1c = p1c.usrCoords.slice(0);
+    //             p2c = p2c.usrCoords.slice(0);
 
-                // The second point is an ideal point
-                if (Math.abs(p2c[0]) < JSXMath.eps) {
-                    i = 1;
-                    d = p2c[i];
+    //             // The second point is an ideal point
+    //             if (Math.abs(p2c[0]) < JSXMath.eps) {
+    //                 i = 1;
+    //                 d = p2c[i];
 
-                    if (Math.abs(d) < JSXMath.eps) {
-                        i = 2;
-                        d = p2c[i];
-                    }
+    //                 if (Math.abs(d) < JSXMath.eps) {
+    //                     i = 2;
+    //                     d = p2c[i];
+    //                 }
 
-                    d = (newCoords.usrCoords[i] - p1c[i]) / d;
-                    sgn = d >= 0 ? 1 : -1;
-                    d = Math.abs(d);
-                    newPos = (sgn * d) / (d + 1);
+    //                 d = (newCoords.usrCoords[i] - p1c[i]) / d;
+    //                 sgn = d >= 0 ? 1 : -1;
+    //                 d = Math.abs(d);
+    //                 newPos = (sgn * d) / (d + 1);
 
-                    // The first point is an ideal point
-                } else if (Math.abs(p1c[0]) < JSXMath.eps) {
-                    i = 1;
-                    d = p1c[i];
+    //                 // The first point is an ideal point
+    //             } else if (Math.abs(p1c[0]) < JSXMath.eps) {
+    //                 i = 1;
+    //                 d = p1c[i];
 
-                    if (Math.abs(d) < JSXMath.eps) {
-                        i = 2;
-                        d = p1c[i];
-                    }
+    //                 if (Math.abs(d) < JSXMath.eps) {
+    //                     i = 2;
+    //                     d = p1c[i];
+    //                 }
 
-                    d = (newCoords.usrCoords[i] - p2c[i]) / d;
+    //                 d = (newCoords.usrCoords[i] - p2c[i]) / d;
 
-                    // 1.0 - d/(1-d);
-                    if (d < 0.0) {
-                        newPos = (1 - 2.0 * d) / (1.0 - d);
-                    } else {
-                        newPos = 1 / (d + 1);
-                    }
-                } else {
-                    i = 1;
-                    d = p2c[i] - p1c[i];
+    //                 // 1.0 - d/(1-d);
+    //                 if (d < 0.0) {
+    //                     newPos = (1 - 2.0 * d) / (1.0 - d);
+    //                 } else {
+    //                     newPos = 1 / (d + 1);
+    //                 }
+    //             } else {
+    //                 i = 1;
+    //                 d = p2c[i] - p1c[i];
 
-                    if (Math.abs(d) < JSXMath.eps) {
-                        i = 2;
-                        d = p2c[i] - p1c[i];
-                    }
-                    newPos = (newCoords.usrCoords[i] - p1c[i]) / d;
-                }
-            }
+    //                 if (Math.abs(d) < JSXMath.eps) {
+    //                     i = 2;
+    //                     d = p2c[i] - p1c[i];
+    //                 }
+    //                 newPos = (newCoords.usrCoords[i] - p1c[i]) / d;
+    //             }
+    //         }
 
-            // Snap the glider to snap values.
-            snappedTo = this.findClosestSnapValue(newPos);
-            if (snappedTo !== null) {
-                snapValues = this.evalVisProp('snapvalues');
-                newPos = (snapValues[snappedTo] - this._smin) / (this._smax - this._smin);
-                this.update(true);
-            } else {
-                // Snap the glider point of the slider into its appropriate position
-                // First, recalculate the new value of this.position
-                // Second, call update(fromParent==true) to make the positioning snappier.
-                ev_sw = this.evalVisProp('snapwidth');
-                if (
-                    ev_sw > 0.0 && Math.abs(this._smax - this._smin) >= JSXMath.eps
-                ) {
-                    newPos = Math.max(Math.min(newPos, 1), 0);
-                    // v = newPos * (this._smax - this._smin) + this._smin;
-                    // v = Math.round(v / ev_sw) * ev_sw;
-                    v = newPos * (this._smax - this._smin);
-                    v = Math.round(v / ev_sw) * ev_sw + this._smin;
-                    newPos = (v - this._smin) / (this._smax - this._smin);
-                    this.update(true);
-                }
-            }
+    //         // Snap the glider to snap values.
+    //         snappedTo = this.findClosestSnapValue(newPos);
+    //         if (snappedTo !== null) {
+    //             snapValues = this.evalVisProp('snapvalues');
+    //             newPos = (snapValues[snappedTo] - this._smin) / (this._smax - this._smin);
+    //             this.update(true);
+    //         } else {
+    //             // Snap the glider point of the slider into its appropriate position
+    //             // First, recalculate the new value of this.position
+    //             // Second, call update(fromParent==true) to make the positioning snappier.
+    //             ev_sw = this.evalVisProp('snapwidth');
+    //             if (
+    //                 ev_sw > 0.0 && Math.abs(this._smax - this._smin) >= JSXMath.eps
+    //             ) {
+    //                 newPos = Math.max(Math.min(newPos, 1), 0);
+    //                 // v = newPos * (this._smax - this._smin) + this._smin;
+    //                 // v = Math.round(v / ev_sw) * ev_sw;
+    //                 v = newPos * (this._smax - this._smin);
+    //                 v = Math.round(v / ev_sw) * ev_sw + this._smin;
+    //                 newPos = (v - this._smin) / (this._smax - this._smin);
+    //                 this.update(true);
+    //             }
+    //         }
 
-            p1c = slide.point1.coords;
-            if (
-                !slide.evalVisProp('straightfirst') &&
-                Math.abs(p1c.usrCoords[0]) > JSXMath.eps &&
-                newPos < 0
-            ) {
-                newCoords = p1c;
-                doRound = true;
-                newPos = 0;
-            }
+    //         p1c = slide.point1.coords;
+    //         if (
+    //             !slide.evalVisProp('straightfirst') &&
+    //             Math.abs(p1c.usrCoords[0]) > JSXMath.eps &&
+    //             newPos < 0
+    //         ) {
+    //             newCoords = p1c;
+    //             doRound = true;
+    //             newPos = 0;
+    //         }
 
-            p2c = slide.point2.coords;
-            if (
-                !slide.evalVisProp('straightlast') &&
-                Math.abs(p2c.usrCoords[0]) > JSXMath.eps &&
-                newPos > 1
-            ) {
-                newCoords = p2c;
-                doRound = true;
-                newPos = 1;
-            }
-        } else if (slide.type === OBJECT_TYPE.TURTLE) {
-            // In case, the point is a constrained glider.
-            this.updateConstraint();
-            res = Geometry.projectPointToTurtle(this, slide, this.board);
-            newCoords = res[0];
-            newPos = res[1]; // save position for the overwriting below
-        } else if (slide.elementClass === OBJECT_CLASS.CURVE) {
-            if (
-                slide.type === OBJECT_TYPE.ARC ||
-                slide.type === OBJECT_TYPE.SECTOR
-            ) {
-                newCoords = Geometry.projectPointToCircle(this, slide, this.board);
+    //         p2c = slide.point2.coords;
+    //         if (
+    //             !slide.evalVisProp('straightlast') &&
+    //             Math.abs(p2c.usrCoords[0]) > JSXMath.eps &&
+    //             newPos > 1
+    //         ) {
+    //             newCoords = p2c;
+    //             doRound = true;
+    //             newPos = 1;
+    //         }
+    //     } else if (slide.type === OBJECT_TYPE.TURTLE) {
+    //         // In case, the point is a constrained glider.
+    //         this.updateConstraint();
+    //         res = Geometry.projectPointToTurtle(this, slide, this.board);
+    //         newCoords = res[0];
+    //         newPos = res[1]; // save position for the overwriting below
+    //     } else if (slide.elementClass === OBJECT_CLASS.CURVE) {
+    //         if (
+    //             slide.type === OBJECT_TYPE.ARC ||
+    //             slide.type === OBJECT_TYPE.SECTOR
+    //         ) {
+    //             newCoords = Geometry.projectPointToCircle(this, slide, this.board);
 
-                angle = Geometry.rad(slide.radiuspoint, slide.center, this);
-                alpha = 0.0;
-                beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
-                newPos = angle;
+    //             angle = Geometry.rad(slide.radiuspoint, slide.center, this);
+    //             alpha = 0.0;
+    //             beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
+    //             newPos = angle;
 
-                ev_sw = slide.evalVisProp('selection');
-                if (
-                    (ev_sw === "minor" && beta > Math.PI) ||
-                    (ev_sw === "major" && beta < Math.PI)
-                ) {
-                    alpha = beta;
-                    beta = 2 * Math.PI;
-                }
+    //             ev_sw = slide.evalVisProp('selection');
+    //             if (
+    //                 (ev_sw === "minor" && beta > Math.PI) ||
+    //                 (ev_sw === "major" && beta < Math.PI)
+    //             ) {
+    //                 alpha = beta;
+    //                 beta = 2 * Math.PI;
+    //             }
 
-                // Correct the position if we are outside of the sector/arc
-                if (angle < alpha || angle > beta) {
-                    newPos = beta;
+    //             // Correct the position if we are outside of the sector/arc
+    //             if (angle < alpha || angle > beta) {
+    //                 newPos = beta;
 
-                    if (
-                        (angle < alpha && angle > alpha * 0.5) ||
-                        (angle > beta && angle > beta * 0.5 + Math.PI)
-                    ) {
-                        newPos = alpha;
-                    }
+    //                 if (
+    //                     (angle < alpha && angle > alpha * 0.5) ||
+    //                     (angle > beta && angle > beta * 0.5 + Math.PI)
+    //                 ) {
+    //                     newPos = alpha;
+    //                 }
 
-                    this.needsUpdateFromParent = true;
-                    this.updateGliderFromParent();
-                }
+    //                 this.needsUpdateFromParent = true;
+    //                 this.updateGliderFromParent();
+    //             }
 
-                delta = beta - alpha;
-                if (this.visProp.isgeonext) {
-                    delta = 1.0;
-                }
-                if (Math.abs(delta) > JSXMath.eps) {
-                    newPos /= delta;
-                }
-            } else {
-                // In case, the point is a constrained glider.
-                this.updateConstraint();
+    //             delta = beta - alpha;
+    //             if (this.visProp.isgeonext) {
+    //                 delta = 1.0;
+    //             }
+    //             if (Math.abs(delta) > JSXMath.eps) {
+    //                 newPos /= delta;
+    //             }
+    //         } else {
+    //             // In case, the point is a constrained glider.
+    //             this.updateConstraint();
 
-                // Handle the case if the curve comes from a transformation of a continuous curve.
-                if (slide.transformations.length > 0) {
-                    isTransformed = false;
-                    // TODO this might buggy, see the recursion
-                    // in line.js getCurveTangentDir
-                    res = slide.getTransformationSource();
-                    if (res[0]) {
-                        isTransformed = res[0];
-                        slides.push(slide);
-                        slides.push(res[1]);
-                    }
-                    // Recurse
-                    while (res[0] && Type.exists(res[1]._transformationSource)) {
-                        res = res[1].getTransformationSource();
-                        slides.push(res[1]);
-                    }
+    //             // Handle the case if the curve comes from a transformation of a continuous curve.
+    //             if (slide.transformations.length > 0) {
+    //                 isTransformed = false;
+    //                 // TODO this might buggy, see the recursion
+    //                 // in line.js getCurveTangentDir
+    //                 res = slide.getTransformationSource();
+    //                 if (res[0]) {
+    //                     isTransformed = res[0];
+    //                     slides.push(slide);
+    //                     slides.push(res[1]);
+    //                 }
+    //                 // Recurse
+    //                 while (res[0] && Type.exists(res[1]._transformationSource)) {
+    //                     res = res[1].getTransformationSource();
+    //                     slides.push(res[1]);
+    //                 }
 
-                    cu = this.coords.usrCoords;
-                    if (isTransformed) {
-                        for (i = 0; i < slides.length; i++) {
-                            slides[i].updateTransformMatrix();
-                            invMat = Mat.inverse(slides[i].transformMat);
-                            cu = Mat.matVecMult(invMat, cu);
-                        }
-                        cp = new Coords(COORDS_BY.USER, cu, this.board).usrCoords;
-                        c = Geometry.projectCoordsToCurve(
-                            cp[1],
-                            cp[2],
-                            this.position || 0,
-                            slides[slides.length - 1],
-                            this.board
-                        );
-                        // projectPointCurve() already would apply the transformation.
-                        // Since we are projecting on the original curve, we have to do
-                        // the transformations "by hand".
-                        cu = c[0].usrCoords;
-                        for (i = slides.length - 2; i >= 0; i--) {
-                            cu = Mat.matVecMult(slides[i].transformMat, cu);
-                        }
-                        c[0] = new Coords(COORDS_BY.USER, cu, this.board);
-                    } else {
-                        slide.updateTransformMatrix();
-                        invMat = Mat.inverse(slide.transformMat);
-                        cu = Mat.matVecMult(invMat, cu);
-                        cp = new Coords(COORDS_BY.USER, cu, this.board).usrCoords;
-                        c = Geometry.projectCoordsToCurve(
-                            cp[1],
-                            cp[2],
-                            this.position || 0,
-                            slide,
-                            this.board
-                        );
-                    }
+    //                 cu = this.coords.usrCoords;
+    //                 if (isTransformed) {
+    //                     for (i = 0; i < slides.length; i++) {
+    //                         slides[i].updateTransformMatrix();
+    //                         invMat = Mat.inverse(slides[i].transformMat);
+    //                         cu = Mat.matVecMult(invMat, cu);
+    //                     }
+    //                     cp = new Coords(COORDS_BY.USER, cu, this.board).usrCoords;
+    //                     c = Geometry.projectCoordsToCurve(
+    //                         cp[1],
+    //                         cp[2],
+    //                         this.position || 0,
+    //                         slides[slides.length - 1],
+    //                         this.board
+    //                     );
+    //                     // projectPointCurve() already would apply the transformation.
+    //                     // Since we are projecting on the original curve, we have to do
+    //                     // the transformations "by hand".
+    //                     cu = c[0].usrCoords;
+    //                     for (i = slides.length - 2; i >= 0; i--) {
+    //                         cu = Mat.matVecMult(slides[i].transformMat, cu);
+    //                     }
+    //                     c[0] = new Coords(COORDS_BY.USER, cu, this.board);
+    //                 } else {
+    //                     slide.updateTransformMatrix();
+    //                     invMat = Mat.inverse(slide.transformMat);
+    //                     cu = Mat.matVecMult(invMat, cu);
+    //                     cp = new Coords(COORDS_BY.USER, cu, this.board).usrCoords;
+    //                     c = Geometry.projectCoordsToCurve(
+    //                         cp[1],
+    //                         cp[2],
+    //                         this.position || 0,
+    //                         slide,
+    //                         this.board
+    //                     );
+    //                 }
 
-                    newCoords = c[0];
-                    newPos = c[1];
-                } else {
-                    res = Geometry.projectPointToCurve(this, slide, this.board);
-                    newCoords = res[0];
-                    newPos = res[1]; // save position for the overwriting below
-                }
-            }
-        } else if (Type.isPoint(slide)) {
-            //this.coords.setCoordinates(COORDS_BY.USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
-            newCoords = Geometry.projectPointToPoint(this, slide, this.board);
-            newPos = this.position; // save position for the overwriting below
-        }
+    //                 newCoords = c[0];
+    //                 newPos = c[1];
+    //             } else {
+    //                 res = Geometry.projectPointToCurve(this, slide, this.board);
+    //                 newCoords = res[0];
+    //                 newPos = res[1]; // save position for the overwriting below
+    //             }
+    //         }
+    //     } else if (Type.isPoint(slide)) {
+    //         //this.coords.setCoordinates(COORDS_BY.USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
+    //         newCoords = Geometry.projectPointToPoint(this, slide, this.board);
+    //         newPos = this.position; // save position for the overwriting below
+    //     }
 
-        this.coords.setCoordinates(COORDS_BY.USER, newCoords.usrCoords, doRound);
-        this.position = newPos;
-    }
+    //     this.coords.setCoordinates(COORDS_BY.USER, newCoords.usrCoords, doRound);
+    //     this.position = newPos;
+    // }
 
     /**
      * Find the closest entry in snapValues that is within snapValueDistance of pos.
@@ -596,7 +612,7 @@ export class CoordsElement extends GeometryElement {
         snapValues = this.evalVisProp('snapvalues');
         snapValueDistance = this.evalVisProp('snapvaluedistance');
 
-        if (Type.isArray(snapValues) &&
+        if (Array.isArray(snapValues) &&
             Math.abs(this._smax - this._smin) >= JSXMath.eps &&
             snapValueDistance > 0.0) {
             for (i = 0; i < snapValues.length; i++) {
@@ -611,198 +627,199 @@ export class CoordsElement extends GeometryElement {
         return snappedTo;
     }
 
-    /**
-     * Update of a glider in case a parent element has been updated. That means the
-     * relative position of the glider stays the same.
-     * @private
-     */
-    updateGliderFromParent() {
-        var p1c, p2c, r, lbda, c,
-            slide = this.slideObject,
-            slides = [],
-            res, i, isTransformed,
-            baseangle, alpha, angle, beta,
-            delta = 2.0 * Math.PI;
+    // /**
+    //  * Update of a glider in case a parent element has been updated. That means the
+    //  * relative position of the glider stays the same.
+    //  * @private
+    //  */
+    // TODO: this should be moved to Glider (above line, curve, circle, etc)
+    // updateGliderFromParent() {
+    //     var p1c, p2c, r, lbda, c,
+    //         slide = this.slideObject,
+    //         slides:GeometryElement[] = [],
+    //         res, i, isTransformed,
+    //         baseangle, alpha, angle, beta,
+    //         delta = 2.0 * Math.PI;
 
-        if (!this.needsUpdateFromParent) {
-            this.needsUpdateFromParent = true;
-            return;
-        }
+    //     if (!this.needsUpdateFromParent) {
+    //         this.needsUpdateFromParent = true;
+    //         return;
+    //     }
 
-        if (slide.elementClass === OBJECT_CLASS.CIRCLE) {
-            r = slide.Radius();
-            if (this.evalVisProp('isgeonext')) {
-                delta = 1.0;
-            }
-            c = [
-                slide.center.X() + r * Math.cos(this.position * delta),
-                slide.center.Y() + r * Math.sin(this.position * delta)
-            ];
-        } else if (slide.elementClass === OBJECT_CLASS.LINE) {
-            p1c = slide.point1.coords.usrCoords;
-            p2c = slide.point2.coords.usrCoords;
+    //     if (slide.elementClass === OBJECT_CLASS.CIRCLE) {
+    //         r = slide.Radius();
+    //         if (this.evalVisProp('isgeonext')) {
+    //             delta = 1.0;
+    //         }
+    //         c = [
+    //             slide.center.X() + r * Math.cos(this.position * delta),
+    //             slide.center.Y() + r * Math.sin(this.position * delta)
+    //         ];
+    //     } else if (slide.elementClass === OBJECT_CLASS.LINE) {
+    //         p1c = slide.point1.coords.usrCoords;
+    //         p2c = slide.point2.coords.usrCoords;
 
-            // If one of the defining points of the line does not exist,
-            // the glider should disappear
-            if (
-                (p1c[0] === 0 && p1c[1] === 0 && p1c[2] === 0) ||
-                (p2c[0] === 0 && p2c[1] === 0 && p2c[2] === 0)
-            ) {
-                c = [0, 0, 0];
-                // The second point is an ideal point
-            } else if (Math.abs(p2c[0]) < JSXMath.eps) {
-                lbda = Math.min(Math.abs(this.position), 1 - JSXMath.eps);
-                lbda /= 1.0 - lbda;
+    //         // If one of the defining points of the line does not exist,
+    //         // the glider should disappear
+    //         if (
+    //             (p1c[0] === 0 && p1c[1] === 0 && p1c[2] === 0) ||
+    //             (p2c[0] === 0 && p2c[1] === 0 && p2c[2] === 0)
+    //         ) {
+    //             c = [0, 0, 0];
+    //             // The second point is an ideal point
+    //         } else if (Math.abs(p2c[0]) < JSXMath.eps) {
+    //             lbda = Math.min(Math.abs(this.position), 1 - JSXMath.eps);
+    //             lbda /= 1.0 - lbda;
 
-                if (this.position < 0) {
-                    lbda = -lbda;
-                }
+    //             if (this.position < 0) {
+    //                 lbda = -lbda;
+    //             }
 
-                c = [
-                    p1c[0] + lbda * p2c[0],
-                    p1c[1] + lbda * p2c[1],
-                    p1c[2] + lbda * p2c[2]
-                ];
-                // The first point is an ideal point
-            } else if (Math.abs(p1c[0]) < JSXMath.eps) {
-                lbda = Math.max(this.position, JSXMath.eps);
-                lbda = Math.min(lbda, 2 - JSXMath.eps);
+    //             c = [
+    //                 p1c[0] + lbda * p2c[0],
+    //                 p1c[1] + lbda * p2c[1],
+    //                 p1c[2] + lbda * p2c[2]
+    //             ];
+    //             // The first point is an ideal point
+    //         } else if (Math.abs(p1c[0]) < JSXMath.eps) {
+    //             lbda = Math.max(this.position, JSXMath.eps);
+    //             lbda = Math.min(lbda, 2 - JSXMath.eps);
 
-                if (lbda > 1) {
-                    lbda = (lbda - 1) / (lbda - 2);
-                } else {
-                    lbda = (1 - lbda) / lbda;
-                }
+    //             if (lbda > 1) {
+    //                 lbda = (lbda - 1) / (lbda - 2);
+    //             } else {
+    //                 lbda = (1 - lbda) / lbda;
+    //             }
 
-                c = [
-                    p2c[0] + lbda * p1c[0],
-                    p2c[1] + lbda * p1c[1],
-                    p2c[2] + lbda * p1c[2]
-                ];
-            } else {
-                lbda = this.position;
-                c = [
-                    p1c[0] + lbda * (p2c[0] - p1c[0]),
-                    p1c[1] + lbda * (p2c[1] - p1c[1]),
-                    p1c[2] + lbda * (p2c[2] - p1c[2])
-                ];
-            }
-        } else if (slide.type === OBJECT_TYPE.TURTLE) {
-            this.coords.setCoordinates(COORDS_BY.USER, [
-                slide.Z(this.position),
-                slide.X(this.position),
-                slide.Y(this.position)
-            ]);
-            // In case, the point is a constrained glider.
-            this.updateConstraint();
-            c = Geometry.projectPointToTurtle(this, slide, this.board)[0].usrCoords;
-        } else if (slide.elementClass === OBJECT_CLASS.CURVE) {
-            // Handle the case if the curve comes from a transformation of a continuous curve.
-            isTransformed = false;
-            res = slide.getTransformationSource();
-            if (res[0]) {
-                isTransformed = res[0];
-                slides.push(slide);
-                slides.push(res[1]);
-            }
-            // Recurse
-            while (res[0] && Type.exists(res[1]._transformationSource)) {
-                res = res[1].getTransformationSource();
-                slides.push(res[1]);
-            }
-            if (isTransformed) {
-                this.coords.setCoordinates(COORDS_BY.USER, [
-                    slides[slides.length - 1].Z(this.position),
-                    slides[slides.length - 1].X(this.position),
-                    slides[slides.length - 1].Y(this.position)
-                ]);
-            } else {
-                this.coords.setCoordinates(COORDS_BY.USER, [
-                    slide.Z(this.position),
-                    slide.X(this.position),
-                    slide.Y(this.position)
-                ]);
-            }
+    //             c = [
+    //                 p2c[0] + lbda * p1c[0],
+    //                 p2c[1] + lbda * p1c[1],
+    //                 p2c[2] + lbda * p1c[2]
+    //             ];
+    //         } else {
+    //             lbda = this.position;
+    //             c = [
+    //                 p1c[0] + lbda * (p2c[0] - p1c[0]),
+    //                 p1c[1] + lbda * (p2c[1] - p1c[1]),
+    //                 p1c[2] + lbda * (p2c[2] - p1c[2])
+    //             ];
+    //         }
+    //     } else if (slide.type === OBJECT_TYPE.TURTLE) {
+    //         this.coords.setCoordinates(COORDS_BY.USER, [
+    //             slide.Z(this.position),
+    //             slide.X(this.position),
+    //             slide.Y(this.position)
+    //         ]);
+    //         // In case, the point is a constrained glider.
+    //         this.updateConstraint();
+    //         c = Geometry.projectPointToTurtle(this, slide, this.board)[0].usrCoords;
+    //     } else if (slide.elementClass === OBJECT_CLASS.CURVE) {
+    //         // Handle the case if the curve comes from a transformation of a continuous curve.
+    //         isTransformed = false;
+    //         res = slide.getTransformationSource();
+    //         if (res[0]) {
+    //             isTransformed = res[0];
+    //             slides.push(slide);
+    //             slides.push(res[1]);
+    //         }
+    //         // Recurse
+    //         while (res[0] && Type.exists(res[1]._transformationSource)) {
+    //             res = res[1].getTransformationSource();
+    //             slides.push(res[1]);
+    //         }
+    //         if (isTransformed) {
+    //             this.coords.setCoordinates(COORDS_BY.USER, [
+    //                 slides[slides.length - 1].Z(this.position),
+    //                 slides[slides.length - 1].X(this.position),
+    //                 slides[slides.length - 1].Y(this.position)
+    //             ]);
+    //         } else {
+    //             this.coords.setCoordinates(COORDS_BY.USER, [
+    //                 slide.Z(this.position),
+    //                 slide.X(this.position),
+    //                 slide.Y(this.position)
+    //             ]);
+    //         }
 
-            if (
-                slide.type === OBJECT_TYPE.ARC ||
-                slide.type === OBJECT_TYPE.SECTOR
-            ) {
-                baseangle = Geometry.rad(
-                    [slide.center.X() + 1, slide.center.Y()],
-                    slide.center,
-                    slide.radiuspoint
-                );
+    //         if (
+    //             slide.type === OBJECT_TYPE.ARC ||
+    //             slide.type === OBJECT_TYPE.SECTOR
+    //         ) {
+    //             baseangle = Geometry.rad(
+    //                 [slide.center.X() + 1, slide.center.Y()],
+    //                 slide.center,
+    //                 slide.radiuspoint
+    //             );
 
-                alpha = 0.0;
-                beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
+    //             alpha = 0.0;
+    //             beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
 
-                if (
-                    (slide.visProp.selection === "minor" && beta > Math.PI) ||
-                    (slide.visProp.selection === "major" && beta < Math.PI)
-                ) {
-                    alpha = beta;
-                    beta = 2 * Math.PI;
-                }
+    //             if (
+    //                 (slide.visProp.selection === "minor" && beta > Math.PI) ||
+    //                 (slide.visProp.selection === "major" && beta < Math.PI)
+    //             ) {
+    //                 alpha = beta;
+    //                 beta = 2 * Math.PI;
+    //             }
 
-                delta = beta - alpha;
-                if (this.evalVisProp('isgeonext')) {
-                    delta = 1.0;
-                }
-                angle = this.position * delta;
+    //             delta = beta - alpha;
+    //             if (this.evalVisProp('isgeonext')) {
+    //                 delta = 1.0;
+    //             }
+    //             angle = this.position * delta;
 
-                // Correct the position if we are outside of the sector/arc
-                if (angle < alpha || angle > beta) {
-                    angle = beta;
+    //             // Correct the position if we are outside of the sector/arc
+    //             if (angle < alpha || angle > beta) {
+    //                 angle = beta;
 
-                    if (
-                        (angle < alpha && angle > alpha * 0.5) ||
-                        (angle > beta && angle > beta * 0.5 + Math.PI)
-                    ) {
-                        angle = alpha;
-                    }
+    //                 if (
+    //                     (angle < alpha && angle > alpha * 0.5) ||
+    //                     (angle > beta && angle > beta * 0.5 + Math.PI)
+    //                 ) {
+    //                     angle = alpha;
+    //                 }
 
-                    this.position = angle;
-                    if (Math.abs(delta) > JSXMath.eps) {
-                        this.position /= delta;
-                    }
-                }
+    //                 this.position = angle;
+    //                 if (Math.abs(delta) > JSXMath.eps) {
+    //                     this.position /= delta;
+    //                 }
+    //             }
 
-                r = slide.Radius();
-                c = [
-                    slide.center.X() + r * Math.cos(this.position * delta + baseangle),
-                    slide.center.Y() + r * Math.sin(this.position * delta + baseangle)
-                ];
-            } else {
-                // In case, the point is a constrained glider.
-                this.updateConstraint();
+    //             r = slide.Radius();
+    //             c = [
+    //                 slide.center.X() + r * Math.cos(this.position * delta + baseangle),
+    //                 slide.center.Y() + r * Math.sin(this.position * delta + baseangle)
+    //             ];
+    //         } else {
+    //             // In case, the point is a constrained glider.
+    //             this.updateConstraint();
 
-                if (isTransformed) {
-                    c = Geometry.projectPointToCurve(
-                        this,
-                        slides[slides.length - 1],
-                        this.board
-                    )[0].usrCoords;
-                    // projectPointCurve() already would do the transformation.
-                    // But since we are projecting on the original curve, we have to do
-                    // the transformation "by hand".
-                    for (i = slides.length - 2; i >= 0; i--) {
-                        c = new Coords(
-                            COORDS_BY.USER,
-                            Mat.matVecMult(slides[i].transformMat, c),
-                            this.board
-                        ).usrCoords;
-                    }
-                } else {
-                    c = Geometry.projectPointToCurve(this, slide, this.board)[0].usrCoords;
-                }
-            }
-        } else if (Type.isPoint(slide)) {
-            c = Geometry.projectPointToPoint(this, slide, this.board).usrCoords;
-        }
+    //             if (isTransformed) {
+    //                 c = Geometry.projectPointToCurve(
+    //                     this,
+    //                     slides[slides.length - 1],
+    //                     this.board
+    //                 )[0].usrCoords;
+    //                 // projectPointCurve() already would do the transformation.
+    //                 // But since we are projecting on the original curve, we have to do
+    //                 // the transformation "by hand".
+    //                 for (i = slides.length - 2; i >= 0; i--) {
+    //                     c = new Coords(
+    //                         COORDS_BY.USER,
+    //                         Mat.matVecMult(slides[i].transformMat, c),
+    //                         this.board
+    //                     ).usrCoords;
+    //                 }
+    //             } else {
+    //                 c = Geometry.projectPointToCurve(this, slide, this.board)[0].usrCoords;
+    //             }
+    //         }
+    //     } else if (Type.isPoint(slide)) {
+    //         c = Geometry.projectPointToPoint(this, slide, this.board).usrCoords;
+    //     }
 
-        this.coords.setCoordinates(COORDS_BY.USER, c, false);
-    }
+    //     this.coords.setCoordinates(COORDS_BY.USER, c, false);
+    // }
 
     updateRendererGeneric(rendererMethod) {
         //var wasReal;
@@ -979,7 +996,7 @@ export class CoordsElement extends GeometryElement {
      * @returns {Number} User coordinate of point in z direction.
      * @private
      */
-    ZEval() {
+    ZEval(): number {
         return this.coords.usrCoords[0];
     }
 
@@ -1013,7 +1030,7 @@ export class CoordsElement extends GeometryElement {
      * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
      * @returns {JXG.CoordsElement} Reference to this element
      */
-    handleSnapToPoints(force) {
+    handleSnapToPoints(force?: number) {
         var i,
             pEl,
             pCoords,
@@ -1055,7 +1072,7 @@ export class CoordsElement extends GeometryElement {
                 }
 
                 if (Type.isPoint(pEl) && pEl !== this && pEl.visPropCalc.visible) {
-                    pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
+                    pCoords = Geometry.projectPointToPoint(this, pEl);
                     if (ev_au === "screen") {
                         d = pCoords.distance(COORDS_BY.SCREEN, this.coords);
                     } else {
@@ -1118,7 +1135,7 @@ export class CoordsElement extends GeometryElement {
 
             if (Type.exists(el) && el !== this) {
                 if (Type.isPoint(el)) {
-                    projCoords = Geometry.projectPointToPoint(this, el, this.board);
+                    projCoords = Geometry.projectPointToPoint(this, el);
                 } else if (el.elementClass === OBJECT_CLASS.LINE) {
                     projection = Geometry.projectCoordsToSegment(
                         this.coords.usrCoords,
@@ -1159,29 +1176,31 @@ export class CoordsElement extends GeometryElement {
                     d = projCoords.distance(COORDS_BY.USER, this.coords);
                 }
 
-                if (d < ev_ad) {
-                    if (
-                        !(
-                            this.type === OBJECT_TYPE.GLIDER &&
-                            (el === this.slideObject ||
-                                (this.slideObject &&
-                                    this.onPolygon &&
-                                    this.slideObject.parentPolygon === el))
-                        )
-                    ) {
-                        this.makeGlider(el);
-                    }
-                    break; // bind the point to the first attractor in its list.
-                }
-                if (
-                    d >= ev_sd &&
-                    (el === this.slideObject ||
-                        (this.slideObject &&
-                            this.onPolygon &&
-                            this.slideObject.parentPolygon === el))
-                ) {
-                    this.popSlideObject();
-                }
+
+                // TODO: move to Glider
+                // if (d < ev_ad) {
+                //     if (
+                //         !(
+                //             this.type === OBJECT_TYPE.GLIDER &&
+                //             (el === this.slideObject ||
+                //                 (this.slideObject &&
+                //                     this.onPolygon &&
+                //                     this.slideObject.parentPolygon === el))
+                //         )
+                //     ) {
+                //         this.makeGlider(el);
+                //     }
+                //     break; // bind the point to the first attractor in its list.
+                // }
+                // if (
+                //     d >= ev_sd &&
+                //     (el === this.slideObject ||
+                //         (this.slideObject &&
+                //             this.onPolygon &&
+                //             this.slideObject.parentPolygon === el))
+                // ) {
+                //     this.popSlideObject();
+                // }
             }
         }
 
@@ -1240,9 +1259,9 @@ export class CoordsElement extends GeometryElement {
             }
             m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
             for (i = 0; i < this.transformations.length; i++) {
-                m = Mat.matMatMult(this.transformations[i].matrix, m);
+                m = JSXMath.matMatMult(this.transformations[i].matrix, m);
             }
-            newCoords = Mat.matVecMult(Mat.inverse(m), newCoords);
+            newCoords = JSXMath.matVecMult(JSXMath.inverse(m), newCoords);
 
             this.initialCoords.setCoordinates(COORDS_BY.USER, newCoords);
             if (this.elementClass !== OBJECT_CLASS.POINT) {
@@ -1252,12 +1271,13 @@ export class CoordsElement extends GeometryElement {
         }
         this.prepareUpdate().update();
 
-        // If the user suspends the board updates we need to recalculate the relative position of
-        // the point on the slide object. This is done in updateGlider() which is NOT called during the
-        // update process triggered by unsuspendUpdate.
-        if (this.board.isSuspendedUpdate && this.type === OBJECT_TYPE.GLIDER) {
-            this.updateGlider();
-        }
+        // TODO: move to glider
+        // // If the user suspends the board updates we need to recalculate the relative position of
+        // // the point on the slide object. This is done in updateGlider() which is NOT called during the
+        // // update process triggered by unsuspendUpdate.
+        // if (this.board.isSuspendedUpdate && this.type === OBJECT_TYPE.GLIDER) {
+        //     this.updateGlider();
+        // }
 
         return this;
     }
@@ -1286,7 +1306,7 @@ export class CoordsElement extends GeometryElement {
             this.addTransform(this, t);
         }
 
-        this.prepareUpdate().update();
+        this.prepareUpdate().update(true);
 
         return this;
     }
@@ -1308,68 +1328,72 @@ export class CoordsElement extends GeometryElement {
      * @param {Number} x
      * @returns {JXG.Point} Reference to the point element.
      */
-    setGliderPosition(x) {
-        if (this.type === OBJECT_TYPE.GLIDER) {
-            this.position = x;
-            this.board.update();
-        }
+    // TODO: move to Glider
+    // setGliderPosition(x) {
+    //     if (this.type === OBJECT_TYPE.GLIDER) {
+    //         this.position = x;
+    //         this.board.update(true);
+    //     }
 
-        return this;
-    }
+    //     return this;
+    // }
 
-    /**
-     * Convert the point to glider and update the construction.
-     * To move the point visual onto the glider, a call of board update is necessary.
-     * @param {String|Object} slide The object the point will be bound to.
-     */
+    // TODO: move to Glider
+    // /**
+    //  * Convert the point to glider and update the construction.
+    //  * To move the point visual onto the glider, a call of board update is necessary.
+    //  * @param {String|Object} slide The object the point will be bound to.
+    //  */
     makeGlider(slide) {
-        var slideobj = this.board.select(slide),
-            onPolygon = false,
-            min, i, dist;
+    //     var slideobj = this.board.select(slide),
+    //         onPolygon = false,
+    //         min, i, dist;
 
-        if (slideobj.type === OBJECT_TYPE.POLYGON) {
-            // Search for the closest edge of the polygon.
-            min = Number.MAX_VALUE;
-            for (i = 0; i < slideobj.borders.length; i++) {
-                dist = Geometry.distPointLine(
-                    this.coords.usrCoords,
-                    slideobj.borders[i].stdform
-                );
-                if (dist < min) {
-                    min = dist;
-                    slide = slideobj.borders[i];
-                }
-            }
-            slideobj = this.board.select(slide);
-            onPolygon = true;
-        }
+    //     if (slideobj.type === OBJECT_TYPE.POLYGON) {
+    //         // Search for the closest edge of the polygon.
+    //         min = Number.MAX_VALUE;
+    //         for (i = 0; i < slideobj.borders.length; i++) {
+    //             dist = Geometry.distPointLine(
+    //                 this.coords.usrCoords,
+    //                 slideobj.borders[i].stdform
+    //             );
+    //             if (dist < min) {
+    //                 min = dist;
+    //                 slide = slideobj.borders[i];
+    //             }
+    //         }
+    //         slideobj = this.board.select(slide);
+    //         onPolygon = true;
+    //     }
 
-        /* Gliders on Ticks are forbidden */
-        if (!Type.exists(slideobj)) {
-            throw new Error("JSXGraph: slide object undefined.");
-        } else if (slideobj.type === OBJECT_TYPE.TICKS) {
-            throw new Error("JSXGraph: gliders on ticks are not possible.");
-        }
+        // TODO: move to glider
+        // /* Gliders on Ticks are forbidden */
+        // if (!Type.exists(slideobj)) {
+        //     throw new Error("JSXGraph: slide object undefined.");
+        // } else if (slideobj.type === OBJECT_TYPE.TICKS) {
+        //     throw new Error("JSXGraph: gliders on ticks are not possible.");
+        // }
 
-        this.slideObject = this.board.select(slide);
-        this.slideObjects.push(this.slideObject);
-        this.addParents(slide);
+        // this.slideObject = this.board.select(slide);
+        // this.slideObjects.push(this.slideObject);
+        // this.addParents(slide);
 
         this.type = OBJECT_TYPE.GLIDER;
         this.elType = 'glider';
         this.visProp.snapwidth = -1; // By default, deactivate snapWidth
         this.slideObject.addChild(this);
         this.isDraggable = true;
-        this.onPolygon = onPolygon;
+        this.onPolygon = this.onPolygon;
 
         this.generatePolynomial = function () {
             return this.slideObject.generatePolynomial(this);
         };
 
-        // Determine the initial value of this.position
-        this.updateGlider();
-        this.needsUpdateFromParent = true;
-        this.updateGliderFromParent();
+        // TODO: move to glider
+        // // Determine the initial value of this.position
+        // this.updateGlider();
+        // this.needsUpdateFromParent = true;
+        // this.updateGliderFromParent();
 
         return this;
     }
@@ -1507,19 +1531,12 @@ export class CoordsElement extends GeometryElement {
      * @see JXG.GeonextParser#geonext2JS
      */
     addConstraint(terms) {
-        var i, v,
-            newfuncs = [],
-            what = ["X", "Y"],
-            makeConstFunction = function (z) {
-                return function () {
-                    return z;
-                };
-            }
-        makeSliderFunction = function (a) {
-            return function () {
-                return a.Value();
-            };
-        };
+        var i, v
+        let newfuncs: Function | Function[]
+        let what = ["X", "Y"]
+        let makeConstFunction = (z) => { () => z }
+        let makeSliderFunction = (a) => { () => a.Value() }
+
 
         if (this.elementClass === OBJECT_CLASS.POINT) {
             this.type = OBJECT_TYPE.CAS;
@@ -1560,7 +1577,7 @@ export class CoordsElement extends GeometryElement {
                 var c = newfuncs[0]();
 
                 // Array
-                if (Type.isArray(c)) {
+                if (Array.isArray(c)) {
                     this.coords.setCoordinates(COORDS_BY.USER, c);
                     // Coords object
                 } else {
@@ -1603,7 +1620,7 @@ export class CoordsElement extends GeometryElement {
         /**
          * We have to do an update. Otherwise, elements relying on this point will receive NaN.
          */
-        this.prepareUpdate().update();
+        this.prepareUpdate().update(true);
         if (!this.board.isSuspendedUpdate) {
             this.updateVisibility().updateRenderer();
             if (this.hasLabel) {
@@ -1634,9 +1651,9 @@ export class CoordsElement extends GeometryElement {
         } else {
             this.relativeCoords = new Coords(COORDS_BY.USER, coordinates, this.board);
         }
-        this.element.addChild(this);
+        this.addChild(this);
         if (isLabel) {
-            this.addParents(this.element);
+            this.addParents([this]);
         }
 
         this.XEval = function () {
@@ -1679,14 +1696,15 @@ export class CoordsElement extends GeometryElement {
             return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
         };
 
-        this.ZEval = Type.createFunction(1, this.board, "");
+        // TODO:  ??         this.ZEval = Type.createFunction(1, this.board, "");
 
-        this.updateConstraint = function () {
+        this.updateConstraint = () => {
             this.coords.setCoordinates(COORDS_BY.USER, [
                 this.ZEval(),
                 this.XEval(),
                 this.YEval()
             ]);
+            return this;
         };
         this.isConstrained = true;
 
@@ -1720,7 +1738,7 @@ export class CoordsElement extends GeometryElement {
         }
         for (i = 1; i < this.transformations.length; i++) {
             this.transformations[i].update();
-            c = Mat.matVecMult(this.transformations[i].matrix, c);
+            c = JSXMath.matVecMult(this.transformations[i].matrix, c);
         }
         this.actualCoords.setCoordinates(COORDS_BY.USER, c);
 
@@ -1734,9 +1752,9 @@ export class CoordsElement extends GeometryElement {
      * or an array of {@link JXG.Transformation}s.
      * @returns {JXG.CoordsElement} Reference to itself.
      */
-    addTransform(el, transform) {
+    addTransform(el: GeometryElement, transform: Transformation | Transformation[]) {
         var i,
-            list = Type.isArray(transform) ? transform : [transform],
+            list = Array.isArray(transform) ? transform : [transform],
             len = list.length;
 
         // There is only one baseElement possible
@@ -1884,7 +1902,7 @@ export class CoordsElement extends GeometryElement {
         var i,
             neville,
             interpath = [],
-            p = [],
+            p: LooseObject[] = [],
             delay = this.board.attr.animationdelay,
             steps = time / delay,
             len,
@@ -1896,7 +1914,7 @@ export class CoordsElement extends GeometryElement {
                 };
             };
 
-        if (Type.isArray(path)) {
+        if (Array.isArray(path)) {
             len = path.length;
             for (i = 0; i < len; i++) {
                 if (Type.isPoint(path[i])) {
@@ -1916,7 +1934,7 @@ export class CoordsElement extends GeometryElement {
                     p[p.length - 1].X(),
                     p[p.length - 1].Y()
                 ]);
-                return this.board.update(this);
+                return this.board.update();
             }
 
             if (!Type.exists(options.interpolate) || options.interpolate) {
@@ -2064,7 +2082,7 @@ export class CoordsElement extends GeometryElement {
             Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > JSXMath.eps
         ) {
             this.setPosition(COORDS_BY.USER, where.usrCoords);
-            return this.board.update(this);
+            return this.board.update();
         }
 
         // In case there is no callback and we are already at the endpoint we can stop here
@@ -2388,62 +2406,63 @@ export class CoordsElement extends GeometryElement {
     _anim(direction, stepCount, maxRounds) {
         var dX, dY, alpha, startPoint, newX, radius, sp1c, sp2c, res;
 
-        this._intervalCount += 1;
-        if (this._intervalCount > stepCount) {
-            this._intervalCount = 0;
+        // TODO: move this to glider
+        // this._intervalCount += 1;
+        // if (this._intervalCount > stepCount) {
+        //     this._intervalCount = 0;
 
-            this._roundsCount += 1;
-            if (maxRounds > 0 && this._roundsCount >= maxRounds) {
-                this._roundsCount = 0;
-                return this.stopAnimation();
-            }
-        }
+        //     this._roundsCount += 1;
+        //     if (maxRounds > 0 && this._roundsCount >= maxRounds) {
+        //         this._roundsCount = 0;
+        //         return this.stopAnimation();
+        //     }
+        // }
 
-        if (this.slideObject.elementClass === OBJECT_CLASS.LINE) {
-            sp1c = this.slideObject.point1.coords.scrCoords;
-            sp2c = this.slideObject.point2.coords.scrCoords;
+        // if (this.slideObject.elementClass === OBJECT_CLASS.LINE) {
+        //     sp1c = this.slideObject.point1.coords.scrCoords;
+        //     sp2c = this.slideObject.point2.coords.scrCoords;
 
-            dX = Math.round(((sp2c[1] - sp1c[1]) * this._intervalCount) / stepCount);
-            dY = Math.round(((sp2c[2] - sp1c[2]) * this._intervalCount) / stepCount);
-            if (direction > 0) {
-                startPoint = this.slideObject.point1;
-            } else {
-                startPoint = this.slideObject.point2;
-                dX *= -1;
-                dY *= -1;
-            }
+        //     dX = Math.round(((sp2c[1] - sp1c[1]) * this._intervalCount) / stepCount);
+        //     dY = Math.round(((sp2c[2] - sp1c[2]) * this._intervalCount) / stepCount);
+        //     if (direction > 0) {
+        //         startPoint = this.slideObject.point1;
+        //     } else {
+        //         startPoint = this.slideObject.point2;
+        //         dX *= -1;
+        //         dY *= -1;
+        //     }
 
-            this.coords.setCoordinates(COORDS_BY.SCREEN, [
-                startPoint.coords.scrCoords[1] + dX,
-                startPoint.coords.scrCoords[2] + dY
-            ]);
-        } else if (this.slideObject.elementClass === OBJECT_CLASS.CURVE) {
-            if (direction > 0) {
-                newX = (this.slideObject.maxX() - this.slideObject.minX()) * this._intervalCount / stepCount + this.slideObject.minX();
-            } else {
-                newX = -(this.slideObject.maxX() - this.slideObject.minX()) * this._intervalCount / stepCount + this.slideObject.maxX();
-            }
-            this.coords.setCoordinates(COORDS_BY.USER, [this.slideObject.X(newX), this.slideObject.Y(newX)]);
+        //     this.coords.setCoordinates(COORDS_BY.SCREEN, [
+        //         startPoint.coords.scrCoords[1] + dX,
+        //         startPoint.coords.scrCoords[2] + dY
+        //     ]);
+        // } else if (this.slideObject.elementClass === OBJECT_CLASS.CURVE) {
+        //     if (direction > 0) {
+        //         newX = (this.slideObject.maxX() - this.slideObject.minX()) * this._intervalCount / stepCount + this.slideObject.minX();
+        //     } else {
+        //         newX = -(this.slideObject.maxX() - this.slideObject.minX()) * this._intervalCount / stepCount + this.slideObject.maxX();
+        //     }
+        //     this.coords.setCoordinates(COORDS_BY.USER, [this.slideObject.X(newX), this.slideObject.Y(newX)]);
 
-            res = Geometry.projectPointToCurve(this, this.slideObject, this.board);
-            this.coords = res[0];
-            this.position = res[1];
-        } else if (this.slideObject.elementClass === OBJECT_CLASS.CIRCLE) {
-            alpha = 2 * Math.PI;
-            if (direction < 0) {
-                alpha *= this._intervalCount / stepCount;
-            } else {
-                alpha *= (stepCount - this._intervalCount) / stepCount;
-            }
-            radius = this.slideObject.Radius();
+        //     res = Geometry.projectPointToCurve(this, this.slideObject, this.board);
+        //     this.coords = res[0];
+        //     this.position = res[1];
+        // } else if (this.slideObject.elementClass === OBJECT_CLASS.CIRCLE) {
+        //     alpha = 2 * Math.PI;
+        //     if (direction < 0) {
+        //         alpha *= this._intervalCount / stepCount;
+        //     } else {
+        //         alpha *= (stepCount - this._intervalCount) / stepCount;
+        //     }
+        //     radius = this.slideObject.Radius();
 
-            this.coords.setCoordinates(COORDS_BY.USER, [
-                this.slideObject.center.coords.usrCoords[1] + radius * Math.cos(alpha),
-                this.slideObject.center.coords.usrCoords[2] + radius * Math.sin(alpha)
-            ]);
-        }
+        //     this.coords.setCoordinates(COORDS_BY.USER, [
+        //         this.slideObject.center.coords.usrCoords[1] + radius * Math.cos(alpha),
+        //         this.slideObject.center.coords.usrCoords[2] + radius * Math.sin(alpha)
+        //     ]);
+        // }
 
-        this.board.update(this);
+        // this.board.update(this);
         return this;
     }
 
@@ -2465,9 +2484,10 @@ export class CoordsElement extends GeometryElement {
             p = this.parents;
         }
 
-        if (this.type === OBJECT_TYPE.GLIDER) {
-            p = [this.X(), this.Y(), this.slideObject.id];
-        }
+        // TODO: move to glider
+        // if (this.type === OBJECT_TYPE.GLIDER) {
+        //     p = [this.X(), this.Y(), this.slideObject.id];
+        // }
 
         return p;
     }
