@@ -861,15 +861,8 @@ export class JSXMath {
      *    1, -1, 0, -0, NaN, which represent "positive number", "negative number", "positive zero", "negative zero"
      *    and NaN respectively.
      */
-    static sign(x: number) {
-        Math.sign(x) ||
-            function (x) {
-                x = +x; // convert to a number
-                if (x === 0 || isNaN(x)) {
-                    return x;
-                }
-                return x > 0 ? 1 : -1;
-            }
+    static sign(x: number):number {
+        return Math.sign(x)
     }
     /**
      * A square & multiply algorithm to compute base to the power of exponent.

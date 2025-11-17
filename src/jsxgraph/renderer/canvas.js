@@ -1640,11 +1640,11 @@ JXG.extend(
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
             if (board && (board.attr.showcopyright || board.attr.showlogo)) {
-                this.displayLogo(JXG.licenseLogo, 12, board);
+                this.displayLogo(licenseLogo, 12, board);
             }
 
             if (board && board.attr.showcopyright) {
-                this.displayCopyright(JXG.licenseText, 12);
+                this.displayCopyright(licenseText, 12);
             }
         },
 

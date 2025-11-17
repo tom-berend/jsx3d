@@ -43,7 +43,6 @@ import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from 
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
 import { Numerics } from '../math/numerics.js'
-//  import {JSXMath}  from '../math/jsxmath.js';
 import { Geometry } from '../math/geometry.js';
 import { Complex } from '../math/complex.js';
 // import {Statistics} from '../math/statistics.js';
@@ -53,12 +52,26 @@ import { LooseObject, Type } from '../utils/type.js';
 import { Events } from '../utils/event.js';
 import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
-import { GeometryElement } from 'element';
+import { GeometryElement } from './element.js';
 import { SVGRenderer } from '../renderer/svg.js';
 import { JSXMath } from '../math/jsxmath.js';
 import { createText } from '../base/text.js'
 import { createPoint } from '../base/point.js'
 import { BoardOptions } from '../optionInterfaces.js';
+import { Statistics } from '../math/statistics.js';
+
+
+/**
+     * Constant: the small gray version indicator in the top left corner of every JSXGraph board (if
+     * showCopyright is not set to false on board creation).
+     */
+const licenseText = `JSXGraph v${JXG.version} \u00A9 jsxgraph.org`;
+
+/**
+ * JSXGraph logo: base64 data-URL of img/png/screen/jsxgraph-logo_black-square-solid.png
+ */
+const licenseLogo =
+    'data:image/png;base64,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';
 
 export class Board extends Events {
 
@@ -75,6 +88,9 @@ export class Board extends Events {
     public cssTransMat
     public isSuspendedUpdate = false
     public _preventSingleClick
+    public animationIntervalCode
+
+    public intersectionObserver
 
     // gestures
     public prevScale
@@ -82,6 +98,15 @@ export class Board extends Events {
     public prevCoords
     public isPreviousGesture
 
+    public mathLib         // Math or JXG.Math.IntervalArithmetic
+    public mathLibJXG  // JXG.Math or JXG.Math.IntervalArithmetic
+    public methodMap
+
+    _shiftKey
+    _ctrlKey
+    numTraces: number
+    _prevDim: { w: number, h: number }
+    _singleClickTimer
 
     /**
      * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
@@ -124,7 +149,7 @@ export class Board extends Events {
      * An array containing all geometric objects on the board in the order of construction.
      * @type Array
      */
-    public objectsList = [];
+    public objectsList: GeometryElement[] = [];
 
     /**
      * An associative array containing all groups belonging to the board. Key is the id of the group and value is a reference to the object.
@@ -214,7 +239,7 @@ export class Board extends Events {
      * @type JXG.GeometryElement
      * @see JXG.Board#touches
      */
-    public mouse = {};
+    public mouse: LooseObject = {};
 
     /**
      * Keeps track on touched elements, like {@link JXG.Board#mouse} does for mouse events.
@@ -261,7 +286,7 @@ export class Board extends Events {
      * Collects all elements that triggered a mouse down event.
      * @type Array
      */
-    public downObjects = [];
+    public downObjects:GeometryElement[] = [];
     public clickObjects = {};
 
     /**
@@ -269,7 +294,7 @@ export class Board extends Events {
      * Elements are stored with their id.
      * @type Array
      */
-    public focusObjects = [];
+    public focusObjects: GeometryElement[] = [];
 
     /**
      * Full updates are needed after zoom and axis translates. This saves some time during an update.
@@ -864,11 +889,11 @@ export class Board extends Events {
         this.focusObjects = [];
 
         if (this.attr.showcopyright || this.attr.showlogo) {
-            this.renderer.displayLogo(JXG.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
+            this.renderer.displayLogo(licenseLogo, Options.text.fontSize);
         }
 
         if (this.attr.showcopyright) {
-            this.renderer.displayCopyright(JXG.licenseText, parseInt(this.options.text.fontSize, 10));
+            this.renderer.displayCopyright(licenseText, Options.text.fontSize);
         }
 
         /**
@@ -893,21 +918,21 @@ export class Board extends Events {
          */
         this.currentCBDef = 'none';
 
-        /**
-         * If GEONExT constructions are displayed, then this property should be set to true.
-         * At the moment there should be no difference. But this may change.
-         * This is set in {@link JXG.GeonextReader.readGeonext}.
-         * @type Boolean
-         * @default false
-         * @see JXG.GeonextReader.readGeonext
-         */
-        this.geonextCompatibilityMode = false;
+        // /**
+        //  * If GEONExT constructions are displayed, then this property should be set to true.
+        //  * At the moment there should be no difference. But this may change.
+        //  * This is set in {@link JXG.GeonextReader.readGeonext}.
+        //  * @type Boolean
+        //  * @default false
+        //  * @see JXG.GeonextReader.readGeonext
+        //  */
+        // this.geonextCompatibilityMode = false;
 
-        if (this.options.text.useASCIIMathML && translateASCIIMath) {
-            init();
-        } else {
-            this.options.text.useASCIIMathML = false;
-        }
+        // if (Options.text.useASCIIMathML && translateASCIIMath) {
+        //     init();
+        // } else {
+        //     this.options.text.useASCIIMathML = false;
+        // }
 
         /**
          * A flag which tells if the board registers mouse events.
@@ -1052,7 +1077,7 @@ export class Board extends Events {
         this.userLog = [];
 
         this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
-        this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
+        this.mathLibJXG = JSXMath; // JXG.Math or JXG.Math.IntervalArithmetic
 
         if (this.attr.registerevents === true) {
             this.attr.registerevents = {
@@ -1392,7 +1417,7 @@ export class Board extends Events {
         cPos = Env.getOffset(container);
         doc = this.document.documentElement.ownerDocument;
 
-        if (!this.containerObj.currentStyle && doc.defaultView) {
+        if ( /*!this.containerObj.currentStyle && */doc.defaultView) {
             // Non IE
             // this is for hacks like this one used in wordpress for the admin bar:
             // html { margin-top: 28px }
@@ -1417,10 +1442,11 @@ export class Board extends Events {
         // and clientY coordinates of the mouse events. The minified sources seem to be the only publicly
         // available version so we're doing it the hacky way: Add a fixed offset.
         // see https://groups.google.com/d/msg/google-translate-general/H2zj0TNjjpY/jw6irtPlCw8J
-        if (typeof google === 'object' && google.translate) {
-            cPos[0] += 10;
-            cPos[1] += 25;
-        }
+
+        // if (typeof google === 'object' && google.translate) {   // removed TBTB
+        //     cPos[0] += 10;
+        //     cPos[1] += 25;
+        // }
 
         // add border width
         cPos[0] += Env.getProp(container, 'border-left-width');
@@ -1640,7 +1666,7 @@ export class Board extends Events {
      * for mouseevents.
      * @returns {Array} Contains the mouse coordinates in screen coordinates, ready for {@link JXG.Coords}
      */
-    getMousePosition(e:Event, i?:number) {
+    getMousePosition(e: Event, i?: number) {
         var cPos = this.getCoordsTopLeftCorner(),
             absPos,
             v;
@@ -1708,7 +1734,7 @@ export class Board extends Events {
             offset = [],
             haspoint,
             len = this.objectsList.length,
-            dragEl = { visProp: { layer: -10000 } };
+            dragEl: LooseObject = { visProp: { layer: -10000 } };
 
         // Store status of key presses for 3D movement
         this._shiftKey = evt.shiftKey;
@@ -2377,8 +2403,7 @@ export class Board extends Events {
         // }
     }
 
-    // TODO: Tom added this
-    resizeObserver() { console.warn('resize observer') }
+    resizeObserver: any  // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
 
 
     /**
@@ -2396,6 +2421,7 @@ export class Board extends Events {
                 this.startResizeObserver();
                 this.resizeHandlers.push('resizeobserver');
             } catch (err) {
+                throw new Error('not supported safari ??')
                 // Certain Safari and edge version do not support
                 // resizeObserver, but intersectionObserver.
                 // resize event: triggered if size of window changes
@@ -2533,7 +2559,7 @@ export class Board extends Events {
      *
      * Since iOS 13, touch events were abandoned in favour of pointer events
      */
-    addTouchEventHandlers(appleGestures:boolean = true) {
+    addTouchEventHandlers(appleGestures: boolean = true) {
         if (!this.hasTouchHandlers && Env.isBrowser) {
             var moveTarget = this.attr.movetarget || this.containerObj;
 
@@ -2639,17 +2665,17 @@ export class Board extends Events {
         if (this.hasPointerHandlers && Env.isBrowser) {
             var moveTarget = this.attr.movetarget || this.containerObj;
 
-            if (window.navigator.msPointerEnabled) {
-                // IE10-
-                Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
-            } else {
-                Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
-                Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
-                Env.removeEvent(moveTarget, 'click', this.pointerClickListener, this);
-                Env.removeEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
-            }
+            // if (window.navigator.msPointerEnabled) {
+            //     // IE10-
+            //     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+            //     Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
+            // } else {
+            Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+            Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
+            Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+            Env.removeEvent(moveTarget, 'click', this.pointerClickListener, this);
+            Env.removeEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
+            // }
 
             if (this.hasWheelHandlers) {
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -2657,13 +2683,8 @@ export class Board extends Events {
             }
 
             if (this.hasPointerUp) {
-                if (window.navigator.msPointerEnabled) {
-                    // IE10-
-                    Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-                } else {
-                    Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
-                }
+                Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 this.hasPointerUp = false;
             }
 
@@ -3139,9 +3160,9 @@ export class Board extends Events {
             //     // IE10-
             //     Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
             // } else {
-                // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
-                Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
+            // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
+            Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
+            Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
             // }
             this.hasPointerUp = true;
         }
@@ -3155,16 +3176,17 @@ export class Board extends Events {
         }
 
         // Prevent accidental selection of text
-        if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
-            this.document.selection.empty();
-        } else if (window.getSelection) {
+        // TODO: selection doesn't exist
+        // if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
+        //     this.document.selection.empty();
+        // } else if (window.getSelection) {
             sel = window.getSelection();
             if (sel.removeAllRanges) {
                 try {
                     sel.removeAllRanges();
                 } catch (e) { }
             }
-        }
+        // }
 
         // Mouse, touch or pen device
         this._inputDevice = this._getPointerInputDevice(evt);
@@ -3639,18 +3661,13 @@ export class Board extends Events {
         }
 
         if (this.hasPointerUp) {
-            if (window.navigator.msPointerEnabled) {
-                // IE10-
-                Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-            } else {
-                Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                Env.removeEvent(
-                    this.document,
-                    'pointercancel',
-                    this.pointerUpListener,
-                    this
-                );
-            }
+            Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+            Env.removeEvent(
+                this.document,
+                'pointercancel',
+                this.pointerUpListener,
+                this
+            );
             this.hasPointerUp = false;
         }
 
@@ -3711,11 +3728,12 @@ export class Board extends Events {
         //if (this.hasMouseHandlers) { this.removeMouseEventHandlers(); }
 
         // prevent accidental selection of text
-        if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
-            this.document.selection.empty();
-        } else if (window.getSelection) {
-            window.getSelection().removeAllRanges();
-        }
+        // TODO: document.selection isn't a thing (multiple places)
+        // if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
+        //     this.document.selection.empty();
+        // } else if (window.getSelection) {
+        //     window.getSelection().removeAllRanges();
+        // }
 
         // multitouch
         this._inputDevice = 'touch';
@@ -4214,12 +4232,13 @@ export class Board extends Events {
     mouseDownListener(evt) {
         var pos, elements, result;
 
-        // prevent accidental selection of text
-        if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
-            this.document.selection.empty();
-        } else if (window.getSelection) {
-            window.getSelection().removeAllRanges();
-        }
+        // TODO: document.selection isn't a thing
+        // // prevent accidental selection of text
+        // if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
+        //     this.document.selection.empty();
+        // } else if (window.getSelection) {
+        //     window.getSelection().removeAllRanges();
+        // }
 
         if (!this.hasMouseUp) {
             Env.addEvent(this.document, 'mouseup', this.mouseUpListener, this);
@@ -4687,7 +4706,7 @@ export class Board extends Events {
      * @see JXG.Board#setBoundingBox
      *
      */
-    updateContainerDims(width?:number, height?:number) {
+    updateContainerDims(width?: number, height?: number) {
         var w = width,
             h = height,
             // bb,
@@ -4894,18 +4913,20 @@ export class Board extends Events {
      * Update the container before and after printing.
      * @param {Event} [evt]
      */
-    printListener(evt) {
+    printListener(evt: Event) {
         this.updateContainerDims();
     }
+
 
     /**
      * Wrapper for printListener to be used in mediaQuery matches.
      * @param {MediaQueryList} mql
      */
     printListenerMatch(mql) {
-        if (mql.matches) {
-            this.printListener();
-        }
+        console.warn('printListenerMatch - ???')
+        // if (mql.matches) {
+        //     this.printListener();
+        // }
     }
 
     /**********************************************************
@@ -5144,8 +5165,8 @@ export class Board extends Events {
         //  -- We do need to redraw during dehighlighting. Otherwise objects won't be dehighlighted until
         // another object is highlighted.
         if (this.renderer.type === 'canvas' && needsDeHighlight) {
-            this.prepareUpdate();
-            this.renderer.suspendRedraw(this);
+            this.prepareUpdate(true);
+            this.renderer.suspendRedraw();
             this.updateRenderer();
             this.renderer.unsuspendRedraw();
         }
@@ -5308,7 +5329,7 @@ export class Board extends Events {
      * @param {Boolean} [diff=false]
      * @returns {JXG.Board} Reference to this board.
      */
-    moveOrigin(x, y, diff) {
+    moveOrigin(x, y, diff: boolean = false) {
         var ox, oy, ul, lr;
         if (Type.exists(x) && Type.exists(y)) {
             ox = this.origin.scrCoords[1];
@@ -5360,23 +5381,24 @@ export class Board extends Events {
             functions = [],
             // plaintext = 'var el, x, y, c, rgbo;\n',
             i = str.indexOf('<data>'),
-            j = str.indexOf('<' + '/data>'),
-            xyFun = function (board, el, f, what) {
-                return function () {
-                    var e, t;
+            j = str.indexOf('<' + '/data>')
 
-                    e = board.select(el.id);
-                    t = e.coords.usrCoords[what];
+        let xyFun = function (board, el, f, what) {
+            return function () {
+                var e, t;
 
-                    if (what === 2) {
-                        e.setPositionDirectly(COORDS_BY.USER, [f(), t]);
-                    } else {
-                        e.setPositionDirectly(COORDS_BY.USER, [t, f()]);
-                    }
-                    e.prepareUpdate().update();
-                };
-            }
-        visFun = function (board, el, f) {
+                e = board.select(el.id);
+                t = e.coords.usrCoords[what];
+
+                if (what === 2) {
+                    e.setPositionDirectly(COORDS_BY.USER, [f(), t]);
+                } else {
+                    e.setPositionDirectly(COORDS_BY.USER, [t, f()]);
+                }
+                e.prepareUpdate().update();
+            };
+        }
+        let visFun = function (board, el, f) {
             return function () {
                 var e, v;
 
@@ -5386,7 +5408,7 @@ export class Board extends Events {
                 e.setAttribute({ visible: v });
             };
         }
-        colFun = function (board, el, f, what) {
+        let colFun = function (board, el, f, what) {
             return function () {
                 var e, v;
 
@@ -5402,14 +5424,14 @@ export class Board extends Events {
                 }
             };
         }
-        posFun = function (board, el, f) {
+        let posFun = function (board, el, f) {
             return function () {
                 var e = board.select(el.id);
 
                 e.position = f();
             };
         }
-        styleFun = function (board, el, f) {
+        let styleFun = function (board, el, f) {
             return function () {
                 var e = board.select(el.id);
 
@@ -5434,7 +5456,7 @@ export class Board extends Events {
                 .slice(m + 1)
                 .replace(/\s+/g, '')
                 .toLowerCase(); // remove whitespace in property
-            right = Type.createFunction(right, this, '', true);
+            right = Type.createFunction(right, this, '');
 
             // Debug
             if (!Type.exists(this.elementsByName[name])) {
@@ -5515,9 +5537,9 @@ export class Board extends Events {
     calculateSnapSizes() {
         var p1, p2,
             bbox = this.getBoundingBox(),
-            gridStep = Type.evaluate(this.options.grid.majorStep),
-            gridX = Type.evaluate(this.options.grid.gridX),
-            gridY = Type.evaluate(this.options.grid.gridY),
+            gridStep = Type.evaluate(Options.grid.majorStep),
+            gridX = Type.evaluate(Options.grid.gridX),
+            gridY = Type.evaluate(Options.grid.gridY),
             x, y;
 
         if (!Array.isArray(gridStep)) {
@@ -5587,7 +5609,7 @@ export class Board extends Events {
      * @param {Number} [y]
      * @returns {JXG.Board} Reference to the board
      */
-    zoomIn(x?:number, y?:number) {
+    zoomIn(x?: number, y?: number) {
         var bb = this.getBoundingBox(),
             zX = Type.evaluate(this.attr.zoom.factorx),
             zY = Type.evaluate(this.attr.zoom.factory),
@@ -5633,7 +5655,7 @@ export class Board extends Events {
      * @param {Number} [y]
      * @returns {JXG.Board} Reference to the board
      */
-    zoomOut(x, y) {
+    zoomOut(x: number = 0, y: number = 0) {
         var bb = this.getBoundingBox(),
             zX = Type.evaluate(this.attr.zoom.factorx),
             zY = Type.evaluate(this.attr.zoom.factory),
@@ -5945,7 +5967,7 @@ export class Board extends Events {
     removeObject(object, saveMethod: boolean = false) {
         var i;
 
-        this.renderer.suspendRedraw(this);
+        this.renderer.suspendRedraw();
         if (Array.isArray(object)) {
             for (i = 0; i < object.length; i++) {
                 this._removeObj(object[i], saveMethod);
@@ -6039,7 +6061,7 @@ export class Board extends Events {
      * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox(), but keep view centered around original visible center.
      * @returns {JXG.Board} Reference to the board
      */
-    resizeContainer(canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
+    resizeContainer(canvasWidth, canvasHeight, dontset, dontSetBoundingBox: boolean = false) {
         var box,
             oldWidth, oldHeight,
             oX, oY;
@@ -6471,7 +6493,7 @@ export class Board extends Events {
      * @param {JXG.GeometryElement} [drag] Element that caused the update.
      * @returns {JXG.Board} Reference to the board
      */
-    update(drag:Boolean=true) {
+    update(drag: Boolean = true) {
         var i, len, b, insert, storeActiveEl;
 
         if (this.inUpdate || this.isSuspendedUpdate) {
@@ -6495,7 +6517,7 @@ export class Board extends Events {
 
         this.prepareUpdate(drag).updateElements(drag).updateConditions();
 
-        this.renderer.suspendRedraw(this);
+        this.renderer.suspendRedraw();
         this.updateRenderer();
         this.renderer.unsuspendRedraw();
         this.triggerEventHandlers(['update'], []);
@@ -6684,7 +6706,7 @@ export class Board extends Events {
      * 'update' adapts these values accoring to the new bounding box and 'keep' does nothing.
      * @returns {JXG.Board} Reference to the board
      */
-    setBoundingBox(bbox, keepaspectratio, setZoom) {
+    setBoundingBox(bbox, keepaspectratio: boolean = false, setZoom: string = "reset") {
         var h, w, ux, uy,
             offX = 0,
             offY = 0,
@@ -7057,7 +7079,7 @@ export class Board extends Events {
                         if (node) {
                             node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
                         } else if (Type.evaluate(value)) {
-                            this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
+                            this.renderer.displayCopyright(licenseText, Options.text.fontSize);
                         }
                     }
                     this._set(key, value);
@@ -7071,7 +7093,7 @@ export class Board extends Events {
                         if (node) {
                             node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
                         } else if (Type.evaluate(value)) {
-                            this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10));
+                            this.renderer.displayLogo(licenseLogo, Options.text.fontSize);
                         }
                     }
                     this._set(key, value);
@@ -7411,7 +7433,7 @@ export class Board extends Events {
      *   return true;
      * });
      */
-    select(str: GeometryElement | null | undefined, onlyByIdOrName: Boolean = false): Object {
+    select(str: GeometryElement | null | undefined, onlyByIdOrName: Boolean = false): GeometryElement {
         var flist,
             olist,
             i,
@@ -7420,7 +7442,7 @@ export class Board extends Events {
 
         if (s === null || s === undefined) {
             throw new Error('what??')  // TODO
-            return {};   // was x
+            // return {};   // was x
         }
 
         // It's a string, most likely an id or a name.
@@ -7507,12 +7529,13 @@ export class Board extends Events {
         // We walk up all parent nodes and collect possible CSS transforms.
         // Works also for ShadowDOM
         if (Type.exists(o.getRootNode)) {
-            o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            while (o) {
-                this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            }
-            this.cssTransMat = JSXMath.inverse(this.cssTransMat);
+            throw new Error('type confusion')  //TODO
+            // o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+            // while (o) {
+            //     this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            //     o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+            // }
+            // this.cssTransMat = JSXMath.inverse(this.cssTransMat);
         } else {
             /*
              * This is necessary for IE11
@@ -8240,10 +8263,6 @@ export class Board extends Events {
 
         if (doc.fullscreenElement !== undefined) {
             fullscreenElement = doc.fullscreenElement;
-        } else if (doc.webkitFullscreenElement !== undefined) {
-            fullscreenElement = doc.webkitFullscreenElement;
-        } else {
-            fullscreenElement = doc.msFullscreenElement;
         }
 
         if (fullscreenElement === null) {
@@ -8256,8 +8275,8 @@ export class Board extends Events {
             this.stopFullscreenResizeObserver(wrap_node);
             if (Type.exists(document.exitFullscreen)) {
                 document.exitFullscreen();
-            } else if (Type.exists(document.webkitExitFullscreen)) {
-                document.webkitExitFullscreen();
+            } else if (Type.exists(document.exitFullscreen)) {
+                document.exitFullscreen();
             }
         }
 
@@ -8284,10 +8303,6 @@ export class Board extends Events {
 
         if (doc.fullscreenElement !== undefined) {
             fullscreenElement = doc.fullscreenElement;
-        } else if (doc.webkitFullscreenElement !== undefined) {
-            fullscreenElement = doc.webkitFullscreenElement;
-        } else {
-            fullscreenElement = doc.msFullscreenElement;
         }
 
         inner_node = doc.getElementById(inner_id);
@@ -8374,7 +8389,7 @@ export class Board extends Events {
                         } else if (doc.fullscreenElement !== undefined) {
                             fullscreenElement = doc.fullscreenElement;
                         } else {
-                            fullscreenElement = doc.msFullscreenElement;
+                            fullscreenElement = doc.fullscreenElement;
                         }
                         if (fullscreenElement !== null) {
                             Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc,
@@ -8455,215 +8470,221 @@ export class Board extends Events {
         return this;
     }
 
-    /**
-     * Function to animate a curve rolling on another curve.
-     * @param {Curve} c1 JSXGraph curve building the floor where c2 rolls
-     * @param {Curve} c2 JSXGraph curve which rolls on c1.
-     * @param {number} start_c1 The parameter t such that c1(t) touches c2. This is the start position of the
-     *                          rolling process
-     * @param {Number} stepsize Increase in t in each step for the curve c1
-     * @param {Number} direction
-     * @param {Number} time Delay time for setInterval()
-     * @param {Array} pointlist Array of points which are rolled in each step. This list should contain
-     *      all points which define c2 and gliders on c2.
-     *
-     * @example
-     *
-     * // Line which will be the floor to roll upon.
-     * var line = board.create('curve', [function (t) { return t;} function (t){ return 1;}], {strokeWidth:6});
-     * // Center of the rolling circle
-     * var C = board.create('point',[0,2],{name:'C'});
-     * // Starting point of the rolling circle
-     * var P = board.create('point',[0,1],{name:'P', trace:true});
-     * // Circle defined as a curve. The circle 'starts' at P, i.e. circle(0) = P
-     * var circle = board.create('curve',[
-     *           function (t){var d = P.Dist(C),
-     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
-     *                       t += beta;
-     *                       return C.X()+d*Math.cos(t);
-     *           }
-     *           function (t){var d = P.Dist(C),
-     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
-     *                       t += beta;
-     *                       return C.Y()+d*Math.sin(t);
-     *           }
-     *           0,2*Math.PI],
-     *           {strokeWidth:6, strokeColor:'green'});
-     *
-     * // Point on circle
-     * var B = board.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
-     * var roll = board.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
-     * roll.start() // Start the rolling, to be stopped by roll.stop()
-     *
-     * </pre><div class='jxgbox' id='JXGe5e1b53c-a036-4a46-9e35-190d196beca5' style='width: 300px; height: 300px;'></div>
-     * <script type='text/javascript'>
-     * var brd = JXG.JSXGraph.initBoard('JXGe5e1b53c-a036-4a46-9e35-190d196beca5', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright:false, shownavigation: false});
-     * // Line which will be the floor to roll upon.
-     * var line = brd.create('curve', [function (t) { return t;} function (t){ return 1;}], {strokeWidth:6});
-     * // Center of the rolling circle
-     * var C = brd.create('point',[0,2],{name:'C'});
-     * // Starting point of the rolling circle
-     * var P = brd.create('point',[0,1],{name:'P', trace:true});
-     * // Circle defined as a curve. The circle 'starts' at P, i.e. circle(0) = P
-     * var circle = brd.create('curve',[
-     *           function (t){var d = P.Dist(C),
-     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
-     *                       t += beta;
-     *                       return C.X()+d*Math.cos(t);
-     *           }
-     *           function (t){var d = P.Dist(C),
-     *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
-     *                       t += beta;
-     *                       return C.Y()+d*Math.sin(t);
-     *           }
-     *           0,2*Math.PI],
-     *           {strokeWidth:6, strokeColor:'green'});
-     *
-     * // Point on circle
-     * var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
-     * var roll = brd.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
-     * roll.start() // Start the rolling, to be stopped by roll.stop()
-     * </script><pre>
-     */
-    createRoulette(c1, c2, start_c1, stepsize, direction, time, pointlist) {
-        var brd = this,
-            Roulette = () => {
-                var alpha = 0,
-                    Tx = 0,
-                    Ty = 0,
-                    t1 = start_c1,
-                    t2 = Numerics.root(
-                        function (t) {
-                            var c1x = c1.X(t1),
-                                c1y = c1.Y(t1),
-                                c2x = c2.X(t),
-                                c2y = c2.Y(t);
 
-                            return (c1x - c2x) * (c1x - c2x) + (c1y - c2y) * (c1y - c2y);
-                        }
-                        [0, Math.PI * 2]
-                    ),
-                    t1_new = 0.0,
-                    t2_new = 0.0,
-                    c1dist,
-                    rotation = brd.create(
-                        'transform',
-                        [
-                            function () {
-                                return alpha;
-                            }
-                        ],
-                        { type: 'rotate' }
-                    ),
-                    rotationLocal = brd.create(
-                        'transform',
-                        [
-                            function () {
-                                return alpha;
-                            },
-                            function () {
-                                return c1.X(t1);
-                            },
-                            function () {
-                                return c1.Y(t1);
-                            },
-                        ],
-                        { type: 'rotate' }
-                    ),
-                    translate = brd.create(
-                        'transform',
-                        [
-                            function () {
-                                return Tx;
-                            },
-                            function () {
-                                return Ty;
-                            },
-                        ],
-                        { type: 'translate' }
-                    ),
-                    // arc length via Simpson's rule.
-                    arclen = function (c, a, b) {
-                        var cpxa = Numerics.D(c.X)(a),
-                            cpya = Numerics.D(c.Y)(a),
-                            cpxb = Numerics.D(c.X)(b),
-                            cpyb = Numerics.D(c.Y)(b),
-                            cpxab = Numerics.D(c.X)((a + b) * 0.5),
-                            cpyab = Numerics.D(c.Y)((a + b) * 0.5),
-                            fa = JSXMath.hypot(cpxa, cpya),
-                            fb = JSXMath.hypot(cpxb, cpyb),
-                            fab = JSXMath.hypot(cpxab, cpyab);
+    // TODO convert to a class. Not sure anyone uses this
+    //     /**
+    //      * Function to animate a curve rolling on another curve.
+    //      * @param {Curve} c1 JSXGraph curve building the floor where c2 rolls
+    //      * @param {Curve} c2 JSXGraph curve which rolls on c1.
+    //      * @param {number} start_c1 The parameter t such that c1(t) touches c2. This is the start position of the
+    //      *                          rolling process
+    //      * @param {Number} stepsize Increase in t in each step for the curve c1
+    //      * @param {Number} direction
+    //      * @param {Number} time Delay time for setInterval()
+    //      * @param {Array} pointlist Array of points which are rolled in each step. This list should contain
+    //      *      all points which define c2 and gliders on c2.
+    //      *
+    //      * @example
+    //      *
+    //      * // Line which will be the floor to roll upon.
+    //      * var line = board.create('curve', [function (t) { return t;} function (t){ return 1;}], {strokeWidth:6});
+    //      * // Center of the rolling circle
+    //      * var C = board.create('point',[0,2],{name:'C'});
+    //      * // Starting point of the rolling circle
+    //      * var P = board.create('point',[0,1],{name:'P', trace:true});
+    //      * // Circle defined as a curve. The circle 'starts' at P, i.e. circle(0) = P
+    //      * var circle = board.create('curve',[
+    //      *           function (t){var d = P.Dist(C),
+    //      *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
+    //      *                       t += beta;
+    //      *                       return C.X()+d*Math.cos(t);
+    //      *           }
+    //      *           function (t){var d = P.Dist(C),
+    //      *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
+    //      *                       t += beta;
+    //      *                       return C.Y()+d*Math.sin(t);
+    //      *           }
+    //      *           0,2*Math.PI],
+    //      *           {strokeWidth:6, strokeColor:'green'});
+    //      *
+    //      * // Point on circle
+    //      * var B = board.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
+    //      * var roll = board.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
+    //      * roll.start() // Start the rolling, to be stopped by roll.stop()
+    //      *
+    //      * </pre><div class='jxgbox' id='JXGe5e1b53c-a036-4a46-9e35-190d196beca5' style='width: 300px; height: 300px;'></div>
+    //      * <script type='text/javascript'>
+    //      * var brd = JXG.JSXGraph.initBoard('JXGe5e1b53c-a036-4a46-9e35-190d196beca5', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright:false, shownavigation: false});
+    //      * // Line which will be the floor to roll upon.
+    //      * var line = brd.create('curve', [function (t) { return t;} function (t){ return 1;}], {strokeWidth:6});
+    //      * // Center of the rolling circle
+    //      * var C = brd.create('point',[0,2],{name:'C'});
+    //      * // Starting point of the rolling circle
+    //      * var P = brd.create('point',[0,1],{name:'P', trace:true});
+    //      * // Circle defined as a curve. The circle 'starts' at P, i.e. circle(0) = P
+    //      * var circle = brd.create('curve',[
+    //      *           function (t){var d = P.Dist(C),
+    //      *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
+    //      *                       t += beta;
+    //      *                       return C.X()+d*Math.cos(t);
+    //      *           }
+    //      *           function (t){var d = P.Dist(C),
+    //      *                           beta = Geometry.rad([C.X()+1,C.Y()],C,P);
+    //      *                       t += beta;
+    //      *                       return C.Y()+d*Math.sin(t);
+    //      *           }
+    //      *           0,2*Math.PI],
+    //      *           {strokeWidth:6, strokeColor:'green'});
+    //      *
+    //      * // Point on circle
+    //      * var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
+    //      * var roll = brd.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
+    //      * roll.start() // Start the rolling, to be stopped by roll.stop()
+    //      * </script><pre>
+    //      */
+    //     createRoulette(c1, c2, start_c1, stepsize, direction, time, pointlist) {
+    //         var brd = this,
+    //             Roulette = () => {
+    //                 var alpha = 0,
+    //                     Tx = 0,
+    //                     Ty = 0,
+    //                     t1 = start_c1,
+    //                     t2 = Numerics.root(
+    //                         function (t) {
+    //                             var c1x = c1.X(t1),
+    //                                 c1y = c1.Y(t1),
+    //                                 c2x = c2.X(t),
+    //                                 c2y = c2.Y(t);
 
-                        return ((fa + 4 * fab + fb) * (b - a)) / 6;
-                    }
-                exactDist = function (t) {
-                    return c1dist - arclen(c2, t2, t);
-                }
-                beta = Math.PI / 18,
-                    beta9 = beta * 9,
-                    interval = null;
+    //                             return (c1x - c2x) * (c1x - c2x) + (c1y - c2y) * (c1y - c2y);
+    //                         }
+    //                         [0, Math.PI * 2]
+    //                     ),
+    //                     t1_new = 0.0,
+    //                     t2_new = 0.0,
+    //                     c1dist,
+    //                     rotation = brd.create(
+    //                         'transform',
+    //                         [
+    //                             function () {
+    //                                 return alpha;
+    //                             }
+    //                         ],
+    //                         { type: 'rotate' }
+    //                     ),
+    //                     rotationLocal = brd.create(
+    //                         'transform',
+    //                         [
+    //                             function () {
+    //                                 return alpha;
+    //                             },
+    //                             function () {
+    //                                 return c1.X(t1);
+    //                             },
+    //                             function () {
+    //                                 return c1.Y(t1);
+    //                             },
+    //                         ],
+    //                         { type: 'rotate' }
+    //                     ),
+    //                     translate = brd.create(
+    //                         'transform',
+    //                         [
+    //                             function () {
+    //                                 return Tx;
+    //                             },
+    //                             function () {
+    //                                 return Ty;
+    //                             },
+    //                         ],
+    //                         { type: 'translate' }
+    //                     ),
+    //                     // arc length via Simpson's rule.
+    //                     arclen = function (c, a, b) {
+    //                         var cpxa = Numerics.D(c.X)(a),
+    //                             cpya = Numerics.D(c.Y)(a),
+    //                             cpxb = Numerics.D(c.X)(b),
+    //                             cpyb = Numerics.D(c.Y)(b),
+    //                             cpxab = Numerics.D(c.X)((a + b) * 0.5),
+    //                             cpyab = Numerics.D(c.Y)((a + b) * 0.5),
+    //                             fa = JSXMath.hypot(cpxa, cpya),
+    //                             fb = JSXMath.hypot(cpxb, cpyb),
+    //                             fab = JSXMath.hypot(cpxab, cpyab);
 
-                this.rolling = function () {
-                    var h, g, hp, gp, z;
+    //                         return ((fa + 4 * fab + fb) * (b - a)) / 6;
+    //                     }
+    //                 exactDist = function (t) {
+    //                     return c1dist - arclen(c2, t2, t);
+    //                 }
+    //                 beta = Math.PI / 18,
+    //                     beta9 = beta * 9,
+    //                     interval = null;
 
-                    t1_new = t1 + direction * stepsize;
+    //                 this.rolling = function () {
+    //                     var h, g, hp, gp, z;
 
-                    // arc length between c1(t1) and c1(t1_new)
-                    c1dist = arclen(c1, t1, t1_new);
+    //                     t1_new = t1 + direction * stepsize;
 
-                    // find t2_new such that arc length between c2(t2) and c1(t2_new) equals c1dist.
-                    t2_new = Numerics.root(exactDist, t2);
+    //                     // arc length between c1(t1) and c1(t1_new)
+    //                     c1dist = arclen(c1, t1, t1_new);
 
-                    // c1(t) as complex number
-                    h = new Complex(c1.X(t1_new), c1.Y(t1_new));
+    //                     // find t2_new such that arc length between c2(t2) and c1(t2_new) equals c1dist.
+    //                     t2_new = Numerics.root(exactDist, t2);
 
-                    // c2(t) as complex number
-                    g = new Complex(c2.X(t2_new), c2.Y(t2_new));
+    //                     // c1(t) as complex number
+    //                     h = new Complex(c1.X(t1_new), c1.Y(t1_new));
 
-                    hp = new Complex(Numerics.D(c1.X)(t1_new), Numerics.D(c1.Y)(t1_new));
-                    gp = new Complex(Numerics.D(c2.X)(t2_new), Numerics.D(c2.Y)(t2_new));
+    //                     // c2(t) as complex number
+    //                     g = new Complex(c2.X(t2_new), c2.Y(t2_new));
 
-                    // z is angle between the tangents of c1 at t1_new, and c2 at t2_new
-                    z = Complex.C.div(hp, gp);
+    //                     hp = new Complex(Numerics.D(c1.X)(t1_new), Numerics.D(c1.Y)(t1_new));
+    //                     gp = new Complex(Numerics.D(c2.X)(t2_new), Numerics.D(c2.Y)(t2_new));
 
-                    alpha = Math.atan2(z.imaginary, z.real);
-                    // Normalizing the quotient
-                    z.div(Complex.C.abs(z));
-                    z.mult(g);
-                    Tx = h.real - z.real;
+    //                     // z is angle between the tangents of c1 at t1_new, and c2 at t2_new
+    //                     z = Complex.C.div(hp, gp);
 
-                    // T = h(t1_new)-g(t2_new)*h'(t1_new)/g'(t2_new);
-                    Ty = h.imaginary - z.imaginary;
+    //                     alpha = Math.atan2(z.imaginary, z.real);
+    //                     // Normalizing the quotient
+    //                     z.div(Complex.C.abs(z));
+    //                     z.mult(g);
+    //                     Tx = h.real - z.real;
 
-                    // -(10-90) degrees: make corners roll smoothly
-                    if (alpha < -beta && alpha > -beta9) {
-                        alpha = -beta;
-                        rotationLocal.applyOnce(pointlist);
-                    } else if (alpha > beta && alpha < beta9) {
-                        alpha = beta;
-                        rotationLocal.applyOnce(pointlist);
-                    } else {
-                        rotation.applyOnce(pointlist);
-                        translate.applyOnce(pointlist);
-                        t1 = t1_new;
-                        t2 = t2_new;
-                    }
-                    brd.update();
-                };
+    //                     // T = h(t1_new)-g(t2_new)*h'(t1_new)/g'(t2_new);
+    //                     Ty = h.imaginary - z.imaginary;
 
-                this.start = function () {
-                    if (time > 0) {
-                        interval = window.setInterval(this.rolling, time);
-                    }
-                    return this;
-                };
+    //                     // -(10-90) degrees: make corners roll smoothly
+    //                     if (alpha < -beta && alpha > -beta9) {
+    //                         alpha = -beta;
+    //                         rotationLocal.applyOnce(pointlist);
+    //                     } else if (alpha > beta && alpha < beta9) {
+    //                         alpha = beta;
+    //                         rotationLocal.applyOnce(pointlist);
+    //                     } else {
+    //                         rotation.applyOnce(pointlist);
+    //                         translate.applyOnce(pointlist);
+    //                         t1 = t1_new;
+    //                         t2 = t2_new;
+    //                     }
+    //                     brd.update();
+    //                 };
 
-                this.stop = function () {
-                    window.clearInterval(interval);
-                    return this;
-                };
-                return this;
-            };
-        return new Roulette();
-    }
+    //                 this.start = function () {
+    //                     if (time > 0) {
+    //                         interval = window.setInterval(this.rolling, time);
+    //                     }
+    //                     return this;
+    //                 };
+
+    //                 this.stop = function () {
+    //                     window.clearInterval(interval);
+    //                     return this;
+    //                 };
+    //                 return this;
+    //             };
+    //         return new Roulette();
+    //     }
 }
+
+
+
+

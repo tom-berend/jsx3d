@@ -1024,7 +1024,7 @@ export class GeometryElement extends Events {
      * @return {JXG.GeometryElement} Reference to the element
      * @private
      */
-    setDisplayRendNode(val) {
+    setDisplayRendNode(val?:boolean) {   // TODO: no one ever sends param val ???
         var i, len, s, len_s, obj;
 
         if (val === undefined) {
@@ -2293,7 +2293,7 @@ export class GeometryElement extends Events {
      * @private
      * @returns {JXG.GeometryElement} Reference to the element.
      */
-    snapToGrid() {
+    snapToGrid(force?:boolean):GeometryElement {
         return this;
     }
 
@@ -2305,7 +2305,7 @@ export class GeometryElement extends Events {
      * @private
      * @returns {JXG.GeometryElement} Reference to the element.
      */
-    snapToPoints() {
+    snapToPoints(force?:boolean):GeometryElement {
         return this;
     }
 

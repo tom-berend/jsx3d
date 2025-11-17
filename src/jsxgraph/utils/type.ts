@@ -953,7 +953,7 @@ export class Type {
      * @param val
      * @returns {Number}
      */
-    staticautoDigits(val) {
+    static autoDigits(val) {
         var x = Math.abs(val),
             str;
 

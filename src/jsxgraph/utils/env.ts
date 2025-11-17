@@ -454,7 +454,7 @@ export class Env {
      * an options object or the useCapture Boolean.
      *
      */
-    static addEvent(obj: Node, type: string, fn: Function, owner: Board, options: object | boolean = false) {
+    static addEvent(obj: Node|Window, type: string, fn: Function, owner: Board, options: object | boolean = false) {
 
         let callback = function () {
             return fn.apply(owner, arguments);

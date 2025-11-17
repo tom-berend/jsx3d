@@ -143,8 +143,9 @@ export class Text extends CoordsElement {
 
         let tmp;
 
-        // this.constructor(board, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT);
-        this.element = this.board.select(attributes.anchor);
+
+        // TODO: what was this ???
+        //this.element = this.board.select(attributes.anchor);
 
 
         // this.coordsConstructor(coords, this.evalVisProp('islabel'));

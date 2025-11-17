@@ -154,6 +154,7 @@ export enum BOARD_QUALITY{
      * @see JXG.Board#updateQuality
      */
     LOW = 0x1,
+    HIGHLOW = 0x1,
 
     /**
      * Update is made with high quality, e.g. graphs are evaluated at much more points.
@@ -163,3 +164,6 @@ export enum BOARD_QUALITY{
      */
     HIGH = 0x2,
 }
+
+
+

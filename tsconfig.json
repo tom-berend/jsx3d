@@ -4,7 +4,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "lib": [
-            "ES2015",
+            "ES2023",
             "DOM"
         ],
         "allowJs": true,

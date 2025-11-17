@@ -66,6 +66,11 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
 
     Xjc
     Yjc
+    _smin
+    _smax
+    _initialized
+    updateGlider
+    updateGliderFromParent
 
 
     /** used by animation */
@@ -215,6 +220,8 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         /*
          * this.element may have been set by the object constructor.
          */
+        // TODO: what is isLable??  not defined
+        let isLabel = false;
         if (Type.exists(this.element)) {
             this.addAnchor(coordinates, isLabel);
         }
@@ -1018,7 +1025,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
      * @returns {JXG.CoordsElement} Reference to this element
      */
-    snapToGrid(force) {
+    snapToGrid(force:boolean) {
         return this.handleSnapToGrid(force);
     }
 
@@ -1030,7 +1037,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
      * @returns {JXG.CoordsElement} Reference to this element
      */
-    handleSnapToPoints(force?: number) {
+    handleSnapToPoints(force?: boolean) {
         var i,
             pEl,
             pCoords,
@@ -1100,7 +1107,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
      * @returns {JXG.CoordsElement} Reference to this element
      */
-    snapToPoints(force) {
+    snapToPoints(force?:boolean) {
         return this.handleSnapToPoints(force);
     }
 
@@ -1289,11 +1296,11 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @param {Array} tv (x, y)
      * @returns {JXG.CoordsElement}
      */
-    setPositionByTransform(method, tv) {
+    setPositionByTransform(method:COORDS_BY, tv:number[]) {
         var t;
 
-        tv = new Coords(method, tv, this.board);
-        t = this.board.create("transform", tv.usrCoords.slice(1), {
+        let tvCoords = new Coords(method, tv, this.board);
+        t = this.board.create("transform", tvCoords.usrCoords.slice(1), {
             type: "translate"
         });
 
@@ -1303,7 +1310,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         ) {
             this.transformations[this.transformations.length - 1].melt(t);
         } else {
-            this.addTransform(this, t);
+            this.addTransform(this.element, t);
         }
 
         this.prepareUpdate().update(true);
@@ -1972,7 +1979,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         }
 
         this.animationCallback = options.callback;
-        this.board.addAnimation(this);
+        this.board.addAnimation(this.element);
 
         return this;
     }
@@ -2223,7 +2230,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         }
         this.animationPath = coords;
         this.animationCallback = options.callback;
-        this.board.addAnimation(this);
+        this.board.addAnimation(this.element);
 
         return this;
     }
