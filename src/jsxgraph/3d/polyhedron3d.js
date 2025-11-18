@@ -672,7 +672,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
 
         if (Array.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Array.isArray(f[0])) {
             // Handle case that face is of type [[points], {attr}]
-            Type.mergeAttr(attr, f[1]);
+            attr = Type.mergeAttrHelper(attr, f[1]);
             // Normalize face array, i.e. don't store attributes of that face in polyhedron
             polyhedron.faces[i] = f[0];
         }

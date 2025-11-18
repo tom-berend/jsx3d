@@ -53,16 +53,11 @@
  * Type is a static class
 */
 
-// TODO: this needs to be replace with real types
-export interface LooseObject {
-    [key: string]: any
-}
-
 
 // TS has strong types - get rid of whatever we can
 
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
-// import { Coords } from '../base/coords.js';
+import { LooseObject } from '../jxg.js';
 import { Board } from '../base/board.js';
 import { GeometryElement } from '../base/element.js';
 import { JSXMath } from '../math/jsxmath.js';
@@ -76,15 +71,16 @@ export class Type {
      * @returns {Boolean}
      */
     static isBoard(v: any): boolean {
-        return (
-            this.isObject(v) &&
-            this.isNumber(v.BOARD_MODE_NONE) &&
-            this.isObject(v.objects) &&
-            this.isObject(v.jc) &&
-            this.isFunction(v.update) &&
-            !!v.containerObj &&
-            this.isString(v.id)
-        );
+        return (v instanceof Board)
+
+        //     this.isObject(v) &&
+        //     this.isNumber(v.BOARD_MODE_NONE) &&
+        //     this.isObject(v.objects) &&
+        //     this.isObject(v.jc) &&
+        //     this.isFunction(v.update) &&
+        //     !!v.containerObj &&
+        //     this.isString(v.id)
+        // );
     }
 
     /**
@@ -1189,7 +1185,7 @@ export class Type {
                     }
                 } else if (typeof o === 'object') {
                     if (typeof obj1[i] !== 'object') {
-                        obj1[i] = {};
+                        obj1[i] = o//{};
                     }
 
                     obj1[i] = this.merge(obj1[i], o);
@@ -1298,9 +1294,9 @@ export class Type {
      * @see JXG.merge
      *
      */
-    static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false) {
-        attr = this.mergeAttrHelper(attr, special, toLower, ignoreUndefinedSpecials)
-    }
+    // static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false) {
+    //     attr = this.mergeAttrHelper(attr, special, toLower, ignoreUndefinedSpecials)
+    // }
     // the helper version is testable.
     static mergeAttrHelper(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false): object {
 
@@ -1387,6 +1383,10 @@ export class Type {
     // attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
     // attr_curve = Type.copyAttributes(attributes, board.options, "conic");
 
+    static testCopy(attributes: object, options: object, ...s: string[]){
+        this.copyAttributes(attributes,options,...s)
+    }
+
     static copyAttributes(attributes: object, options: object, ...s: string[]) {
         var defaultOptions: LooseObject,
             arg,
@@ -1428,6 +1428,7 @@ export class Type {
         isAvail = true;
         for (i = 2; i < len; i++) {
             arg = arguments[i];
+            let a = Options[arg]
             if (Options[arg]) {
                 o = Options[arg];
             } else {
@@ -1445,20 +1446,21 @@ export class Type {
         // in case it is supplied as in
         //     copyAttribute(attributes, board.options, 'line', 'point1')
         // In this case we would merge attributes.point1 into the global line.point1 attributes.
-        o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
-        isAvail = true;
-        for (i = 2; i < len; i++) {
-            arg = arguments[i].toLowerCase();
-            if (Options[arg]) {
-                o = Options[arg];
-            } else {
-                isAvail = false;
-                break;
-            }
-        }
-        if (isAvail) {
-            this.mergeAttr(defaultOptions, o, true);
-        }
+        // o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
+        // isAvail = true;
+        // for (i = 2; i < len; i++) {
+        //     arg = arguments[i].toLowerCase();
+
+        //     if (o[arg]) {
+        //         o = o[arg];
+        //     } else {
+        //         isAvail = false;
+        //         break;
+        //     }
+        // }
+        // if (isAvail) {
+            defaultOptions =this.mergeAttrHelper(defaultOptions, attributes, true);
+        // }
 
         if (arguments[2] === 'board') {
             // For board attributes we are done now.

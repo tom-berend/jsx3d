@@ -38,8 +38,8 @@
 type argVals = string | number | Boolean  // arguments for event handlers
 
 
-
-import { LooseObject, Type } from "./type.js";
+import { LooseObject } from "../jxg.js";
+import { Type } from "./type.js";
 import { GeometryElement } from "../base/element.js";
 import { Coords } from "../base/coords.js";
 import { CoordsElement } from "../base/coordselement.js";

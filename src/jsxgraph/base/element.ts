@@ -30,7 +30,7 @@
  */
 
 
-import { JXG, JXG_elements } from "../jxg.js";
+import { LooseObject,JXG } from "../jxg.js";
 import { Board } from "../base/board.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
@@ -41,7 +41,7 @@ import { Statistics } from "../math/statistics.js";
 import { Options } from "../options.js";
 import { Events } from "../utils/event.js";
 import { Color } from "../utils/color.js";
-import { LooseObject, Type } from "../utils/type.js";
+import {  Type } from "../utils/type.js";
 import { Text } from "../base/text.js";
 
 import { BoardOptions, GeometryElementOptions } from "../optionInterfaces.js";
@@ -89,6 +89,8 @@ export interface AriaAttributes {
 
 
 export class GeometryElement extends Events {
+
+
 
     public coords: Coords
     public initialCoords: Coords;
@@ -1394,7 +1396,7 @@ export class GeometryElement extends Events {
                         // That is a primitive type is replaced by an object.
                         this.visProp[key] = {};
                     }
-                    Type.mergeAttr(this.visProp[key], value);
+                    this.visProp[key] = Type.mergeAttrHelper(this.visProp[key], value);
 
                     // First, handle the special case
                     // ticks.setAttribute({label: {anchorX: "right", ..., visible: true});

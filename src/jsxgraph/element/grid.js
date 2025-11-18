@@ -420,20 +420,20 @@ JXG.createGrid = function (board, parents, attributes) {
 
     // Themes
     attrGrid = Type.copyAttributes(attributes, board.options, 'grid');
-    Type.mergeAttr(attrGrid, attrGrid.themes[attrGrid.theme], false);
+    attrGrid = Type.mergeAttrHelper(attrGrid, attrGrid.themes[attrGrid.theme], false);
 
     // Create majorGrid
     attrMajor = {};
-    Type.mergeAttr(attrMajor, attrGrid, true, true);
-    Type.mergeAttr(attrMajor, attrGrid.major, true, true);
+    attrMajor = Type.mergeAttrHelper(attrMajor, attrGrid, true, true);
+    attrMajor = Type.mergeAttrHelper(attrMajor, attrGrid.major, true, true);
     majorGrid = board.create('curve', [[null], [null]], attrMajor);
     majorGrid.elType = 'grid';
     majorGrid.type = OBJECT_TYPE.GRID;
 
     // Create minorGrid
     attrMinor = {};
-    Type.mergeAttr(attrMinor, attrGrid, true, true);
-    Type.mergeAttr(attrMinor, attrGrid.minor, true, true);
+    attrMinor = Type.mergeAttrHelper(attrMinor, attrGrid, true, true);
+    attrMinor = Type.mergeAttrHelper(attrMinor, attrGrid.minor, true, true);
     if (attrMinor.id === attrMajor.id) {
         attrMinor.id = majorGrid.id + '_minor';
     }

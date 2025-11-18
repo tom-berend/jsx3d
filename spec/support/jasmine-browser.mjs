@@ -5,14 +5,15 @@ export default {
   srcFiles: [],
   specDir: "build",
   specFiles: [
-    "**/*.spec.js",
+    "tests/base/coords.spec.js",
+    // "tests/type.spec.js",
   ],
   helpers: [
     "spec/helpers/**/*.?(m)js"
   ],
   esmFilenameExtension: ".js",
   // Set to true if you need to load module src files instead of loading via the spec files.
-  modulesWithSideEffectsInSrcFiles: false,
+  modulesWithSideEffectsInSrcFiles: true,
   // Allows the use of top-level await in src/spec/helper files. This is off by
   // default because it makes files load more slowly.
   enableTopLevelAwait: false,

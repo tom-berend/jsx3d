@@ -35,7 +35,7 @@
  * This object provides the coordinate handling of points, images and texts.
  */
 
-import { JXG } from "../jxg.js";
+import { LooseObject, JXG } from "../jxg.js";
 import { Board } from "../base/board.js"
 import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";
@@ -43,7 +43,7 @@ import { Numerics } from "../math/numerics.js";
 import { Statistics } from "../math/statistics.js";
 import { Coords } from "./coords.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
-import { LooseObject, Type } from "../utils/type.js";
+import { Type } from "../utils/type.js";
 import { GeometryElement } from "../base/element.js";
 import { Options } from "../options.js"
 import { Transformation } from "./transformation.js";

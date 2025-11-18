@@ -60,12 +60,12 @@
  * defined in this file directly in the JXG namespace.
  */
 
-import { Board } from "./base/board.js"
-import { JSXGraph } from "./jsxgraph.js";
-import { Type, LooseObject } from "./utils/type.js";
-import { GeometryElement } from "./base/element.js";
-import {Text} from './base/text.js'
-import {Point} from './base/point.js'
+// import { Board } from "./base/board.js"
+// import { JSXGraph } from "./jsxgraph.js";
+// import { Type, LooseObject } from "./utils/type.js";
+// import { GeometryElement } from "./base/element.js";
+// import {Text} from './base/text.js'
+// import {Point} from './base/point.js'
 
 // // calling the files this way lets them register their element
 // import './base/text.js'
@@ -73,6 +73,11 @@ import {Point} from './base/point.js'
 // import "./base/element.js";
 // import "./options.js";
 
+
+// TODO: this needs to be replace with real types
+export interface LooseObject {
+    [key: string]: any
+}
 
 
 
@@ -133,7 +138,7 @@ const VERSION = '1.12.1-beta';
 /**
  * JXG is the top object of JSXGraph and defines the namespace
  */
-export class JXG extends JSXGraph {
+export class JXG  {
     /**  Constant: the currently used JSXGraph version.  */
     static version = VERSION; // -dev  -beta ??
 
@@ -454,13 +459,13 @@ export class JXG extends JSXGraph {
         }
     }
 
-    static forcePreload(){
-        throw new Error('should NEVER call this, it just forces object loading')
-        let x:any
+    // static forcePreload(){
+    //     throw new Error('should NEVER call this, it just forces object loading')
+    //     let x:any
 
-        let b = new Board('j','svg','preload',[0,0],1,1,1,1,1000,1000,{})
-        x = new Text(b,[0,0],{},'preload')
-        x = new Point(b,[0,0],{})
-    }
+    //     let b = new Board('j','svg','preload',[0,0],1,1,1,1,1000,1000,{})
+    //     x = new Text(b,[0,0],{},'preload')
+    //     x = new Point(b,[0,0],{})
+    // }
 
 }

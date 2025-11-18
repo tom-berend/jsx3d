@@ -27,19 +27,21 @@
 
         // console.log('end')
 
-        import {JXG} from './build/jsxgraph/jxg.js'
-        let board = JXG.initBoard(
-                'box', {
-                    boundingbox: [-10, 10, 10, -10],
-                    axis:true
-                });
+        import { JSXGraph } from './build/jsxgraph/jsxgraph.js'
+
+        let board = JSXGraph.initBoard(
+            'box', {
+            boundingbox: [-10, 10, 10, -10],
+            axis: true
+        });
         // console.warn('about to create text')
         // board.create('text',[0,0,'message from tom'],{strokeColor:'red'})
 
-        console.warn('about to create pointt')
-        board.create('point',[1,1])
 
-</script>
+        console.warn('about to create pointt')
+        board.create('point', [1, 1])
+
+    </script>
 </body>
 
 </html>

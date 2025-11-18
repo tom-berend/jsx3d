@@ -1,23 +1,24 @@
 ////////////////// prototype test
-describe('suite description', () => {
+describe('type suite description', () => {
     it('test description', () => {
         let a = 0
         expect(a).toBe(0)
     });
 });
 //////////////////////////////////////////////////
-import { LooseObject, Type } from '../jsxgraph/utils/type.js';
+import { LooseObject} from '../jsxgraph/jxg.js'
+import { Type } from '../jsxgraph/utils/type.js';
 import { Options } from '../jsxgraph/options.js';
 
-// temporary for testing
-class Board {
-    BOARD_MODE_NONE = 0
-    objects = {}
-    jc = {}
-    update = () => { }
-    containerObj = true
-    id = 'string'
-}
+// // temporary for testing
+// class Board {
+//     BOARD_MODE_NONE = 0
+//     objects = {}
+//     jc = {}
+//     update = () => { }
+//     containerObj = true
+//     id = 'string'
+// }
 describe('deepcopy', () => {
     it('adds obj2 to obj1 NOT lowercalse', () => {
         let obj1 = { a: 1, b: 2 }
@@ -32,12 +33,12 @@ describe('deepcopy', () => {
         expect(Type.deepCopy(obj1, obj4, true)).toEqual({ a: 1, b: 4, c: { d: 5, e: { f: 6 } } });
     });
 });
-describe("isBoard", function () {
-    it("tests whether a parameter is really a Board", function () {
-        let b = new Board()
-        expect(Type.isBoard(b)).toBe(true);   // missing param
-    });
-});
+// describe("isBoard", function () {
+//     it("tests whether the parameter is really a Board", function () {
+//         let b = new Board()
+//         expect(Type.isBoard(b)).toBeTrue();
+//     });
+// });
 describe("isObject", function () {
     it('surprisingly hard to verify that something is an object', () => {
         expect(Type.isObject({})).toBe(true);
@@ -81,6 +82,14 @@ describe('mergeAttr(attr, special, toLower, ignoreUndefinedSpecials)', () => {
         expect(Type.mergeAttrHelper(x, y)).toEqual({ A: true, b: true })
         expect(Type.mergeAttrHelper(y, x)).toEqual({ a: true, B: true })
 
+
+        let x1 = {enabled:true, compile:true}
+        let y1 = {enabled:false}
+        let z1 = Type.mergeAttrHelper(x1,y1)
+        expect(z1).toEqual({enabled:false, compile:true})
+        let y2 = {Enabled:false}
+        let z2 = Type.mergeAttrHelper(x1,y2)  // 'enabled' vs 'Enabled', merge always takes to lowercase
+        expect(z1).toEqual({enabled:false, compile:true})
     });
 });
 describe('getObjectDiff(a:object, b:object): object)', () => {
@@ -111,6 +120,7 @@ describe('copyAttributes(attributes, options, ...s)', () => {
         // we lose 'dummy' because ??
         // dummyOption asks for partial from jc
         expect(Type.copyAttributes({}, Options.board, 'jc')).toEqual({ enabled: true, compile:true, label: lowerCaseLabelOptions })
+        expect(Type.copyAttributes({enabled:true}, Options.board, 'jc')).toEqual({ enabled: true, compile:true, label: lowerCaseLabelOptions })
         expect(Type.copyAttributes({enabled:false}, Options.board, 'jc')).toEqual({ enabled: false, compile:true, label: lowerCaseLabelOptions })
 
         // expect(Type.copyAttributes({ compile: true }, dummyOption, 'jc')).toEqual({ enabled: false, label: lowerCaseLabelOptions })

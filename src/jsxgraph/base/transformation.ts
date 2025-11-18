@@ -36,11 +36,11 @@
  * @fileoverview This file contains code for transformations of geometrical objects.
  */
 
-import { JXG } from "../jxg.js";
+import { LooseObject, JXG } from "../jxg.js";
 import { OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from "./constants.js";
 import { Board } from "./board.js";
 import { JSXMath } from "../math/jsxmath.js";
-import { LooseObject, Type } from "../utils/type.js";
+import { Type } from "../utils/type.js";
 
 /**
  * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
@@ -111,7 +111,7 @@ export class Transformation {
     public isNumericMatrix: boolean
     public methodMap: LooseObject
 
-    public evalParam: Function = ()=>{}
+    public evalParam: Function = () => { }
 
 
     /**
@@ -120,7 +120,7 @@ export class Transformation {
     */
     public update: Function
 
-    constructor(board: Board, type:'none', params:any[], is3D: boolean=false) {
+    constructor(board: Board, type: 'none', params: any[], is3D: boolean = false) {
 
         this.board = board
         this.update = () => {
@@ -724,13 +724,13 @@ export class Transformation {
      *
      * @returns {JXG.Transformation}
      */
-    clone():Transformation {
+    clone(): Transformation {
         let t
 
         if (this.isNumericMatrix) {
             t = new Transformation(this.board, 'none', []);
             t.matrix = this.matrix.slice();  // copy
-        }else{
+        } else {
             t = this
         }
         return t;
@@ -762,7 +762,7 @@ export class Transformation {
      * @returns {JXG.Transform} the transformation object.
      */
     melt(t) {
-        var res:number[][] = [];
+        var res: number[][] = [];
 
         this.update();
         t.update();
@@ -791,20 +791,20 @@ export class Transformation {
     // }
 
 
-     /* Convert a String, a number or a function into a function. This method is used in Transformation.js
-     * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
-     * by a JessieCode string, thus it must be a valid reference only in case one of the param
-     * values is of type string.
-     * @param {Array} param An array containing strings, numbers, or functions.
-     * @param {Number} n Length of <tt>param</tt>.
-     * @returns {Function} A function taking one parameter k which specifies the index of the param element
-     * to evaluate.
-     */
+    /* Convert a String, a number or a function into a function. This method is used in Transformation.js
+    * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
+    * by a JessieCode string, thus it must be a valid reference only in case one of the param
+    * values is of type string.
+    * @param {Array} param An array containing strings, numbers, or functions.
+    * @param {Number} n Length of <tt>param</tt>.
+    * @returns {Function} A function taking one parameter k which specifies the index of the param element
+    * to evaluate.
+    */
     // static createEvalFunction(board, param, n):Function {
 
-    createEvalFunction(board:Board, param:any[], parmLength?:Number):Function{
-        console.error('is this just for jessiecode?',param)
-        return ()=>console.error('createEvalFunction')
+    createEvalFunction(board: Board, param: any[], parmLength?: Number): Function {
+        console.error('is this just for jessiecode?', param)
+        return () => console.error('createEvalFunction')
     }
 }
 

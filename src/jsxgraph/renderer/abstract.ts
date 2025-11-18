@@ -47,14 +47,14 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-import { JXG } from "../jxg.js";
+import { LooseObject,JXG } from "../jxg.js";
 import { Options } from "../options.js";
 // import { GeometryElementOptions } from "../optionInterfaces.js'
 import { Coords } from "../base/coords.js";
 // import { Constants } from "../base/constants.js";
 import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";
-import { LooseObject, Type } from "../utils/type.js";
+import { Type } from "../utils/type.js";
 import { Env } from "../utils/env.js";
 import { OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from "../base/constants.js";
 import { GeometryElement } from "../base/element.js";

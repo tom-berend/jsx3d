@@ -38,7 +38,7 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import { JXG } from '../jxg.js';
+import { LooseObject,JXG } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
@@ -48,7 +48,7 @@ import { Complex } from '../math/complex.js';
 // import {Statistics} from '../math/statistics.js';
 // import {JessieCode} from '../parser/jessiecode.js';
 import { Color } from '../utils/color.js';
-import { LooseObject, Type } from '../utils/type.js';
+import {  Type } from '../utils/type.js';
 import { Events } from '../utils/event.js';
 import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
@@ -61,19 +61,20 @@ import { BoardOptions } from '../optionInterfaces.js';
 import { Statistics } from '../math/statistics.js';
 
 
-/**
+export class Board extends Events {
+
+    /**
      * Constant: the small gray version indicator in the top left corner of every JSXGraph board (if
      * showCopyright is not set to false on board creation).
      */
-const licenseText = `JSXGraph v${JXG.version} \u00A9 jsxgraph.org`;
+    public licenseText = `JSXGraph v${JXG.version} \u00A9 jsxgraph.org`;
 
-/**
- * JSXGraph logo: base64 data-URL of img/png/screen/jsxgraph-logo_black-square-solid.png
- */
-const licenseLogo =
-    'data:image/png;base64,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';
+    /**
+     * JSXGraph logo: base64 data-URL of img/png/screen/jsxgraph-logo_black-square-solid.png
+     */
+    public licenseLogo =
+        'data:image/png;base64,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';
 
-export class Board extends Events {
 
     public containerObj: HTMLElement | null
     public infobox
@@ -286,7 +287,7 @@ export class Board extends Events {
      * Collects all elements that triggered a mouse down event.
      * @type Array
      */
-    public downObjects:GeometryElement[] = [];
+    public downObjects: GeometryElement[] = [];
     public clickObjects = {};
 
     /**
@@ -555,10 +556,13 @@ export class Board extends Events {
     public hasKeyboardHandlers: boolean = false
     public _fullscreen_inner_id: string = ''
 
-    constructor(container, renderer, id,
-        origin, zoomX, zoomY, unitX, unitY,
-        canvasWidth, canvasHeight, attributes) {
+    constructor(container:string= '', renderer?, id?,
+        origin?, zoomX?, zoomY?, unitX?, unitY?,
+        canvasWidth?, canvasHeight?, attributes?) {
         super()
+
+        this.licenseText = `JSXGraph v${JXG.version} \u00A9 jsxgraph.org`;
+
 
         if (('document' in attributes) && attributes.document !== false && attributes.document !== null) {
             this.document = attributes.document;
@@ -566,7 +570,7 @@ export class Board extends Events {
             this.document = document;
         }
 
-        this.container = ''; // container
+        this.container = container;
 
 
         /**
@@ -630,7 +634,7 @@ export class Board extends Events {
         this.attr = attributes;
 
         if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
-            Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
+            this.options = Type.mergeAttrHelper(this.options, JXG.themes[this.attr.theme], true);
         }
 
         /**
@@ -889,11 +893,11 @@ export class Board extends Events {
         this.focusObjects = [];
 
         if (this.attr.showcopyright || this.attr.showlogo) {
-            this.renderer.displayLogo(licenseLogo, Options.text.fontSize);
+            this.renderer.displayLogo(this.licenseLogo, Options.text.fontSize);
         }
 
         if (this.attr.showcopyright) {
-            this.renderer.displayCopyright(licenseText, Options.text.fontSize);
+            this.renderer.displayCopyright(this.licenseText, Options.text.fontSize);
         }
 
         /**
@@ -3180,12 +3184,12 @@ export class Board extends Events {
         // if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
         //     this.document.selection.empty();
         // } else if (window.getSelection) {
-            sel = window.getSelection();
-            if (sel.removeAllRanges) {
-                try {
-                    sel.removeAllRanges();
-                } catch (e) { }
-            }
+        sel = window.getSelection();
+        if (sel.removeAllRanges) {
+            try {
+                sel.removeAllRanges();
+            } catch (e) { }
+        }
         // }
 
         // Mouse, touch or pen device
@@ -6833,7 +6837,7 @@ export class Board extends Events {
             //         this.attr[key][el.toLocaleLowerCase()] = value[el];
             //     }
             // }
-            Type.mergeAttr(this.attr[key], value);
+            this.attr[key] = Type.mergeAttrHelper(this.attr[key], value);
         } else {
             this.attr[key] = value;
         }
@@ -7079,7 +7083,7 @@ export class Board extends Events {
                         if (node) {
                             node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
                         } else if (Type.evaluate(value)) {
-                            this.renderer.displayCopyright(licenseText, Options.text.fontSize);
+                            this.renderer.displayCopyright(this.licenseText, Options.text.fontSize);
                         }
                     }
                     this._set(key, value);
@@ -7093,7 +7097,7 @@ export class Board extends Events {
                         if (node) {
                             node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
                         } else if (Type.evaluate(value)) {
-                            this.renderer.displayLogo(licenseLogo, Options.text.fontSize);
+                            this.renderer.displayLogo(this.licenseLogo, Options.text.fontSize);
                         }
                     }
                     this._set(key, value);
@@ -7520,7 +7524,7 @@ export class Board extends Events {
      */
     updateCSSTransforms() {
         var obj = this.containerObj,
-            o: HTMLElement = obj,
+            o: Node = obj,
             o2: HTMLElement = obj;
 
         this.cssTransMat = Env.getCSSTransformMatrix(o);
@@ -7528,31 +7532,35 @@ export class Board extends Events {
         // Newer variant of walking up the tree.
         // We walk up all parent nodes and collect possible CSS transforms.
         // Works also for ShadowDOM
-        if (Type.exists(o.getRootNode)) {
-            throw new Error('type confusion')  //TODO
-            // o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            // while (o) {
-            //     this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-            //     o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            // }
-            // this.cssTransMat = JSXMath.inverse(this.cssTransMat);
-        } else {
-            /*
-             * This is necessary for IE11
-             */
-            o = (o.offsetParent) as HTMLElement;
-            while (o) {
-                this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+        // if (Type.exists(o.getRootNode)) {
 
-                o2 = (o2.parentNode) as HTMLElement;
-                while (o2 !== o) {
-                    this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                    o2 = (o2.parentNode) as HTMLElement;
-                }
-                o = (o.offsetParent) as HTMLElement;
-            }
-            this.cssTransMat = JSXMath.inverse(this.cssTransMat);
+        // TODO using '.parentNode instead of .host    - how did host ever work??
+        o = o.parentNode === o.getRootNode() ? o : o.parentNode
+        while (o !== o.getRootNode()) {
+            console.log('o', o)
+            console.log('o.getRootNode', o.getRootNode())
+            console.log('o.parentNode', o.parentNode)
+            this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            o = o === o.getRootNode() ? o : o.parentNode
         }
+        this.cssTransMat = JSXMath.inverse(this.cssTransMat);
+        // } else {
+        //     /*
+        //      * This is necessary for IE11
+        //      */
+        //     o = (o.offsetParent) as HTMLElement;
+        //     while (o) {
+        //         this.cssTransMat = JSXMath.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+
+        //         o2 = (o2.parentNode) as HTMLElement;
+        //         while (o2 !== o) {
+        //             this.cssTransMat = JSXMath.matMatMult(Env.getCSStypTransformMatrix(o), this.cssTransMat);
+        //             o2 = (o2.parentNode) as HTMLElement;
+        //         }
+        //         o = (o.offsetParent) as HTMLElement;
+        //     }
+        //     this.cssTransMat = JSXMath.inverse(this.cssTransMat);
+        // }
         return this;
     }
 
