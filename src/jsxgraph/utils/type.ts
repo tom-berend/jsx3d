@@ -59,9 +59,10 @@
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
 import { LooseObject } from '../jxg.js';
 import { Board } from '../base/board.js';
-import { GeometryElement } from '../base/element.js';
+import { GeometryElement } from "../base/element.js";
 import { JSXMath } from '../math/jsxmath.js';
 import { Options } from '../options.js';
+
 // import { HtmlSanitizer } from './htmlsanitizer.js';
 
 export class Type {
@@ -1300,7 +1301,9 @@ export class Type {
     // the helper version is testable.
     static mergeAttrHelper(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false): object {
 
-        let result: LooseObject = structuredClone(attr);         // deep copy
+
+        // let result: LooseObject = structuredClone(attr);         // deep copy
+        let result:LooseObject = JSON.parse(JSON.stringify(attr));   // inadequate polyfill for deep copy
 
         for (let e in special) {
             if (special.hasOwnProperty(e)) {    // only direct properties, not inherited ones

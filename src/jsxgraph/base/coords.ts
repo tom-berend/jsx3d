@@ -37,7 +37,7 @@ import { COORDS_BY, OBJECT_TYPE, OBJECT_CLASS } from "./constants.js";
 import { Events } from '../utils/event.js';
 // import { Type } from "../utils/type.js";
 // import { JSXMath } from "../math/jsxmath.js";
-import { Board } from "./board.js";
+// import { Board } from "./board.js";
 import { GeometryElement } from "./element.js";
 import { GeometryElementOptions } from "../optionInterfaces.js";
 

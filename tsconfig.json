@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "target": "es6",
-        "module": "esnext",
-        "moduleResolution": "node",
+        "target": "es2015",
+        "module": "es2015",
+        "moduleResolution": "bundler",
         "lib": [
             "ES2023",
             "DOM"
@@ -14,13 +14,15 @@
         "esModuleInterop": true,
         "types": [
             "node",
-            "jasmine"
+            "jest"
         ],
         "skipLibCheck": true,
         "noImplicitAny": false,
         "sourceMap": true,
+        "isolatedModules": true,
+        "rewriteRelativeImportExtensions":true,
     },
     "include": [
-        "src/**/*"
+        "src/jsxgraph/**/*.ts"
     ],
 }

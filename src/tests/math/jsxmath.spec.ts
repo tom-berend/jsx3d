@@ -29,7 +29,7 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
-import { JSXMath } from "../../jsxgraph/math/jsxmath";
+import { JSXMath } from '../../jsxgraph/math/jsxmath.js';
 
 describe("Test JSXMath", function () {
     it("Matrices, vectors", function () {
@@ -130,14 +130,14 @@ describe("Test JSXMath", function () {
         expect(JSXMath.pow(4, 2)).toEqual(16);
     });
 
-    beforeEach(function () {
-        jasmine.addCustomEqualityTester(function floatEquality(a, b) {
-            if (a === +a && b === +b && (a !== (a | 0) || b !== (b | 0))) {
-                // if float
-                return Math.abs(a - b) < 5e-10;
-            }
-        });
-    });
+    // beforeEach(function () {
+    //     jasmine.addCustomEqualityTester(function floatEquality(a, b) {
+    //         if (a === +a && b === +b && (a !== (a | 0) || b !== (b | 0))) {
+    //             // if float
+    //             return Math.abs(a - b) < 5e-10;
+    //         }
+    //     });
+    // });
 
     it("Normalize", function () {
         var i,

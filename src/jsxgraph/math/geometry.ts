@@ -69,7 +69,8 @@ import { Statistics } from "./statistics.js";
 import { Numerics } from './numerics.js'
 import { Type } from "../utils/type.js";
 import { Expect } from "../utils/expect.js";
-import { Nlp } from "./nlp.js"
+// import { Nlp } from "./nlp.js"
+console.warn('restore this code! ^^^^')
 
 
 
@@ -4178,7 +4179,9 @@ export class Geometry {
             params[0] = f * (r_u[0] + r_u[1]);
             if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
         }
-        Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+        //TODO:  add this back !! //Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+        console.warn('restore this code! ^^^^')
+
         // Update p which is used subsequently in _minFunc
         p = [target.X.apply(target, params),
         target.Y.apply(target, params),
@@ -4193,7 +4196,10 @@ export class Geometry {
             params[0] = f * (r_u[0] + r_u[1]);
             if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
 
-            Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+            //TODO:  add this back !!
+            // //Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+            console.warn('restore this code! ^^^^')
+
         }
 
         return [1,

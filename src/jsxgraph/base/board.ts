@@ -38,7 +38,7 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import { LooseObject,JXG } from '../jxg.js';
+import { LooseObject, JXG } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
@@ -48,7 +48,7 @@ import { Complex } from '../math/complex.js';
 // import {Statistics} from '../math/statistics.js';
 // import {JessieCode} from '../parser/jessiecode.js';
 import { Color } from '../utils/color.js';
-import {  Type } from '../utils/type.js';
+import { Type } from '../utils/type.js';
 import { Events } from '../utils/event.js';
 import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
@@ -556,21 +556,42 @@ export class Board extends Events {
     public hasKeyboardHandlers: boolean = false
     public _fullscreen_inner_id: string = ''
 
-    constructor(container:string= '', renderer?, id?,
-        origin?, zoomX?, zoomY?, unitX?, unitY?,
-        canvasWidth?, canvasHeight?, attributes?) {
+    constructor(container: string = '',
+        renderer: 'svg' | 'canvas' | 'no' = 'svg',
+        id?,
+        origin?,
+        zoomX?,
+        zoomY?,
+        unitX?,
+        unitY?,
+        canvasWidth?,
+        canvasHeight?,
+        attributes?) {
         super()
 
         this.licenseText = `JSXGraph v${JXG.version} \u00A9 jsxgraph.org`;
 
 
-        if (('document' in attributes) && attributes.document !== false && attributes.document !== null) {
-            this.document = attributes.document;
-        } else if (Env.isBrowser) {
-            this.document = document;
-        }
+
+
+
+
+        // if (('document' in attributes) && attributes.document !== false && attributes.document !== null) {
+        //     this.document = attributes.document;
+        // } else if (Env.isBrowser) {
+        //     this.document = document;
+        // }
+        console.warn('restore this code ^^^^^')
 
         this.container = container;
+
+        // set up the renderer early, so we can tell it about our setup
+
+        switch(renderer){
+            case 'svg':
+                import { SVGRenderer } from '../renderer/svg.js';
+                this.renderer = new SVGRenderer(container, [canvasHeight,canvasWidth])
+        }
 
 
         /**

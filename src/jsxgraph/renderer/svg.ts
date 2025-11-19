@@ -96,8 +96,10 @@ export class SVGRenderer extends AbstractRenderer {
      */
     xlinkNamespace = "http://www.w3.org/1999/xlink";
 
-    constructor(container: HTMLDivElement, dim) {
+    constructor(containerName: string, dim) {
         super()
+
+        HTMLDivElement
         var i;
 
         // https://stackoverflow.com/questions/7944460/detect-safari-browser

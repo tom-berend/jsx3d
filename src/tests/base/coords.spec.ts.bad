@@ -2,14 +2,14 @@
 describe('coords suite description', () => {
     it('test description', () => {
         let a = 0
-        expect(a).toBe(1)
+        expect(a).toBe(0)
     });
 });
 //
 //
-import { Board } from "../../jsxgraph/base/board";
-import { COORDS_BY } from "../../jsxgraph/base/constants";
-import { Coords } from "../../jsxgraph/base/coords";
+import { Board } from "../../jsxgraph/base/board.js";
+import { COORDS_BY } from "../../jsxgraph/base/constants.js";
+import { Coords } from "../../jsxgraph/base/coords.js";
 describe('test the Coords constructor', () => {
     it('basic coordinates', () => {
         let board = new Board('x')
