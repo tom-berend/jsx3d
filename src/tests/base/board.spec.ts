@@ -12,8 +12,11 @@ import { Board } from "../../jsxgraph/base/board.js";
 ////////////////// prototype test
 describe('board creation', () => {
     it('test description', () => {
-        let b = new Board('abc')
-        expect(b.container).toBe('abc')
+        document.body.innerHTML =
+        `<!DOCTYPE html><html lang="en"><head></head><body><div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div></body></html>`
+
+        let b = new Board('box')
+        expect(b.container).toBe('box')
 
     });
 });

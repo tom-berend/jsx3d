@@ -114,10 +114,20 @@ export class Env {
      * @type Boolean
      * @default false
      */
-    static isBrowser() {
-        console.log("isBrowser", window !== null && document !== null)
-        return true // TODO
-        return (window !== null && document !== null)
+    static isBrowser(): boolean {
+        // old way:  return (window !== null && document !== null)
+        return (typeof window !== "undefined" && typeof window.document !== "undefined")
+    }
+
+    static isJsdom(): boolean {
+        // another test for JsDom (for testing)
+        // https://github.com/flexdinesh/browser-or-node
+        return (typeof window !== "undefined" && window.name === "nodejs") ||
+            (typeof navigator !== "undefined" &&
+                "userAgent" in navigator &&
+                typeof navigator.userAgent === "string" &&
+                (navigator.userAgent.includes("Node.js") ||
+                    navigator.userAgent.includes("jsdom")))
     }
 
     /**
@@ -455,7 +465,7 @@ export class Env {
      * an options object or the useCapture Boolean.
      *
      */
-    static addEvent(obj: Node|Window, type: string, fn: Function, owner: Board, options: object | boolean = false) {
+    static addEvent(obj: Node | Window, type: string, fn: Function, owner: Board, options: object | boolean = false) {
 
         let callback = function () {
             return fn.apply(owner, arguments);

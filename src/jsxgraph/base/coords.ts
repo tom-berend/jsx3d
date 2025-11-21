@@ -32,6 +32,9 @@
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true*/
 
+// type dependency ensures no circular dependencies at runtime
+import type {Board} from './board'
+
 import { JSXMath } from "../math/jsxmath.js";
 import { COORDS_BY, OBJECT_TYPE, OBJECT_CLASS } from "./constants.js";
 import { Events } from '../utils/event.js';

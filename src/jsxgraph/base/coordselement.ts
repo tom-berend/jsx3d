@@ -1025,7 +1025,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
      * @returns {JXG.CoordsElement} Reference to this element
      */
-    snapToGrid(force:boolean) {
+    snapToGrid(force: boolean) {
         return this.handleSnapToGrid(force);
     }
 
@@ -1107,7 +1107,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
      * @returns {JXG.CoordsElement} Reference to this element
      */
-    snapToPoints(force?:boolean) {
+    snapToPoints(force?: boolean) {
         return this.handleSnapToPoints(force);
     }
 
@@ -1296,7 +1296,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @param {Array} tv (x, y)
      * @returns {JXG.CoordsElement}
      */
-    setPositionByTransform(method:COORDS_BY, tv:number[]) {
+    setPositionByTransform(method: COORDS_BY, tv: number[]) {
         var t;
 
         let tvCoords = new Coords(method, tv, this.board);
@@ -1352,26 +1352,26 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
     //  * @param {String|Object} slide The object the point will be bound to.
     //  */
     makeGlider(slide) {
-    //     var slideobj = this.board.select(slide),
-    //         onPolygon = false,
-    //         min, i, dist;
+        //     var slideobj = this.board.select(slide),
+        //         onPolygon = false,
+        //         min, i, dist;
 
-    //     if (slideobj.type === OBJECT_TYPE.POLYGON) {
-    //         // Search for the closest edge of the polygon.
-    //         min = Number.MAX_VALUE;
-    //         for (i = 0; i < slideobj.borders.length; i++) {
-    //             dist = Geometry.distPointLine(
-    //                 this.coords.usrCoords,
-    //                 slideobj.borders[i].stdform
-    //             );
-    //             if (dist < min) {
-    //                 min = dist;
-    //                 slide = slideobj.borders[i];
-    //             }
-    //         }
-    //         slideobj = this.board.select(slide);
-    //         onPolygon = true;
-    //     }
+        //     if (slideobj.type === OBJECT_TYPE.POLYGON) {
+        //         // Search for the closest edge of the polygon.
+        //         min = Number.MAX_VALUE;
+        //         for (i = 0; i < slideobj.borders.length; i++) {
+        //             dist = Geometry.distPointLine(
+        //                 this.coords.usrCoords,
+        //                 slideobj.borders[i].stdform
+        //             );
+        //             if (dist < min) {
+        //                 min = dist;
+        //                 slide = slideobj.borders[i];
+        //             }
+        //         }
+        //         slideobj = this.board.select(slide);
+        //         onPolygon = true;
+        //     }
 
         // TODO: move to glider
         // /* Gliders on Ticks are forbidden */

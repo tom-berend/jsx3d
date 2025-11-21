@@ -44,6 +44,9 @@ import { LayerOptions } from "../optionInterfaces.js";
 import { GeometryElement } from "../base/element.js";
 import { Board } from "../base/board.js";
 
+export interface Dim { width: number, height: number }
+
+
 /**
  * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
  * @class JXG.SVGRenderer
@@ -68,6 +71,12 @@ export class SVGRenderer extends AbstractRenderer {
     isSafari: boolean
 
     /**
+     * renderer object
+     */
+        renderer: AbstractRenderer | null = null
+
+
+    /**
      * SVG root node
      */
     svgRoot: Element | null = null;       // not SVGElement!
@@ -89,6 +98,7 @@ export class SVGRenderer extends AbstractRenderer {
     touchpoints: HTMLElement[] = []
 
 
+
     /**
      * The xlink namespace. This is used for images.
      * @see http://www.w3.org/TR/xlink/
@@ -96,7 +106,8 @@ export class SVGRenderer extends AbstractRenderer {
      */
     xlinkNamespace = "http://www.w3.org/1999/xlink";
 
-    constructor(containerName: string, dim) {
+
+    constructor(containerName: string, dim: Dim) {  // width height
         super()
 
         HTMLDivElement
@@ -105,9 +116,12 @@ export class SVGRenderer extends AbstractRenderer {
         // https://stackoverflow.com/questions/7944460/detect-safari-browser
         this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-        // container is documented in AbstractRenderer.
-        // Type node
-        this.container = container;
+        let container = document.getElementById(containerName) as HTMLDivElement
+        if (container) {
+            this.container = container;
+        } else {
+            throw new Error(`Could not find HTML container element '${container}`)
+        }
 
         // prepare the div container and the svg root node for use with JSXGraph
         this.container.style.userSelect = "none";
@@ -1114,7 +1128,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {Number} rx The x-axis radius.
      * @param {Number} ry The y-axis radius.
      */
-    updateEllipsePrim(node, x, y, rx, ry) {
+    updateEllipsePrim(node:HTMLElement, x:number, y:number, rx:number, ry:number) {
         var huge = 1000000;
 
         huge = 200000; // IE
@@ -1125,10 +1139,10 @@ export class SVGRenderer extends AbstractRenderer {
         rx = Math.abs(rx) < huge ? rx : (huge * rx) / Math.abs(rx);
         ry = Math.abs(ry) < huge ? ry : (huge * ry) / Math.abs(ry);
 
-        node.setAttributeNS(null, "cx", x);
-        node.setAttributeNS(null, "cy", y);
-        node.setAttributeNS(null, "rx", Math.abs(rx));
-        node.setAttributeNS(null, "ry", Math.abs(ry));
+        node.setAttributeNS(null, "cx", x.toString());
+        node.setAttributeNS(null, "cy", y.toString());
+        node.setAttributeNS(null, "rx", Math.abs(rx).toString());
+        node.setAttributeNS(null, "ry", Math.abs(ry).toString());
     }
 
     /**
@@ -1554,28 +1568,28 @@ export class SVGRenderer extends AbstractRenderer {
     /**
     * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
     * @param {JXG.GeometryElement} el Reference to the object that has to appear.
-    * @param {Boolean} value true to show the element, false to hide the element.
+    * @param {Boolean} show true to show the element, false to hide the element.
     */
 
-    display(el, value) {
+    display(el: GeometryElement, show: boolean) {
         if (el) {
-            el.visPropOld.visible = value;
+            el.visPropOld.visible = show;
         }
 
         ///////////////////// tbtb - this was in svg.js, but above code implement in abstract.js
-        // var node;
+        var node;
 
-        // if (el && el.rendNode) {
-        //     el.visPropOld.visible = val;
-        //     node = el.rendNode;
-        //     if (val) {
-        //         node.setAttributeNS(null, "display", "inline");
-        //         node.style.visibility = "inherit";
-        //     } else {
-        //         node.setAttributeNS(null, "display", "none");
-        //         node.style.visibility = "hidden";
-        //     }
-        // }
+        if (el && el.rendNode) {
+            el.visPropOld.visible = show;
+            node = el.rendNode;
+            if (show) {
+                node.setAttributeNS(null, "display", "inline");
+                node.style.visibility = "inherit";
+            } else {
+                node.setAttributeNS(null, "display", "none");
+                node.style.visibility = "hidden";
+            }
+        }
     }
 
     /**
@@ -2243,6 +2257,7 @@ export class SVGRenderer extends AbstractRenderer {
      */
     resize(w: number, h: number) {
         this.assertNonNullish(this.svgRoot, "Expected a node")
+        console.log(this.svgRoot)
 
         this.svgRoot.setAttribute("width", w.toString());
         this.svgRoot.setAttribute("height", h.toString());

@@ -1083,7 +1083,7 @@ export abstract class AbstractRenderer {
 
             if (el.evalVisProp('display') === "html" && this.type !== "no") {
                 // Set the position
-                if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                if (!isNaN(el.coords.scrCoords[1]) && !isNaN(el.coords.scrCoords[2])) {
                     // Horizontal
                     c = el.coords.scrCoords[1];
                     // webkit seems to fail for extremely large values for c.
@@ -1952,5 +1952,6 @@ export abstract class AbstractRenderer {
     abstract dumpToCanvas(canvasId, w, h, _ignoreTexts)
     abstract screenshot(board, imgId, ignoreTexts)
     abstract updateInternalTextStyle(el, strokeColor, strokeOpacity)
+    abstract uniqName(prefix)
 
 }

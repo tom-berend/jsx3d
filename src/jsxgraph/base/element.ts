@@ -417,6 +417,8 @@ export class GeometryElement extends Events {
     public element
 
     public rendNodeCheckbox // put this in checkbox !
+    public rendNodeLabel    // many elements seem to need this
+    public htmlStr // svg writes content to this
 
     public name
     public label

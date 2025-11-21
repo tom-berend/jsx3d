@@ -1724,7 +1724,7 @@ export class Text extends CoordsElement {
  * </script><pre>
  *
  */
-export function createText(board, parents, attributes):Text {
+export function createText(board:Board, parents:any[], attributes:TextOptions):Text {
     var t,
         attr = Type.copyAttributes(attributes, board.options, "text"),
         coords = parents.slice(0, -1),

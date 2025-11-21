@@ -58,7 +58,7 @@
 
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
 import { LooseObject } from '../jxg.js';
-import { Board } from '../base/board.js';
+import type { Board } from '../base/board.js';
 import { GeometryElement } from "../base/element.js";
 import { JSXMath } from '../math/jsxmath.js';
 import { Options } from '../options.js';
@@ -66,23 +66,25 @@ import { Options } from '../options.js';
 // import { HtmlSanitizer } from './htmlsanitizer.js';
 
 export class Type {
-    /**
-     * Checks if the given object is an JSXGraph board.
-     * @param {Object} v
-     * @returns {Boolean}
-     */
-    static isBoard(v: any): boolean {
-        return (v instanceof Board)
 
-        //     this.isObject(v) &&
-        //     this.isNumber(v.BOARD_MODE_NONE) &&
-        //     this.isObject(v.objects) &&
-        //     this.isObject(v.jc) &&
-        //     this.isFunction(v.update) &&
-        //     !!v.containerObj &&
-        //     this.isString(v.id)
-        // );
-    }
+
+    // /**
+    //  * Checks if the given object is an JSXGraph board.
+    //  * @param {Object} v
+    //  * @returns {Boolean}
+    //  */
+    // static isBoard(v: any): boolean {
+    //     return (v instanceof Board)
+
+    //     //     this.isObject(v) &&
+    //     //     this.isNumber(v.BOARD_MODE_NONE) &&
+    //     //     this.isObject(v.objects) &&
+    //     //     this.isObject(v.jc) &&
+    //     //     this.isFunction(v.update) &&
+    //     //     !!v.containerObj &&
+    //     //     this.isString(v.id)
+    //     // );
+    // }
 
     /**
      * Checks if the given string is an id within the given board.

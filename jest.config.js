@@ -9,7 +9,7 @@ export default {
         ...tsJestTransformCfg,
     },
     testEnvironment: 'jsdom',
-    verbose: true,
+    verbose: false,
     moduleNameMapper: {
         "^(\\.\\.?\\/.+)\\.js$": "$1",
     },

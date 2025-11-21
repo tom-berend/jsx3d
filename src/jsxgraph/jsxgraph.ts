@@ -46,7 +46,8 @@ import { Type } from './utils/type.js';
 import { Board } from './base/board.js';
 import { JSXFileReader } from './reader/filereader.js';
 import { Options } from './options.js';
-import { SVGRenderer } from './renderer/svg.js';
+import { SVGRenderer, Dim } from './renderer/svg.js';
+import { BoardOptions } from './optionInterfaces.js';
 // import CanvasRenderer from './renderer/canvas.js';
 // import NoRenderer from './renderer/no.js';
 
@@ -62,7 +63,7 @@ export class JSXGraph {
      * @type String
      */
     static rendererType: string = 'svg';   // tbtb for
-    static renderer: Object
+    // static renderer: Object
     // constructor() {
     //     this.rendererType = this.setRendererType();
     // }
@@ -91,53 +92,57 @@ export class JSXGraph {
         return Options.board.renderer;
     }
 
-    /**
-     * Initialize the rendering engine
-     *
-     * @param  {String} box        id of or reference to the div element which hosts the JSXGraph construction
-     * @param  {Object} dim        The dimensions of the board
-     * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
-     * to the document object of the browser.
-     * @param  {Object} attrRenderer Attribute 'renderer', specifies the rendering engine. Possible values are 'auto', 'svg',
-     *  'canvas', 'no', and 'vml'.
-     * @returns {Object}           Reference to the rendering engine object.
-     * @private
-     */
-    static initRenderer(box:string, dim:number[], doc:any=null, attrRenderer:string='svg') {
-        var boxid, renderer;
 
-        // Former version:
-        // doc = doc || document
-        if ((!Type.exists(doc) || doc === false) && typeof document === 'object') {
-            doc = document;
-        }
+    // TBTB - moved to Board, so we can run different renderers at the same time
+    // /**
+    //  * Initialize the rendering engine
+    //  *
+    //  * @param  {String} box        id of or reference to the div element which hosts the JSXGraph construction
+    //  * @param  {Object} dim        The dimensions of the board
+    //  * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
+    //  * to the document object of the browser.
+    //  * @param  {Object} attrRenderer Attribute 'renderer', specifies the rendering engine. Possible values are 'auto', 'svg',
+    //  *  'canvas', 'no', and 'vml'.
+    //  * @returns {Object}           Reference to the rendering engine object.
+    //  * @private
+    //  */
+    // static initRenderer(box:string, dim:Dim, doc:any=null, attrRenderer:string='svg') {
+    //     var boxid, renderer;
 
-        if (typeof doc === 'object' && box !== null) {
-            boxid = Type.isString(box) ? doc.getElementById(box) : box;
+    //     // Former version:
+    //     // doc = doc || document
 
-            // Remove everything from the container before initializing the renderer and the board
-            while (boxid.fievenrstChild) {
-                boxid.removeChild(boxid.firstChild);
-            }
-        } else {
-            boxid = box;
-        }
+    //     // TODO this stuff belongs in renderer
+    //     // if ((!Type.exists(doc) || doc === false) && typeof document === 'object') {
+    //     //     doc = document;
+    //     // }
 
-        // If attrRenderer is not supplied take the first available renderer
-        if (attrRenderer === undefined || attrRenderer === 'auto') {
-            attrRenderer = this.rendererType;
-        }
-        // create the renderer
-        if (attrRenderer === 'svg') {
-            renderer = new SVGRenderer(boxid, dim);
-        // } else if (attrRenderer === 'canvas') {      // TODO
-        //     renderer = new CanvasRenderer(boxid, dim);
-        // } else {
-        //     renderer = new NoRenderer();
-        }
+    //     // if (typeof doc === 'object' && box !== null) {
+    //     //     boxid = Type.isString(box) ? doc.getElementById(box) : box;
 
-        return renderer;
-    }
+    //     //     // Remove everything from the container before initializing the renderer and the board
+    //     //     while (boxid.fievenrstChild) {
+    //     //         boxid.removeChild(boxid.firstChild);
+    //     //     }
+    //     // } else {
+    //     //     boxid = box;
+    //     // }
+
+    //     // If attrRenderer is not supplied take the first available renderer
+    //     if (attrRenderer === undefined || attrRenderer === 'auto') {
+    //         attrRenderer = this.rendererType;
+    //     }
+    //     // create the renderer
+    //     if (attrRenderer === 'svg') {
+    //         renderer = new SVGRenderer(box, dim);
+    //     // } else if (attrRenderer === 'canvas') {      // TODO
+    //     //     renderer = new CanvasRenderer(boxid, dim);
+    //     // } else {
+    //     //     renderer = new NoRenderer();
+    //     }
+
+    //     return renderer;
+    // }
 
     /**
      * Merge the user supplied attributes with the attributes in options.js
@@ -147,7 +152,7 @@ export class JSXGraph {
      *
      * @private
      */
-    static _setAttributes(attributes, options={}):object {
+    static _setAttributes(attributes, options = {}): object {
         // merge attributes
         let attr = Type.copyAttributes(attributes, options, 'board'),
             // These attributes - which are objects - have to be copied separately.
@@ -181,58 +186,6 @@ export class JSXGraph {
             Options.board.moveTarget;
 
         return attr;
-    }
-
-    /**
-     * Further initialization of the board. Set some properties from attribute values.
-     *
-     * @param {JXG.Board} board
-     * @param {Object} attr attributes object
-     * @param {Object} dimensions Object containing dimensions of the canvas
-     *
-     * @private
-     */
-    static _fillBoard(board, attr, dimensions) {
-        board.initInfobox(attr.infobox);
-        board.maxBoundingBox = attr.maxBoundingBox;
-        board.resizeContainer(dimensions.width, dimensions.height, true, true);
-        board._createSelectionPolygon(attr);
-        board.renderer.drawNavigationBar(board, attr.navbar);
-        JXG.boards[board.id] = board;
-    }
-
-    /**
-     *
-     * @param {String|Object} container id of or reference to the HTML element in which the board is painted.
-     * @param {Object} attr An object that sets some of the board properties.
-     *
-     * @private
-     */
-     static _setARIA(container, attr) {
-        let doc: Document = attr.document
-
-        // Unused variables, made obsolete in db3e50f4dfa8b86b1ff619b578e243a97b41151c
-        // doc_glob,
-        // newNode,
-        // parent,
-        // id_label,
-        // id_description;
-
-        if (!doc) {
-            if (!Env.isBrowser) {
-                return;
-            }
-            doc = document;
-        }
-
-        let node_jsx = Type.isString(container)
-            ? doc.getElementById(container)
-            : container;
-        node_jsx.setAttribute('role', 'region');
-        node_jsx.setAttribute('aria-label', attr.title); // set by initBoard( {title:})
-
-        // doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
-        // parent = node_jsx.parentNode;
     }
 
     /**
@@ -281,7 +234,8 @@ export class JSXGraph {
      *
      * @see JXG.AbstractRenderer#drawNavigationBar
      */
-    static initBoard(box, attributes) {
+    static initBoard(box: string, attributes: BoardOptions) {
+
         var originX,
             originY,
             unitX,
@@ -368,18 +322,17 @@ export class JSXGraph {
             originY = unitY * (bbox[1] + offY);
         }
 
-        renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
-        this._setARIA(box, attr);
+
 
         // Create the board.
         // board.options will contain the user supplied board attributes
         let board = new Board(
             box,
-            renderer,
+            attr.renderer,  // eg: 'svg'
             attr.id,
             [originX, originY],
-      /*attr.zoomfactor * */ attr.zoomx,
-      /*attr.zoomfactor * */ attr.zoomy,
+            /*attr.zoomfactor * */ attr.zoomx,
+            /*attr.zoomfactor * */ attr.zoomy,
             unitX,
             unitY,
             dimensions.width,
@@ -387,9 +340,11 @@ export class JSXGraph {
             attr,
         );
 
+        board._setARIA(box, attr);
+
         // TODO:  board.keepaspectratio = attr.keepaspectratio;
 
-        this._fillBoard(board, attr, dimensions);
+        board._fillBoard(board, attr, dimensions);
 
         // Create elements like axes, grid, navigation, ...
         board.suspendUpdate();
@@ -398,8 +353,8 @@ export class JSXGraph {
             axattr = typeof attr.axis === 'object' ? attr.axis : {};
 
             // The defaultAxes attributes are overwritten by user supplied axis object.
-            axattr_x = Type.deepCopy(options.board.defaultaxes.x, axattr);
-            axattr_y = Type.deepCopy(options.board.defaultaxes.y, axattr);
+            axattr_x = Type.deepCopy(options.board.defaultAxes.x, axattr);
+            axattr_y = Type.deepCopy(options.board.defaultAxes.y, axattr);
 
             // The user supplied defaultAxes attributes are merged in.
             if (attr.defaultaxes.x) {
@@ -435,118 +390,118 @@ export class JSXGraph {
         return board;
     }
 
-    /**
-     * Load a board from a file containing a construction made with either GEONExT,
-     * Intergeo, Geogebra, or Cinderella.
-     * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-     * @param {String} file base64 encoded string.
-     * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
-     * @param {Object} attributes Attributes for the board and 'encoding'.
-     *  Compressed files need encoding 'iso-8859-1'. Otherwise it probably is 'utf-8'.
-     * @param {Function} callback
-     * @returns {JXG.Board} Reference to the created board.
-     * @see JXG.FileReader
-     * @see JXG.GeonextReader
-     * @see JXG.GeogebraReader
-     * @see JXG.IntergeoReader
-     * @see JXG.CinderellaReader
-     *
-     * @example
-     * // Uncompressed file
-     * var board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'filename', 'geonext',
-     *      {encoding: 'utf-8'}
-     *      function (board) { console.log("Done loading"); }
-     * );
-     * // Compressed file
-     * var board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'filename', 'geonext',
-     *      {encoding: 'iso-8859-1'}
-     *      function (board) { console.log("Done loading"); }
-     * );
-     *
-     * @example
-     * // From <input type="file" id="localfile" />
-     * var file = document.getElementById('localfile').files[0];
-     * JXG.JSXGraph.loadBoardFromFile('jxgbox', file, 'geonext',
-     *      {encoding: 'utf-8'}
-     *      function (board) { console.log("Done loading"); }
-     * );
-     */
-    static loadBoardFromFile(box, file, format, attributes, callback) {
-        var attr, renderer, board, dimensions, encoding;
+    // /**
+    //  * Load a board from a file containing a construction made with either GEONExT,
+    //  * Intergeo, Geogebra, or Cinderella.
+    //  * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
+    //  * @param {String} file base64 encoded string.
+    //  * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
+    //  * @param {Object} attributes Attributes for the board and 'encoding'.
+    //  *  Compressed files need encoding 'iso-8859-1'. Otherwise it probably is 'utf-8'.
+    //  * @param {Function} callback
+    //  * @returns {JXG.Board} Reference to the created board.
+    //  * @see JXG.FileReader
+    //  * @see JXG.GeonextReader
+    //  * @see JXG.GeogebraReader
+    //  * @see JXG.IntergeoReader
+    //  * @see JXG.CinderellaReader
+    //  *
+    //  * @example
+    //  * // Uncompressed file
+    //  * var board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'filename', 'geonext',
+    //  *      {encoding: 'utf-8'}
+    //  *      function (board) { console.log("Done loading"); }
+    //  * );
+    //  * // Compressed file
+    //  * var board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'filename', 'geonext',
+    //  *      {encoding: 'iso-8859-1'}
+    //  *      function (board) { console.log("Done loading"); }
+    //  * );
+    //  *
+    //  * @example
+    //  * // From <input type="file" id="localfile" />
+    //  * var file = document.getElementById('localfile').files[0];
+    //  * JXG.JSXGraph.loadBoardFromFile('jxgbox', file, 'geonext',
+    //  *      {encoding: 'utf-8'}
+    //  *      function (board) { console.log("Done loading"); }
+    //  * );
+    //  */
+    // static loadBoardFromFile(box, file, format, attributes, callback) {
+    //     var attr, renderer, board, dimensions, encoding;
 
-        attributes = attributes || {};
-        attr = this._setAttributes(attributes);
+    //     attributes = attributes || {};
+    //     attr = this._setAttributes(attributes);
 
-        dimensions = Env.getDimensions(box, attr.document);
-        renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
-        this._setARIA(box, attr);
+    //     dimensions = Env.getDimensions(box, attr.document);
+    //     renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
+    //     this._setARIA(box, attr);
 
-        /* User default parameters, in parse* the values in the gxt files are submitted to board */
-        board = new Board(
-            box,
-            renderer,
-            '',
-            [150, 150],
-            1,
-            1,
-            50,
-            50,
-            dimensions.width,
-            dimensions.height,
-            attr,
-        );
-        this._fillBoard(board, attr, dimensions);
-        encoding = attr.encoding || 'iso-8859-1';
-        JSXFileReader.parseFileContent(file, board, format, true, encoding, callback);
+    //     /* User default parameters, in parse* the values in the gxt files are submitted to board */
+    //     board = new Board(
+    //         box,
+    //         renderer,
+    //         '',
+    //         [150, 150],
+    //         1,
+    //         1,
+    //         50,
+    //         50,
+    //         dimensions.width,
+    //         dimensions.height,
+    //         attr,
+    //     );
+    //     this._fillBoard(board, attr, dimensions);
+    //     encoding = attr.encoding || 'iso-8859-1';
+    //     JSXFileReader.parseFileContent(file, board, format, true, encoding, callback);
 
-        return board;
-    }
+    //     return board;
+    // }
 
-    /**
-     * Load a board from a base64 encoded string containing a construction made with either GEONExT,
-     * Intergeo, Geogebra, or Cinderella.
-     * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-     * @param {String} string base64 encoded string.
-     * @param {String} format containing the file format: 'Geonext', 'Intergeo', 'Geogebra'.
-     * @param {Object} attributes Attributes for the board and 'encoding'.
-     *  Compressed files need encoding 'iso-8859-1'. Otherwise it probably is 'utf-8'.
-     * @param {Function} callback
-     * @returns {JXG.Board} Reference to the created board.
-     * @see JXG.FileReader
-     * @see JXG.GeonextReader
-     * @see JXG.GeogebraReader
-     * @see JXG.IntergeoReader
-     * @see JXG.CinderellaReader
-     */
-    static loadBoardFromString(box, string, format, attributes, callback) {
-        var attr, renderer, board, dimensions;
+    // /**
+    //  * Load a board from a base64 encoded string containing a construction made with either GEONExT,
+    //  * Intergeo, Geogebra, or Cinderella.
+    //  * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
+    //  * @param {String} string base64 encoded string.
+    //  * @param {String} format containing the file format: 'Geonext', 'Intergeo', 'Geogebra'.
+    //  * @param {Object} attributes Attributes for the board and 'encoding'.
+    //  *  Compressed files need encoding 'iso-8859-1'. Otherwise it probably is 'utf-8'.
+    //  * @param {Function} callback
+    //  * @returns {JXG.Board} Reference to the created board.
+    //  * @see JXG.FileReader
+    //  * @see JXG.GeonextReader
+    //  * @see JXG.GeogebraReader
+    //  * @see JXG.IntergeoReader
+    //  * @see JXG.CinderellaReader
+    //  */
+    // static loadBoardFromString(box, string, format, attributes, callback) {
+    //     var attr, renderer, board, dimensions;
 
-        attributes = attributes || {};
-        attr = this._setAttributes(attributes);
+    //     attributes = attributes || {};
+    //     attr = this._setAttributes(attributes);
 
-        dimensions = Env.getDimensions(box, attr.document);
-        renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
-        this._setARIA(box, attr);
+    //     dimensions = Env.getDimensions(box, attr.document);
+    //     renderer = initRenderer(box, dimensions, attr.document, attr.renderer);
+    //     this._setARIA(box, attr);
 
-        /* User default parameters, in parse* the values in the gxt files are submitted to board */
-        board = new Board(
-            box,
-            renderer,
-            '',
-            [150, 150],
-            1.0,
-            1.0,
-            50,
-            50,
-            dimensions.width,
-            dimensions.height,
-            attr,
-        );
-        this._fillBoard(board, attr, dimensions);
-        JSXFileReader.parseString(string, board, format, callback);
+    //     /* User default parameters, in parse* the values in the gxt files are submitted to board */
+    //     board = new Board(
+    //         box,
+    //         renderer,
+    //         '',
+    //         [150, 150],
+    //         1.0,
+    //         1.0,
+    //         50,
+    //         50,
+    //         dimensions.width,
+    //         dimensions.height,
+    //         attr,
+    //     );
+    //     this._fillBoard(board, attr, dimensions);
+    //     JSXFileReader.parseString(string, board, format, callback);
 
-        return board;
-    }
+    //     return board;
+    // }
 
     /**
      * Delete a board and all its contents.
