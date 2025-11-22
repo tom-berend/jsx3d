@@ -611,7 +611,7 @@ export class Board extends Events {
             // }
         }
 
-      
+
         // TODO
         // Why do we need this.id AND this.container?
         // There was never a board attribute "id".
