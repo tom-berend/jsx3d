@@ -64,8 +64,11 @@
 // import { JSXGraph } from "./jsxgraph.js";
 // import { Type, LooseObject } from "./utils/type.js";
 // import { GeometryElement } from "./base/element.js";
-// import {Text} from './base/text.js'
-// import {Point} from './base/point.js'
+
+
+// side-effect imports
+import  './base/text.js'
+import './base/point.js'
 
 // // calling the files this way lets them register their element
 // import './base/text.js'
@@ -102,6 +105,7 @@ export function JXG_registerElement(element: string, creator: Function) {
         JXG_elements = {}
     }
 
+    console.log('registering ',element)
     element = element.toLowerCase();
     JXG_elements[element] = creator;
 }

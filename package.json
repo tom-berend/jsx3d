@@ -6,12 +6,13 @@
     "main": "./build/jsxgraph/jxg.js",
     "type": "module",
     "scripts": {
-        "comment1":"convenient to use 'npm run build' while setting breakpoints in VSCode",
+        "comment1":"it is convenient to use 'npm run build' with debug breakpoints in VSCode",
         "build": "rimraf ./build && tsc -w",
+        "comment2" : "to run a single test (eg: coords):  npx jest -t coords*.*",
         "test": "jest",
         "docs": "typedoc",
         "dist": "vite build --base=/jsx3d/dist/",
-        "comment2": "use 'npx vite' to preview building distribution"
+        "comment3": "use 'npx vite' to preview building distribution"
     },
     "keywords": [],
     "author": "",

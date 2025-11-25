@@ -234,7 +234,7 @@ export class JSXGraph {
      *
      * @see JXG.AbstractRenderer#drawNavigationBar
      */
-    static initBoard(box: string, attributes: BoardOptions) {
+    static initBoard(box: string, attributes: BoardOptions = {}) {
 
         var originX,
             originY,
@@ -254,10 +254,8 @@ export class JSXGraph {
             options,
             theme = {};
 
-        attributes = attributes || {};
         // Merge a possible theme
-        if (
-            attributes.theme !== 'default' &&
+        if (attributes.theme !== 'default' &&
             Type.exists(JXG.themes[attributes.theme])
         ) {
             theme = JXG.themes[attributes.theme];

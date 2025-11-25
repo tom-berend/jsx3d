@@ -376,7 +376,7 @@ export interface BoardOptions {
      * @description DOM object
      * @defaultValue false (meaning window.document)
      */
-    document?: object | null
+    document?: Document | null
 
     /**
      * Control the possibilities for dragging objects.
@@ -622,7 +622,7 @@ export interface BoardOptions {
      * </script><pre>
      *
      */
-    intl?: { enabled: boolean }
+    intl?: { enabled: boolean, locale:string }
 
     /**
      * If set to true the ratio between horizontal and vertical unit sizes
@@ -1439,7 +1439,6 @@ export interface BoardOptions {
      * @defaultValue 1.0
      */
     zoomY?: number
-
 }
 
 /**

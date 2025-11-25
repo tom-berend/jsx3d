@@ -870,14 +870,14 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
 
         // Update rendNode display
         this.setDisplayRendNode();
-        // if (this.visPropCalc.visible !== this.visPropOld.visible) {
-        //     this.board.renderer.display(this, this.visPropCalc.visible);
-        //     this.visPropOld.visible = this.visPropCalc.visible;
-        //
-        //     if (this.hasLabel) {
-        //         this.board.renderer.display(this.label, this.label.visPropCalc.visible);
-        //     }
-        // }
+        if (this.visPropCalc.visible !== this.visPropOld.visible) {
+            this.board.renderer.display(this, this.visPropCalc.visible);
+            this.visPropOld.visible = this.visPropCalc.visible;
+
+            if (this.hasLabel) {
+                this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+            }
+        }
 
         this.needsUpdate = false;
         return this;

@@ -1297,9 +1297,55 @@ export class Type {
      * @see JXG.merge
      *
      */
-    // static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false) {
-    //     attr = this.mergeAttrHelper(attr, special, toLower, ignoreUndefinedSpecials)
-    // }
+    static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false):void {
+            var e, e2, o;
+
+            toLower = toLower || true;
+            ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
+
+            for (e in special) {
+                if (special.hasOwnProperty(e)) {
+                    e2 = (toLower) ? e.toLowerCase(): e;
+                    // Key already exists, but not in lower case
+                    console.warn(attr,e)
+                    if (e2 !== e && attr.hasOwnProperty(e)) {
+                        if (attr.hasOwnProperty(e2)) {
+                            // Lower case key already exists - this should not happen
+                            // We have to unify the two key-value pairs
+                            // It is not clear which has precedence.
+                            this.mergeAttr(attr[e2], attr[e], toLower);
+                        } else {
+                            attr[e2] = attr[e];
+                        }
+                        delete attr[e];
+                    }
+
+                    o = special[e];
+                    if (this.isObject(o) && o !== null &&
+                        // Do not recurse into a document object or a JSXGraph object
+                        !this.isDocumentOrFragment(o) && !this.exists(o.board) &&
+                        // Do not recurse if a string is provided as "new String(...)"
+                        typeof o.valueOf() !== 'string') {
+                        if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
+                            // The last test handles the case:
+                            //   attr.draft = false;
+                            //   special.draft = { strokewidth: 4}
+                            attr[e2] = {};
+                        }
+                        this.mergeAttr(attr[e2], o, toLower);
+                    } else if(!ignoreUndefinedSpecials || this.exists(o)) {
+                        // Flat copy
+                        // This is also used in the cases
+                        //   attr.shadow = { enabled: true ...}
+                        //   special.shadow = false;
+                        // and
+                        //   special.anchor is a JSXGraph element
+                        attr[e2] = o;
+                    }
+                }
+            }
+        }
+
     // the helper version is testable.
     static mergeAttrHelper(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false): object {
 

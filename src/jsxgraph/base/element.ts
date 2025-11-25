@@ -907,7 +907,7 @@ export class GeometryElement extends Events {
         var r,
             p,
             i,
-            delay = this.board.attr.animationdelay,
+            delay = Options.board.animationDelay,
             steps = Math.ceil(time / delay),
             self = this
         let animateColor = function (startRGB, endRGB, property) {
@@ -2423,13 +2423,13 @@ export class GeometryElement extends Events {
         sX = this.evalVisProp('snapsizex');
         sY = this.evalVisProp('snapsizey');
 
-        if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-            ticks = this.board.defaultAxes.x.defaultTicks;
+        if (sX <= 0 && Options.board.defaultAxes && Options.board.defaultAxes.x.defaultTicks) {
+            ticks = Options.board.defaultAxes.x.defaultTicks;
             sX = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
         }
 
-        if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-            ticks = this.board.defaultAxes.y.defaultTicks;
+        if (sY <= 0 && Options.board.defaultAxes && Options.board.defaultAxes.y.defaultTicks) {
+            ticks = Options.board.defaultAxes.y.defaultTicks;
             sY = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
         }
 
@@ -2471,7 +2471,7 @@ export class GeometryElement extends Events {
 
             // If no valid snap sizes are available, don't change the coords.
             if (sX > 0 && sY > 0) {
-                boardBB = this.board.getBoundingBox();
+                boardBB = this.getBoundingBox();
                 rx = Math.round(x / sX) * sX;
                 ry = Math.round(y / sY) * sY;
 
@@ -2634,7 +2634,7 @@ export class GeometryElement extends Events {
             this.useLocale()) {
 
             loc = this.evalVisProp('intl.locale') ||
-                this.eval(this.board.attr.intl.locale);
+                this.eval(Options.board.intl.locale);
             opt = this.evalVisProp('intl.options') || {};
 
             // Transfer back to camel case if necessary and evaluate
@@ -2691,7 +2691,7 @@ export class GeometryElement extends Events {
 
         // Check intl attribute of the board
         if (val === 'inherit') {
-            if (this.eval(this.board.attr.intl.enabled) === true) {
+            if (this.eval(Options.board.intl.enabled) === true) {
                 return true;
             }
         }

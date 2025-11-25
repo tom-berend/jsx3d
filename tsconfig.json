@@ -25,4 +25,7 @@
     "include": [
         "src/jsxgraph/**/*.ts"
     ],
+    "exclude":[
+        "build/**/*.*"
+    ]
 }

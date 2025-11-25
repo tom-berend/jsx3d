@@ -70,24 +70,6 @@ export class SVGRenderer extends AbstractRenderer {
 
     isSafari: boolean
 
-    /**
-     * renderer object
-     */
-        renderer: AbstractRenderer | null = null
-
-
-    /**
-     * SVG root node
-     */
-    svgRoot: Element | null = null;       // not SVGElement!
-
-    /**
-     * The SVG Namespace used in JSXGraph.
-     * @see http://www.w3.org/TR/SVG2/
-     * @default http://www.w3.org/2000/svg
-     */
-    svgNamespace = "http://www.w3.org/2000/svg";
-
 
     defs: any
 
@@ -110,8 +92,6 @@ export class SVGRenderer extends AbstractRenderer {
     constructor(containerName: string, dim: Dim) {  // width height
         super()
 
-        HTMLDivElement
-        var i;
 
         // https://stackoverflow.com/questions/7944460/detect-safari-browser
         this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -122,6 +102,9 @@ export class SVGRenderer extends AbstractRenderer {
         } else {
             throw new Error(`Could not find HTML container element '${container}`)
         }
+
+        // check once here instead of in every call
+        this.assertNonNullish(this.container, `expected container with id: '${containerName}'`)
 
         // prepare the div container and the svg root node for use with JSXGraph
         this.container.style.userSelect = "none";
@@ -159,7 +142,7 @@ export class SVGRenderer extends AbstractRenderer {
          * @type Array
          */
         this.layer = [];
-        for (i = 0; i < Options.layer.numlayers; i++) {
+        for (let i = 0; i < Options.layer.numlayers; i++) {
             this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
             this.svgRoot.appendChild(this.layer[i]);
         }
@@ -731,7 +714,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     drawInternalText(el) {
-        console.log('drawInternalText', el)
+        // console.log('drawInternalText', el)
         var node = this.createPrim("text", el.id);
 
         this.assertNonNullish(this.container, 'expected container')
@@ -745,7 +728,6 @@ export class SVGRenderer extends AbstractRenderer {
         node.appendChild(el.rendNodeText);
         this.appendChildPrim(node, el.evalVisProp('layer'));
 
-        console.log(node)
         return node;
     }
 
@@ -976,7 +958,6 @@ export class SVGRenderer extends AbstractRenderer {
      * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in SVGRenderer.
      */
     appendChildPrim(node: Node, level: number = 0) {  // trace nodes have level not set
-        console.log('appendChildPrim', level, node)
 
         if (typeof level !== 'number') {      // someone is misbehaving
             console.warn('level is not a number', level)
@@ -999,9 +980,8 @@ export class SVGRenderer extends AbstractRenderer {
      * @param  id Set the id attribute to this.
      * @returns {Node} Reference to the created node.
      */
-    createPrim(type: string, id: string): HTMLElement {
-
-        this.assertNonNullish(this.container, 'expected container')
+    createPrim(type: 'text' | 'line' | 'path' | 'ellipse' | 'polygon' | 'image' | 'foreignObject' | 'stop' | 'marker' | 'linearGradient' | 'radialGradient',
+        id: string): HTMLElement {
 
         let node = this.container.ownerDocument.createElementNS(this.svgNamespace, type) as HTMLElement
         node.setAttributeNS(null, "id", this.uniqName(id));
@@ -1128,7 +1108,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {Number} rx The x-axis radius.
      * @param {Number} ry The y-axis radius.
      */
-    updateEllipsePrim(node:HTMLElement, x:number, y:number, rx:number, ry:number) {
+    updateEllipsePrim(node: HTMLElement, x: number, y: number, rx: number, ry: number) {
         var huge = 1000000;
 
         huge = 200000; // IE
@@ -1143,6 +1123,7 @@ export class SVGRenderer extends AbstractRenderer {
         node.setAttributeNS(null, "cy", y.toString());
         node.setAttributeNS(null, "rx", Math.abs(rx).toString());
         node.setAttributeNS(null, "ry", Math.abs(ry).toString());
+        console.log(node)
     }
 
     /**
@@ -1696,7 +1677,11 @@ export class SVGRenderer extends AbstractRenderer {
 
 
         if (ev_g === "linear" || ev_g === "radial") {
-            node = this.createPrim(ev_g + "Gradient", el.id + "_gradient");
+            if (ev_g === "linear")
+                node = this.createPrim("linearGradient", el.id + "_gradient");
+            else
+                node = this.createPrim("radialGradient", el.id + "_gradient");
+
             node2 = this.createPrim("stop", el.id + "_gradient1");
             node3 = this.createPrim("stop", el.id + "_gradient2");
             node.appendChild(node2);
@@ -2257,7 +2242,6 @@ export class SVGRenderer extends AbstractRenderer {
      */
     resize(w: number, h: number) {
         this.assertNonNullish(this.svgRoot, "Expected a node")
-        console.log(this.svgRoot)
 
         this.svgRoot.setAttribute("width", w.toString());
         this.svgRoot.setAttribute("height", h.toString());

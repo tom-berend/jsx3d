@@ -33,7 +33,7 @@
 /*jslint nomen: true, plusplus: true*/
 
 // type dependency ensures no circular dependencies at runtime
-import type {Board} from './board'
+import type { Board } from './board'
 
 import { JSXMath } from "../math/jsxmath.js";
 import { COORDS_BY, OBJECT_TYPE, OBJECT_CLASS } from "./constants.js";
@@ -72,7 +72,7 @@ export class Coords {
      */
     public emitter: boolean = true
 
-    public method: number
+    public method: COORDS_BY
 
     /**
      * Constructs a new Coordinates object.
@@ -86,15 +86,17 @@ export class Coords {
      * @constructor
      */
     constructor(method: COORDS_BY, coordinates: number[] | Object | Function, board: Board, emitter: boolean = true) {
+
         if (board === undefined)
             throw new Error('who did not send Board??')
+        if (!Array.isArray(coordinates))
+            throw new Error('who did not send number[] to coordinates??')
 
-        // super(board,{})
 
         this.board = board
         this.method = method
 
-        if (method === COORDS_BY.USER) {
+        if (method == -COORDS_BY.USER) {
             this.usrCoords = [1, coordinates[0], coordinates[1]]
             this.usr2screen()
         } else {
@@ -102,21 +104,11 @@ export class Coords {
             this.screen2usr()
         }
 
-
-        // this.board = board;
-        // this.method = method
-
-        // this.usrCoords = [];
-        // //this.usrCoords = new Float64Array(3);
-
-        // this.scrCoords = [];
-        //this.scrCoords = new Float64Array(3);
-
         // if (this.emitter) {
         // EventEmitter.eventify(this);  // tb now handled by class hierarchy
         // }
 
-        // this.setCoordinates(this.method, coordinates, false, true);
+        this.setCoordinates(this.method, [coordinates[0], coordinates[1]], false, true);
     };
 
     /**
@@ -173,7 +165,7 @@ export class Coords {
      * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
      * @returns {Number} The distance
      */
-    distance(coord_type: COORDS_BY, coordinates: Coords) {
+    distance(coord_type: COORDS_BY, coordinates: Coords): number {
         var sum = 0,
             c,
             ucr = this.usrCoords,

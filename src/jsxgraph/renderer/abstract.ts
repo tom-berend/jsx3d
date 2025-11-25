@@ -119,6 +119,21 @@ export abstract class AbstractRenderer {
     //     i.a;
     //     > false
 
+
+    /**
+     * SVG root node
+     */
+    svgRoot: Element | null = null;       // not SVGElement!
+
+    /**
+     * The SVG Namespace used in JSXGraph.
+     * @see http://www.w3.org/TR/SVG2/
+     * @default http://www.w3.org/2000/svg
+     */
+    svgNamespace = "http://www.w3.org/2000/svg";
+
+
+
     /**
      * The vertical offset for {@link Text} elements. Every {@link Text} element will
      * be placed this amount of pixels below the user given coordinates.

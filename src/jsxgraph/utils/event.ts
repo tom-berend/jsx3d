@@ -41,6 +41,7 @@ type argVals = string | number | Boolean  // arguments for event handlers
 import { LooseObject } from "../jxg.js";
 import { Type } from "./type.js";
 import { GeometryElement } from "../base/element.js";
+import { Board } from "../base/board.js"
 import { Coords } from "../base/coords.js";
 import { CoordsElement } from "../base/coordselement.js";
 /**
@@ -146,23 +147,24 @@ export class Events {
 
 
 
-    // /**
-    //  * @description Implements the functionality from this interface in the given object.
-    //  * All objects getting their event handling
-    //  * capabilities from this method should document it by adding
-    //  * the <tt>on, off, triggerEventHandlers</tt> via the
-    //  * borrows tag as methods to their documentation:
-    //  * <pre>@borrows JXG.EventEmitter#on as this.on</pre>
-    //  * @param {Object} o
-    //  */
-    // eventify(o: Coords | CoordsElement | GeometryElement) {
-    //     o.eventHandlers = {
-    //         clicks: 0 // Needed to handle dblclicks
-    //     };
-    //     o.on = this.on;
-    //     o.off = this.off;
-    //     o.triggerEventHandlers = this.trigger;
-    //     o.trigger = this.trigger;
-    //     o.suspended = {};
-    // }
+    /**
+     * @description Implements the functionality from this interface in the given object.
+     * All objects getting their event handling
+     * capabilities from this method should document it by adding
+     * the <tt>on, off, triggerEventHandlers</tt> via the
+     * borrows tag as methods to their documentation:
+     * <pre>@borrows JXG.EventEmitter#on as this.on</pre>
+     * @param {Object} o
+     */
+    eventify(o: Board | GeometryElement) {
+        o.eventHandlers = {
+            clicks: 0 // Needed to handle dblclicks
+        };
+        //// TODO: do we need this code?  we have clean inheritance
+        // o.on = this.on;
+        // o.off = this.off;
+        // o.triggerEventHandlers = this.trigger;
+        // o.trigger = this.trigger;
+        // o.suspended = {};
+    }
 }
