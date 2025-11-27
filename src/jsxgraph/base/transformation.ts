@@ -102,8 +102,8 @@ import { Type } from "../utils/type.js";
  */
 export class Transformation {
 
-    public elementClass: OBJECT_CLASS = OBJECT_CLASS.OTHER
-    public type: OBJECT_TYPE = OBJECT_TYPE.TRANSFORMATION
+    public elementClass = OBJECT_CLASS.OTHER
+    public type = OBJECT_TYPE.TRANSFORMATION
 
     public is3D: boolean
     public matrix: number[][]

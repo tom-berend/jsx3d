@@ -89,7 +89,7 @@ var priv = {
 
 export class Text extends CoordsElement {
 
-    content:string = "";
+    content: string = "";
     plaintext = "";
     plaintextOld = '';
     orgText = "";
@@ -102,16 +102,20 @@ export class Text extends CoordsElement {
     size: number[] = [1.0, 1.0]
 
     updateText: Function = () => console.warn('updateText not set')
-    public rendNode: HTMLElement;
+    rendNode: HTMLElement;
+
+    rendNodeRange: HTMLElement
+    rendNodeForm: HTMLElement
+
 
 
     constructor(board: Board, coordinates: number[] | Object | Function, attributes: TextOptions, content: string | Function) {
-        super(board, COORDS_BY.USER, coordinates, attributes)
+        super(board, COORDS_BY.USER, coordinates, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT)
 
         this.elType = "text";
         this.visProp = Type.merge(this.visProp, Options)
 
-        this.relativeCoords = new Coords(COORDS_BY.USER,coordinates,board)
+        this.relativeCoords = new Coords(COORDS_BY.USER, coordinates, board)
 
         // this.setCoordinates(this.method, coordinates, false, true);
 
@@ -121,6 +125,7 @@ export class Text extends CoordsElement {
          * @type Number
             */
         this.otype = OBJECT_TYPE.TEXT
+        this.type = OBJECT_TYPE.TEXT
 
         /**
          * Original type of the element at construction time. Used for removing glider property.
@@ -145,9 +150,7 @@ export class Text extends CoordsElement {
 
 
         // TODO: what was this ???
-        //this.element = this.board.select(attributes.anchor);
-
-
+        this.element = this.board.select(attributes.anchor);
         // this.coordsConstructor(coords, this.evalVisProp('islabel'));
 
         this.content = "";
@@ -172,8 +175,8 @@ export class Text extends CoordsElement {
         this.board.finalizeAdding(this);
 
         // Set text before drawing
-        // this._createFctUpdateText(content);
-        // this.updateText();
+        this._createFctUpdateText(content);
+        this.updateText();
 
         // Set attribute visible to true. This is necessary to
         // create all sub-elements for button, input and checkbox
@@ -289,7 +292,7 @@ export class Text extends CoordsElement {
              *
              * @private
              */
-            this.updateText = function () {
+            this.updateText = () => {
                 resolvedText = text().toString(); // Evaluate function
                 if (ev_p && !ev_um && !ev_uk) {
                     this.plaintext = this.replaceSub(
@@ -326,7 +329,13 @@ export class Text extends CoordsElement {
                     // MathJax or KaTeX
                     // Replace value-tags by functions
                     // sketchofont is ignored
-                    this.content = 'Find this error! 328' // TODO: this.valueTagToJessieCode(text);
+
+
+                    // TODO:jessiecode returns an ARRY ???
+                    console.error('should not be here, ', text, this.valueTagToJessieCode(text))
+                    // this.content = this.valueTagToJessieCode(text);
+
+
                     if (!Array.isArray(this.content)) {
                         // For some reason we don't have to mask backslashes in an array of strings
                         // anymore.
@@ -350,68 +359,68 @@ export class Text extends CoordsElement {
                 this.content = text;
             }
 
-            // // Generate function which returns the text to be displayed
-            // if (convertJessieCode) {
-            //     // Convert JessieCode to JS function
-            //     if (Array.isArray(this.content)) {
-            //         // This is the case if the text contained value-tags.
-            //         // These value-tags consist of JessieCode snippets
-            //         // which are now replaced by JavaScript functions
-            //         that = this;
-            //         for (i = 0; i < this.content.length; i++) {
-            //             if (this.content[i][0] !== '"') {
-            //                 // TODO: GEONEXT ??  // this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
-            //                 for (e in this.content[i].deps) {
-            //                     this.addParents(this.content[i].deps[e]);
-            //                     this.content[i].deps[e].addChild(this);
-            //                 }
-            //             }
-            //         }
+            // Generate function which returns the text to be displayed
+            if (convertJessieCode) {
+                // Convert JessieCode to JS function
+                if (Array.isArray(this.content)) {
+                    // This is the case if the text contained value-tags.
+                    // These value-tags consist of JessieCode snippets
+                    // which are now replaced by JavaScript functions
+                    that = this;
+                    for (i = 0; i < this.content.length; i++) {
+                        if (this.content[i][0] !== '"') {
+                            this.content[i] = this.snippet(this.content[i], true, "", false);
+                            for (e in this.content[i].deps) {
+                                this.addParents(this.content[i].deps[e]);
+                                this.content[i].deps[e].addChild(this);
+                            }
+                        }
+                    }
 
-            //         updateText = function () {
-            //             var i, t,
-            //                 digits = that.evalVisProp('digits'),
-            //                 txt = '';
+                    updateText = function () {
+                        var i, t,
+                            digits = that.evalVisProp('digits'),
+                            txt = '';
 
-            //             for (i = 0; i < that.content.length; i++) {
-            //                 if (Type.isFunction(that.content[i])) {
-            //                     t = that.content[i]();
-            //                     if (that.useLocale()) {
-            //                         t = that.formatNumberLocale(t, digits);
-            //                     } else {
-            //                         t = Type.toFixed(t, digits);
-            //                     }
-            //                 } else {
-            //                     t = that.content[i];
-            //                     // Instead of 't.at(t.length - 1)' also 't.(-1)' should work.
-            //                     // However in Moodle 4.2 't.(-1)' returns an empty string.
-            //                     // In plain HTML pages it works.
-            //                     if (t[0] === '"' && t[t.length - 1] === '"') {
-            //                         t = t.slice(1, -1);
-            //                     }
-            //                 }
+                        for (i = 0; i < that.content.length; i++) {
+                            if (Type.isFunction(that.content[i])) {
+                                t = that.content[i]();
+                                if (that.useLocale()) {
+                                    t = that.formatNumberLocale(t, digits);
+                                } else {
+                                    t = Type.toFixed(t, digits);
+                                }
+                            } else {
+                                t = that.content[i];
+                                // Instead of 't.at(t.length - 1)' also 't.(-1)' should work.
+                                // However in Moodle 4.2 't.(-1)' returns an empty string.
+                                // In plain HTML pages it works.
+                                if (t[0] === '"' && t[t.length - 1] === '"') {
+                                    t = t.slice(1, -1);
+                                }
+                            }
 
-            //                 txt += t;
-            //             }
-            //             return txt;
-            //         };
-            //     } else {
-            //         // TODO: GEONEXT ??  // updateText = this.board.jc.snippet(this.content, true, "", false);
-            //         // for (e in updateText.deps) {
-            //         //     this.addParents(updateText.deps[e]);
-            //         //     updateText.deps[e].addChild(this);
-            //         // }
-            //     }
+                            txt += t;
+                        }
+                        return txt;
+                    };
+                } else {
+                    updateText = this.snippet(this.content, true, "", false);
+                    for (e in updateText.deps) {
+                        this.addParents(updateText.deps[e]);
+                        updateText.deps[e].addChild(this);
+                    }
+                }
 
-            //     // Ticks have been escaped in valueTagToJessieCode
-            //     this.updateText = function () {
-            //         this.plaintext = this.unescapeTicks(updateText());
-            //     };
-            // } else {
+                // Ticks have been escaped in valueTagToJessieCode
                 this.updateText = function () {
+                    this.plaintext = this.unescapeTicks(updateText());
+                };
+            } else {
+                this.updateText = () => {
                     this.plaintext = this.content; // text;
                 };
-            // }
+            }
         }
     }
 
@@ -436,9 +445,9 @@ export class Text extends CoordsElement {
         }
 
         // This may slow down canvas renderer
-        // if (this.board.renderer.type === 'canvas') {
-        //     this.board.fullUpdate();
-        // }
+        if (this.board.renderer.type === 'canvas') {
+            this.board.fullUpdate();
+        }
 
         return this;
     }
@@ -680,7 +689,7 @@ export class Text extends CoordsElement {
      * Then, the update function of the renderer
      * is called.
      */
-    update(fromParent:boolean) {
+    update(fromParent: boolean = false) {
         if (!this.needsUpdate) {
             return this;
         }
@@ -827,16 +836,16 @@ export class Text extends CoordsElement {
                 // GEONExT-Hack: apply rounding once only.
                 if (res.indexOf("toFixed") < 0) {
                     // output of a value tag
-                    // if (
-                    //     Type.isNumber(
-                    //         // TODO: GEONEXT ??  //  Type.bind(this.board.jc.snippet(res, true, '', false), this)()
-                    //     )
-                    // ) {
-                    //     // may also be a string
-                    //     plaintext += '+(' + res + ').toFixed(' + this.evalVisProp('digits') + ')';
-                    // } else {
+                    if (
+                        Type.isNumber(
+                            console.error("Type.bind(this.snippet(res, true, '', false), this)()")
+                        )
+                    ) {
+                        // may also be a string
+                        plaintext += '+(' + res + ').toFixed(' + this.evalVisProp('digits') + ')';
+                    } else {
                         plaintext += '+(' + res + ')';
-                    // }
+                    }
                 } else {
                     plaintext += '+(' + res + ')';
                 }
@@ -1482,6 +1491,180 @@ export class Text extends CoordsElement {
         return this;
     }
 
+
+    // tbtb - move these two functions from jessiecode
+
+    /**
+     * Parses a JessieCode snippet, e.g. "3+4", and wraps it into a function, if desired.
+     * @param {String} code A small snippet of JessieCode. Must not be an assignment.
+     * @param {Boolean} [funwrap=true] If true, the code is wrapped in a function.
+     * @param {String} [varname=''] Name of the parameter(s)
+     * @param {Boolean} [geonext=false] Geonext compatibility mode.
+     * @param {Boolean} [forceValueCall=true] Force evaluation of value method of sliders.
+     */
+
+    snippet(code: string | Function, funwrap = true, varname: string, geonext = false, forceValueCall = true): string {
+        let c: string
+        throw new Error('snippet')
+
+        // this.forceValueCall = Type.def(forceValueCall, true);
+
+        c = (funwrap ? ' function (' + varname + ') { return ' : '') +
+            code +
+            (funwrap ? '; }' : '') + ';';
+
+        return this.parse(c, geonext, true);
+    }
+
+    parse(input, ignore1, ignore2) {
+        console.warn('parse:', input)
+        return input;
+    }
+
+
+    // /**
+    //  * @class
+    //  * @ignore
+    //  */
+    // parse: function parse(input) {
+    //     var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
+    //     var args = lstack.slice.call(arguments, 1);
+    //     var lexer = Object.create(this.lexer);
+    //     var sharedState = { yy: {} };
+    //     for (var k in this.yy) {
+    //         if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+    //             sharedState.yy[k] = this.yy[k];
+    //         }
+    //     }
+    //     lexer.setInput(input, sharedState.yy);
+    //     sharedState.yy.lexer = lexer;
+    //     sharedState.yy.parser = this;
+    //     if (typeof lexer.yylloc == 'undefined') {
+    //         lexer.yylloc = {};
+    //     }
+    //     var yyloc = lexer.yylloc;
+    //     lstack.push(yyloc);
+    //     var ranges = lexer.options && lexer.options.ranges;
+    //     if (typeof sharedState.yy.parseError === 'function') {
+    //         this.parseError = sharedState.yy.parseError;
+    //     } else {
+    //         this.parseError = Object.getPrototypeOf(this).parseError;
+    //     }
+    //     function popStack(n) {
+    //         stack.length = stack.length - 2 * n;
+    //         vstack.length = vstack.length - n;
+    //         lstack.length = lstack.length - n;
+    //     }
+    //     _token_stack:
+    //         var lex = function () {
+    //             var token;
+    //             token = lexer.lex() || EOF;
+    //             if (typeof token !== 'number') {
+    //                 token = self.symbols_[token] || token;
+    //             }
+    //             return token;
+    //         };
+    //     var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
+    //     while (true) {
+    //         state = stack[stack.length - 1];
+    //         if (this.defaultActions[state]) {
+    //             action = this.defaultActions[state];
+    //         } else {
+    //             if (symbol === null || typeof symbol == 'undefined') {
+    //                 symbol = lex();
+    //             }
+    //             action = table[state] && table[state][symbol];
+    //         }
+    //                     if (typeof action === 'undefined' || !action.length || !action[0]) {
+    //                 var errStr = '';
+    //                 expected = [];
+    //                 for (p in table[state]) {
+    //                     if (this.terminals_[p] && p > TERROR) {
+    //                         expected.push('\'' + this.terminals_[p] + '\'');
+    //                     }
+    //                 }
+    //                 if (lexer.showPosition) {
+    //                     errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+    //                 } else {
+    //                     errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+    //                 }
+    //                 this.parseError(errStr, {
+    //                     text: lexer.match,
+    //                     token: this.terminals_[symbol] || symbol,
+    //                     line: lexer.yylineno,
+    //                     loc: yyloc,
+    //                     expected: expected
+    //                 });
+    //             }
+    //         if (action[0] instanceof Array && action.length > 1) {
+    //             throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+    //         }
+    //         switch (action[0]) {
+    //         case 1:
+    //             stack.push(symbol);
+    //             vstack.push(lexer.yytext);
+    //             lstack.push(lexer.yylloc);
+    //             stack.push(action[1]);
+    //             symbol = null;
+    //             if (!preErrorSymbol) {
+    //                 yyleng = lexer.yyleng;
+    //                 yytext = lexer.yytext;
+    //                 yylineno = lexer.yylineno;
+    //                 yyloc = lexer.yylloc;
+    //                 if (recovering > 0) {
+    //                     recovering--;
+    //                 }
+    //             } else {
+    //                 symbol = preErrorSymbol;
+    //                 preErrorSymbol = null;
+    //             }
+    //             break;
+    //         case 2:
+    //             len = this.productions_[action[1]][1];
+    //             yyval.$ = vstack[vstack.length - len];
+    //             yyval._$ = {
+    //                 first_line: lstack[lstack.length - (len || 1)].first_line,
+    //                 last_line: lstack[lstack.length - 1].last_line,
+    //                 first_column: lstack[lstack.length - (len || 1)].first_column,
+    //                 last_column: lstack[lstack.length - 1].last_column
+    //             };
+    //             if (ranges) {
+    //                 yyval._$.range = [
+    //                     lstack[lstack.length - (len || 1)].range[0],
+    //                     lstack[lstack.length - 1].range[1]
+    //                 ];
+    //             }
+    //             r = this.performAction.apply(yyval, [
+    //                 yytext,
+    //                 yyleng,
+    //                 yylineno,
+    //                 sharedState.yy,
+    //                 action[1],
+    //                 vstack,
+    //                 lstack
+    //             ].concat(args));
+    //             if (typeof r !== 'undefined') {
+    //                 return r;
+    //             }
+    //             if (len) {
+    //                 stack = stack.slice(0, -1 * len * 2);
+    //                 vstack = vstack.slice(0, -1 * len);
+    //                 lstack = lstack.slice(0, -1 * len);
+    //             }
+    //             stack.push(this.productions_[action[1]][0]);
+    //             vstack.push(yyval.$);
+    //             lstack.push(yyval._$);
+    //             newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+    //             stack.push(newState);
+    //             break;
+    //         case 3:
+    //             return true;
+    //         }
+    //     }
+    //     return true;
+    // }};
+
+
     // /**
     //  * Computes the number of overlaps of a box of w pixels width, h pixels height
     //  * and center (x, y)
@@ -1724,7 +1907,7 @@ export class Text extends CoordsElement {
  * </script><pre>
  *
  */
-export function createText(board:Board, parents:any[], attributes:TextOptions):Text {
+export function createText(board: Board, parents: any[], attributes: TextOptions): Text {
     var t,
         attr = Type.copyAttributes(attributes, board.options, "text"),
         coords = parents.slice(0, -1),
@@ -1734,6 +1917,7 @@ export function createText(board:Board, parents:any[], attributes:TextOptions):T
     // Backwards compatibility
     attr.anchor = attr.parent || attr.anchor;
     t = new Text(board, coords, attr, content);
+
 
     if (!t) {
         throw new Error(
@@ -1780,14 +1964,14 @@ export function createText(board:Board, parents:any[], attributes:TextOptions):T
  */
 //  See element.js#createLabel
 
-// /**
-//  * [[x,y], [w px, h px], [range]
-//  */
+/**
+ * [[x,y], [w px, h px], [range]
+ */
 // export class HTMLSlider extends Text {
 //     constructor(board, parents, attributes) {
 //         super(board,parents[0],parents,attributes)
 
-//         var t:Text,
+//     var
 //             par,
 //             attr = Type.copyAttributes(attributes, board.options, "htmlslider");
 
@@ -1814,7 +1998,7 @@ export function createText(board:Board, parents:any[], attributes:TextOptions):T
 //             "</form>"
 //         ];
 
-//         t = createText(board, par, attr);
+//         let t = createText(board, par, attr);
 //         t.type = OBJECT_TYPE.HTMLSLIDER;
 
 //         t.rendNodeForm = t.rendNode.childNodes[0];

@@ -96,8 +96,8 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * {@link JXG.Options#elements} and - optionally - a name and an id.
      */
     // constructor(board: Board, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS, method: COORDS_BY) {
-    constructor(board: Board, method: COORDS_BY, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object /*, JSX_type: OBJECT_TYPE, JSX_class: OBJECT_CLASS*/) {
-        super(board, attributes)
+    constructor(board: Board, method: COORDS_BY, coordinates: number[] | Object | Function = [1, 0, 0], attributes: Object, otype: number, oclass: number) {
+        super(board, attributes, otype, oclass)
 
 
         // for (let i = 0; i < coordinates.length; ++i) {
@@ -1559,13 +1559,14 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
                 //t  = JXG.GeonextParser.geonext2JS(v, this.board);
                 //newfuncs[i] = new Function('','return ' + t + ';');
                 //v = GeonextParser.replaceNameById(v, this.board);
-                // TODO: GEONEXT ??  // newfuncs[i] = this.board.jc.snippet(v, true, null, true);
-                // TODO: GEONEXT ??  // this.addParentsFromJCFunctions([newfuncs[i]]);
+                throw new Error('snippet')
+                // newfuncs[i] = this.snippet(v, true, null, true);
+                this.addParentsFromJCFunctions([newfuncs[i]]);
 
                 // Store original term as 'Xjc' or 'Yjc'
-                // TODO: GEONEXT ??  // if (terms.length === 2) {
-                // TODO: GEONEXT ??  //     this[what[i] + "jc"] = terms[i];
-                // TODO: GEONEXT ??  // }
+                if (terms.length === 2) {
+                    this[what[i] + "jc"] = terms[i];
+                }
             } else if (Type.isFunction(v)) {
                 newfuncs[i] = v;
             } else if (Type.isNumber(v)) {

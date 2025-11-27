@@ -11,9 +11,9 @@ describe('test the Coords constructor', () => {
 
         let coords = new Coords(COORDS_BY.USER, [1, 1], board)
         expect(coords.usrCoords).toEqual([1, 1, 1])
-        expect(coords.scrCoords).toEqual([1, Infinity, -Infinity])
+        expect(coords.scrCoords).toEqual([1, NaN, NaN])
         coords = new Coords(COORDS_BY.USER, [2, 3], board)
         expect(coords.usrCoords).toEqual([1, 2, 3])
-        expect(coords.scrCoords).toEqual([1, Infinity, -Infinity])
+        expect(coords.scrCoords).toEqual([1, NaN, NaN])
     });
 });

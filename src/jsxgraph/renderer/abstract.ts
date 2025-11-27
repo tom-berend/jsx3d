@@ -47,7 +47,7 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-import { LooseObject,JXG } from "../jxg.js";
+import { LooseObject, JXG } from "../jxg.js";
 import { Options } from "../options.js";
 // import { GeometryElementOptions } from "../optionInterfaces.js'
 import { Coords } from "../base/coords.js";
@@ -1020,9 +1020,9 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     drawText(el): HTMLElement {
-        var node:HTMLElement, z, level, ev_visible;
+        var node: HTMLElement, z, level, ev_visible;
 
-        console.log('drawText', el, el.evalVisProp('display'))
+        console.warn('drawText', el, el.evalVisProp('display'))
         if (this.container !== null) {
             if (
                 el.evalVisProp('display') === "html" &&
@@ -1035,6 +1035,7 @@ export abstract class AbstractRenderer {
                 node.style.position = "absolute";
                 node.className = el.evalVisProp('cssclass');
 
+                console.log('1038', node)
                 level = el.evalVisProp('layer');
                 if (!Type.exists(level)) {
                     // trace nodes have level not set
@@ -1049,11 +1050,13 @@ export abstract class AbstractRenderer {
 
                 node.style.zIndex = z + level;
                 this.container.appendChild(node);
-                el.rendNode = node  // TODO tbtb - added but i think this is wrong
+                // el.rendNode = node  // TODO tbtb - added but i think this is wrong
+                console.log('1054', node)
 
                 node.setAttribute("id", this.container.id + "_" + el.id);
             } else {
                 node = this.drawInternalText(el);
+                console.log('1059', node)
 
                 el.rendNode = node;
                 el.htmlStr = "";
@@ -1070,6 +1073,7 @@ export abstract class AbstractRenderer {
         } else {
             throw new Error('container was null')
         }
+        console.log('1073', node)
         return node
     }
 
@@ -1567,7 +1571,7 @@ export abstract class AbstractRenderer {
      * @returns {JXG.AbstractRenderer} Reference to the renderer
      * @see JXG.AbstractRenderer#updateTextStyle
      */
-    highlight(el:GeometryElement, suppressHighlightStrokeWidth:boolean = false) {
+    highlight(el: GeometryElement, suppressHighlightStrokeWidth: boolean = false) {
         var i, do_hl, sw;
 
         this.setObjectTransition(el);

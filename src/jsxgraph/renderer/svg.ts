@@ -1123,7 +1123,6 @@ export class SVGRenderer extends AbstractRenderer {
         node.setAttributeNS(null, "cy", y.toString());
         node.setAttributeNS(null, "rx", Math.abs(rx).toString());
         node.setAttributeNS(null, "ry", Math.abs(ry).toString());
-        console.log(node)
     }
 
     /**

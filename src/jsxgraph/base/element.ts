@@ -30,7 +30,7 @@
  */
 
 
-import { LooseObject,JXG } from "../jxg.js";
+import { LooseObject, JXG } from "../jxg.js";
 import { Board } from "../base/board.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
@@ -41,7 +41,7 @@ import { Statistics } from "../math/statistics.js";
 import { Options } from "../options.js";
 import { Events } from "../utils/event.js";
 import { Color } from "../utils/color.js";
-import {  Type } from "../utils/type.js";
+import { Type } from "../utils/type.js";
 import { Text } from "../base/text.js";
 
 import { BoardOptions, GeometryElementOptions } from "../optionInterfaces.js";
@@ -209,9 +209,9 @@ export class GeometryElement extends Events {
     public board: Board;
 
     /**  Type of the element.   */
-    public type: OBJECT_TYPE = OBJECT_TYPE.NOTYETASSIGNED
+    public type = OBJECT_TYPE.NOTYETASSIGNED
     /**  Class of the element.   */
-    public class: OBJECT_CLASS = OBJECT_CLASS.OTHER
+    public class = OBJECT_CLASS.OTHER
 
     /**
      * Original type of the element at construction time. Used for removing glider property.
@@ -420,8 +420,8 @@ export class GeometryElement extends Events {
     public rendNodeLabel    // many elements seem to need this
     public htmlStr // svg writes content to this
 
-    public name
-    public label
+    public name: string | Function
+    public label: Text | null
     public labels
     public needsRegularUpdate
 
@@ -457,7 +457,7 @@ export class GeometryElement extends Events {
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
-    constructor(board: Board, attributes: BoardOptions) {
+    constructor(board: Board, attributes: GeometryElementOptions, otype: number, oclass: number) {
         super()
 
         var name, key, attr;
@@ -469,6 +469,13 @@ export class GeometryElement extends Events {
         this.visProp = Type.merge(this.visProp, Options.elements)
 
         this.board = board;
+        this.type = otype;
+        this._org_type = otype
+        this.elementClass = oclass || OBJECT_CLASS.OTHER;
+
+        console.assert('id' in attributes, 'need ID')
+        // this.id = attributes.id;
+
 
         if (arguments.length > 0) {
             // this.board = board;
@@ -479,7 +486,7 @@ export class GeometryElement extends Events {
             // */
             // this.id = attributes.id;
 
-            if (attributes.hasOwnProperty('name')) {
+            if ('name' in attributes) {
                 name = attributes['name'];
             } else {
                 /* If name is not set or null or even undefined, generate an unique name for this object */
@@ -498,8 +505,7 @@ export class GeometryElement extends Events {
             */
             this.name = name;
 
-            // TODO - needsRegularUpdates is a GeometryElement value
-            // this.needsRegularUpdate = attributes.needsRegularUpdate;
+            this.needsRegularUpdate = attributes.needsRegularUpdate;
 
             // create this.visPropOld and set default values
             Type.clearVisPropOld(this);
@@ -518,6 +524,27 @@ export class GeometryElement extends Events {
             //this.visProp.gradientpositiony = 0.5;
         }
 
+        this.methodMap = {
+            setLabel: "setLabel",
+            label: "label",
+            setName: "setName",
+            getName: "getName",
+            Name: "getName",
+            addTransform: "addTransform",
+            setProperty: "setAttribute",
+            setAttribute: "setAttribute",
+            addChild: "addChild",
+            animate: "animate",
+            on: "on",
+            off: "off",
+            trigger: "trigger",
+            addTicks: "addTicks",
+            removeTicks: "removeTicks",
+            removeAllTicks: "removeAllTicks",
+            Bounds: "bounds"
+        };
+
+
         // EventEmitter.eventify(this);  // tb now handled by class hierarchy
     }
     /**
@@ -528,7 +555,7 @@ export class GeometryElement extends Events {
         var el, el2;
 
         this.childElements[obj.id] = obj;
-        this.addDescendants(obj);  // TODO TomBerend removed this. Check if it is possible.
+        this.addDescendants(obj);
         obj.ancestors[this.id] = this;
 
         for (el in this.descendants) {
@@ -994,7 +1021,6 @@ export class GeometryElement extends Events {
         }
         return this;
     }
-    // TODO:  require all classes to have 'implements CoordsInterface' with methods like 'update'
 
 
     /**
@@ -1028,7 +1054,7 @@ export class GeometryElement extends Events {
      * @return {JXG.GeometryElement} Reference to the element
      * @private
      */
-    setDisplayRendNode(val?:boolean) {   // TODO: no one ever sends param val ???
+    setDisplayRendNode(val?: boolean) {   // TODO: no one ever sends param val ???
         var i, len, s, len_s, obj;
 
         if (val === undefined) {
@@ -1365,7 +1391,7 @@ export class GeometryElement extends Events {
                 attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
             } else if (!Array.isArray(arg)) {
                 // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-                // TODO ?? // JXG.extend(attributes, arg);
+                JXG.extend(attributes, arg);
             } else {
                 // pairRaw consists of array [key,value]
                 attributes[arg[0]] = arg[1];
@@ -1510,12 +1536,16 @@ export class GeometryElement extends Events {
                     //     }
                     //     break;
 
-                    case "name":
-                        oldvalue = this.name;
-                        delete this.board.elementsByName[this.name];
-                        this.name = value;
-                        this.board.elementsByName[this.name] = this;
-                        break;
+
+                    // TODO: doesn't work because name can be a function
+                    // case "name":
+                    //     oldvalue = this.name;
+                    //     delete this.board.elementsByName[this.name];
+                    //     this.name = value;
+                    //     this.board.elementsByName[this.name] = this;
+                    //     break;
+
+
                     case "needsregularupdate":
                         this.needsRegularUpdate = !(value === "false" || value === false);
                         this.board.renderer.setBuffering(
@@ -1895,8 +1925,8 @@ export class GeometryElement extends Events {
      * @see JXG.GeometryElement#addLabelToElement
      */
     createLabel() {
-        var attr,
-            that = this;
+        var attr
+        // that = this;
 
         // this is a dirty hack to resolve the text-dependency. If there is no text element available,
         // just don't create a label. This method is usually not called by a user, so we won't throw
@@ -1909,20 +1939,18 @@ export class GeometryElement extends Events {
         attr.anchor = this;
         attr.priv = this.visProp.priv;
 
+
         if (this.visProp.withlabel) {
             this.label = new Text(
                 this.board,
-                [
-                    0,
-                    0,],
+                [0, 0,],
                 attr,
                 (): string => {
-                    if (Type.isFunction(that.name)) {
-                        return that.name(that);
+                    if (typeof this.name == 'function') {
+                        return this.name();
                     }
-                    return that.name;
+                    return this.name;
                 }
-
             );
             this.label.needsUpdate = true;
             this.label.dump = false;
@@ -2297,7 +2325,7 @@ export class GeometryElement extends Events {
      * @private
      * @returns {JXG.GeometryElement} Reference to the element.
      */
-    snapToGrid(force?:boolean):GeometryElement {
+    snapToGrid(force?: boolean): GeometryElement {
         return this;
     }
 
@@ -2309,7 +2337,7 @@ export class GeometryElement extends Events {
      * @private
      * @returns {JXG.GeometryElement} Reference to the element.
      */
-    snapToPoints(force?:boolean):GeometryElement {
+    snapToPoints(force?: boolean): GeometryElement {
         return this;
     }
 
@@ -2446,7 +2474,7 @@ export class GeometryElement extends Events {
      *    the visible board, but the distance between the two points stays constant.
      * @returns {JXG.GeometryElement} Reference to this element
      */
-    handleSnapToGrid(force:boolean=false, fromParent:boolean=false) {
+    handleSnapToGrid(force: boolean = false, fromParent: boolean = false) {
         var x, y, rx, ry, rcoords,
             mi, ma,
             boardBB, res, sX, sY,

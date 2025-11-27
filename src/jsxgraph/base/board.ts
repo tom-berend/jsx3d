@@ -728,7 +728,7 @@ export class Board extends Events {
         }
 
 
-        if (this.attr.registerevents === true) {
+        // if (this.attr.registerevents === true) {
             this.attr.registerevents = {
                 fullscreen: true,
                 keyboard: true,
@@ -736,7 +736,10 @@ export class Board extends Events {
                 resize: true,
                 wheel: true
             };
-        } else if (typeof this.attr.registerevents === 'object') {
+
+            // TODO, this isn't quite the original logic....
+
+        // } else  if (typeof this.attr.registerevents === 'object') {
             if (!Type.exists(this.attr.registerevents.fullscreen)) {
                 this.attr.registerevents.fullscreen = true;
             }
@@ -752,7 +755,7 @@ export class Board extends Events {
             if (!Type.exists(this.attr.registerevents.wheel)) {
                 this.attr.registerevents.wheel = true;
             }
-        }
+        // }
 
         if (this.attr.registerevents !== false) {
             if (this.attr.registerevents.fullscreen) {
@@ -772,6 +775,7 @@ export class Board extends Events {
             }
         }
 
+
         // this.jc = new JessieCode();
         // this.jc.use(this);
 
@@ -779,7 +783,7 @@ export class Board extends Events {
 
         this.origin = {
             usrCoords: [1, 0, 0],
-            scrCoords:[1, origin[0], origin[1]]
+            scrCoords: [1, origin[0], origin[1]]
         };
 
         this.zoomX = zoomX
@@ -857,7 +861,7 @@ export class Board extends Events {
      * @param {Object} object Reference of an JXG.GeometryElement that is to be named.
      * @returns {String} Unique name for the object.
      */
-    generateName(object) {
+    generateName(object:GeometryElement):string {
         var possibleNames, i,
             maxNameLength = this.attr.maxnamelength,
             pre = '',
@@ -869,7 +873,7 @@ export class Board extends Events {
             return '';
         }
 
-        if (Type.isPoint(object) || Type.isPoint3D(object)) {
+        if (object.otype == OBJECT_TYPE.POINT || object.otype == OBJECT_TYPE.POINT3D) {
             // points have capital letters
             possibleNames = [
                 '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
@@ -916,7 +920,7 @@ export class Board extends Events {
                     name += possibleNames[indices[i - 1]];
                 }
 
-                if (!Type.exists(this.elementsByName[name + post])) {
+                if (!(name + post in this.elementsByName)) {
                     return name + post;
                 }
             }
@@ -2828,18 +2832,12 @@ export class Board extends Events {
             // this._pointerClearTouches();
         }
 
-        console.warn('missing pointerDown code')
-        // if (!this.hasPointerUp) {
-        //     if (window.navigator.msPointerEnabled) {
-        //         // IE10-
-        //         Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-        //     } else {
-        //         // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
-        //         Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
-        //         Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
-        //     }
-        //     this.hasPointerUp = true;
-        // }
+        if (!this.hasPointerUp) {
+            // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
+            Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
+            Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
+            this.hasPointerUp = true;
+        }
 
         if (this.hasMouseHandlers) {
             this.removeMouseEventHandlers();
@@ -2850,17 +2848,12 @@ export class Board extends Events {
         }
 
         // Prevent accidental selection of text
-        console.warn('missing pointerdown code')
-        // if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
-        //     this.document.selection.empty();
-        // } else if (window.getSelection) {
-        //     sel = window.getSelection();
-        //     if (sel.removeAllRanges) {
-        //         try {
-        //             sel.removeAllRanges();
-        //         } catch (e) { }
-        //     }
-        // }
+        sel = window.getSelection();
+        if (sel.removeAllRanges) {
+            try {
+                sel.removeAllRanges();
+            } catch (e) { }
+        }
 
         // Mouse, touch or pen device
         this._inputDevice = this._getPointerInputDevice(evt);
@@ -3334,22 +3327,16 @@ export class Board extends Events {
             }
         }
 
-        console.warn('missing pointerup code')
-        // if (this.hasPointerUp) {
-        //     if (window.navigator.msPointerEnabled) {
-        //         // IE10-
-        //         Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-        //     } else {
-        //         Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-        //         Env.removeEvent(
-        //             this.document,
-        //             'pointercancel',
-        //             this.pointerUpListener,
-        //             this
-        //         );
-        //     }
-        //     this.hasPointerUp = false;
-        // }
+        if (this.hasPointerUp) {
+            Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+            Env.removeEvent(
+                this.document,
+                'pointercancel',
+                this.pointerUpListener,
+                this
+            )
+            this.hasPointerUp = false;
+        }
 
         // After one finger leaves the screen the gesture is stopped.
         this._pointerClearTouches(evt.pointerId);
@@ -6162,60 +6149,57 @@ export class Board extends Events {
     update(drag?: GeometryElement) {
         var i, len, b, insert, storeActiveEl;
 
-        if (drag === undefined) {
-            console.warn("missing element causing update")
-        } else {
-
-
-            if (this.inUpdate || this.isSuspendedUpdate) {
-                return this;
-            }
-            this.inUpdate = true;
-
-            if (
-                this.attr.minimizereflow === 'all' &&
-                this.containerObj &&
-                this.renderer.type !== 'vml'
-            ) {
-                storeActiveEl = this.document.activeElement; // Store focus element
-                insert = this.renderer.removeToInsertLater(this.containerObj);
-            }
-
-            if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
-                storeActiveEl = this.document.activeElement;
-                insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
-            }
-
-            this.prepareUpdate(drag).updateElements(drag).updateConditions();
-
-            this.renderer.suspendRedraw();
-            this.updateRenderer();
-            this.renderer.unsuspendRedraw();
-            this.triggerEventHandlers(['update'], []);
-
-            if (insert) {
-                insert();
-                storeActiveEl.focus(); // Restore focus element
-            }
-
-            // To resolve dependencies between boards
-            // for (var board in JXG.boards) {
-            len = this.dependentBoards.length;
-            for (i = 0; i < len; i++) {
-                b = this.dependentBoards[i];
-                if (Type.exists(b) && b !== this) {
-                    b.updateQuality = this.updateQuality;
-                    b.prepareUpdate().updateElements().updateConditions();
-                    b.renderer.suspendRedraw(this);
-                    b.updateRenderer();
-                    b.renderer.unsuspendRedraw();
-                    b.triggerEventHandlers(['update'], []);
-                }
-            }
-
-            this.inUpdate = false;
+        if (this.inUpdate || this.isSuspendedUpdate) {
             return this;
         }
+        this.inUpdate = true;
+
+        if (
+            this.attr.minimizereflow === 'all' &&
+            this.containerObj &&
+            this.renderer.type !== 'vml'
+        ) {
+            storeActiveEl = this.document.activeElement; // Store focus element
+            insert = this.renderer.removeToInsertLater(this.containerObj);
+        }
+
+        if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
+            storeActiveEl = this.document.activeElement;
+            insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
+        }
+
+        if (drag !== undefined)
+            this.prepareUpdate(drag).updateElements(drag).updateConditions();
+        else
+            console.warn('Board.update() without specifying element')
+
+        this.renderer.suspendRedraw();
+        this.updateRenderer();
+        this.renderer.unsuspendRedraw();
+        this.triggerEventHandlers(['update'], []);
+
+        if (insert) {
+            insert();
+            storeActiveEl.focus(); // Restore focus element
+        }
+
+        // To resolve dependencies between boards
+        // for (var board in JXG.boards) {
+        len = this.dependentBoards.length;
+        for (i = 0; i < len; i++) {
+            b = this.dependentBoards[i];
+            if (Type.exists(b) && b !== this) {
+                b.updateQuality = this.updateQuality;
+                b.prepareUpdate().updateElements().updateConditions();
+                b.renderer.suspendRedraw(this);
+                b.updateRenderer();
+                b.renderer.unsuspendRedraw();
+                b.triggerEventHandlers(['update'], []);
+            }
+        }
+
+        this.inUpdate = false;
+        return this;
     }
 
     /**
@@ -6688,6 +6672,7 @@ export class Board extends Events {
                             this.defaultAxes.y.setAttribute({ visible: false });
                         }
                     } else {
+                        throw new Error(key)
                         // TODO
                     }
                     break;
@@ -8146,12 +8131,12 @@ export class Board extends Events {
     }
 
     /**
- *
- * @param {String|Object} container id of or reference to the HTML element in which the board is painted.
- * @param {Object} attr An object that sets some of the board properties.
- *
- * @private
- */
+    *
+    * @param {String|Object} container id of or reference to the HTML element in which the board is painted.
+    * @param {Object} attr An object that sets some of the board properties.
+    *
+    * @private
+    */
     _setARIA(container, attr) {
         var doc = attr.document,
             node_jsx;
@@ -8197,17 +8182,17 @@ export class Board extends Events {
     }
 
     /**
- * Initialize the rendering engine
- *
- * @param  {String} box        id of or reference to the div element which hosts the JSXGraph construction
- * @param  {Object} dim        The dimensions of the canvas {width:500, height:500}
- * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
- * to the document object of the browser.
- * @param  {Object} attrRenderer Attribute 'renderer', specifies the rendering engine. Possible values are 'auto', 'svg',
- *  'canvas', 'no', and 'vml'.
- * @returns {Object}           Reference to the rendering engine object.
- * @private
- */
+    * Initialize the rendering engine
+    *
+    * @param  {String} box        id of or reference to the div element which hosts the JSXGraph construction
+    * @param  {Object} dim        The dimensions of the canvas {width:500, height:500}
+    * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
+    * to the document object of the browser.
+    * @param  {Object} attrRenderer Attribute 'renderer', specifies the rendering engine. Possible values are 'auto', 'svg',
+    *  'canvas', 'no', and 'vml'.
+    * @returns {Object}           Reference to the rendering engine object.
+    * @private
+    */
     initRenderer(containerName: string, dim: Dim, doc: any = null, rendererType: string = 'svg'): AbstractRenderer {
 
         // TODO: there is logic in JSXGraph.initRenderer to clear board, specify the document

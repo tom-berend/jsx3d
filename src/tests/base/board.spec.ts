@@ -20,6 +20,22 @@ describe('board creation', () => {
         let b = new Board('box')
         expect(b.container).toBe('box')
     });
-    
+
 });
 
+////////////////// prototype test
+describe('generate names', () => {
+    it('generates A,B,C for points', () => {
+        document.body.innerHTML =
+        `<!DOCTYPE html><html lang="en"><head></head><body><div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div></body></html>`
+
+        let b = new Board('box')
+        let p = b.create('point',[2,3])
+        // expect(p.name).toBe('A')
+
+        let ptName = b.generateName(p)
+        // expect ptName
+
+    });
+
+});
