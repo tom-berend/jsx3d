@@ -36,9 +36,9 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import {JXG} from"../jxg.js";
-import {Env} from "../utils/env.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
 
 var priv = {
     /**
@@ -171,7 +171,7 @@ var priv = {
 JXG.createCheckbox = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "checkbox");
+        attr = Type.copyAttributes(attributes, board.options, 'checkbox');
 
     //if (parents.length !== 3) {
     //throw new Error("JSXGraph: Can't create checkbox with parent types '" +
@@ -189,7 +189,7 @@ JXG.createCheckbox = function (board, parents, attributes) {
 
     // 1. Create checkbox element with empty label
     t = board.create("text", par, attr);
-    t.type = OBJECT_TYPE.CHECKBOX;
+    t.type = Type.OBJECT_TYPE_CHECKBOX;
 
     t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
@@ -197,7 +197,6 @@ JXG.createCheckbox = function (board, parents, attributes) {
     t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
 
-    // t.rendNodeLabel.innerHTML = parents[2];
     t.rendNodeCheckbox.id = t.rendNode.id + "_checkbox";
     t.rendNodeLabel.id = t.rendNode.id + "_label";
     t.rendNodeLabel.setAttribute("for", t.rendNodeCheckbox.id);
@@ -207,7 +206,7 @@ JXG.createCheckbox = function (board, parents, attributes) {
     t.setText(parents[2]);
 
     // This sets the font-size of the checkbox itself
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     t.rendNodeCheckbox.checked = attr.checked;

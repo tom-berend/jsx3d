@@ -29,10 +29,10 @@
  */
 /*global JXG:true, define: true*/
 
-import {JXG} from'../jxg.js';
-import {Constants} from '../base/constants.js';
-import {Type} from '../utils/type.js';
- import {JSXMath}  from '../math/jsxmath.js';
+import JXG from '../jxg.js';
+import Const from '../base/constants.js';
+import Type from '../utils/type.js';
+import Mat from '../math/math.js';
 
 /**
  * Constructor for 3D polygons.
@@ -50,7 +50,7 @@ import {Type} from '../utils/type.js';
 JXG.Polygon3D = function (view, vertices, attributes) {
     var i;
 
-    this.constructor(view.board, attributes, OBJECT_TYPE.POLYGON3D, Const.OBJECT_CLASS_3D);
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_POLYGON3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, 'polygon3d');
 
     this.board.finalizeAdding(this);
@@ -153,7 +153,7 @@ JXG.createPolygon3D = function (board, parents, attributes) {
     // TODO: Number of points? Is the last point equal to the first point?
     if (
         Type.isObject(obj) &&
-        obj.type === OBJECT_TYPE.POLYGON3D &&
+        obj.type === Const.OBJECT_TYPE_POLYGON3D &&
         Type.isTransformationOrArray(parents[2])
     ) {
         is_transform = true;
@@ -166,7 +166,7 @@ JXG.createPolygon3D = function (board, parents, attributes) {
             }
             points.push(board.create('point3d', [obj.vertices[i], parents[2]], attr_points));
         }
-    } else if (Array.isArray(parents[1]) && parents[1].every((x) => Type.isPoint3D(x))) {
+    } else if (Type.isArray(parents[1]) && parents[1].every((x) => Type.isPoint3D(x))) {
         // array of points [A, B, C]
         // TODO mixing points and coords arrays
         points = parents[1];

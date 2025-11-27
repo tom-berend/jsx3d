@@ -38,11 +38,11 @@
  * a board.
  */
 
-import {JXG} from"../jxg.js";
- import {JSXMath}  from "../math/jsxmath.js";
-import {Constants} from "../base/constants.js";
-import{Coords} from "../base/coords.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Type from "../utils/type.js";
 import Point from "../base/point.js";
 
 /**
@@ -231,7 +231,7 @@ JXG.createSlider = function (board, parents, attributes) {
         snapWidth, sw, s,
         attr;
 
-    attr = Type.copyAttributes(attributes, board.options, "slider");
+    attr = Type.copyAttributes(attributes, board.options, 'slider');
     withTicks = attr.withticks;
     withText = attr.withlabel;
     snapWidth = attr.snapwidth;
@@ -267,7 +267,7 @@ JXG.createSlider = function (board, parents, attributes) {
     starty = pos0[1] + ((pos1[1] - pos0[1]) * (s - smin)) / (smax - smin);
 
     // glider point
-    // attr = Type.copyAttributes(attributes, board.options, "slider");
+    // attr = Type.copyAttributes(attributes, board.options, 'slider');
     // overwrite this in any case; the sliders label is a special text element, not the gliders label.
     // this will be set back to true after the text was created (and only if withlabel was true initially).
     attr.withlabel = false;
@@ -276,7 +276,7 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.setAttribute({ snapwidth: snapWidth, snapvalues: snapValues, snapvaluedistance: snapValueDistance });
 
     // Segment from start point to glider point: highline
-    // attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
+    // attr = Type.copyAttributes(attributes, board.options, "slider", 'highline');
     l2 = board.create("segment", [p1, p3], attr.highline);
 
     /**
@@ -353,7 +353,7 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.setValue = function (val) {
         var d = this._smax - this._smin;
 
-        if (Math.abs(d) > JSXMath.eps) {
+        if (Math.abs(d) > Mat.eps) {
             this.position = (val - this._smin) / d;
         } else {
             this.position = 0.0; //this._smin;
@@ -471,7 +471,7 @@ JXG.createSlider = function (board, parents, attributes) {
     if (withTicks) {
         // Function to generate correct label texts
 
-        // attr = Type.copyAttributes(attributes, board.options, "slider", "ticks");
+        // attr = Type.copyAttributes(attributes, board.options, "slider", 'ticks');
         if (!Type.exists(attr.generatelabeltext)) {
             attr.ticks.generateLabelText = function (tick, zero, value) {
                 var labelText,
@@ -480,9 +480,9 @@ JXG.createSlider = function (board, parents, attributes) {
                     smax = p3._smax,
                     val = (this.getDistanceFromZero(zero, tick) * (smax - smin)) / dFull + smin;
 
-                if (dFull < JSXMath.eps || Math.abs(val) < JSXMath.eps) {
+                if (dFull < Mat.eps || Math.abs(val) < Mat.eps) {
                     // Point is zero
-                    labelText = "0";
+                    labelText = '0';
                 } else {
                     labelText = this.formatLabelText(val);
                 }
@@ -498,9 +498,9 @@ JXG.createSlider = function (board, parents, attributes) {
 
                 function (tick) {
                     var dFull = p3.point1.Dist(p3.point2),
-                        d = p3.point1.coords.distance(COORDS_BY.USER, tick);
+                        d = p3.point1.coords.distance(Const.COORDS_BY_USER, tick);
 
-                    if (dFull < JSXMath.eps) {
+                    if (dFull < Mat.eps) {
                         return 0;
                     }
 
@@ -541,8 +541,8 @@ JXG.createSlider = function (board, parents, attributes) {
         t.dump = false;
     }
 
-    // p3.type = OBJECT_TYPE.SLIDER; // No! type has to be OBJECT_TYPE.GLIDER
-    p3.elType = "slider";
+    // p3.type = Const.OBJECT_TYPE_SLIDER; // No! type has to be Const.OBJECT_TYPE_GLIDER
+    p3.elType = 'slider';
     p3.parents = parents;
     p3.subs = {
         point1: p1,
@@ -574,7 +574,7 @@ JXG.createSlider = function (board, parents, attributes) {
 
         if (p3.evalVisProp('moveonup') && !p3.evalVisProp('fixed')) {
             pos = l1.board.getMousePosition(evt, 0);
-            c = new Coords(COORDS_BY.SCREEN, pos, this.board);
+            c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
             p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
             p3.triggerEventHandlers(['drag'], [evt]);
         }

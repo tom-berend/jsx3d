@@ -41,8 +41,8 @@
  * renderers is the class AbstractRenderer.
  */
 
-import { JXG } from "../jxg.js";
-import { AbstractRenderer } from "./abstract.js";
+import JXG from "../jxg.js";
+import AbstractRenderer from "./abstract.js";
 
 /**
  * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
@@ -69,7 +69,7 @@ JXG.NoRenderer = function () {
      * }
      * @type String
      */
-    this.type = "no";
+    this.type = 'no';
 };
 
 JXG.extend(
@@ -80,137 +80,137 @@ JXG.extend(
 
         /* ********* Point related stuff *********** */
 
-        drawPoint: function (el) { },
+        drawPoint: function (el) {},
 
-        updatePoint: function (el) { },
+        updatePoint: function (el) {},
 
-        changePointStyle: function (el) { },
+        changePointStyle: function (el) {},
 
         /* ********* Line related stuff *********** */
 
-        drawLine: function (el) { },
+        drawLine: function (el) {},
 
-        updateLine: function (el) { },
+        updateLine: function (el) {},
 
-        drawTicks: function (el) { },
+        drawTicks: function (el) {},
 
-        updateTicks: function (el) { },
+        updateTicks: function (el) {},
 
         /* ********* Curve related stuff *********** */
 
-        drawCurve: function (el) { },
+        drawCurve: function (el) {},
 
-        updateCurve: function (el) { },
+        updateCurve: function (el) {},
 
         /* ********* Circle related stuff *********** */
 
-        drawEllipse: function (el) { },
+        drawEllipse: function (el) {},
 
-        updateEllipse: function (el) { },
+        updateEllipse: function (el) {},
 
         /* ********* Polygon related stuff *********** */
 
-        drawPolygon: function (el) { },
+        drawPolygon: function (el) {},
 
-        updatePolygon: function (el) { },
+        updatePolygon: function (el) {},
 
         /* ********* Text related stuff *********** */
 
-        displayCopyright: function (str, fontsize) { },
+        displayCopyright: function (str, fontsize) {},
 
-        drawInternalText: function (el) { },
+        drawInternalText: function (el) {},
 
-        updateInternalText: function (el) { },
+        updateInternalText: function (el) {},
 
-        drawText: function (el) { },
+        drawText: function (el) {},
 
-        updateText: function (el) { },
+        updateText: function (el) {},
 
-        updateTextStyle: function (el, doHighlight) { },
+        updateTextStyle: function (el, doHighlight) {},
 
-        updateInternalTextStyle: function (el, strokeColor, strokeOpacity) { },
+        updateInternalTextStyle: function (el, strokeColor, strokeOpacity) {},
 
         /* ********* Image related stuff *********** */
 
-        drawImage: function (el) { },
+        drawImage: function (el) {},
 
-        updateImage: function (el) { },
+        updateImage: function (el) {},
 
-        updateImageURL: function (el) { },
+        updateImageURL: function (el) {},
 
         /* ********* Render primitive objects *********** */
 
-        appendChildPrim: function (node, level) { },
+        appendChildPrim: function (node, level) {},
 
-        appendNodesToElement: function (el, type) { },
+        appendNodesToElement: function (el, type) {},
 
-        remove: function (node) { },
+        remove: function (node) {},
 
-        makeArrows: function (el) { },
+        makeArrows: function (el) {},
 
-        updateEllipsePrim: function (node, x, y, rx, ry) { },
+        updateEllipsePrim: function (node, x, y, rx, ry) {},
 
-        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) { },
+        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {},
 
-        updatePathPrim: function (node, pathString, board) { },
+        updatePathPrim: function (node, pathString, board) {},
 
-        updatePathStringPoint: function (el, size, type) { },
+        updatePathStringPoint: function (el, size, type) {},
 
-        updatePathStringPrim: function (el) { },
+        updatePathStringPrim: function (el) {},
 
-        updatePathStringBezierPrim: function (el) { },
+        updatePathStringBezierPrim: function (el) {},
 
-        updatePolygonPrim: function (node, el) { },
+        updatePolygonPrim: function (node, el) {},
 
-        updateRectPrim: function (node, x, y, w, h) { },
+        updateRectPrim: function (node, x, y, w, h) {},
 
-        setPropertyPrim: function (node, key, val) { },
+        setPropertyPrim: function (node, key, val) {},
 
         /* ********* Set attributes *********** */
 
-        show: function (el) { },
+        show: function (el) {},
 
-        hide: function (el) { },
+        hide: function (el) {},
 
-        setBuffering: function (node, type) { },
+        setBuffering: function (node, type) {},
 
-        setDashStyle: function (el) { },
+        setDashStyle: function (el) {},
 
-        setDraft: function (el) { },
+        setDraft: function (el) {},
 
-        removeDraft: function (el) { },
+        removeDraft: function (el) {},
 
-        setGradient: function (el) { },
+        setGradient: function (el) {},
 
-        updateGradient: function (el) { },
+        updateGradient: function (el) {},
 
-        setObjectTransition: function (el, duration) { },
+        setObjectTransition: function (el, duration) {},
 
-        setObjectFillColor: function (el, color, opacity) { },
+        setObjectFillColor: function (el, color, opacity) {},
 
-        setObjectStrokeColor: function (el, color, opacity) { },
+        setObjectStrokeColor: function (el, color, opacity) {},
 
-        setObjectStrokeWidth: function (el, width) { },
+        setObjectStrokeWidth: function (el, width) {},
 
-        setShadow: function (el) { },
+        setShadow: function (el) {},
 
-        highlight: function (el) { },
+        highlight: function (el) {},
 
-        noHighlight: function (el) { },
+        noHighlight: function (el) {},
 
         /* ********* Renderer control *********** */
 
-        suspendRedraw: function () { },
+        suspendRedraw: function () {},
 
-        unsuspendRedraw: function () { },
+        unsuspendRedraw: function () {},
 
-        drawNavigationBar: function (board) { },
+        drawNavigationBar: function (board) {},
 
         getElementById: function (id) { return null; },
 
-        resize: function (w, h) { },
+        resize: function (w, h) {},
 
-        removeToInsertLater: function () { return function () { }; }
+        removeToInsertLater: function () { return function () {}; }
     }
 );
 

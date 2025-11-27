@@ -33,14 +33,14 @@
  * @fileoverview Here, the computer algebra algorithms are implemented.
  */
 
-import {JXG} from"../jxg.js";
-import {Type} from "../utils/type.js";
-// import {Constants} from "../base/constants.js";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+// import Const from "../base/constants.js";
 // import Text from "../base/text.js";
-//  import {JSXMath}  from "../math/math.js";
-// import{Geometry}   from "../math/geometry.js";
-// import {Statistics} from "../math/statistics.js";
-// import {Env} from "../utils/env.js";
+// import Mat from "../math/math.js";
+// import Geometry from "../math/geometry.js";
+// import Statistics from "../math/statistics.js";
+// import Env from "../utils/env.js";
 
 /**
  * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
@@ -121,7 +121,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -157,7 +157,7 @@ JXG.extend(
                     newNode = this.createNode(
                         "node_op",
                         "op_execfun",
-                        this.createNode("node_var", "cos"),
+                        this.createNode("node_var", 'cos'),
                         Type.deepCopy(arg)
                     );
                     break;
@@ -169,7 +169,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sin"),
+                            this.createNode("node_var", 'sin'),
                             Type.deepCopy(arg)
                         )
                     );
@@ -186,7 +186,7 @@ JXG.extend(
                             this.createNode(
                                 "node_op",
                                 "op_execfun",
-                                this.createNode("node_var", "cos"),
+                                this.createNode("node_var", 'cos'),
                                 Type.deepCopy(arg)
                             ),
                             this.createNode("node_const", 2)
@@ -208,7 +208,7 @@ JXG.extend(
                                 this.createNode(
                                     "node_op",
                                     "op_execfun",
-                                    this.createNode("node_var", "sin"),
+                                    this.createNode("node_var", 'sin'),
                                     Type.deepCopy(arg)
                                 ),
                                 this.createNode("node_const", 2)
@@ -258,7 +258,7 @@ JXG.extend(
                                 this.createNode(
                                     "node_op",
                                     "op_execfun",
-                                    this.createNode("node_var", "log"),
+                                    this.createNode("node_var", 'log'),
                                     [Type.deepCopy(node.children[1][0])]
                                 )
                             )
@@ -318,7 +318,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -347,7 +347,7 @@ JXG.extend(
                             this.createNode(
                                 "node_op",
                                 "op_execfun",
-                                this.createNode("node_var", "sqrt"),
+                                this.createNode("node_var", 'sqrt'),
                                 [
                                     this.createNode(
                                         "node_op",
@@ -414,7 +414,7 @@ JXG.extend(
                     newNode = this.createNode(
                         "node_op",
                         "op_execfun",
-                        this.createNode("node_var", "cosh"),
+                        this.createNode("node_var", 'cosh'),
                         [Type.deepCopy(arg[0])]
                     );
                     break;
@@ -423,7 +423,7 @@ JXG.extend(
                     newNode = this.createNode(
                         "node_op",
                         "op_execfun",
-                        this.createNode("node_var", "sinh"),
+                        this.createNode("node_var", 'sinh'),
                         [Type.deepCopy(arg[0])]
                     );
                     break;
@@ -439,7 +439,7 @@ JXG.extend(
                             this.createNode(
                                 "node_op",
                                 "op_execfun",
-                                this.createNode("node_var", "tanh"),
+                                this.createNode("node_var", 'tanh'),
                                 [Type.deepCopy(arg[0])]
                             ),
                             this.createNode("node_const", 2.0)
@@ -455,7 +455,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -481,7 +481,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -548,7 +548,7 @@ JXG.extend(
                         */
                         case "op_execfun":
                             // f'(g(x))g'(x)
-                            if (node.children[0].value == "pow") {
+                            if (node.children[0].value == 'pow') {
                                 newNode = this.deriveElementary(node, varname);
                             } else {
                                 if (node.children[1].length === 0) {
@@ -660,7 +660,7 @@ JXG.extend(
                                         this.createNode(
                                             "node_op",
                                             "op_execfun",
-                                            this.createNode("node_var", "log"),
+                                            this.createNode("node_var", 'log'),
                                             [Type.deepCopy(node.children[0])]
                                         )
                                     )
@@ -720,7 +720,7 @@ JXG.extend(
             for (i = 0; i < len; ++i) {
                 if (node.children[i] && node.children[i].type) {
                     node.children[i] = this.expandDerivatives(node.children[i], node, ast);
-                } else if (Array.isArray(node.children[i])) {
+                } else if (Type.isArray(node.children[i])) {
                     for (j = 0; j < node.children[i].length; ++j) {
                         if (node.children[i][j] && node.children[i][j].type) {
                             node.children[i][j] = this.expandDerivatives(
@@ -737,7 +737,7 @@ JXG.extend(
                 case "node_op":
                     switch (node.value) {
                         case "op_execfun":
-                            if (node.children[0] && node.children[0].value === "D") {
+                            if (node.children[0] && node.children[0].value === 'D') {
                                 /*
                                  * Distinguish the cases:
                                  *   D(f, x) where f is map -> isMap = true
@@ -784,7 +784,7 @@ JXG.extend(
                                     if (node.children[1].length >= 2) {
                                         varname = node.children[1][1].value;
                                     } else {
-                                        varname = "x";
+                                        varname = 'x';
                                     }
                                 }
 
@@ -847,7 +847,7 @@ JXG.extend(
             var i, len, n0, n1, swap;
 
             // In case of 'op_execfun' the children[1] node is an array.
-            if (Array.isArray(node)) {
+            if (Type.isArray(node)) {
                 len = node.length;
                 for (i = 0; i < len; ++i) {
                     node[i] = this.removeTrivialNodes(node[i]);
@@ -1580,7 +1580,7 @@ JXG.extend(
                         node.value = 0.0;
                         return node;
                     }
-                    if (arg[0].type == "node_var" && arg[0].value == "PI") {
+                    if (arg[0].type == "node_var" && arg[0].value == 'PI') {
                         node.type = "node_const";
                         node.value = 0.0;
                         return node;
@@ -1609,7 +1609,7 @@ JXG.extend(
                         node.value = 1.0;
                         return node;
                     }
-                    if (arg[0].type == "node_var" && arg[0].value == "PI") {
+                    if (arg[0].type == "node_var" && arg[0].value == 'PI') {
                         node.type = "node_op";
                         node.value = "op_neg";
                         node.children = [this.createNode("node_const", 1.0)];

@@ -64,8 +64,8 @@
  * by D.E. Knuth and J.D. Hobby.
  */
 
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "./jsxmath.js";
+import Type from "../utils/type.js";
+import Mat from "./math.js";
 
 /**
  * The JXG.Math.Metapost namespace holds algorithms translated from Metapost
@@ -629,7 +629,7 @@ Mat.Metapost = {
         // for (i in controls.direction) {
         //     if (controls.direction.hasOwnProperty(i)) {
         //         val = Type.evaluate(controls.direction[i]);
-        //         if (Array.isArray(val)) {
+        //         if (Type.isArray(val)) {
         //             if (val[0] !== false) {
         //                 knots[i].lx = (val[0] * Math.PI) / 180;
         //                 knots[i].ltype = this.MP_GIVEN;
@@ -692,7 +692,7 @@ Mat.Metapost = {
                     // Handle individual directions
                     if (Type.exists(obj.direction)) {
                         val = Type.evaluate(obj.direction);
-                        if (Array.isArray(val)) {
+                        if (Type.isArray(val)) {
                             if (val[0] !== false) {
                                 knots[i].lx = (val[0] * Math.PI) / 180;
                                 knots[i].ltype = this.MP_GIVEN;
@@ -711,7 +711,7 @@ Mat.Metapost = {
                     // Handle individual tension
                     if (Type.exists(obj.tension)) {
                         val = Type.evaluate(obj.tension);
-                        if (Array.isArray(val)) {
+                        if (Type.isArray(val)) {
                             if (val[0] !== false) {
                                 knots[i].ly = Type.evaluate(val[0]);
                             }

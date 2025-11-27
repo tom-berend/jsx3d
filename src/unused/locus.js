@@ -32,9 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import {JXG} from"../jxg.js";
+import JXG from "../jxg.js";
 import Symbolic from "../math/symbolic.js";
-import {Type} from "../utils/type.js";
+import Type from "../utils/type.js";
 
 /**
  * @class This element is used to visualize the locus of a given dependent point.
@@ -74,7 +74,7 @@ import {Type} from "../utils/type.js";
 JXG.createLocus = function (board, parents, attributes) {
     var c, p;
 
-    if (Array.isArray(parents) && parents.length === 1 && Type.isPoint(parents[0])) {
+    if (Type.isArray(parents) && parents.length === 1 && Type.isPoint(parents[0])) {
         p = parents[0];
     } else {
         throw new Error(
@@ -86,7 +86,7 @@ JXG.createLocus = function (board, parents, attributes) {
     c = board.create("curve", [[null], [null]], attributes);
     c.dontCallServer = false;
 
-    c.elType = "locus";
+    c.elType = 'locus'
     c.setParents([p.id]);
 
     /**

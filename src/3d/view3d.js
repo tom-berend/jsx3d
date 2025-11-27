@@ -39,16 +39,15 @@
 
 /*global JXG:true, define: true*/
 
-import { JXG } from "../jxg.js";
-import { Constants } from "../base/constants.js";
-import { Coords } from "../base/coords.js";
-import { Type } from "../utils/type.js";
-import { JSXMath } from "../math/jsxmath.js";
-import { Geometry } from "../math/geometry.js";
-import {Numerics} from "../math/numerics.js";
-import { Env } from "../utils/env.js";
-import { Geometry } from "../math/geometry.js"
-import { Element } from "../base/element.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+import Env from "../utils/env.js";
+import GeometryElement from "../base/element.js";
 import Composition from "../base/composition.js";
 
 /**
@@ -63,7 +62,7 @@ import Composition from "../base/composition.js";
  * [x,y] and side lengths [w, h] of the board.
  */
 JXG.View3D = function (board, parents, attributes) {
-    this.constructor(board, attributes, OBJECT_TYPE.VIEW3D, OBJECT_CLASS._3D);
+    this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_3D);
 
     /**
      * An associative array containing all geometric objects belonging to the view.
@@ -343,7 +342,7 @@ JXG.extend(
 
         // extract bank by rotating the view box z axis onto the camera yz plane
         rBank = Math.sqrt(rem[1][3] * rem[1][3] + rem[2][3] * rem[2][3]);
-        if (rBank > JSXMath.eps) {
+        if (rBank > Mat.eps) {
             cosBank = rem[2][3] / rBank;
             sinBank = rem[1][3] / rBank;
         } else {
@@ -384,9 +383,9 @@ JXG.extend(
     anglesHaveMoved: function () {
         return (
             this._hasMoveAz || this._hasMoveEl ||
-            Math.abs(this.angles.az - this.az_slide.Value()) > JSXMath.eps ||
-            Math.abs(this.angles.el - this.el_slide.Value()) > JSXMath.eps ||
-            Math.abs(this.angles.bank - this.bank_slide.Value()) > JSXMath.eps
+            Math.abs(this.angles.az - this.az_slide.Value()) > Mat.eps ||
+            Math.abs(this.angles.el - this.el_slide.Value()) > Mat.eps ||
+            Math.abs(this.angles.bank - this.bank_slide.Value()) > Mat.eps
         );
     },
 
@@ -534,7 +533,7 @@ JXG.extend(
         dx = this._trackball.dx;
         dy = this._trackball.dy;
         dr2 = dx * dx + dy * dy;
-        if (dr2 > JSXMath.eps) {
+        if (dr2 > Mat.eps) {
             // // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
             // // Rotation axis:
             // //     n = (-dy/dr, dx/dr, 0)
@@ -744,7 +743,7 @@ JXG.extend(
             ],
             mat2D, objectToClip, size,
             dx, dy;
-        // objectsList;
+            // objectsList;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -846,15 +845,15 @@ JXG.extend(
      */
     compareDepth: function (a, b) {
         // return a.zIndex - b.zIndex;
-        // if (a.type !== OBJECT_TYPE.PLANE3D && b.type !== OBJECT_TYPE.PLANE3D) {
+        // if (a.type !== Const.OBJECT_TYPE_PLANE3D && b.type !== Const.OBJECT_TYPE_PLANE3D) {
         //     return a.zIndex - b.zIndex;
-        // } else if (a.type === OBJECT_TYPE.PLANE3D) {
+        // } else if (a.type === Const.OBJECT_TYPE_PLANE3D) {
         //     let bHesse = Mat.innerProduct(a.point.coords, a.normal, 4);
         //     let po = Mat.innerProduct(b.coords, a.normal, 4);
         //     let pos = Mat.innerProduct(this.boxToCam[3], a.normal, 4);
         // console.log(this.boxToCam[3])
         //     return pos - po;
-        // } else if (b.type === OBJECT_TYPE.PLANE3D) {
+        // } else if (b.type === Const.OBJECT_TYPE_PLANE3D) {
         //     let bHesse = Mat.innerProduct(b.point.coords, b.normal, 4);
         //     let po = Mat.innerProduct(a.coords, a.normal, 4);
         //     let pos = Mat.innerProduct(this.boxToCam[3], b.normal, 4);
@@ -864,16 +863,16 @@ JXG.extend(
         return a.zIndex - b.zIndex;
     },
 
-    updateZIndices: function () {
+    updateZIndices: function() {
         var id, el;
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
                 // Update zIndex of less frequent objects line3d and polygon3d
                 // The other elements (point3d, face3d) do this in their update method.
-                if ((el.type === OBJECT_TYPE.LINE3D ||
-                    el.type === OBJECT_TYPE.POLYGON3D
-                ) &&
+                if ((el.type === Const.OBJECT_TYPE_LINE3D ||
+                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                    ) &&
                     Type.exists(el.element2D) &&
                     el.element2D.evalVisProp('visible')
                 ) {
@@ -883,7 +882,7 @@ JXG.extend(
         }
     },
 
-    updateShaders: function () {
+    updateShaders: function() {
         var id, el, v;
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
@@ -913,12 +912,12 @@ JXG.extend(
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
-                if ((el.type === OBJECT_TYPE.FACE3D ||
-                    el.type === OBJECT_TYPE.LINE3D ||
-                    // el.type === OBJECT_TYPE.PLANE3D ||
-                    el.type === OBJECT_TYPE.POINT3D ||
-                    el.type === OBJECT_TYPE.POLYGON3D
-                ) &&
+                if ((el.type === Const.OBJECT_TYPE_FACE3D ||
+                    el.type === Const.OBJECT_TYPE_LINE3D ||
+                    // el.type === Const.OBJECT_TYPE_PLANE3D ||
+                    el.type === Const.OBJECT_TYPE_POINT3D ||
+                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                    ) &&
                     Type.exists(el.element2D) &&
                     el.element2D.evalVisProp('visible')
                 ) {
@@ -958,7 +957,7 @@ JXG.extend(
             return this;
         }
 
-        // console.time("update")
+        // console.time('update')
         // Handle depth ordering
         this.depthOrdered = {};
 
@@ -976,7 +975,7 @@ JXG.extend(
                 this.updateDepthOrdering();
             }
         }
-        // console.timeEnd("update")
+        // console.timeEnd('update')
 
         this.needsUpdate = false;
         return this;
@@ -986,7 +985,7 @@ JXG.extend(
         var i, el;
 
         // this.board.removeObject(object, saveMethod);
-        if (Array.isArray(object)) {
+        if (Type.isArray(object)) {
             for (i = 0; i < object.length; i++) {
                 this.removeObject(object[i]);
             }
@@ -1138,7 +1137,7 @@ JXG.extend(
             try {
                 // Prevent singularity in case elevation angle is zero
                 if (mat[2][3] === 1.0) {
-                    mat[2][1] = mat[2][2] = JSXMath.eps * 0.001;
+                    mat[2][1] = mat[2][2] = Mat.eps * 0.001;
                 }
                 sol = Mat.Numerics.Gauss(mat, rhs);
             } catch (e) {
@@ -1162,7 +1161,7 @@ JXG.extend(
             try {
                 // Prevent singularity in case elevation angle is zero
                 if (mat[2][3] === 1.0) {
-                    mat[2][1] = mat[2][2] = JSXMath.eps * 0.001;
+                    mat[2][1] = mat[2][2] = Mat.eps * 0.001;
                 }
 
                 sol = Mat.Numerics.Gauss(mat, rhs);
@@ -1347,12 +1346,12 @@ JXG.extend(
             q = p.slice(1);
         }
         return (
-            q[0] > this.bbox3D[0][0] - JSXMath.eps &&
-            q[0] < this.bbox3D[0][1] + JSXMath.eps &&
-            q[1] > this.bbox3D[1][0] - JSXMath.eps &&
-            q[1] < this.bbox3D[1][1] + JSXMath.eps &&
-            q[2] > this.bbox3D[2][0] - JSXMath.eps &&
-            q[2] < this.bbox3D[2][1] + JSXMath.eps
+            q[0] > this.bbox3D[0][0] - Mat.eps &&
+            q[0] < this.bbox3D[0][1] + Mat.eps &&
+            q[1] > this.bbox3D[1][0] - Mat.eps &&
+            q[1] < this.bbox3D[1][1] + Mat.eps &&
+            q[2] > this.bbox3D[2][0] - Mat.eps &&
+            q[2] < this.bbox3D[2][1] + Mat.eps
         );
     },
 
@@ -1460,7 +1459,7 @@ JXG.extend(
 
             sol = Numerics.Gauss(mat, b);
             t = sol[1];
-            if (t > -JSXMath.eps && t < 1 + JSXMath.eps) {
+            if (t > -Mat.eps && t < 1 + Mat.eps) {
                 c = [1, p1[1] + t * vec[1], p1[2] + t * vec[2], p1[3] + t * vec[3]];
                 ret.push(c);
             }
@@ -1472,7 +1471,7 @@ JXG.extend(
     // TODO:
     // - handle non-closed polyhedra
     // - handle intersections in vertex, edge, plane
-    intersectionPlanePolyhedron: function (plane, phdr) {
+    intersectionPlanePolyhedron: function(plane, phdr) {
         var i, j, seg,
             p, first, pos, pos_akt,
             eps = 1e-12,
@@ -1936,7 +1935,7 @@ JXG.extend(
         var pos = this.board.getMousePosition(evt),
             x, y, center;
 
-        center = new Coords(COORDS_BY.USER, [this.llftCorner[0] + this.size[0] * 0.5, this.llftCorner[1] + this.size[1] * 0.5], this.board);
+        center = new Coords(Const.COORDS_BY_USER, [this.llftCorner[0] + this.size[0] * 0.5, this.llftCorner[1] + this.size[1] * 0.5], this.board);
         x = pos[0] - center.scrCoords[1];
         y = pos[1] - center.scrCoords[2];
         this._trackball = {
@@ -2638,14 +2637,14 @@ JXG.createView3D = function (board, parents, attributes) {
     attr_bank.name = 'bank';
 
     v = Type.evaluate(attr_az.point1.pos);
-    if (!Array.isArray(v)) {
+    if (!Type.isArray(v)) {
         // 'auto'
         p1 = [x - 1, y - 2];
     } else {
         p1 = v;
     }
     v = Type.evaluate(attr_az.point2.pos);
-    if (!Array.isArray(v)) {
+    if (!Type.isArray(v)) {
         // 'auto'
         p2 = [x + w + 1, y - 2];
     } else {
@@ -2673,14 +2672,14 @@ JXG.createView3D = function (board, parents, attributes) {
     view.az_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     v = Type.evaluate(attr_el.point1.pos);
-    if (!Array.isArray(v)) {
+    if (!Type.isArray(v)) {
         // 'auto'
         p1 = [x - 1, y];
     } else {
         p1 = v;
     }
     v = Type.evaluate(attr_el.point2.pos);
-    if (!Array.isArray(v)) {
+    if (!Type.isArray(v)) {
         // 'auto'
         p2 = [x - 1, y + h];
     } else {
@@ -2708,14 +2707,14 @@ JXG.createView3D = function (board, parents, attributes) {
     view.el_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     v = Type.evaluate(attr_bank.point1.pos);
-    if (!Array.isArray(v)) {
+    if (!Type.isArray(v)) {
         // 'auto'
         p1 = [x - 1, y + h + 2];
     } else {
         p1 = v;
     }
     v = Type.evaluate(attr_bank.point2.pos);
-    if (!Array.isArray(v)) {
+    if (!Type.isArray(v)) {
         // 'auto'
         p2 = [x + w + 1, y + h + 2];
     } else {

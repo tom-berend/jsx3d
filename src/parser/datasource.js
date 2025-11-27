@@ -37,8 +37,8 @@
  * javascript arrays and HTML tables.
  */
 
-import {JXG} from"../jxg.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
 
 JXG.DataSource = function () {
     this.data = [];
@@ -54,12 +54,12 @@ JXG.extend(
         loadFromArray: function (table, columnHeader, rowHeader) {
             var i, j, cell;
 
-            if (Array.isArray(columnHeader)) {
+            if (Type.isArray(columnHeader)) {
                 this.columnHeaders = columnHeader;
                 columnHeader = false;
             }
 
-            if (Array.isArray(rowHeader)) {
+            if (Type.isArray(rowHeader)) {
                 this.rowHeaders = rowHeader;
                 rowHeader = false;
             }
@@ -113,12 +113,12 @@ JXG.extend(
         loadFromTable: function (table, columnHeader, rowHeader) {
             var row, i, j, col, cell;
 
-            if (Array.isArray(columnHeader)) {
+            if (Type.isArray(columnHeader)) {
                 this.columnHeaders = columnHeader;
                 columnHeader = false;
             }
 
-            if (Array.isArray(rowHeader)) {
+            if (Type.isArray(rowHeader)) {
                 this.rowHeaders = rowHeader;
                 rowHeader = false;
             }
@@ -138,15 +138,15 @@ JXG.extend(
 
             if (Type.exists(table)) {
                 // extract the data
-                row = table.getElementsByTagName("tr");
+                row = table.getElementsByTagName('tr');
                 this.data = [];
 
                 for (i = 0; i < row.length; i++) {
-                    col = row[i].getElementsByTagName("td");
+                    col = row[i].getElementsByTagName('td');
                     this.data[i] = [];
 
                     for (j = 0; j < col.length; j++) {
-                        cell = col[j].innerHTML;
+                        cell = col[j].innerText;
 
                         if (parseFloat(cell).toString() === cell) {
                             this.data[i][j] = parseFloat(cell);

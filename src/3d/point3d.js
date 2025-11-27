@@ -28,11 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "../math/jsxmath.js";
-import{Geometry}   from "../math/geometry.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
 
 /**
  * A 3D point is the basic geometric element.
@@ -48,8 +48,8 @@ import{Geometry}   from "../math/geometry.js";
  * @see JXG.Board#generateName
  */
 JXG.Point3D = function (view, F, slide, attributes) {
-    this.constructor(view.board, attributes, OBJECT_TYPE.POINT3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "point3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, 'point3d');
 
     this.board.finalizeAdding(this);
 
@@ -127,7 +127,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
 };
 
 JXG.Point3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Point3D.prototype,
@@ -389,14 +389,14 @@ JXG.extend(
                         // The 3D coordinates have been corrected, now
                         // also correct the 2D element.
                         this.element2D.coords.setCoordinates(
-                            COORDS_BY.USER,
+                            Const.COORDS_BY_USER,
                             this.view.project3DTo2D(this.coords)
                         );
                     }
                     if (this.slide) {
                         this.coords = this.slide.projectCoords([1, this.X(), this.Y(), this.Z()], this.position);
                         this.element2D.coords.setCoordinates(
-                            COORDS_BY.USER,
+                            Const.COORDS_BY_USER,
                             this.view.project3DTo2D(this.coords)
                         );
                     }
@@ -412,7 +412,7 @@ JXG.extend(
                 }
                 c3d = this.coords;
                 this.element2D.coords.setCoordinates(
-                    COORDS_BY.USER,
+                    Const.COORDS_BY_USER,
                     this.view.project3DTo2D(c3d)
                 );
                 // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
@@ -576,7 +576,7 @@ JXG.extend(
                 !Type.exists(time) ||
                 time === 0
                 // check for tiny move, is this necessary?
-                // Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > JSXMath.eps
+                // Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > Mat.eps
             ) {
                 this.setPosition([X, Y, Z], true);  // no event here
                 return this.board.update(this);
@@ -585,9 +585,9 @@ JXG.extend(
             // In case there is no callback and we are already at the endpoint we can stop here
             if (
                 !Type.exists(options.callback) &&
-                Math.abs(dX) < JSXMath.eps &&
-                Math.abs(dY) < JSXMath.eps &&
-                Math.abs(dZ) < JSXMath.eps
+                Math.abs(dX) < Mat.eps &&
+                Math.abs(dY) < Mat.eps &&
+                Math.abs(dZ) < Mat.eps
             ) {
                 return this;
             }

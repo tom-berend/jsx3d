@@ -30,16 +30,16 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import{Coords} from "../base/coords.js";
- import {JSXMath}  from "./jsxmath.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
 import Extrapolate from "./extrapolate.js";
 import Numerics from "./numerics.js";
-import {Statistics} from "./statistics.js";
-import{Geometry}   from "./geometry.js";
-import IntervalArithmetic from "./intervalarithmetic.js";
-import {Type} from "../utils/type.js";
+import Statistics from "./statistics.js";
+import Geometry from "./geometry.js";
+import IntervalArithmetic from "./ia.js";
+import Type from "../utils/type.js";
 
 /**
  * Functions for plotting of curves.
@@ -59,7 +59,7 @@ Mat.Plot = {
 
         for (i = 0; i < len; i++) {
             p = points[i].usrCoords;
-            if (!isNaN(p[1]) && !isNaN(p[2]) && Math.abs(p[0]) > JSXMath.eps) {
+            if (!isNaN(p[1]) && !isNaN(p[2]) && Math.abs(p[0]) > Mat.eps) {
                 b = true;
                 break;
             }
@@ -88,7 +88,7 @@ Mat.Plot = {
             t = mi + i * stepSize;
             // The last parameter prevents rounding in usr2screen().
             curve.points[i].setCoordinates(
-                COORDS_BY.USER,
+                Const.COORDS_BY_USER,
                 [curve.X(t, suspendUpdate), curve.Y(t, suspendUpdate)],
                 false
             );
@@ -166,7 +166,7 @@ Mat.Plot = {
             MAX_XDIST,
             MAX_YDIST,
             suspendUpdate = false,
-            po = new Coords(COORDS_BY.USER, [0, 0], curve.board, false),
+            po = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
             dyadicStack = [],
             depthStack = [],
             pointStack = [],
@@ -181,7 +181,7 @@ Mat.Plot = {
                     y1 = p2[1] - p1[2],
                     den = x1 * x1 + y1 * y1;
 
-                if (den >= JSXMath.eps) {
+                if (den >= Mat.eps) {
                     lbda = (x0 * x1 + y0 * y1) / den;
                     if (lbda > 0) {
                         if (lbda <= 1) {
@@ -220,7 +220,7 @@ Mat.Plot = {
 
         t = mi;
         po.setCoordinates(
-            COORDS_BY.USER,
+            Const.COORDS_BY_USER,
             [curve.X(t, suspendUpdate), curve.Y(t, suspendUpdate)],
             false
         );
@@ -236,7 +236,7 @@ Mat.Plot = {
 
         t = ma;
         po.setCoordinates(
-            COORDS_BY.USER,
+            Const.COORDS_BY_USER,
             [curve.X(t, suspendUpdate), curve.Y(t, suspendUpdate)],
             false
         );
@@ -249,7 +249,7 @@ Mat.Plot = {
         depth = 0;
 
         curve.points = [];
-        curve.points[j++] = new Coords(COORDS_BY.SCREEN, [x0, y0], curve.board, false);
+        curve.points[j++] = new Coords(Const.COORDS_BY_SCREEN, [x0, y0], curve.board, false);
 
         do {
             distOK =
@@ -277,7 +277,7 @@ Mat.Plot = {
                 t = mi + i * divisors[depth];
 
                 po.setCoordinates(
-                    COORDS_BY.USER,
+                    Const.COORDS_BY_USER,
                     [curve.X(t, suspendUpdate), curve.Y(t, suspendUpdate)],
                     false,
                     true
@@ -300,7 +300,7 @@ Mat.Plot = {
                 }
             }
 
-            curve.points[j] = new Coords(COORDS_BY.SCREEN, [x, y], curve.board, false);
+            curve.points[j] = new Coords(Const.COORDS_BY_SCREEN, [x, y], curve.board, false);
             curve.points[j]._t = t;
             j += 1;
 
@@ -358,7 +358,7 @@ Mat.Plot = {
         ) {
             pnt._t = t;
             curve.points.push(pnt);
-            this._lastCrds = pnt.copy("scrCoords");
+            this._lastCrds = pnt.copy('scrCoords');
         }
     },
 
@@ -370,18 +370,18 @@ Mat.Plot = {
      */
     neighborhood_isNaN_v2: function (curve, t0) {
         var is_undef,
-            pnt = new Coords(COORDS_BY.USER, [0, 0], curve.board, false),
+            pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
             t,
             p;
 
-        t = t0 + JSXMath.eps;
-        pnt.setCoordinates(COORDS_BY.USER, [curve.X(t, true), curve.Y(t, true)], false);
+        t = t0 + Mat.eps;
+        pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
         p = pnt.usrCoords;
         is_undef = isNaN(p[1] + p[2]);
         if (!is_undef) {
-            t = t0 - JSXMath.eps;
+            t = t0 - Mat.eps;
             pnt.setCoordinates(
-                COORDS_BY.USER,
+                Const.COORDS_BY_USER,
                 [curve.X(t, true), curve.Y(t, true)],
                 false
             );
@@ -422,7 +422,7 @@ Mat.Plot = {
         // asymptote;
 
         if (depth <= 1) {
-            pnt = new Coords(COORDS_BY.USER, [0, 0], curve.board, false);
+            pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
             // Test if there is a single undefined point.
             // If yes, we ignore it.
             if (
@@ -481,7 +481,7 @@ Mat.Plot = {
                 }
                 t = 0.5 * (t_nan + t_real);
                 pnt.setCoordinates(
-                    COORDS_BY.USER,
+                    Const.COORDS_BY_USER,
                     [curve.X(t, true), curve.Y(t, true)],
                     false
                 );
@@ -522,7 +522,7 @@ Mat.Plot = {
             if (p_good !== null) {
                 this._insertPoint_v2(
                     curve,
-                    new Coords(COORDS_BY.USER, p_good, curve.board, false)
+                    new Coords(Const.COORDS_BY_USER, p_good, curve.board, false)
                 );
                 return true;
             }
@@ -555,7 +555,7 @@ Mat.Plot = {
             isCusp,
             cusp_threshold = 0.5,
             jump_threshold = 0.99,
-            pnt = new Coords(COORDS_BY.USER, [0, 0], curve.board, false);
+            pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
 
         if (curve.numberPoints > 65536) {
             return;
@@ -571,7 +571,7 @@ Mat.Plot = {
         }
 
         tc = (ta + tb) * 0.5;
-        pnt.setCoordinates(COORDS_BY.USER, [curve.X(tc, true), curve.Y(tc, true)], false);
+        pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(tc, true), curve.Y(tc, true)], false);
         c = pnt.scrCoords;
 
         if (this._borderCase(curve, a, b, c, ta, tb, tc, depth)) {
@@ -608,7 +608,7 @@ Mat.Plot = {
         if (isJump) {
             this._insertPoint_v2(
                 curve,
-                new Coords(COORDS_BY.SCREEN, [NaN, NaN], curve.board, false),
+                new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], curve.board, false),
                 tc
             );
         } else if (depth <= mindepth || isSmooth) {
@@ -639,15 +639,15 @@ Mat.Plot = {
         var ta, tb,
             a, b,
             suspendUpdate = false,
-            pa = new Coords(COORDS_BY.USER, [0, 0], curve.board, false),
-            pb = new Coords(COORDS_BY.USER, [0, 0], curve.board, false),
+            pa = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
+            pb = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
             depth,
             delta,
             w2,
             // h2,
             bbox, ret_arr;
 
-        //console.time("plot");
+        //console.time('plot');
         if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
             depth = curve.evalVisProp('recursiondepthlow') || 13;
             delta = 2;
@@ -666,7 +666,7 @@ Mat.Plot = {
 
         curve.points = [];
 
-        if (this.xterm === "x") {
+        if (this.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area + plus margin
             bbox = curve.board.getBoundingBox();
@@ -679,7 +679,7 @@ Mat.Plot = {
             tb = ma;
         }
         pa.setCoordinates(
-            COORDS_BY.USER,
+            Const.COORDS_BY_USER,
             [curve.X(ta, suspendUpdate), curve.Y(ta, suspendUpdate)],
             false
         );
@@ -691,17 +691,17 @@ Mat.Plot = {
         suspendUpdate = true;
 
         pb.setCoordinates(
-            COORDS_BY.USER,
+            Const.COORDS_BY_USER,
             [curve.X(tb, suspendUpdate), curve.Y(tb, suspendUpdate)],
             false
         );
 
         // Find start and end points of the visible area (plus a certain margin)
         ret_arr = this._findStartPoint(curve, pa.scrCoords, ta, pb.scrCoords, tb);
-        pa.setCoordinates(COORDS_BY.SCREEN, ret_arr[0], false);
+        pa.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
         ta = ret_arr[1];
         ret_arr = this._findStartPoint(curve, pb.scrCoords, tb, pa.scrCoords, ta);
-        pb.setCoordinates(COORDS_BY.SCREEN, ret_arr[0], false);
+        pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
         tb = ret_arr[1];
 
         // Save the visible area.
@@ -709,17 +709,17 @@ Mat.Plot = {
         this._visibleArea = [ta, tb];
 
         // Start recursive plotting algorithm
-        a = pa.copy("scrCoords");
-        b = pb.copy("scrCoords");
+        a = pa.copy('scrCoords');
+        b = pb.copy('scrCoords');
         pa._t = ta;
         curve.points.push(pa);
-        this._lastCrds = pa.copy("scrCoords"); // Used in _insertPoint
+        this._lastCrds = pa.copy('scrCoords'); // Used in _insertPoint
         this._plotRecursive_v2(curve, a, ta, b, tb, depth, delta);
         pb._t = tb;
         curve.points.push(pb);
 
         curve.numberPoints = curve.points.length;
-        //console.timeEnd("plot");
+        //console.timeEnd('plot');
 
         return curve;
     },
@@ -760,11 +760,11 @@ Mat.Plot = {
         // } else {
         //     y = limes.left_y;
         // }
-        // //pnt.setCoordinates(COORDS_BY.USER, [x, y], false);
+        // //pnt.setCoordinates(Const.COORDS_BY_USER, [x, y], false);
 
         // Add points at a jump. pnt contains [NaN, NaN]
         //console.log("Add", t, pnt.usrCoords, limes, depth)
-        p0 = new Coords(COORDS_BY.USER, [limes.left_x, limes.left_y], curve.board);
+        p0 = new Coords(Const.COORDS_BY_USER, [limes.left_x, limes.left_y], curve.board);
         p0._t = t;
         curve.points.push(p0);
 
@@ -773,19 +773,19 @@ Mat.Plot = {
             !isNaN(limes.left_y) &&
             !isNaN(limes.right_x) &&
             !isNaN(limes.right_y) &&
-            (Math.abs(limes.left_x - limes.right_x) > JSXMath.eps ||
-                Math.abs(limes.left_y - limes.right_y) > JSXMath.eps)
+            (Math.abs(limes.left_x - limes.right_x) > Mat.eps ||
+                Math.abs(limes.left_y - limes.right_y) > Mat.eps)
         ) {
-            p1 = new Coords(COORDS_BY.SCREEN, pnt, curve.board);
+            p1 = new Coords(Const.COORDS_BY_SCREEN, pnt, curve.board);
             p1._t = t;
             curve.points.push(p1);
         }
 
-        p2 = new Coords(COORDS_BY.USER, [limes.right_x, limes.right_y], curve.board);
+        p2 = new Coords(Const.COORDS_BY_USER, [limes.right_x, limes.right_y], curve.board);
         p2._t = t;
         curve.points.push(p2);
-        this._lastScrCrds = p2.copy("scrCoords");
-        this._lastUsrCrds = p2.copy("usrCoords");
+        this._lastScrCrds = p2.copy('scrCoords');
+        this._lastUsrCrds = p2.copy('usrCoords');
     },
 
     /**
@@ -845,11 +845,11 @@ Mat.Plot = {
 
         //console.log("add", t, pnt.usrCoords, depth)
         // Add regular point
-        p = new Coords(COORDS_BY.SCREEN, pnt, curve.board);
+        p = new Coords(Const.COORDS_BY_SCREEN, pnt, curve.board);
         p._t = t;
         curve.points.push(p);
-        this._lastScrCrds = p.copy("scrCoords");
-        this._lastUsrCrds = p.copy("usrCoords");
+        this._lastScrCrds = p.copy('scrCoords');
+        this._lastUsrCrds = p.copy('usrCoords');
     },
 
     /**
@@ -896,12 +896,12 @@ Mat.Plot = {
             return false;
         }
 
-        pnt = new Coords(COORDS_BY.USER, [0, 0], curve.board, false);
+        pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
 
         for (i = 0; i < 20; ++i) {
             t = ta + Math.random() * (tb - ta);
             pnt.setCoordinates(
-                COORDS_BY.USER,
+                Const.COORDS_BY_USER,
                 [curve.X(t, true), curve.Y(t, true)],
                 false
             );
@@ -984,7 +984,7 @@ Mat.Plot = {
         //     isFound,
         //     w2,
         //     h2,
-        //     pnt = new Coords(COORDS_BY.USER, [0, 0], curve.board, false),
+        //     pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
         //     steps = 40,
         //     eps = 0.01,
         //     fnX1,
@@ -1064,14 +1064,14 @@ Mat.Plot = {
         // }
         // if (isFound) {
         //     pnt.setCoordinates(
-        //         COORDS_BY.USER,
+        //         Const.COORDS_BY_USER,
         //         [curve.X(td, true), curve.Y(td, true)],
         //         false
         //     );
         //     return [pnt.scrCoords, td];
         // }
         // console.log("TODO _findStartPoint", curve.Y.toString(), tc);
-        // pnt.setCoordinates(COORDS_BY.USER, [curve.X(ta, true), curve.Y(ta, true)], false);
+        // pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(ta, true), curve.Y(ta, true)], false);
         // return [pnt.scrCoords, ta];
     },
 
@@ -1099,7 +1099,7 @@ Mat.Plot = {
             is_undef = false,
             t_good, t_bad;
 
-        pnt = new Coords(COORDS_BY.USER, [0, 0], curve.board, false);
+        pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
         j = 0;
         // Bisect a, b and c until the point t_real is inside of the definition interval
         // and as close as possible at the boundary.
@@ -1130,7 +1130,7 @@ Mat.Plot = {
         do {
             t = 0.5 * (t_good + t_bad);
             pnt.setCoordinates(
-                COORDS_BY.USER,
+                Const.COORDS_BY_USER,
                 [curve.X(t, true), curve.Y(t, true)],
                 false
             );
@@ -1142,7 +1142,7 @@ Mat.Plot = {
                 t_good = t;
             }
             ++j;
-        } while (j < max_it && Math.abs(t_good - t_bad) > JSXMath.eps);
+        } while (j < max_it && Math.abs(t_good - t_bad) > Mat.eps);
         return t;
     },
 
@@ -1174,7 +1174,7 @@ Mat.Plot = {
      */
     _getJumpPos: function (curve, ta, tb) {
         var max_func = function (t) {
-            var e = JSXMath.eps * JSXMath.eps,
+            var e = Mat.eps * Mat.eps,
                 c1 = [curve.X(t, true), curve.Y(t, true)],
                 c2 = [curve.X(t + e, true), curve.Y(t + e, true)];
             return -Math.abs((c2[1] - c1[1]) / (c2[0] - c1[0]));
@@ -1200,26 +1200,26 @@ Mat.Plot = {
         // From left
         res = Extrapolate.limit(t, -step, curve.X);
         x_l = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             x_l = Math.sign(x_l) * Infinity;
         }
 
         res = Extrapolate.limit(t, -step, curve.Y);
         y_l = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             y_l = Math.sign(y_l) * Infinity;
         }
 
         // From right
         res = Extrapolate.limit(t, step, curve.X);
         x_r = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             x_r = Math.sign(x_r) * Infinity;
         }
 
         res = Extrapolate.limit(t, step, curve.Y);
         y_r = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             y_r = Math.sign(y_r) * Infinity;
         }
 
@@ -1247,11 +1247,11 @@ Mat.Plot = {
     _getLimes: function (curve, ta, a, tc, c, tb, b, may_be_special, depth) {
         var t;
 
-        if (may_be_special === "border") {
+        if (may_be_special === 'border') {
             t = this._getBorderPos(curve, ta, a, tc, c, tb, b);
-        } else if (may_be_special === "cusp") {
+        } else if (may_be_special === 'cusp') {
             t = this._getCuspPos(curve, ta, tb);
-        } else if (may_be_special === "jump") {
+        } else if (may_be_special === 'jump') {
             t = this._getJumpPos(curve, ta, tb);
         }
         return this._getLimits(curve, t);
@@ -1333,14 +1333,14 @@ Mat.Plot = {
             a_nan = isNaN(a[1] + a[2]);
             b_nan = isNaN(b[1] + b[2]);
             if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
-                may_be_special = "border";
+                may_be_special = 'border';
             } else if (
                 ds[0] > 0.66 * ds0 ||
                 ds[0] < this.cusp_threshold * (ds[1] + ds[2]) ||
                 ds[1] > 5 * ds[2] ||
                 ds[2] > 5 * ds[1]
             ) {
-                may_be_special = "cusp";
+                may_be_special = 'cusp';
             } else if (
                 ds[2] > this.jump_threshold * ds[0] ||
                 ds[1] > this.jump_threshold * ds[0] ||
@@ -1348,7 +1348,7 @@ Mat.Plot = {
                 ds[1] === Infinity ||
                 ds[2] === Infinity
             ) {
-                may_be_special = "jump";
+                may_be_special = 'jump';
             }
             isSmooth =
                 may_be_special === "" &&
@@ -1391,15 +1391,15 @@ Mat.Plot = {
             a,
             b,
             suspendUpdate = false,
-            pa = new Coords(COORDS_BY.USER, [0, 0], curve.board, false),
-            pb = new Coords(COORDS_BY.USER, [0, 0], curve.board, false),
+            pa = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
+            pb = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
             depth,
             w2, // h2,
             bbox,
             ret_arr;
 
         // console.log("-----------------------------------------------------------");
-        // console.time("plot");
+        // console.time('plot');
         if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
             depth = curve.evalVisProp('recursiondepthlow') || 14;
         } else {
@@ -1416,7 +1416,7 @@ Mat.Plot = {
 
         curve.points = [];
 
-        if (curve.xterm === "x") {
+        if (curve.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area +plus margin
             bbox = curve.board.getBoundingBox();
@@ -1429,7 +1429,7 @@ Mat.Plot = {
             tb = ma;
         }
         pa.setCoordinates(
-            COORDS_BY.USER,
+            Const.COORDS_BY_USER,
             [curve.X(ta, suspendUpdate), curve.Y(ta, suspendUpdate)],
             false
         );
@@ -1441,17 +1441,17 @@ Mat.Plot = {
         suspendUpdate = true;
 
         pb.setCoordinates(
-            COORDS_BY.USER,
+            Const.COORDS_BY_USER,
             [curve.X(tb, suspendUpdate), curve.Y(tb, suspendUpdate)],
             false
         );
 
         // Find start and end points of the visible area (plus a certain margin)
         ret_arr = this._findStartPoint(curve, pa.scrCoords, ta, pb.scrCoords, tb);
-        pa.setCoordinates(COORDS_BY.SCREEN, ret_arr[0], false);
+        pa.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
         ta = ret_arr[1];
         ret_arr = this._findStartPoint(curve, pb.scrCoords, tb, pa.scrCoords, ta);
-        pb.setCoordinates(COORDS_BY.SCREEN, ret_arr[0], false);
+        pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
         tb = ret_arr[1];
 
         // Save the visible area.
@@ -1459,12 +1459,12 @@ Mat.Plot = {
         this._visibleArea = [ta, tb];
 
         // Start recursive plotting algorithm
-        a = pa.copy("scrCoords");
-        b = pb.copy("scrCoords");
+        a = pa.copy('scrCoords');
+        b = pb.copy('scrCoords');
         pa._t = ta;
         curve.points.push(pa);
-        this._lastScrCrds = pa.copy("scrCoords"); // Used in _insertPoint
-        this._lastUsrCrds = pa.copy("usrCoords"); // Used in _insertPoint
+        this._lastScrCrds = pa.copy('scrCoords'); // Used in _insertPoint
+        this._lastUsrCrds = pa.copy('usrCoords'); // Used in _insertPoint
 
         this._plotNonRecursive(curve, a, ta, b, tb, depth);
 
@@ -1472,7 +1472,7 @@ Mat.Plot = {
         curve.points.push(pb);
 
         curve.numberPoints = curve.points.length;
-        // console.timeEnd("plot");
+        // console.timeEnd('plot');
         // console.log("number of points:", this.numberPoints);
 
         return curve;
@@ -1553,7 +1553,7 @@ Mat.Plot = {
         // or if a whole interval is problematic.
         // The latter is the case if the differences have many sign changes.
         for (j = 0; j < groups.length; j++) {
-            types[j] = "point";
+            types[j] = 'point';
             le1 = groups[j].length;
             if (le1 < 64) {
                 continue;
@@ -1567,7 +1567,7 @@ Mat.Plot = {
                 }
             }
             if (sgnChange * 6 > le1) {
-                types[j] = "interval";
+                types[j] = 'interval';
             }
         }
 
@@ -1666,7 +1666,7 @@ Mat.Plot = {
             };
 
         if (pos < 5) {
-            result.type = "borderleft";
+            result.type = 'borderleft';
             result.idx = 0;
             result.t = t_values[0];
             result.x = x_values[0];
@@ -1676,7 +1676,7 @@ Mat.Plot = {
             return result;
         }
         if (pos > len - 6) {
-            result.type = "borderright";
+            result.type = 'borderright';
             result.idx = full_len - 1;
             result.t = t_values[full_len - 1];
             result.x = x_values[full_len - 1];
@@ -1982,7 +1982,7 @@ Mat.Plot = {
         // console.log("Last diffs", y_table[Math.min(level + 1, up)], "level", level + 1);
         // Analyze the groups which have been found.
         for (i = 0; i < groups.length; i++) {
-            if (types[i] === "interval") {
+            if (types[i] === 'interval') {
                 continue;
             }
             // console.log("Group", i, groups[i], types[i], level + 1)
@@ -2019,7 +2019,7 @@ Mat.Plot = {
         }
 
         // Add regular point
-        p = new Coords(COORDS_BY.USER, crds, curve.board);
+        p = new Coords(Const.COORDS_BY_USER, crds, curve.board);
 
         if (prev !== null) {
             x = p.scrCoords[1] - prev[1];
@@ -2086,11 +2086,11 @@ Mat.Plot = {
         // console.log("Group:", group);
 
         h = comp.t_values[1] - comp.t_values[0];
-        if (group.type === "borderleft") {
+        if (group.type === 'borderleft') {
             t = comp.left_isNaN ? comp.left_t : group.t - h;
             t1 = t;
             t2 = t1 + h;
-        } else if (group.type === "borderright") {
+        } else if (group.type === 'borderright') {
             t = comp.right_isNaN ? comp.right_t : group.t + h;
             t2 = t;
             t1 = t2 - h;
@@ -2102,7 +2102,7 @@ Mat.Plot = {
         if (components2.length === 0) {
             return;
         }
-        if (group.type === "borderleft") {
+        if (group.type === 'borderleft') {
             t1 = components2[0].left_t;
             t2 = components2[0].t_values[0];
             h = components2[0].t_values[1] - components2[0].t_values[0];
@@ -2127,7 +2127,7 @@ Mat.Plot = {
             this._insertPoint_v4(curve, [1, x, y], t);
         }
 
-        if (group.type === "borderright") {
+        if (group.type === 'borderright') {
             t1 = components2[0].t_values[le - 1];
             t2 = components2[0].right_t;
             h = components2[0].t_values[1] - components2[0].t_values[0];
@@ -2418,7 +2418,7 @@ Mat.Plot = {
             // if (degree_y >= 0) {
             //     console.log("y polynomial of degree", degree_y);
             // }
-            if (groups.length === 0 || groups[0].type !== "borderleft") {
+            if (groups.length === 0 || groups[0].type !== 'borderleft') {
                 groups.unshift({
                     idx: 0,
                     t: comp.t_values[0],
@@ -2427,7 +2427,7 @@ Mat.Plot = {
                     type: "borderleft"
                 });
             }
-            if (groups[groups.length - 1].type !== "borderright") {
+            if (groups[groups.length - 1].type !== 'borderright') {
                 le = comp.t_values.length;
                 groups.push({
                     idx: le - 1,
@@ -2516,7 +2516,7 @@ Mat.Plot = {
                     //console.log("critical point / interval", groups[g]);
 
                     i = groups[g].idx;
-                    if (groups[g].type === "borderleft" || groups[g].type === "borderright") {
+                    if (groups[g].type === "borderleft" || groups[g].type === 'borderright') {
                         this.handleBorder(curve, comp, groups[g], x_table, y_table);
                     } else {
                         this._seconditeration_v4(curve, comp, groups[g], x_table, y_table);
@@ -2543,7 +2543,7 @@ Mat.Plot = {
     updateParametricCurve_v4: function (curve, mi, ma) {
         var ta, tb, w2, bbox;
 
-        if (curve.xterm === "x") {
+        if (curve.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area +plus margin
             bbox = curve.board.getBoundingBox();

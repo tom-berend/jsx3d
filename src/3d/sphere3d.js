@@ -29,12 +29,12 @@
  */
 /*global JXG:true, define: true*/
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "../math/jsxmath.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 import Stat from "../math/statistics.js";
-import{Geometry}   from "../math/geometry.js";
+import Geometry from "../math/geometry.js";
 
 /**
  * A sphere consists of all points with a given distance from a given point.
@@ -58,8 +58,8 @@ import{Geometry}   from "../math/geometry.js";
  * @see JXG.Board#generateName
  */
 JXG.Sphere3D = function (view, method, par1, par2, attributes) {
-    this.constructor(view.board, attributes, OBJECT_TYPE.SPHERE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "sphere3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_SPHERE3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, 'sphere3d');
 
     this.board.finalizeAdding(this);
 
@@ -108,10 +108,10 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
      */
     this.projectionType = view.projectionType;
 
-    if (method === "twoPoints") {
+    if (method === 'twoPoints') {
         this.point2 = this.board.select(par2);
         this.radius = this.Radius();
-    } else if (method === "pointRadius") {
+    } else if (method === 'pointRadius') {
         // Converts JessieCode syntax into JavaScript syntax and generally ensures that the radius is a function
         this.updateRadius = Type.createFunction(par2, this.board);
         // First evaluation of the radius function
@@ -126,7 +126,7 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
         this.center.addChild(this);
     }
 
-    if (method === "twoPoints") {
+    if (method === 'twoPoints') {
         if (Type.exists(this.point2._is_new)) {
             this.addChild(this.point2);
             delete this.point2._is_new;
@@ -142,7 +142,7 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     });
 };
 JXG.Sphere3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Sphere3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Sphere3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Sphere3D.prototype,
@@ -202,7 +202,7 @@ JXG.extend(
                 return this.Radius();
             }
 
-            if (this.method === "twoPoints") {
+            if (this.method === 'twoPoints') {
                 if (!this.center.testIfFinite() || !this.point2.testIfFinite()) {
                     return NaN;
                 }
@@ -210,7 +210,7 @@ JXG.extend(
                 return this.center.distance(this.point2);
             }
 
-            if (this.method === "pointRadius") {
+            if (this.method === 'pointRadius') {
                 return Math.abs(this.updateRadius());
             }
 

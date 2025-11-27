@@ -28,11 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import{Geometry}   from "../math/geometry.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "../math/jsxmath.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * Constructor for 3D curves.
@@ -50,8 +50,8 @@ import {Type} from "../utils/type.js";
  * @see JXG.Board#generateName
  */
 JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
-    this.constructor(view.board, attributes, OBJECT_TYPE.CURVE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "curve3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_CURVE3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, 'curve3d');
 
     this.board.finalizeAdding(this);
 
@@ -123,7 +123,7 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     });
 };
 JXG.Curve3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Curve3D.prototype,
@@ -147,7 +147,7 @@ JXG.extend(
                 for (u = 0; u < steps; u++) {
                     this.points.push([1, this.dataX[u], this.dataY[u], this.dataZ[u]]);
                 }
-            } else if (Array.isArray(this._X)) {
+            } else if (Type.isArray(this._X)) {
                 steps = this._X.length;
                 for (u = 0; u < steps; u++) {
                     this.points.push([1, this._X[u], this._Y[u], this._Z[u]]);
@@ -389,7 +389,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
         transform = null;
 
     if (parents.length === 3) {
-        if (Type.isTransformationOrArray(parents[2]) && parents[1].type === OBJECT_TYPE.CURVE3D) {
+        if (Type.isTransformationOrArray(parents[2]) && parents[1].type === Const.OBJECT_TYPE_CURVE3D) {
             // [curve, transformation(s)]
             // This might be adopted to the type of the base element (data plot or function)
             base = parents[1];
@@ -406,7 +406,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
             Y = null;
             Z = null;
         }
-    } else if (parents.length === 2 && Array.isArray(parents[1])) {
+    } else if (parents.length === 2 && Type.isArray(parents[1])) {
         mat = Mat.transpose(parents[1]);
         X = mat[0];
         Y = mat[1];
@@ -422,7 +422,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
     }
     // TODO Throw new Error
 
-    attr = Type.copyAttributes(attributes, board.options, "curve3d");
+    attr = Type.copyAttributes(attributes, board.options, 'curve3d');
     el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
 
     attr = el.setAttr2D(attr);
@@ -533,10 +533,10 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         el, attr;
 
     if (!(parents.length >= 5 &&
-        (Array.isArray(parents[1]) || Type.isFunction(parents[1]) || Type.isString(parents[1])) &&
-        (Array.isArray(parents[2]) && parents[1].length === 3) &&
-        (Array.isArray(parents[3]) && parents[2].length === 3) &&
-        (Array.isArray(parents[4]) && parents[3].length === 3)
+        (Type.isArray(parents[1]) || Type.isFunction(parents[1]) || Type.isString(parents[1])) &&
+        (Type.isArray(parents[2]) && parents[1].length === 3) &&
+        (Type.isArray(parents[3]) && parents[2].length === 3) &&
+        (Type.isArray(parents[4]) && parents[3].length === 3)
     )) {
         throw new Error(
             "JSXGraph: Can't create vector field 3D with parent types " +
@@ -566,7 +566,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
      */
     el.setF = function (func, varnames) {
         var f0, f1, f2;
-        if (Array.isArray(func)) {
+        if (Type.isArray(func)) {
             f0 = Type.createFunction(func[0], this.board, varnames);
             f1 = Type.createFunction(func[1], this.board, varnames);
             f2 = Type.createFunction(func[2], this.board, varnames);

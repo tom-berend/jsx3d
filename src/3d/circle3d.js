@@ -29,11 +29,11 @@
  */
 /*global JXG:true, define: true*/
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from '../math/jsxmath.js';
-import{Geometry}   from '../math/geometry.js';
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Mat from '../math/math.js';
+import Geometry from '../math/geometry.js';
 
 /**
  * In 3D space, a circle consists of all points on a given plane with a given distance from a given point. The given point is called the center, and the given distance is called the radius.
@@ -53,8 +53,8 @@ import{Geometry}   from '../math/geometry.js';
 JXG.Circle3D = function (view, center, normal, radius, attributes) {
     var altFrame1, that;
 
-    this.constructor(view.board, attributes, OBJECT_TYPE.CIRCLE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "circle3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_CIRCLE3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, 'circle3d');
 
     /**
      * The circle's center. Do not set this parameter directly, as that will break JSXGraph's update system.
@@ -154,7 +154,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     );
 };
 JXG.Circle3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Circle3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Circle3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Circle3D.prototype,
@@ -380,7 +380,7 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
         el1 = parents[1],
         el2 = parents[2],
         ixnCircle, center, func,
-        attr = Type.copyAttributes(attributes, board.options, "intersectioncircle3d");
+        attr = Type.copyAttributes(attributes, board.options, 'intersectioncircle3d');
 
     func = Geometry.intersectionFunction3D(view, el1, el2);
     center = view.create('point3d', func[0], { visible: false });
@@ -399,7 +399,7 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
         );
     }
 
-    ixnCircle.type = OBJECT_TYPE.INTERSECTION_CIRCLE3D;
+    ixnCircle.type = Const.OBJECT_TYPE_INTERSECTION_CIRCLE3D;
     ixnCircle.elType = 'intersectioncircle3d';
     ixnCircle.setParents([el1.id, el2.id]);
 

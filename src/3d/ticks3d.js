@@ -32,9 +32,9 @@
  * Create axes and rear and front walls of the
  * view3d bounding box bbox3D.
  */
-import {JXG} from"../jxg.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "../math/jsxmath.js";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * @class Ticks are used as distance markers on a line in a 3D view.
@@ -114,7 +114,7 @@ JXG.createTicks3D = function (board, parents, attributes) {
             v2[i] /= l2;
         }
 
-        if (Math.abs(step) < JSXMath.eps) {
+        if (Math.abs(step) < Mat.eps) {
             return;
         }
         for (u = s1; u <= e1; u += step) {
@@ -181,7 +181,7 @@ JXG.createTicks3D = function (board, parents, attributes) {
             v2[i] /= l2;
         }
 
-        if (Math.abs(step) < JSXMath.eps) {
+        if (Math.abs(step) < Mat.eps) {
             return;
         }
         for (u = s1; u <= e1; u += step) {

@@ -38,10 +38,9 @@
  * a board.
  */
 
-import {JXG} from"../jxg.js";
-import {Type} from "../utils/type.js";
-import{Geometry} from "../math/geometry.js"
-import{Element} from "../base/element.js";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import GeometryElement from "../base/element.js";
 import Prefix from "../parser/prefix.js";
 
 /**
@@ -82,18 +81,18 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     pos1 = parents[1];
 
     // start point
-    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point1");
+    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", 'point1');
     p1 = board.create("point", pos0, attr);
 
     // end point
-    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point2");
+    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", 'point2');
     p2 = board.create("point", pos1, attr);
 
     p1.setAttribute({ignoredSnapToPoints: [p2.id]});
     p2.setAttribute({ignoredSnapToPoints: [p1.id]});
 
     // tape measure line
-    attr = Type.copyAttributes(attributes, board.options, "tapemeasure");
+    attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
     withTicks = attr.withticks;
     withText = attr.withlabel;
     digits = attr.digits;
@@ -127,7 +126,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     }
 
     if (withTicks) {
-        attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "ticks");
+        attr = Type.copyAttributes(attributes, board.options, "tapemeasure", 'ticks');
         //ticks  = 2;
         ti = board.create("ticks", [li, 0.1], attr);
         li.inherits.push(ti);
@@ -160,7 +159,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     p1.dump = false;
     p2.dump = false;
 
-    li.elType = "tapemeasure";
+    li.elType = 'tapemeasure';
     li.getParents = function () {
         return [
             [p1.X(), p1.Y()],
@@ -177,7 +176,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         ti.dump = false;
     }
 
-    li.methodMap = Type.deepcopy(li.methodMap, {
+    li.methodMap = JXG.deepCopy(li.methodMap, {
         Value: "Value"
     });
 
@@ -324,14 +323,14 @@ JXG.createMeasurement = function (board, parents, attributes) {
         x, y, term,
         i;
 
-    attr = Type.copyAttributes(attributes, board.options, "measurement");
+    attr = Type.copyAttributes(attributes, board.options, 'measurement');
 
     x = parents[0];
     y = parents[1];
     term = parents[2];
 
     el = board.create("text", [x, y, ''], attr);
-    el.type = OBJECT_TYPE.MEASUREMENT;
+    el.type = Type.OBJECT_TYPE_MEASUREMENT;
     el.elType = 'measurement';
 
     el.Value = function () {
@@ -357,7 +356,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
             dim = el.Dimension();
         }
 
-        if (Array.isArray(dimension)) {
+        if (Type.isArray(dimension)) {
             for (i = 0; i < dimension.length; i++) {
                 dims['dim' + dimension[i]] = el.Unit(dimension[i]);
             }
@@ -388,8 +387,8 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
     el.getMethod = function () {
         var method = term[0];
-        if (method === "V") {
-            method = "Value";
+        if (method === 'V') {
+            method = 'Value';
         }
         return method;
     };
@@ -442,7 +441,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
                     val = Type.toFixed(val, digits);
                 }
             }
-        } else if (Array.isArray(val)) {
+        } else if (Type.isArray(val)) {
             for (i = 0; i < val.length; i++) {
                 if (!Type.isNumber(val[i])) {
                     continue;
@@ -465,14 +464,14 @@ JXG.createMeasurement = function (board, parents, attributes) {
             }
         }
 
-        if (dim === 'coords' && Array.isArray(val)) {
+        if (dim === 'coords' && Type.isArray(val)) {
             if (val.length === 2) {
                 val.unshift(undefined);
             }
             val = el.visProp.formatcoords(el, val[1], val[2], val[0]);
         }
 
-        if (dim === 'direction' && Array.isArray(val)) {
+        if (dim === 'direction' && Type.isArray(val)) {
             val = el.visProp.formatdirection(el, val[0], val[1]);
         }
 

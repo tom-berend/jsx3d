@@ -28,10 +28,10 @@
  */
 /*global JXG:true, define: true*/
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "../math/jsxmath.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * 3D faces
@@ -49,8 +49,8 @@ import {Type} from "../utils/type.js";
  * @see JXG.Board#generateName
  */
 JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
-    this.constructor(view.board, attributes, OBJECT_TYPE.FACE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "face3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_FACE3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, 'face3d');
 
     this.board.finalizeAdding(this);
 
@@ -106,7 +106,7 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     });
 };
 JXG.Face3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Face3D.prototype,
@@ -126,7 +126,7 @@ JXG.extend(
                 p = def.vertices[i];
                 if (Type.isFunction(p)) {
                     def.coords[i] = Type.evaluate(p);
-                } else if (Array.isArray(p)) {
+                } else if (Type.isArray(p)) {
                     def.coords[i] = [];
                     le = p.length;
                     for (j = 0; j < le; j++) {
@@ -359,7 +359,7 @@ JXG.createFace3D = function (board, parents, attributes) {
         attr, el;
 
     // TODO Throw new Error
-    attr = Type.copyAttributes(attributes, board.options, "face3d");
+    attr = Type.copyAttributes(attributes, board.options, 'face3d');
     el = new JXG.Face3D(view, polyhedron, faceNumber, attr);
 
     attr = el.setAttr2D(attr);

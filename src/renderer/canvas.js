@@ -18,16 +18,32 @@
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-{canv}
-import { Env } from "../utils/env.js";
-import { Type } from "../utils/type.js";
-import { UUID } from "../utils/uuid.js";
-import { Color } from "../utils/color.js";
-import { Coords } from "../base/coords.js";
-import { JSXMath } from "../math/jsxmath.js";
-import { Geometry } from "../math/geometry.js";
-import { Numerics } from "../math/numerics.js";
-// import $__canvas from "canvas.js";
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
+ */
+
+/*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
+/*jslint nomen: true, plusplus: true, newcap:true*/
+
+import JXG from "../jxg.js";
+import AbstractRenderer from "./abstract.js";
+import Const from "../base/constants.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
+import UUID from "../utils/uuid.js";
+import Color from "../utils/color.js";
+import Coords from "../base/coords.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+// import $__canvas from 'canvas.js'
 
 /**
  * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -41,7 +57,7 @@ import { Numerics } from "../math/numerics.js";
  * @see JXG.AbstractRenderer
  */
 JXG.CanvasRenderer = function (container, dim) {
-    this.type = "canvas";
+    this.type = 'canvas';
 
     this.canvasRoot = null;
     this.suspendHandle = null;
@@ -51,29 +67,29 @@ JXG.CanvasRenderer = function (container, dim) {
 
     if (Env.isBrowser) {
         this.container = container;
-        this.container.style.MozUserSelect = "none";
-        this.container.style.userSelect = "none";
+        this.container.style.MozUserSelect = 'none';
+        this.container.style.userSelect = 'none';
 
-        this.container.style.overflow = "hidden";
+        this.container.style.overflow = 'hidden';
         if (this.container.style.position === "") {
-            this.container.style.position = "relative";
+            this.container.style.position = 'relative';
         }
 
         this.container.innerHTML = [
             '<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="', dim.height, 'px"></canvas>'
         ].join("");
         this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
-        this.canvasRoot.style.display = "block";
-        this.context = this.canvasRoot.getContext("2d");
+        this.canvasRoot.style.display = 'block';
+        this.context = this.canvasRoot.getContext('2d');
     } else if (Env.isNode()) {
         try {
             this.canvasRoot = JXG.createCanvas(500, 500);
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
         } catch (err) {
             throw new Error('JXG.createCanvas not available.\n' +
                 'Install the npm package `canvas`\n' +
                 'and call:\n' +
-                '    import { createCanvas } from "canvas.js";\n' +
+                '    import { createCanvas } from "canvas.js"\n' +
                 '    JXG.createCanvas = createCanvas;\n');
         }
     }
@@ -126,7 +142,7 @@ JXG.extend(
                 if (doFill) {
                     context.lineTo(shape[0][0], shape[0][1]);
                     context.closePath();
-                    context.fill("evenodd");
+                    context.fill('evenodd');
                 } else {
                     context.stroke();
                 }
@@ -142,8 +158,8 @@ JXG.extend(
             var context = this.context;
 
             context.save();
-            if (this._setColor(el, "fill")) {
-                context.fill("evenodd");
+            if (this._setColor(el, 'fill')) {
+                context.fill('evenodd');
             }
             context.restore();
         },
@@ -229,8 +245,8 @@ JXG.extend(
                 y2 = 0;
             }
 
-            c1 = new Coords(COORDS_BY.USER, [bb[0], bb[1]], el.board);
-            c2 = new Coords(COORDS_BY.USER, [bb[2], bb[3]], el.board);
+            c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
+            c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c2.scrCoords[2] - c1.scrCoords[2];
 
@@ -261,8 +277,8 @@ JXG.extend(
                 fxs, fys, frs,
                 dx, dy;
 
-            c1 = new Coords(COORDS_BY.USER, [bb[0], bb[1]], el.board);
-            c2 = new Coords(COORDS_BY.USER, [bb[2], bb[3]], el.board);
+            c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
+            c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c1.scrCoords[2] - c2.scrCoords[2];
 
@@ -287,12 +303,12 @@ JXG.extend(
             // op = op > 0 ? op : 0;
             col = el.evalVisProp('fillcolor');
 
-            if (ev_g === "linear") {
+            if (ev_g === 'linear') {
                 gradient = this.updateGradientAngle(
                     el,
                     el.evalVisProp('gradientangle')
                 );
-            } else if (ev_g === "radial") {
+            } else if (ev_g === 'radial') {
                 gradient = this.updateGradientCircle(
                     el,
                     el.evalVisProp('gradientcx'),
@@ -331,7 +347,7 @@ JXG.extend(
                 c, o, oo,
                 grad;
 
-            type = type || "stroke";
+            type = type || 'stroke';
             targetType = targetType || type;
 
             hl = this._getHighlighted(el);
@@ -339,7 +355,7 @@ JXG.extend(
             // type is equal to 'fill' or 'stroke'
             rgba = el.evalVisProp(hl + type + 'color');
             if (rgba !== "none" && rgba !== "" && rgba !== false) {
-                o = el.evalVisProp(hl + type + "opacity");
+                o = el.evalVisProp(hl + type + 'opacity');
                 o = o > 0 ? o : 0;
 
                 if (rgba.length !== 9) {
@@ -360,10 +376,10 @@ JXG.extend(
                 hasColor = false;
             }
 
-            if (type !== "stroke") {
+            if (type !== 'stroke') {
                 // For the time being, gradients are only supported for fills
                 grad = el.evalVisProp('gradient');
-                if (grad === "linear" || grad === "radial") {
+                if (grad === "linear" || grad === 'radial') {
                     this.context.globalAlpha = oo;
                     this.context[targetType + "Style"] = this.updateGradient(el);
                     return hasColor;
@@ -412,7 +428,7 @@ JXG.extend(
                 this.context.lineDashArray = [];
             }
 
-            if (this._setColor(el, "stroke")) {
+            if (this._setColor(el, 'stroke')) {
                 context.stroke();
             }
 
@@ -467,8 +483,8 @@ JXG.extend(
                     context.lineTo(scr[1] + size, scr[2] + size);
                     context.moveTo(scr[1] + size, scr[2] - size);
                     context.lineTo(scr[1] - size, scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -487,7 +503,7 @@ JXG.extend(
                     }
 
                     context.save();
-                    if (this._setColor(el, "stroke", "fill")) {
+                    if (this._setColor(el, "stroke", 'fill')) {
                         context.fillRect(
                             scr[1] - size - stroke05,
                             scr[2] - size - stroke05,
@@ -497,7 +513,7 @@ JXG.extend(
                     }
                     context.restore();
                     context.save();
-                    this._setColor(el, "fill");
+                    this._setColor(el, 'fill');
                     context.fillRect(
                         scr[1] - size + stroke05,
                         scr[2] - size + stroke05,
@@ -513,8 +529,8 @@ JXG.extend(
                     context.lineTo(scr[1] + size, scr[2]);
                     context.moveTo(scr[1], scr[2] - size);
                     context.lineTo(scr[1], scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -523,8 +539,8 @@ JXG.extend(
                     context.beginPath();
                     context.moveTo(scr[1], scr[2] - size);
                     context.lineTo(scr[1], scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -533,8 +549,8 @@ JXG.extend(
                     context.beginPath();
                     context.moveTo(scr[1] - size, scr[2]);
                     context.lineTo(scr[1] + size, scr[2]);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -916,8 +932,8 @@ JXG.extend(
                 }
 
                 context.save();
-                if (this._setColor(el, "stroke", "fill")) {
-                    this._setColor(el, "stroke");
+                if (this._setColor(el, "stroke", 'fill')) {
+                    this._setColor(el, 'stroke');
                     if (ev_fa) {
                         if (type_fa === 7) {
                             doFill = false;
@@ -951,8 +967,8 @@ JXG.extend(
         drawLine: function (el) {
             var c1_org,
                 c2_org,
-                c1 = new Coords(COORDS_BY.USER, el.point1.coords.usrCoords, el.board),
-                c2 = new Coords(COORDS_BY.USER, el.point2.coords.usrCoords, el.board),
+                c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+                c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null,
                 hl,
                 w,
@@ -972,8 +988,8 @@ JXG.extend(
             Geometry.calcStraight(el, c1, c2, margin);
             this.handleTouchpoints(el, c1, c2, arrowData);
 
-            c1_org = new Coords(COORDS_BY.USER, c1.usrCoords, el.board);
-            c2_org = new Coords(COORDS_BY.USER, c2.usrCoords, el.board);
+            c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board);
+            c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board);
 
 
             this.getPositionArrowHead(el, c1, c2, arrowData);
@@ -998,7 +1014,7 @@ JXG.extend(
 
         // documented in AbstractRenderer
         drawTicks: function () {
-            // this function is supposed to initialize the svg nodes in the SVGRenderer.
+            // this function is supposed to initialize the svg/vml nodes in the SVG/VMLRenderer.
             // but in canvas there are no such nodes, hence we just do nothing and wait until
             // updateTicks is called.
         },
@@ -1038,7 +1054,7 @@ JXG.extend(
             //         this.updateText(ticks.labels[i]);
             //     }
             // }
-            context.lineCap = "round";
+            context.lineCap = 'round';
             this._stroke(ticks);
         },
 
@@ -1143,7 +1159,7 @@ JXG.extend(
                 board._logo_image = new Image();
                 board._logo_image.src = str;
             }
-            board._logo_image.onload = function () {
+            board._logo_image.onload = function() {
                 context.save();
                 context.globalAlpha = alpha;
                 context.drawImage(board._logo_image, 5, 5, s, s);
@@ -1165,25 +1181,25 @@ JXG.extend(
 
             context.save();
             if (
-                this._setColor(el, "stroke", "fill") &&
+                this._setColor(el, "stroke", 'fill') &&
                 !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])
             ) {
                 context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + " Arial";
 
                 this.transformRect(el, el.transformations);
-                if (ev_ax === "left") {
-                    context.textAlign = "left";
-                } else if (ev_ax === "right") {
-                    context.textAlign = "right";
-                } else if (ev_ax === "middle") {
-                    context.textAlign = "center";
+                if (ev_ax === 'left') {
+                    context.textAlign = 'left';
+                } else if (ev_ax === 'right') {
+                    context.textAlign = 'right';
+                } else if (ev_ax === 'middle') {
+                    context.textAlign = 'center';
                 }
-                if (ev_ay === "bottom") {
-                    context.textBaseline = "bottom";
-                } else if (ev_ay === "top") {
-                    context.textBaseline = "top";
-                } else if (ev_ay === "middle") {
-                    context.textBaseline = "middle";
+                if (ev_ay === 'bottom') {
+                    context.textBaseline = 'bottom';
+                } else if (ev_ay === 'top') {
+                    context.textBaseline = 'top';
+                } else if (ev_ay === 'middle') {
+                    context.textBaseline = 'middle';
                 }
                 context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
             }
@@ -1312,7 +1328,7 @@ JXG.extend(
                         node.style['transform-origin'] = (cx) + 'px ' + (cy) + 'px';
                     }
                 } else {
-                    if (Math.abs(Numerics.det(m)) >= JSXMath.eps) {
+                    if (Math.abs(Numerics.det(m)) >= Mat.eps) {
                         ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
                     }
                 }
@@ -1429,8 +1445,8 @@ JXG.extend(
                     i += 1;
                 }
             }
-            context.lineCap = "round";
-            context.lineJoin = "round";
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
             this._fill(el);
             this._stroke(el);
         },
@@ -1499,8 +1515,8 @@ JXG.extend(
                     }
                 }
             }
-            context.lineCap = "round";
-            context.lineJoin = "round";
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
             this._fill(el);
             this._stroke(el);
         },
@@ -1517,7 +1533,7 @@ JXG.extend(
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
-            if (el.elType === "polygonalchain") {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
@@ -1551,9 +1567,9 @@ JXG.extend(
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
                 if (val) {
-                    el.rendNode.style.visibility = "inherit";
+                    el.rendNode.style.visibility = 'inherit';
                 } else {
-                    el.rendNode.style.visibility = "hidden";
+                    el.rendNode.style.visibility = 'hidden';
                 }
             }
         },
@@ -1563,7 +1579,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
-                el.rendNode.style.visibility = "inherit";
+                el.rendNode.style.visibility = 'inherit';
             }
         },
 
@@ -1572,7 +1588,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
-                el.rendNode.style.visibility = "hidden";
+                el.rendNode.style.visibility = 'hidden';
             }
         },
 
@@ -1640,11 +1656,11 @@ JXG.extend(
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
             if (board && (board.attr.showcopyright || board.attr.showlogo)) {
-                this.displayLogo(licenseLogo, 12, board);
+                this.displayLogo(JXG.licenseLogo, 12, board);
             }
 
             if (board && board.attr.showcopyright) {
-                this.displayCopyright(licenseText, 12);
+                this.displayCopyright(JXG.licenseText, 12);
             }
         },
 
@@ -1656,16 +1672,16 @@ JXG.extend(
         // document in AbstractRenderer
         resize: function (w, h) {
             if (this.container) {
-                this.canvasRoot.style.width = parseFloat(w) + "px";
-                this.canvasRoot.style.height = parseFloat(h) + "px";
+                this.canvasRoot.style.width = parseFloat(w) + 'px';
+                this.canvasRoot.style.height = parseFloat(h) + 'px';
 
-                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + "px");
-                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + "px");
+                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + 'px');
+                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + 'px');
             } else {
                 this.canvasRoot.width = 2 * parseFloat(w);
                 this.canvasRoot.height = 2 * parseFloat(h);
             }
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
             // The width and height of the canvas is set to twice the CSS values,
             // followed by an appropriate scaling.
             // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines

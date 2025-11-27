@@ -36,8 +36,8 @@
  * @fileoverview The JXG.Dump namespace provides methods to save a board to javascript.
  */
 
-import {JXG} from"../jxg.js";
-import {Type} from "./type.js";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 /**
  * The JXG.Dump namespace provides classes and methods to save a board to javascript.
@@ -53,11 +53,11 @@ JXG.Dump = {
     addMarkers: function (board, markers, values) {
         var e, l, i;
 
-        if (!Array.isArray(markers)) {
+        if (!Type.isArray(markers)) {
             markers = [markers];
         }
 
-        if (!Array.isArray(values)) {
+        if (!Type.isArray(values)) {
             values = [values];
         }
 
@@ -83,7 +83,7 @@ JXG.Dump = {
     deleteMarkers: function (board, markers) {
         var e, l, i;
 
-        if (!Array.isArray(markers)) {
+        if (!Type.isArray(markers)) {
             markers = [markers];
         }
 
@@ -106,7 +106,7 @@ JXG.Dump = {
      * @returns {String} " + s + "
      */
     str: function (s) {
-        if (typeof s === "string" && s.slice(0, 7) !== "function") {
+        if (typeof s === "string" && s.slice(0, 7) !== 'function') {
             s = '"' + s + '"';
         }
 
@@ -141,7 +141,7 @@ JXG.Dump = {
             if (def.hasOwnProperty(p)) {
                 pl = p.toLowerCase();
 
-                if (typeof def[p] !== "object" && def[p] === copy[pl]) {
+                if (def[p] !== null && typeof def[p] !== "object" && def[p] === copy[pl]) {
                     // console.log("delete", p);
                     delete copy[pl];
                 }
@@ -228,7 +228,7 @@ JXG.Dump = {
                         element.parents[s][0] !== '"'
                     ) {
                         element.parents[s] = '"' + element.parents[s] + '"';
-                    } else if (Array.isArray(element.parents[s])) {
+                    } else if (Type.isArray(element.parents[s])) {
                         element.parents[s] = "[" + element.parents[s].toString() + "]";
                     }
                 }
@@ -246,7 +246,7 @@ JXG.Dump = {
             }
         }
 
-        this.deleteMarkers(board, "dumped");
+        this.deleteMarkers(board, 'dumped');
 
         return {
             elements: elementList,
@@ -286,7 +286,7 @@ JXG.Dump = {
                 if (obj) {
                     list = [];
 
-                    if (Array.isArray(obj)) {
+                    if (Type.isArray(obj)) {
                         for (i = 0; i < obj.length; i++) {
                             list.push(this.toJCAN(obj[i]));
                         }
@@ -302,14 +302,14 @@ JXG.Dump = {
 
                     return "<<" + list.join(", ") + ">> ";
                 }
-                return "null";
+                return 'null';
             case "string":
                 return "'" + obj.replace(/\\/g, "\\\\").replace(/(["'])/g, "\\$1") + "'";
             case "number":
             case "boolean":
                 return obj.toString();
             case "null":
-                return "null";
+                return 'null';
         }
     },
 
@@ -337,7 +337,7 @@ JXG.Dump = {
                 "s" + i + " = " + elements[i].type + "(" + elements[i].parents.join(", ") + ") " + this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
             );
 
-            if (elements[i].type === "axis") {
+            if (elements[i].type === 'axis') {
                 // Handle the case that remove[All]Ticks had been called.
                 id = elements[i].attributes.id;
                 if (board.objects[id].defaultTicks === null) {
@@ -386,7 +386,7 @@ JXG.Dump = {
             dump = this.dump(board),
             script = [];
 
-        dump.methods = this.setBoundingBox(dump.methods, board, "board");
+        dump.methods = this.setBoundingBox(dump.methods, board, 'board');
 
         elements = dump.elements;
 
@@ -401,7 +401,7 @@ JXG.Dump = {
                     ");"
             );
 
-            if (elements[i].type === "axis") {
+            if (elements[i].type === 'axis') {
                 // Handle the case that remove[All]Ticks had been called.
                 id = elements[i].attributes.id;
                 if (board.objects[id].defaultTicks === null) {

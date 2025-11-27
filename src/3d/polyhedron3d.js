@@ -32,9 +32,9 @@
  * Create axes and rear and front walls of the
  * view3d bounding box bbox3D.
  */
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 
 JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
     var e,
@@ -42,8 +42,8 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
         generateMethod,
         that = this;
 
-    this.constructor(view.board, attributes, OBJECT_TYPE.POLYHEDRON3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "polyhedron3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_POLYHEDRON3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, 'polyhedron3d');
 
     this.board.finalizeAdding(this);
 
@@ -119,7 +119,7 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
     });
 };
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Polyhedron3D.prototype,
@@ -633,7 +633,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
             faces: []
         };
 
-    if (Type.exists(parents[1].type) && parents[1].type === OBJECT_TYPE.POLYHEDRON3D) {
+    if (Type.exists(parents[1].type) && parents[1].type === Const.OBJECT_TYPE_POLYHEDRON3D) {
         // Polyhedron from baseElement and transformations
         base = parents[1];
         transform = parents[2];
@@ -641,7 +641,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         polyhedron.faces = base.def.faces;
     } else {
         // Copy vertices into a dict
-        if (Array.isArray(parents[1])) {
+        if (Type.isArray(parents[1])) {
             le = parents[1].length;
             for (i = 0; i < le; i++) {
                 polyhedron.vertices[i] = parents[1][i];
@@ -656,7 +656,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         polyhedron.faces = parents[2];
     }
 
-    attr_polyhedron = Type.copyAttributes(attributes, board.options, "polyhedron3d");
+    attr_polyhedron = Type.copyAttributes(attributes, board.options, 'polyhedron3d');
 
     console.time('polyhedron');
 
@@ -664,15 +664,15 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
     // Create face3d elements
     le = polyhedron.faces.length;
     for (i = 0; i < le; i++) {
-        attr = Type.copyAttributes(attributes, board.options, "face3d");
+        attr = Type.copyAttributes(attributes, board.options, 'face3d');
         if (attr_polyhedron.fillcolorarray.length > 0) {
             attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
         }
         f = polyhedron.faces[i];
 
-        if (Array.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Array.isArray(f[0])) {
+        if (Type.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Type.isArray(f[0])) {
             // Handle case that face is of type [[points], {attr}]
-            attr = Type.mergeAttrHelper(attr, f[1]);
+            Type.mergeAttr(attr, f[1]);
             // Normalize face array, i.e. don't store attributes of that face in polyhedron
             polyhedron.faces[i] = f[0];
         }

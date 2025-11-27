@@ -28,11 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
- import {JSXMath}  from "../math/jsxmath.js";
-import{Geometry}   from "../math/geometry.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 //, GeometryElement3D) {
 
 /**
@@ -49,8 +49,8 @@ import {Type} from "../utils/type.js";
  * @see JXG.Board#generateName
  */
 JXG.Text3D = function (view, F, text, slide, attributes) {
-    this.constructor(view.board, attributes, OBJECT_TYPE.TEXT3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "text3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_TEXT3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, 'text3d');
 
     this.board.finalizeAdding(this);
 
@@ -152,7 +152,7 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
     });
 };
 JXG.Text3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Text3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Text3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Text3D.prototype,
@@ -222,7 +222,7 @@ JXG.extend(
          *    p.normalizeCoords();
          */
         normalizeCoords: function () {
-            if (Math.abs(this.coords[0]) > JSXMath.eps) {
+            if (Math.abs(this.coords[0]) > Mat.eps) {
                 this.coords[1] /= this.coords[0];
                 this.coords[2] /= this.coords[0];
                 this.coords[3] /= this.coords[0];
@@ -302,7 +302,7 @@ JXG.extend(
                         // The 3D coordinates have been corrected, now
                         // also correct the 2D element.
                         this.element2D.coords.setCoordinates(
-                            COORDS_BY.USER,
+                            Const.COORDS_BY_USER,
                             this.view.project3DTo2D(this.coords)
                         );
                     }
@@ -310,7 +310,7 @@ JXG.extend(
                     if (this.slide) {
                         this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
                         this.element2D.coords.setCoordinates(
-                            COORDS_BY.USER,
+                            Const.COORDS_BY_USER,
                             this.view.project3DTo2D(this.coords)
                         );
                     }
@@ -323,7 +323,7 @@ JXG.extend(
                 // Update 2D text from its 3D view
                 c3d = this.coords;
                 this.element2D.coords.setCoordinates(
-                    COORDS_BY.USER,
+                    Const.COORDS_BY_USER,
                     this.view.project3DTo2D(c3d)
                 );
                 // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
@@ -345,7 +345,7 @@ JXG.extend(
          * @returns {Boolean} True if the first entry of the coordinate vector is not zero; false otherwise.
          */
         testIfFinite: function () {
-            return Math.abs(this.coords[0]) > JSXMath.eps ? true : false;
+            return Math.abs(this.coords[0]) > Mat.eps ? true : false;
             // return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
 

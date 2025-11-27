@@ -43,10 +43,10 @@
  * @example
  *
  */
-import {JXG} from"../jxg.js";
-import {Type} from "../utils/type.js";
- import {JSXMath}  from "../math/jsxmath.js";
-import {Constants} from "../base/constants.js";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Const from "../base/constants.js";
 
 /**
  * Prefix expression parser, i.e. a poor man's parser.
@@ -113,7 +113,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term) || Type.isString(term)) {
             return term;
         }
-        if (!Array.isArray(term) || term.length < 2) {
+        if (!Type.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.parse: term is not an array, number or string');
         }
 
@@ -202,7 +202,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term)) {
             return 0;
         }
-        if (!Array.isArray(term) || term.length < 2) {
+        if (!Type.isArray(term) || term.length < 2) {
             throw new Error('PrefixParser.dimension: term is not an array');
         }
 
@@ -236,7 +236,7 @@ JXG.PrefixParser = {
             }
 
         } else if (method === 'exec') {
-            if (term[2].type === OBJECT_TYPE.MEASUREMENT) {
+            if (term[2].type === Type.OBJECT_TYPE_MEASUREMENT) {
                 res = term[2].Dimension();
                 // If attribute "dim" is set, this overrules anything else.
                 if (Type.exists(term[2].visProp.dim)) {
@@ -265,7 +265,7 @@ JXG.PrefixParser = {
                     res = 2;
                     break;
                 default: // 'V', 'Value'
-                    if (term[1].type === OBJECT_TYPE.MEASUREMENT) {
+                    if (term[1].type === Type.OBJECT_TYPE_MEASUREMENT) {
                         res = term[1].Dimension();
                         // If attribute "dim" is set, this overrules anything else.
                         if (Type.exists(term[1].visProp.dim)) {
@@ -280,14 +280,14 @@ JXG.PrefixParser = {
                         if (fun === 'Value' || fun === 'V') {
                             // The Value method of sector, angle and arc does not have the same dimension
                             // for all units.
-                            if ([OBJECT_TYPE.ARC, OBJECT_TYPE.SECTOR, OBJECT_TYPE.ANGLE].indexOf(term[1].type) >= 0) {
+                            if ([Const.OBJECT_TYPE_ARC, Const.OBJECT_TYPE_SECTOR, Const.OBJECT_TYPE_ANGLE].indexOf(term[1].type) >= 0) {
                                 unit = '';
                                 if (term.length === 3 && Type.isString(term[2])) {
                                     unit = term[2].toLowerCase();
                                 }
                                 if (unit === '') {
                                     // Default values:
-                                    if (term[1].type === OBJECT_TYPE.ANGLE) {
+                                    if (term[1].type === Const.OBJECT_TYPE_ANGLE) {
                                         // Default for angle.Value() is radians, i.e. dim 0
                                         res = 0;
                                     } else {
@@ -323,7 +323,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term)) {
             return term;
         }
-        if (!Array.isArray(term) || term.length < 2) {
+        if (!Type.isArray(term) || term.length < 2) {
             throw new Error('PrefixParser.toPrefix: term is not an array');
         }
 
@@ -335,7 +335,7 @@ JXG.PrefixParser = {
             if (Type.isInArray(['+', '-', '*', '/'], method)) {
                 res.push(this.toPrefix(term[i]));
             } else {
-                if (method === 'V' && term[i].type === OBJECT_TYPE.MEASUREMENT) {
+                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
                     res = term[i].toPrefix();
                 } else if (method === 'exec') {
                     if (i === 1) {
@@ -364,7 +364,7 @@ JXG.PrefixParser = {
         if (Type.isNumber(term)) {
             return [];
         }
-        if (!Array.isArray(term) || term.length < 2) {
+        if (!Type.isArray(term) || term.length < 2) {
             throw new Error('PrefixParser.getParents: term is not an array');
         }
 
@@ -376,7 +376,7 @@ JXG.PrefixParser = {
             if (Type.isInArray(['+', '-', '*', '/'], method)) {
                 Type.concat(res, this.getParents(term[i]));
             } else {
-                if (method === 'V' && term[i].type === OBJECT_TYPE.MEASUREMENT) {
+                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
                     Type.concat(res, term[i].getParents());
                 } else if (method === 'exec') {
                     if (i > 1) {

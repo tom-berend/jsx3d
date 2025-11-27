@@ -36,9 +36,9 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import {JXG} from"../jxg.js";
-import {Env} from "../utils/env.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
 
 /**
  * @class
@@ -90,11 +90,11 @@ var priv = {
  *  var f = board.jc.snippet(input.Value(), true, 'x', false);
  *  var graph = board.create('functiongraph',[f,
  *          function() {
- *            var c = new JXG.Coords(COORDS_BY.SCREEN,[0,0],board);
+ *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
  *            return c.usrCoords[1];
  *          },
  *          function() {
- *            var c = new JXG.Coords(COORDS_BY.SCREEN,[board.canvasWidth,0],board);
+ *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
  *            return c.usrCoords[1];
  *          }
  *        ]);
@@ -113,11 +113,11 @@ var priv = {
  *   var f = t1_board.jc.snippet(input.Value(), true, 'x', false);
  *   var graph = t1_board.create('functiongraph',[f,
  *          function() {
- *            var c = new JXG.Coords(COORDS_BY.SCREEN,[0,0],t1_board);
+ *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],t1_board);
  *            return c.usrCoords[1];
  *          },
  *          function() {
- *            var c = new JXG.Coords(COORDS_BY.SCREEN,[t1_board.canvasWidth,0],t1_board);
+ *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[t1_board.canvasWidth,0],t1_board);
  *            return c.usrCoords[1];
  *          }
  *        ]);
@@ -259,7 +259,7 @@ var priv = {
 JXG.createInput = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "input");
+        attr = Type.copyAttributes(attributes, board.options, 'input');
 
     par = [
         parents[0],
@@ -267,17 +267,16 @@ JXG.createInput = function (board, parents, attributes) {
         '<span style="display:inline; white-space:nowrap; padding:0px;">' +
         '<label></label><input type="text" maxlength="' +
         attr.maxlength +
-        '" style="width:100%"/>' +
+        '" style="width:100%" />' +
         "</span>"
     ];
 
     // 1. Create input element with empty label
     t = board.create("text", par, attr);
-    t.type = OBJECT_TYPE.INPUT;
+    t.type = Type.OBJECT_TYPE_INPUT;
 
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-    // t.rendNodeLabel.innerHTML = parents[3];
     t.rendNodeInput.value = parents[2];
     t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
@@ -411,7 +410,7 @@ JXG.createInput = function (board, parents, attributes) {
     );
 
     // This sets the font-size of the input HTML element
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     return t;

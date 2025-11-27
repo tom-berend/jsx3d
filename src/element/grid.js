@@ -36,10 +36,10 @@
         Nina Koch
  */
 
-import {JXG} from"../jxg.js";
- import {JSXMath}  from "../math/jsxmath.js";
-import {Type} from "../utils/type.js";
-import {Constants} from "../base/constants.js";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
 
 /**
  * @class A grid is a mesh consisting of vertical and horizontal lines or other geometrical objects.
@@ -216,7 +216,7 @@ import {Constants} from "../base/constants.js";
  * </script><pre>
  */
 JXG.createGrid = function (board, parents, attributes) {
-    var eps = JSXMath.eps,       // to avoid rounding errors
+    var eps = Mat.eps,       // to avoid rounding errors
         maxLines = 5000,    // maximum number of vertical or horizontal grid elements (abort criterion for performance reasons)
 
         majorGrid,      // main object which will be returned as grid
@@ -420,20 +420,20 @@ JXG.createGrid = function (board, parents, attributes) {
 
     // Themes
     attrGrid = Type.copyAttributes(attributes, board.options, 'grid');
-    attrGrid = Type.mergeAttrHelper(attrGrid, attrGrid.themes[attrGrid.theme], false);
+    Type.mergeAttr(attrGrid, attrGrid.themes[attrGrid.theme], false);
 
     // Create majorGrid
     attrMajor = {};
-    attrMajor = Type.mergeAttrHelper(attrMajor, attrGrid, true, true);
-    attrMajor = Type.mergeAttrHelper(attrMajor, attrGrid.major, true, true);
+    Type.mergeAttr(attrMajor, attrGrid, true, true);
+    Type.mergeAttr(attrMajor, attrGrid.major, true, true);
     majorGrid = board.create('curve', [[null], [null]], attrMajor);
     majorGrid.elType = 'grid';
-    majorGrid.type = OBJECT_TYPE.GRID;
+    majorGrid.type = Const.OBJECT_TYPE_GRID;
 
     // Create minorGrid
     attrMinor = {};
-    attrMinor = Type.mergeAttrHelper(attrMinor, attrGrid, true, true);
-    attrMinor = Type.mergeAttrHelper(attrMinor, attrGrid.minor, true, true);
+    Type.mergeAttr(attrMinor, attrGrid, true, true);
+    Type.mergeAttr(attrMinor, attrGrid.minor, true, true);
     if (attrMinor.id === attrMajor.id) {
         attrMinor.id = majorGrid.id + '_minor';
     }
@@ -442,7 +442,7 @@ JXG.createGrid = function (board, parents, attributes) {
     }
     minorGrid = board.create('curve', [[null], [null]], attrMinor);
     minorGrid.elType = 'grid';
-    minorGrid.type = OBJECT_TYPE.GRID;
+    minorGrid.type = Const.OBJECT_TYPE_GRID;
 
     majorGrid.minorGrid = minorGrid;
     minorGrid.majorGrid = majorGrid;
@@ -475,18 +475,18 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // set global majorStep
         majorStep = this.evalVisProp('majorstep');
-        if (!Array.isArray(majorStep)) {
+        if (!Type.isArray(majorStep)) {
             majorStep = [majorStep, majorStep];
         }
         if (majorStep.length < 2) {
             majorStep = [majorStep[0], majorStep[0]];
         }
         if (Type.exists(gridX)) {
-            JXG.deprecated("gridX", "majorStep");
+            JXG.deprecated("gridX", 'majorStep');
             majorStep[0] = gridX;
         }
         if (Type.exists(gridY)) {
-            JXG.deprecated("gridY", "majorStep");
+            JXG.deprecated("gridY", 'majorStep');
             majorStep[1] = gridY;
         }
 
@@ -534,7 +534,7 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // Set global majorSize
         majorSize = this.evalVisProp('size');
-        if (!Array.isArray(majorSize)) {
+        if (!Type.isArray(majorSize)) {
             majorSize = [majorSize, majorSize];
         }
         if (majorSize.length < 2) {
@@ -547,10 +547,10 @@ JXG.createGrid = function (board, parents, attributes) {
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
         if (Type.isNumber(majorSize[0], true)) {
-            majorSize[0] = majorSize[0] + "px";
+            majorSize[0] = majorSize[0] + 'px';
         }
         if (Type.isNumber(majorSize[1], true)) {
-            majorSize[1] = majorSize[1] + "px";
+            majorSize[1] = majorSize[1] + 'px';
         }
         majorSize[0] = Type.parseNumber(majorSize[0], majorStep[0], 1 / this.board.unitX);
         majorSize[1] = Type.parseNumber(majorSize[1], majorStep[1], 1 / this.board.unitY);
@@ -671,7 +671,7 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // set minorStep
         // minorElements can be 'auto' or a number (also a number like '20')
-        if (!Array.isArray(minorElements)) {
+        if (!Type.isArray(minorElements)) {
             minorElements = [minorElements, minorElements];
         }
         if (minorElements.length < 2) {
@@ -701,7 +701,7 @@ JXG.createGrid = function (board, parents, attributes) {
         minorStep[1] = majorStep[1] / (minorElements[1] + 1);
 
         // set global minorSize
-        if (!Array.isArray(minorSize)) {
+        if (!Type.isArray(minorSize)) {
             minorSize = [minorSize, minorSize];
         }
         if (minorSize.length < 2) {
@@ -719,10 +719,10 @@ JXG.createGrid = function (board, parents, attributes) {
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
         if (Type.isNumber(minorSize[0], true)) {
-            minorSize[0] = minorSize[0] + "px";
+            minorSize[0] = minorSize[0] + 'px';
         }
         if (Type.isNumber(minorSize[1], true)) {
-            minorSize[1] = minorSize[1] + "px";
+            minorSize[1] = minorSize[1] + 'px';
         }
         minorSize[0] = Type.parseNumber(minorSize[0], minorStep[0], 1 / this.board.unitX);
         minorSize[1] = Type.parseNumber(minorSize[1], minorStep[1], 1 / this.board.unitY);

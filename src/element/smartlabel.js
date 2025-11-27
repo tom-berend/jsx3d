@@ -33,9 +33,9 @@
  * @fileoverview Implementation of smart labels..
  */
 
-import {JXG} from"../jxg.js";
-import {Constants} from "../base/constants.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 
 /**
  * @class Customized text elements for displaying measurements of JSXGraph elements,
@@ -193,8 +193,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         getTextFun, txt_fun;
 
     if (parents.length === 0 || (
-        [OBJECT_CLASS.POINT, Const.OBJECT_CLASS_LINE,Const.OBJECT_CLASS_CIRCLE].indexOf(parents[0].elementClass) < 0 &&
-        [OBJECT_TYPE.POLYGON, OBJECT_TYPE.ANGLE].indexOf(parents[0].type) < 0
+        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE,Const.OBJECT_CLASS_CIRCLE].indexOf(parents[0].elementClass) < 0 &&
+        [Const.OBJECT_TYPE_POLYGON, Const.OBJECT_TYPE_ANGLE].indexOf(parents[0].type) < 0
         )
     ) {
         throw new Error(
@@ -207,7 +207,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
     p = parents[0];
     user_supplied_text = parents[1] || '';
 
-    if (p.elementClass === OBJECT_CLASS.POINT) {
+    if (p.elementClass === Const.OBJECT_CLASS_POINT) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelpoint');
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -231,9 +231,9 @@ JXG.createSmartLabel = function (board, parents, attributes) {
          */
         attr.visible = function () { return (p.Radius() < 1.5) ? false : true; };
 
-    } else if (p.type === OBJECT_TYPE.POLYGON) {
+    } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelpolygon');
-    } else if (p.type === OBJECT_TYPE.ANGLE) {
+    } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelangle');
         /**
          * @class
@@ -337,7 +337,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         };
     };
 
-    if (p.elementClass === OBJECT_CLASS.POINT) {
+    if (p.elementClass === Const.OBJECT_CLASS_POINT) {
         el = board.create('text', [
             function () { return p.X(); },
             function () { return p.Y(); },
@@ -374,7 +374,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                     if (mj) {
                         str = ['\\(', pre, '\\left(\\array{', x, '\\,', u, '\\\\ ', y, '\\,', u, '}\\right)', suf, '\\)'].join('');
                     } else {
-                        str = [pre, x, ' ', u, '<br/>', y, ' ', u, suf].join('');
+                        str = [pre, x, ' ', u, '<br />', y, ' ', u, suf].join('');
                     }
                 }
             } else {
@@ -427,7 +427,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             txt_fun = getTextFun(el, p, 'circle', 'perimeter');
 
         }
-    } else if (p.type === OBJECT_TYPE.POLYGON) {
+    } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
         if (attr.measure === 'area') {
             el = board.create('text', [
                 function () { return p.getTextAnchor(); },
@@ -453,7 +453,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             txt_fun = getTextFun(el, p, 'polygon', 'perimeter');
         }
 
-    } else if (p.type === OBJECT_TYPE.ANGLE) {
+    } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
         el = board.create('text', [
             function () {
                 return p.getLabelAnchor();

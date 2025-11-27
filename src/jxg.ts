@@ -137,7 +137,7 @@ export function JXG_registerElement(element: string, creator: Function) {
 
 // this file now incorporates parts of constants.js, type.js
 
-const VERSION = '1.12.1-beta';
+const VERSION = '1.13.0';
 
 /**
  * JXG is the top object of JSXGraph and defines the namespace

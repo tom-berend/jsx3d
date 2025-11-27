@@ -37,9 +37,9 @@
  * manipulate polynomials.
  */
 
-import {JXG} from"../jxg.js";
- import {JSXMath}  from "./jsxmath.js";
-import {Type} from "../utils/type.js";
+import JXG from "../jxg.js";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 /**
  * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.
@@ -85,7 +85,7 @@ Mat.Poly.Monomial = function (ring, coefficient, exponents) {
         throw new Error("JSXGraph error: In JXG.Math.Poly.monomial missing parameter 'ring'.");
     }
 
-    if (!Array.isArray(exponents)) {
+    if (!Type.isArray(exponents)) {
         exponents = [];
     }
 
@@ -235,7 +235,7 @@ JXG.extend(
             var i;
 
             if (Type.exists(mp) && mp.ring === this.ring) {
-                if (Array.isArray(mp.exponents)) {
+                if (Type.isArray(mp.exponents)) {
                     // mp is a monomial
                     this.addSubMonomial(mp, 1);
                 } else {
@@ -261,7 +261,7 @@ JXG.extend(
             var i;
 
             if (Type.exists(mp) && mp.ring === this.ring) {
-                if (Array.isArray(mp.exponents)) {
+                if (Type.isArray(mp.exponents)) {
                     // mp is a monomial
                     this.addSubMonomial(mp, -1);
                 } else {

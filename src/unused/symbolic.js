@@ -38,12 +38,12 @@
  * @author graphjs
  */
 
-import {Constants} from "../base/constants.js";
-import{Coords} from "../base/coords.js";
- import {JSXMath}  from "./math.js";
-import{Geometry}   from "./geometry.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Geometry from "./geometry.js";
 import Server from "../server/server.js";
-import {Type} from "../utils/type.js";
+import Type from "../utils/type.js";
 
 var undef;
 
@@ -74,9 +74,9 @@ Mat.Symbolic = {
             makeCoords = function (num) {
                 var r;
 
-                if (append === "underscore") {
+                if (append === 'underscore') {
                     r = variable + "_{" + num + "}";
-                } else if (append === "brace") {
+                } else if (append === 'brace') {
                     r = variable + "[" + num + "]";
                 } else {
                     r = variable + num;
@@ -115,8 +115,8 @@ Mat.Symbolic = {
         }
 
         if (Type.isPoint(element)) {
-            element.symbolic.x = "x";
-            element.symbolic.y = "y";
+            element.symbolic.x = 'x'
+            element.symbolic.y = 'y'
         }
 
         return count;
@@ -166,7 +166,7 @@ Mat.Symbolic = {
             result = [];
 
         if (generateCoords) {
-            this.generateSymbolicCoordinatesPartial(board, element, "u", "brace");
+            this.generateSymbolicCoordinatesPartial(board, element, "u", 'brace');
         }
 
         list[element.id] = element;
@@ -223,7 +223,7 @@ Mat.Symbolic = {
             tx,
             bol = board.options.locus,
             oldRadius = {},
-            numDependent = this.generateSymbolicCoordinatesPartial(board, point, "u", "brace"),
+            numDependent = this.generateSymbolicCoordinatesPartial(board, point, "u", 'brace'),
             xsye = new Coords(Const.COORDS_BY_USR, [0, 0], board),
             xeys = new Coords(
                 Const.COORDS_BY_USR,
@@ -236,7 +236,7 @@ Mat.Symbolic = {
             rot = 0;
 
         if (Server.modules.geoloci === undef) {
-            Server.loadModule("geoloci");
+            Server.loadModule('geoloci');
         }
 
         if (Server.modules.geoloci === undef) {
@@ -323,7 +323,7 @@ Mat.Symbolic = {
                 ye = s * tx + c * ye;
 
                 // Step 3
-                if (bol.stretch && Math.abs(P2.symbolic.x) > JSXMath.eps) {
+                if (bol.stretch && Math.abs(P2.symbolic.x) > Mat.eps) {
                     sf = P2.symbolic.x;
 
                     for (i = 0; i < board.listOfFreePoints.length; i++) {
@@ -355,21 +355,21 @@ Mat.Symbolic = {
             for (i = 0; i < board.listOfFreePoints.length; i++) {
                 tx = board.listOfFreePoints[i].symbolic.x;
 
-                if (Math.abs(tx) < JSXMath.eps) {
+                if (Math.abs(tx) < Mat.eps) {
                     board.listOfFreePoints[i].symbolic.x = 0;
                 }
 
-                if (Math.abs(tx - Math.round(tx)) < JSXMath.eps) {
+                if (Math.abs(tx - Math.round(tx)) < Mat.eps) {
                     board.listOfFreePoints[i].symbolic.x = Math.round(tx);
                 }
 
                 tx = board.listOfFreePoints[i].symbolic.y;
 
-                if (Math.abs(tx) < JSXMath.eps) {
+                if (Math.abs(tx) < Mat.eps) {
                     board.listOfFreePoints[i].symbolic.y = 0;
                 }
 
-                if (Math.abs(tx - Math.round(tx)) < JSXMath.eps) {
+                if (Math.abs(tx - Math.round(tx)) < Mat.eps) {
                     board.listOfFreePoints[i].symbolic.y = Math.round(tx);
                 }
             }

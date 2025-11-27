@@ -1,4 +1,4 @@
-import {JXG} from"./jxg.js";
+import JXG from "./jxg.js";
 import Zip from "./utils/zip.js";
 import Base64 from "./utils/base64.js";
 
