@@ -6,9 +6,9 @@ describe('type suite description', () => {
     });
 });
 //////////////////////////////////////////////////
-import { LooseObject} from '../jsxgraph/jxg.js'
-import { Type } from '../jsxgraph/utils/type.js';
-import { Options } from '../jsxgraph/options.js';
+import { LooseObject} from '../src/jxg.js'
+import { Type } from '../src/utils/type.js';
+import { Options } from '../src/options.js';
 
 // // temporary for testing
 // class Board {

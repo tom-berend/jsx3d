@@ -960,7 +960,7 @@ export class SVGRenderer extends AbstractRenderer {
     appendChildPrim(node: Node, level: number = 0) {  // trace nodes have level not set
 
         if (typeof level !== 'number') {      // someone is misbehaving
-            console.warn('level is not a number', level)
+            console.warn('level is not a number', (typeof level))
             level = 0
         }
 

@@ -343,7 +343,6 @@ export abstract class AbstractRenderer {
         }
 
         console.log('drawPoint', this.createPrim(prim, el.id),)
-        console.log(el.evalVisProp('layer'))
         el.rendNode = this.appendChildPrim(
             this.createPrim(prim, el.id),
             el.evalVisProp('layer')
@@ -1022,7 +1021,6 @@ export abstract class AbstractRenderer {
     drawText(el): HTMLElement {
         var node: HTMLElement, z, level, ev_visible;
 
-        console.warn('drawText', el, el.evalVisProp('display'))
         if (this.container !== null) {
             if (
                 el.evalVisProp('display') === "html" &&
@@ -1088,7 +1086,7 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText(el) {
-        console.warn('abstract: updating Text', el.content, el)
+        // console.warn('abstract: updating Text', el.content, el)
         var content = el.plaintext,
             v, c,
             parentNode, node,

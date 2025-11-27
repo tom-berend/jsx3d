@@ -2132,8 +2132,8 @@ export class Board extends Events {
             // we need to call the listener when having @media: print.
             try {
                 // window.matchMedia('print').addEventListener('change', this.printListenerMatch.apply(this, arguments));
-                window.matchMedia('print').addEventListener('change', this.printListenerMatch.bind(this));
-                window.matchMedia('screen').addEventListener('change', this.printListenerMatch.bind(this));
+                // window.matchMedia('print').addEventListener('change', this.printListenerMatch.bind(this));
+                // window.matchMedia('screen').addEventListener('change', this.printListenerMatch.bind(this));
                 this.resizeHandlers.push('print');
             } catch (err) {
                 JXG.debug("Error adding printListener", err);

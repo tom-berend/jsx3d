@@ -23,7 +23,7 @@
         "rewriteRelativeImportExtensions":true,
     },
     "include": [
-        "src/jsxgraph/**/*.ts"
+        "src/**/*.ts"
     ],
     "exclude":[
         "build/**/*.*"

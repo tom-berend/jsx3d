@@ -1,5 +1,5 @@
 ////////////////// prototype test
-import { Observer } from "../../jsxgraph/utils/observer.js"
+import { Observer } from "../../src/utils/observer"
 describe('setup up some observers', () => {
     it('basic, no message handling', () => {
         let event = 'not yet'

@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "Convert JSXGraph to TS, then maybe add ThreeJS, then add XR support...",
     "license": "MIT",
-    "main": "./build/jsxgraph/jxg.js",
+    "main": "./build/jxg.js",
     "type": "module",
     "scripts": {
         "comment1":"it is convenient to use 'npm run build' with debug breakpoints in VSCode",

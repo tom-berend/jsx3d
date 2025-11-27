@@ -1,4 +1,4 @@
-import { SVGRenderer } from "../../jsxgraph/renderer/svg.js";
+import { SVGRenderer } from "../../src/renderer/svg.js";
 
 describe('testing points', () => {
     // afterEach(() => {

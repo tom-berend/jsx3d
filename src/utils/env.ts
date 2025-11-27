@@ -1001,9 +1001,11 @@ export class Env {
 
 
     static debug(msg: string) {
-        console.warn("Debug: " + msg)
+        throw new Error('debug')
+        // console.warn("Debug: " + msg)
     }
     static warn(msg: string) {
+        throw new Error('warn')
         console.warn("Warning: " + msg)
     }
     static deprecated(old: string, replace: string = '') {

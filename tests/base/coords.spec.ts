@@ -1,6 +1,6 @@
-import { Board } from "../../jsxgraph/base/board.js";
-import { COORDS_BY } from "../../jsxgraph/base/constants.js";
-import { Coords } from "../../jsxgraph/base/coords.js";
+import { Board } from "../../src/base/board.js";
+import { COORDS_BY } from "../../src/base/constants.js";
+import { Coords } from "../../src/base/coords.js";
 
 describe('test the Coords constructor', () => {
     it('basic coordinates', () => {
