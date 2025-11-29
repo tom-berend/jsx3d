@@ -1,13 +1,16 @@
-import { SVGRenderer } from "../../src/renderer/svg.js";
+// svg renderer
+import { SVGRenderer } from "../../src/renderer/svg.js"
+
+document.body.innerHTML =
+    `<!DOCTYPE html><html lang="en"><head></head><body><div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div></body></html>`
+
+let svg = new SVGRenderer('box', { width: 100, height: 100 })
+let node = svg.createPrim('ellipse', 'box2')
 
 describe('testing points', () => {
     // afterEach(() => {
     //     document.getElementsByTagName('html')[0].innerHTML = '';
     // });
-    document.body.innerHTML =
-        `<!DOCTYPE html><html lang="en"><head></head><body><div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div></body></html>`
-    let svg = new SVGRenderer('box', { width: 100, height: 100 })
-    let node = svg.createPrim('ellipse', 'box2')
 
     it('does is create a primitive?', () => {
         expect(node.id).toBe('box_box2')  // unique name
@@ -20,4 +23,5 @@ describe('testing points', () => {
         expect(node2).toBeDefined()
 
     })
+
 })

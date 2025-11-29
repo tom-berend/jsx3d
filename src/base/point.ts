@@ -77,34 +77,14 @@ export class Point extends CoordsElement {
 
 
     constructor(board: Board, coordinates: number[] | Object | Function, attributes: PointOptions) {
-        super(board, COORDS_BY.USER, coordinates, attributes, OBJECT_TYPE.POINT,OBJECT_CLASS.POINT)
+        super(board, COORDS_BY.USER, coordinates, attributes, OBJECT_TYPE.POINT, OBJECT_CLASS.POINT)
 
-        this.element = this.board.select(attributes['anchor']) ?? null;
+        this.element = this.board.select(attributes['anchor'])
         this.coords = new Coords(COORDS_BY.USER, coordinates, board);
 
         this.elType = "point";
-        this.visProp = Type.merge(this.visProp, Options)
 
-        this.otype = OBJECT_TYPE.POINT
-        this.oclass = OBJECT_CLASS.POINT
-
-        ////////////////// this was the original JSXGraph Point
-        // this.constructor(board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
-
-        // this.element = this.board.select(attributes.anchor);
-
-
-        /* Register point at board. */
-        this.id = this.board.setId(this, "P");
-        this.board.renderer.drawPoint(this);
-        this.board.finalizeAdding(this);
-
-        this.createGradient();
-        this.createLabel();
-
-
-
-        this.elType = 'point';
+        this.visProp = Type.mergeVisProps(Options.point, attributes)
 
         /* Register point at board. */
         this.id = this.board.setId(this, 'P');
@@ -112,7 +92,14 @@ export class Point extends CoordsElement {
         this.board.finalizeAdding(this);
 
         this.createGradient();
-        this.createLabel();
+
+        let label = this.createLabel();
+        label.visProp = Type.mergeVisProps(Options.text, Options.label)
+        label.visProp = Type.mergeVisProps(label.visProp, attributes.label)
+        console.log(99,label.visProp)
+
+
+
 
     }
     /**
@@ -244,7 +231,7 @@ export class Point extends CoordsElement {
             );
         }
 
-        this.type = OBJECT_TYPE.INTERSECTION;
+        this.otype = OBJECT_TYPE.INTERSECTION;
         this.elType = "intersection";
         this.parents = [el1.id, el2.id, i, j];
 
@@ -1039,7 +1026,6 @@ export function createPolePoint(board, parents, attributes) {
 
 
 
-console.warn('point has been loaded !!')
 JXG_registerElement("point", createPoint);
 JXG_registerElement("glider", createGlider);
 JXG_registerElement("intersection", createIntersectionPoint);

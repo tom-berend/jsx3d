@@ -53,7 +53,7 @@ import { Events } from '../utils/event.js';
 import { Env } from '../utils/env.js';
 // import Composition from './composition.js';
 import { GeometryElement } from './element.js';
-import { SVGRenderer, Dim } from '../renderer/svg.js';
+import { SVGRenderer } from '../renderer/svg.js';
 import { JSXMath } from '../math/jsxmath.js';
 import { createText } from '../base/text.js'
 import { createPoint } from '../base/point.js'
@@ -61,6 +61,7 @@ import { BoardOptions } from '../optionInterfaces.js';
 import { Statistics } from '../math/statistics.js';
 import { AbstractRenderer } from '../renderer/abstract.js';
 import { JSXFileReader } from '../reader/filereader.js';
+import { Dim } from '../interfaces.js'
 
 
 
@@ -729,32 +730,32 @@ export class Board extends Events {
 
 
         // if (this.attr.registerevents === true) {
-            this.attr.registerevents = {
-                fullscreen: true,
-                keyboard: true,
-                pointer: true,
-                resize: true,
-                wheel: true
-            };
+        this.attr.registerevents = {
+            fullscreen: true,
+            keyboard: true,
+            pointer: true,
+            resize: true,
+            wheel: true
+        };
 
-            // TODO, this isn't quite the original logic....
+        // TODO, this isn't quite the original logic....
 
         // } else  if (typeof this.attr.registerevents === 'object') {
-            if (!Type.exists(this.attr.registerevents.fullscreen)) {
-                this.attr.registerevents.fullscreen = true;
-            }
-            if (!Type.exists(this.attr.registerevents.keyboard)) {
-                this.attr.registerevents.keyboard = true;
-            }
-            if (!Type.exists(this.attr.registerevents.pointer)) {
-                this.attr.registerevents.pointer = true;
-            }
-            if (!Type.exists(this.attr.registerevents.resize)) {
-                this.attr.registerevents.resize = true;
-            }
-            if (!Type.exists(this.attr.registerevents.wheel)) {
-                this.attr.registerevents.wheel = true;
-            }
+        if (!Type.exists(this.attr.registerevents.fullscreen)) {
+            this.attr.registerevents.fullscreen = true;
+        }
+        if (!Type.exists(this.attr.registerevents.keyboard)) {
+            this.attr.registerevents.keyboard = true;
+        }
+        if (!Type.exists(this.attr.registerevents.pointer)) {
+            this.attr.registerevents.pointer = true;
+        }
+        if (!Type.exists(this.attr.registerevents.resize)) {
+            this.attr.registerevents.resize = true;
+        }
+        if (!Type.exists(this.attr.registerevents.wheel)) {
+            this.attr.registerevents.wheel = true;
+        }
         // }
 
         if (this.attr.registerevents !== false) {
@@ -861,24 +862,24 @@ export class Board extends Events {
      * @param {Object} object Reference of an JXG.GeometryElement that is to be named.
      * @returns {String} Unique name for the object.
      */
-    generateName(object:GeometryElement):string {
-        var possibleNames, i,
+    generateName(object: GeometryElement): string {
+        let possibleNames, i,
             maxNameLength = this.attr.maxnamelength,
             pre = '',
             post = '',
             indices = [],
             name = '';
 
-        if (object.type === OBJECT_TYPE.TICKS) {
+        if (object.otype === OBJECT_TYPE.TICKS) {
             return '';
         }
 
-        if (object.otype == OBJECT_TYPE.POINT || object.otype == OBJECT_TYPE.POINT3D) {
+        if (object.otype === OBJECT_TYPE.POINT || object.otype === OBJECT_TYPE.POINT3D) {
             // points have capital letters
             possibleNames = [
                 '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
             ];
-        } else if (object.type === OBJECT_TYPE.ANGLE) {
+        } else if (object.otype === OBJECT_TYPE.ANGLE) {
             possibleNames = [
                 '', '&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;', '&iota;', '&kappa;', '&lambda;',
                 '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'
@@ -890,50 +891,61 @@ export class Board extends Events {
             ];
         }
 
-        if (
-            !Type.isPoint(object) &&
-            !Type.isPoint3D(object) &&
-            object.elementClass !== OBJECT_CLASS.LINE &&
-            object.type !== OBJECT_TYPE.ANGLE
-        ) {
-            if (object.type === OBJECT_TYPE.POLYGON) {
-                pre = 'P_{';
-            } else if (object.elementClass === OBJECT_CLASS.CIRCLE) {
-                pre = 'k_{';
-            } else if (object.elementClass === OBJECT_CLASS.TEXT) {
-                pre = 't_{';
-            } else {
-                pre = 's_{';
+        // TBTB- prefix and postfix just seem to differentiate what has been used.  Then
+        // are removed.  This seems to be related to JessieCode.  Refactored to simply return name.
+        // if (
+        //     !Type.isPoint(object) &&
+        //     !Type.isPoint3D(object) &&
+        //     object.elementClass !== OBJECT_CLASS.LINE &&
+        //     object.type !== OBJECT_TYPE.ANGLE
+        // ) {
+        //     if (object.type === OBJECT_TYPE.POLYGON) {
+        //         pre = 'P_{';
+        //     } else if (object.elementClass === OBJECT_CLASS.CIRCLE) {
+        //         pre = 'k_{';
+        //     } else if (object.elementClass === OBJECT_CLASS.TEXT) {
+        //         pre = 't_{';
+        //     } else {
+        //         pre = 's_{';
+        //     }
+        //     post = '}';
+        // }
+
+        // for (i = 0; i < maxNameLength; i++) {
+        //     indices[i] = 0;
+        // }
+
+        // while (indices[maxNameLength - 1] < possibleNames.length) {
+        //     for (indices[0] = 1; indices[0] < possibleNames.length; indices[0]++) {
+        //         // name = pre;
+
+        //         for (i = maxNameLength; i > 0; i--) {
+        //             name += possibleNames[indices[i - 1]];
+        //         }
+
+        //         if (!(name /*+ post*/ in this.elementsByName)) {
+        //             return name; //+ post;
+        //         }
+        //     }
+
+        //     // finished a-z, start on aa
+        //     indices[0] = possibleNames.length;
+
+        //     for (i = 1; i < maxNameLength; i++) {
+        //         if (indices[i - 1] === possibleNames.length) {
+        //             indices[i - 1] = 1;
+        //             indices[i] += 1;
+        //         }
+        //     }
+        // }
+
+        for (i = 1; i < possibleNames.length; i++) {
+            if (!(possibleNames[i] in this.elementsByName)) {
+                return possibleNames[i];
             }
-            post = '}';
         }
 
-        for (i = 0; i < maxNameLength; i++) {
-            indices[i] = 0;
-        }
-
-        while (indices[maxNameLength - 1] < possibleNames.length) {
-            for (indices[0] = 1; indices[0] < possibleNames.length; indices[0]++) {
-                name = pre;
-
-                for (i = maxNameLength; i > 0; i--) {
-                    name += possibleNames[indices[i - 1]];
-                }
-
-                if (!(name + post in this.elementsByName)) {
-                    return name + post;
-                }
-            }
-            indices[0] = possibleNames.length;
-
-            for (i = 1; i < maxNameLength; i++) {
-                if (indices[i - 1] === possibleNames.length) {
-                    indices[i - 1] = 1;
-                    indices[i] += 1;
-                }
-            }
-        }
-
+        // can't find a name...
         return '';
     }
 
@@ -6292,8 +6304,6 @@ export class Board extends Events {
             }
         }
 
-
-        console.log(JXG_elements[elementType])
         if (Type.isFunction(JXG_elements[elementType])) {
             el = JXG_elements[elementType](this, parents, attributes);
         } else {

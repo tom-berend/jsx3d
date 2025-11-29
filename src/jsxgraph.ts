@@ -46,7 +46,7 @@ import { Type } from './utils/type.js';
 import { Board } from './base/board.js';
 import { JSXFileReader } from './reader/filereader.js';
 import { Options } from './options.js';
-import { SVGRenderer, Dim } from './renderer/svg.js';
+import { SVGRenderer } from './renderer/svg.js';
 import { BoardOptions } from './optionInterfaces.js';
 // import CanvasRenderer from './renderer/canvas.js';
 // import NoRenderer from './renderer/no.js';
@@ -272,7 +272,6 @@ export class JSXGraph {
             unitY = Type.def(attr.unity, 50);
         } else {
             bbox = attr.boundingbox;
-            console.log(attr)
             if (bbox[0] < attr.maxboundingbox[0]) {
                 bbox[0] = attr.maxboundingbox[0];
             }

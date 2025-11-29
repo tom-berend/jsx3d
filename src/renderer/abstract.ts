@@ -1,3 +1,5 @@
+const dbug = true;
+const dbugColor = `color:red;background-color:#f9ce90`;
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -58,6 +60,7 @@ import { Type } from "../utils/type.js";
 import { Env } from "../utils/env.js";
 import { OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from "../base/constants.js";
 import { GeometryElement } from "../base/element.js";
+import { SVGType } from "../interfaces.js";
 
 
 /**
@@ -220,6 +223,9 @@ export abstract class AbstractRenderer {
      * @private
      */
     _updateVisual(el: GeometryElement, not: LooseObject = {}, enhanced: boolean = false) {
+
+        if (dbug) console.log(`%c abstract: updateVisual(el)`, dbugColor, 'el.visProp = ',el.visProp, not)
+
         if (enhanced || this.enhancedRendering) {
             not = not || {};
 
@@ -326,7 +332,7 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#changePointStyle
      */
     drawPoint(el) {
-        var prim
+        var prim: SVGType
         // Sometimes el is not a real point and lacks the methods of a JXG.Point instance,
         // in these cases to not use el directly.
         let face = Options.normalizePointFace(el.evalVisProp('face'));
@@ -342,7 +348,8 @@ export abstract class AbstractRenderer {
             prim = "path";
         }
 
-        console.log('drawPoint', this.createPrim(prim, el.id),)
+        if (dbug) console.log(`%c abstract: drawPoint(el)`, dbugColor)
+
         el.rendNode = this.appendChildPrim(
             this.createPrim(prim, el.id),
             el.evalVisProp('layer')
@@ -1005,9 +1012,6 @@ export abstract class AbstractRenderer {
     /* ********* Text related stuff *********** */
 
 
-
-
-
     /**
      * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
      * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be displayed
@@ -1021,6 +1025,8 @@ export abstract class AbstractRenderer {
     drawText(el): HTMLElement {
         var node: HTMLElement, z, level, ev_visible;
 
+        if (dbug) console.log(`%c abstract: drawText(el)`, dbugColor)
+
         if (this.container !== null) {
             if (
                 el.evalVisProp('display') === "html" &&
@@ -1033,9 +1039,8 @@ export abstract class AbstractRenderer {
                 node.style.position = "absolute";
                 node.className = el.evalVisProp('cssclass');
 
-                console.log('1038', node)
                 level = el.evalVisProp('layer');
-                if (!Type.exists(level)) {
+                if (level !== undefined) {
                     // trace nodes have level not set
                     level = 0;
                 }
@@ -1049,12 +1054,10 @@ export abstract class AbstractRenderer {
                 node.style.zIndex = z + level;
                 this.container.appendChild(node);
                 // el.rendNode = node  // TODO tbtb - added but i think this is wrong
-                console.log('1054', node)
 
                 node.setAttribute("id", this.container.id + "_" + el.id);
             } else {
                 node = this.drawInternalText(el);
-                console.log('1059', node)
 
                 el.rendNode = node;
                 el.htmlStr = "";
@@ -1071,7 +1074,6 @@ export abstract class AbstractRenderer {
         } else {
             throw new Error('container was null')
         }
-        console.log('1073', node)
         return node
     }
 
@@ -1086,7 +1088,6 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText(el) {
-        // console.warn('abstract: updating Text', el.content, el)
         var content = el.plaintext,
             v, c,
             parentNode, node,
@@ -1354,6 +1355,7 @@ export abstract class AbstractRenderer {
             styleList = ["cssdefaultstyle", "cssstyle"],
             lenS = styleList.length;
 
+
         if (doHighlight) {
             sc = el.evalVisProp('highlightstrokecolor');
             so = el.evalVisProp('highlightstrokeopacity');
@@ -1424,7 +1426,7 @@ export abstract class AbstractRenderer {
         if (display === "html" && this.type !== "no") {
             // Set new CSS class
             if (el.visPropOld.cssclass !== css) {
-                el.rendNode.className = css;
+                // el.rendNode.className = css;     // TODO this is a getter, not a property
                 el.visPropOld.cssclass = css;
                 el.needsSizeUpdate = true;
             }
@@ -1574,7 +1576,7 @@ export abstract class AbstractRenderer {
 
         this.setObjectTransition(el);
         if (!el.visProp.draft) {
-            if (el.type === OBJECT_TYPE.POLYGON) {
+            if (el.otype === OBJECT_TYPE.POLYGON) {
                 this.setObjectFillColor(el, el.evalVisProp('highlightfillcolor'), el.evalVisProp('highlightfillopacity'));
                 do_hl = el.evalVisProp('highlightbystrokewidth');
                 for (i = 0; i < el.borders.length; i++) {
@@ -1583,7 +1585,7 @@ export abstract class AbstractRenderer {
             } else {
                 if (el.elementClass === OBJECT_CLASS.TEXT) {
                     this.updateTextStyle(el, true);
-                } else if (el.type === OBJECT_TYPE.IMAGE) {
+                } else if (el.otype === OBJECT_TYPE.IMAGE) {
                     this.updateImageStyle(el, true);
                     this.setObjectFillColor(
                         el,

@@ -262,7 +262,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
          * This function is called with fromParent==true in case it is a glider element for example if
          * the defining elements of the line or circle have been changed.
          */
-        if (this.type === OBJECT_TYPE.GLIDER) {
+        if (this.otype === OBJECT_TYPE.GLIDER) {
             if (this.isConstrained) {
                 fromParent = false;
             }
@@ -1385,7 +1385,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         // this.slideObjects.push(this.slideObject);
         // this.addParents(slide);
 
-        this.type = OBJECT_TYPE.GLIDER;
+        this.otype = OBJECT_TYPE.GLIDER;
         this.elType = 'glider';
         this.visProp.snapwidth = -1; // By default, deactivate snapWidth
         this.slideObject.addChild(this);
@@ -1421,14 +1421,14 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
             this.slideObject.removeChild(this);
 
             if (this.slideObjects.length === 0) {
-                this.type = this._org_type;
-                if (this.type === OBJECT_TYPE.POINT) {
+                this.otype = this._org_type;
+                if (this.otype === OBJECT_TYPE.POINT) {
                     this.elType = "point";
                 } else if (this.elementClass === OBJECT_CLASS.TEXT) {
                     this.elType = "text";
-                } else if (this.type === OBJECT_TYPE.IMAGE) {
+                } else if (this.otype === OBJECT_TYPE.IMAGE) {
                     this.elType = "image";
-                } else if (this.type === OBJECT_TYPE.FOREIGNOBJECT) {
+                } else if (this.otype === OBJECT_TYPE.FOREIGNOBJECT) {
                     this.elType = "foreignobject";
                 }
 
@@ -1448,7 +1448,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         var ancestorId, ancestor;
         // child;
 
-        if (this.type !== OBJECT_TYPE.GLIDER) {
+        if (this.otype !== OBJECT_TYPE.GLIDER) {
             // remove all transformations
             this.transformations.length = 0;
 
@@ -1462,7 +1462,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
                 this.isDraggable = true;
 
                 if (this.elementClass === OBJECT_CLASS.POINT) {
-                    this.type = OBJECT_TYPE.POINT;
+                    this.otype = OBJECT_TYPE.POINT;
                     this.elType = "point";
                 }
 
@@ -1512,13 +1512,13 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         this.slideObject = null;
         this.slideObjects = [];
         if (this.elementClass === OBJECT_CLASS.POINT) {
-            this.type = OBJECT_TYPE.POINT;
+            this.otype = OBJECT_TYPE.POINT;
             this.elType = "point";
         } else if (this.elementClass === OBJECT_CLASS.TEXT) {
-            this.type = this._org_type;
+            this.otype = this._org_type;
             this.elType = "text";
         } else if (this.elementClass === OBJECT_CLASS.OTHER) {
-            this.type = this._org_type;
+            this.otype = this._org_type;
             this.elType = "image";
         }
     }
@@ -1546,7 +1546,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
 
 
         if (this.elementClass === OBJECT_CLASS.POINT) {
-            this.type = OBJECT_TYPE.CAS;
+            this.otype = OBJECT_TYPE.CAS;
         }
 
         this.isDraggable = false;
@@ -1855,7 +1855,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         maxRounds = Type.evaluate(maxRounds);
         maxRounds = (maxRounds !== 'undefined') ? maxRounds : -1;
 
-        if (this.type === OBJECT_TYPE.GLIDER && !Type.exists(this._intervalCode) && maxRounds !== 0) {
+        if (this.otype === OBJECT_TYPE.GLIDER && !Type.exists(this._intervalCode) && maxRounds !== 0) {
             this._roundsCount = 0;
             this._intervalCode = window.setInterval(function () {
                 that._anim(dir, sc, maxRounds);

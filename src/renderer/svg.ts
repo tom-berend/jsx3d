@@ -1,3 +1,6 @@
+const dbug = true;
+const dbugColor = `color:blue;background-color:#feb07c`;
+
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -44,7 +47,7 @@ import { LayerOptions } from "../optionInterfaces.js";
 import { GeometryElement } from "../base/element.js";
 import { Board } from "../base/board.js";
 
-export interface Dim { width: number, height: number }
+import { Dim, SVGType } from "../interfaces.js"
 
 
 /**
@@ -91,6 +94,8 @@ export class SVGRenderer extends AbstractRenderer {
 
     constructor(containerName: string, dim: Dim) {  // width height
         super()
+
+        if (dbug) console.log(`%c svg: constructor(container:${containerName},dim:'${JSON.stringify(dim)}'`, dbugColor)
 
 
         // https://stackoverflow.com/questions/7944460/detect-safari-browser
@@ -142,7 +147,7 @@ export class SVGRenderer extends AbstractRenderer {
          * @type Array
          */
         this.layer = [];
-        for (let i = 0; i < Options.layer.numlayers; i++) {
+        for (let i = 0; i < Options.layers.numlayers; i++) {
             this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
             this.svgRoot.appendChild(this.layer[i]);
         }
@@ -717,8 +722,6 @@ export class SVGRenderer extends AbstractRenderer {
         // console.log('drawInternalText', el)
         var node = this.createPrim("text", el.id);
 
-        this.assertNonNullish(this.container, 'expected container')
-
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         // Preserve spaces
         //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
@@ -966,8 +969,8 @@ export class SVGRenderer extends AbstractRenderer {
 
         if (!Type.exists(level)) {
             level = 0;
-        } else if (level >= Options.layer.numlayers) {
-            level = Options.layer.numlayers - 1;
+        } else if (level >= Options.layers.numlayers) {
+            level = Options.layers.numlayers - 1;
         }
         this.layer[level].appendChild(node);
 
@@ -980,8 +983,8 @@ export class SVGRenderer extends AbstractRenderer {
      * @param  id Set the id attribute to this.
      * @returns {Node} Reference to the created node.
      */
-    createPrim(type: 'text' | 'line' | 'path' | 'ellipse' | 'polygon' | 'image' | 'foreignObject' | 'stop' | 'marker' | 'linearGradient' | 'radialGradient',
-        id: string): HTMLElement {
+    createPrim(type: SVGType, id: string): HTMLElement {
+        if (dbug) console.log(`%c svg: createPrim(type:${type},id:'${id}'`, dbugColor)
 
         let node = this.container.ownerDocument.createElementNS(this.svgNamespace, type) as HTMLElement
         node.setAttributeNS(null, "id", this.uniqName(id));
@@ -1016,8 +1019,8 @@ export class SVGRenderer extends AbstractRenderer {
     setLayer(el: GeometryElement, level: number) {
         if (!Type.exists(level)) {
             level = 0;
-        } else if (level >= Options.layer.numlayers) {
-            level = Options.layer.numlayers - 1;
+        } else if (level >= Options.layers.numlayers) {
+            level = Options.layers.numlayers - 1;
         }
 
         this.layer[level].appendChild(el.rendNode);
@@ -1776,7 +1779,7 @@ export class SVGRenderer extends AbstractRenderer {
                 }, el.visPropOld.fillcolor);
             }
 
-            if (el.type === OBJECT_TYPE.IMAGE) {
+            if (el.otype === OBJECT_TYPE.IMAGE) {
                 this._setAttribute(function () {
                     node.setAttributeNS(null, "opacity", oo);
                 }, el.visPropOld.fillopacity);
@@ -1814,6 +1817,8 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
      */
     setObjectStrokeColor(el, color, opacity) {
+        if (dbug) console.log(`%c svg: setObjectSrokeColor(el, color:${color},opacity:'${opacity}'`, dbugColor)
+
         var rgba = color,
             c, rgbo,
             o = opacity,

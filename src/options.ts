@@ -131,7 +131,7 @@ export class Options {
     }
 
 
-    static layer: LayerOptions = {
+    static layers: LayerOptions = {
         numlayers: 20, // only important in SVG
         unused9: 19,
         unused8: 18,

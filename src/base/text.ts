@@ -94,15 +94,15 @@ export class Text extends CoordsElement {
     plaintextOld = '';
     orgText = "";
 
-    relativeCoords: Coords
+    // relativeCoords: Coords
 
-    element: object
+    // element: object
     needsSizeUpdate: boolean
-    hiddenByParent: boolean
+    // hiddenByParent: boolean
     size: number[] = [1.0, 1.0]
 
     updateText: Function = () => console.warn('updateText not set')
-    rendNode: HTMLElement;
+    // rendNode: HTMLElement;
 
     rendNodeRange: HTMLElement
     rendNodeForm: HTMLElement
@@ -119,35 +119,10 @@ export class Text extends CoordsElement {
 
         // this.setCoordinates(this.method, coordinates, false, true);
 
-        /**
-         * Type of the element.
-         * @constant
-         * @type Number
-            */
-        this.otype = OBJECT_TYPE.TEXT
-        this.type = OBJECT_TYPE.TEXT
-
-        /**
-         * Original type of the element at construction time. Used for removing glider property.
-         * @constant
-         * @type Number
-        */
-        this._org_type = OBJECT_TYPE.TEXT
-
-        /**
-         * The element's class.
-         * @constant
-         * @type Number
-        */
-        this.oclass = OBJECT_CLASS.TEXT
-
-
-
-
-
+        // this.visProp = Type.mergeAttrHelper(this.visProp, Options.text)
+        // console.log(123,this.visProp)
 
         let tmp;
-
 
         // TODO: what was this ???
         this.element = this.board.select(attributes.anchor);

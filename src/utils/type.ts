@@ -132,7 +132,7 @@ export class Type {
      * @param {Boolean} [acceptNaN=true] If set to false, the function returns false for v=NaN.
      * @returns {Boolean} True, if v is of type number.
      */
-    static isNumber(v:any, acceptStringNumber = false, acceptNaN = true) {
+    static isNumber(v: any, acceptStringNumber = false, acceptNaN = true) {
         var result =
             typeof v === 'number' ||
             Object.prototype.toString.call(v) === '[Object Number]';
@@ -431,10 +431,10 @@ export class Type {
      * @returns {Function} A function evaluating the value given by term or null if term is not of type string,
      * function or number.
      */
-    static createFunction(term:number|Function, board:Board,variableName?:string): Function {
+    static createFunction(term: number | Function, board: Board, variableName?: string): Function {
         console.error('what do we use this for (other than jessiecode)?')
 
-        let f:Function = ()=>{}      // default empty function
+        let f: Function = () => { }      // default empty function
         return f
 
         // if (typeof term === 'function'){
@@ -1297,112 +1297,135 @@ export class Type {
      * @see JXG.merge
      *
      */
-    static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false):void {
-            var e, e2, o;
+    static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false): void {
+        var e, e2, o;
 
-            toLower = toLower || true;
-            ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
-
-            for (e in special) {
-                if (special.hasOwnProperty(e)) {
-                    e2 = (toLower) ? e.toLowerCase(): e;
-                    // Key already exists, but not in lower case
-                    console.warn(attr,e)
-                    if (e2 !== e && attr.hasOwnProperty(e)) {
-                        if (attr.hasOwnProperty(e2)) {
-                            // Lower case key already exists - this should not happen
-                            // We have to unify the two key-value pairs
-                            // It is not clear which has precedence.
-                            this.mergeAttr(attr[e2], attr[e], toLower);
-                        } else {
-                            attr[e2] = attr[e];
-                        }
-                        delete attr[e];
-                    }
-
-                    o = special[e];
-                    if (this.isObject(o) && o !== null &&
-                        // Do not recurse into a document object or a JSXGraph object
-                        !this.isDocumentOrFragment(o) && !this.exists(o.board) &&
-                        // Do not recurse if a string is provided as "new String(...)"
-                        typeof o.valueOf() !== 'string') {
-                        if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
-                            // The last test handles the case:
-                            //   attr.draft = false;
-                            //   special.draft = { strokewidth: 4}
-                            attr[e2] = {};
-                        }
-                        this.mergeAttr(attr[e2], o, toLower);
-                    } else if(!ignoreUndefinedSpecials || this.exists(o)) {
-                        // Flat copy
-                        // This is also used in the cases
-                        //   attr.shadow = { enabled: true ...}
-                        //   special.shadow = false;
-                        // and
-                        //   special.anchor is a JSXGraph element
-                        attr[e2] = o;
-                    }
-                }
-            }
-        }
-
-    // the helper version is testable.
-    static mergeAttrHelper(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false): object {
-
-
-        // let result: LooseObject = structuredClone(attr);         // deep copy
-        let result:LooseObject = JSON.parse(JSON.stringify(attr));   // inadequate polyfill for deep copy
-
-        for (let e in special) {
-            if (special.hasOwnProperty(e)) {    // only direct properties, not inherited ones
-                let e2 = toLower ? e.toLowerCase() : e;
+        for (e in special) {
+            if (special.hasOwnProperty(e)) {
+                e2 = (toLower) ? e.toLowerCase() : e;
                 // Key already exists, but not in lower case
-                if (e2 !== e && result.hasOwnProperty(e)) {
-                    if (result.hasOwnProperty(e2)) {
+                if (e2 !== e && attr.hasOwnProperty(e)) {
+                    if (attr.hasOwnProperty(e2)) {
                         // Lower case key already exists - this should not happen
                         // We have to unify the two key-value pairs
                         // It is not clear which has precedence.
-                        result = this.mergeAttrHelper(result[e2], result[e], toLower);
+                        this.mergeAttr(attr[e2], attr[e], toLower);
                     } else {
-                        result[e2] = result[e];
+                        attr[e2] = attr[e];
                     }
-                    delete result[e];
+                    delete attr[e];
                 }
 
-                let o = special[e];
-                if (
-                    this.isObject(o) &&
-                    o !== null &&
+                o = special[e];
+                if (this.isObject(o) && o !== null &&
                     // Do not recurse into a document object or a JSXGraph object
-                    !this.isDocumentOrFragment(o) &&
-                    !Type.exists(o.board) &&
+                    !this.isDocumentOrFragment(o) && !this.exists(o.board) &&
                     // Do not recurse if a string is provided as "new String(...)"
-                    typeof o.valueOf() !== 'string'
-                ) {
-                    if (
-                        result[e2] === undefined ||
-                        result[e2] === null ||
-                        !this.isObject(result[e2])
-                    ) {
+                    typeof o.valueOf() !== 'string') {
+                    if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
                         // The last test handles the case:
                         //   attr.draft = false;
                         //   special.draft = { strokewidth: 4}
-                        result[e2] = {};
+                        attr[e2] = {};
                     }
-                    result[e2] = this.mergeAttrHelper(result[e2], o, toLower);
-                } else if (!ignoreUndefinedSpecials || Type.exists(o)) {
+                    this.mergeAttr(attr[e2], o, toLower);
+                } else if (!ignoreUndefinedSpecials || this.exists(o)) {
                     // Flat copy
                     // This is also used in the cases
                     //   attr.shadow = { enabled: true ...}
                     //   special.shadow = false;
                     // and
                     //   special.anchor is a JSXGraph element
-                    result[e2] = o;
+                    attr[e2] = o;
                 }
             }
         }
+    }
+
+    // mergeVisProps is testable.
+    static mergeVisProps(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false, depth = 0,): object {
+        let maxDepth = 10
+        if (depth > 5) {
+            console.warn(depth, attr, special)
+        }
+
+        let result = {}
+
+        for (let e in attr) {
+            let e2 = toLower ? e.toLowerCase() : e;
+            let o = attr[e] // check if this was an object
+            if (depth < maxDepth && this.isObject(attr[e]) && attr[e] !== null && !this.isDocumentOrFragment(attr[e]) && !(attr instanceof Element)) {  // missing test for 'new String'
+                // console.log(`copying ${e} from attr`)
+                result[e2] = this.mergeVisProps({}, attr[e], toLower, true, depth + 1);
+            } else {
+                result[e2] = attr[e];
+            }
+        }
+
+
+        for (let e in special) {
+            let e2 = toLower ? e.toLowerCase() : e;
+            if (depth < maxDepth && this.isObject(special[e]) && special[e] !== null && !this.isDocumentOrFragment(special[e]) && !(special instanceof Element)) {  // missing test for 'new String'
+                // console.log(`copying ${e} from special`)
+                result[e2] = this.mergeVisProps({}, special[e], toLower, true, depth + 1);
+            } else {
+                result[e2] = special[e];
+            }
+
+        }
         return result
     }
+
+
+    // for (let e in special) {
+    //     if (special.hasOwnProperty(e)) {    // only direct properties, not inherited ones
+    //         let e2 = toLower ? e.toLowerCase() : e;
+    //         // Key already exists, but not in lower case
+    //         if (e2 !== e && result.hasOwnProperty(e)) {
+    //             if (result.hasOwnProperty(e2)) {
+    //                 // Lower case key already exists - this should not happen
+    //                 // We have to unify the two key-value pairs
+    //                 // It is not clear which has precedence.
+    //                 result = this.mergeAttrHelper(result[e2], result[e], toLower);
+    //             } else {
+    //                 result[e2] = result[e];
+    //             }
+    //             delete result[e];
+    //         }
+
+    //         let o = special[e];
+    //         if (
+    //             this.isObject(o) &&
+    //             o !== null &&
+    //             // Do not recurse into a document object or a JSXGraph object
+    //             !this.isDocumentOrFragment(o) &&
+    //             !Type.exists(o.board) &&
+    //             // Do not recurse if a string is provided as "new String(...)"
+    //             typeof o.valueOf() !== 'string'
+    //         ) {
+    //             if (
+    //                 result[e2] === undefined ||
+    //                 result[e2] === null ||
+    //                 !this.isObject(result[e2])
+    //             ) {
+    //                 // The last test handles the case:
+    //                 //   attr.draft = false;
+    //                 //   special.draft = { strokewidth: 4}
+    //                 result[e2] = {};
+    //             }
+    //             result[e2] = this.mergeAttrHelper(result[e2], o, toLower);
+    //         } else if (!ignoreUndefinedSpecials || Type.exists(o)) {
+    //             // Flat copy
+    //             // This is also used in the cases
+    //             //   attr.shadow = { enabled: true ...}
+    //             //   special.shadow = false;
+    //             // and
+    //             //   special.anchor is a JSXGraph element
+    //             result[e2] = o;
+    //         }
+    //     }
+    // }
+    // }
 
     /**
      * Convert a n object to a new object containing only
@@ -1416,7 +1439,7 @@ export class Type {
      * // return {radiuspoint: {visible: false}}
      */
     static keysToLowerCase(obj: object): object {
-        return Type.mergeAttrHelper({}, obj)  // merge converts to lower by default
+        return Type.mergeVisProps({}, obj)  // merge converts to lower by default
     }
 
 
@@ -1434,11 +1457,7 @@ export class Type {
     // attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
     // attr_curve = Type.copyAttributes(attributes, board.options, "conic");
 
-    static testCopy(attributes: object, options: object, ...s: string[]){
-        this.copyAttributes(attributes,options,...s)
-    }
-
-    static copyAttributes(attributes: object, options: object, ...s: string[]) {
+    static copyAttributes(attributes: LooseObject, options: LooseObject, ...s: string[]): LooseObject {
         var defaultOptions: LooseObject,
             arg,
             i,
@@ -1467,8 +1486,8 @@ export class Type {
         }
 
         // Only the layer of the main element is set.
-        if (len < 4 && Type.exists(s) && Type.exists(Options.layer[s[2]])) {
-            defaultOptions.layer = Options.layer[s[2]];
+        if (len < 4 && Type.exists(s) && Type.exists(Options.layers[s[2]])) {
+            defaultOptions.layer = Options.layers[s[2]];
         }
 
         // Default options from the specific element like 'line' in
@@ -1510,7 +1529,7 @@ export class Type {
         //     }
         // }
         // if (isAvail) {
-            defaultOptions =this.mergeAttrHelper(defaultOptions, attributes, true);
+        this.mergeAttr(defaultOptions, attributes, true);
         // }
 
         if (arguments[2] === 'board') {
@@ -1567,11 +1586,11 @@ export class Type {
      * @returns Object Cloned element
      * @private
      */
-    static getCloneObject(el:GeometryElement):LooseObject {
+    static getCloneObject(el: GeometryElement): LooseObject {
         var obj,
             key
 
-        let copy:LooseObject = {}
+        let copy: LooseObject = {}
 
         copy.id = el.id + 'T' + el.numTraces;
         el.numTraces += 1;
@@ -1874,7 +1893,7 @@ export class Type {
      * @returns {String}
      * @see JXG.Math.decToFraction
      */
-    static toFraction(x:number, useTeX:boolean=false, order:number=0.001) {
+    static toFraction(x: number, useTeX: boolean = false, order: number = 0.001) {
         var arr = JSXMath.decToFraction(x, order),
             str = '';
 

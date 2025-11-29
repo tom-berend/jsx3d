@@ -31,6 +31,7 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
+
 export enum COORDS_BY {
     /**  Constant: user coordinates relative to the coordinates system defined by the bounding box.  */
    SCREEN = 0x0001,
@@ -167,3 +168,10 @@ export enum BOARD_QUALITY{
 
 
 
+// pastel colors
+// feb07c   // svg.ts
+// f9ce90   // abstract.ts
+// f9f1da
+// b8d1c0
+// af97c7
+// ec9bb0

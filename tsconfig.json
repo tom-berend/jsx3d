@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
-        "target": "es2015",
+        "target": "esnext",
         "module": "es2015",
         "moduleResolution": "bundler",
         "lib": [
-            "ES2023",
+            "ESNext",
             "DOM"
         ],
         "allowJs": true,
