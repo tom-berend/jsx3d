@@ -1,5 +1,5 @@
-const dbug = true;
-const dbugColor = `color:blue;background-color:#feb07c`;
+const dbug = false;
+const dbugColor = `color:blue;background-color:#feb09c`;
 
 /*
     Copyright 2008-2025
@@ -722,6 +722,9 @@ export class SVGRenderer extends AbstractRenderer {
         // console.log('drawInternalText', el)
         var node = this.createPrim("text", el.id);
 
+        if (dbug) console.log(`%c svg: drawInternalText(el)`, dbugColor, el)
+
+
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         // Preserve spaces
         //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
@@ -749,6 +752,9 @@ export class SVGRenderer extends AbstractRenderer {
             v, css,
             ev_ax = el.getAnchorX(),
             ev_ay = el.getAnchorY();
+
+        if (dbug) console.log(`%c svg: updateInternalText(el)`, dbugColor, el)
+
 
         css = el.evalVisProp('cssclass');
         if (el.rendNode.getAttributeNS(null, "class") !== css) {
@@ -853,6 +859,8 @@ export class SVGRenderer extends AbstractRenderer {
             str = "",
             cx, cy,
             len = t.length;
+
+        if (dbug) console.log(`%c svg: transformRect(el,t)'`, dbugColor,el)
 
         if (len > 0) {
             node = el.rendNode;

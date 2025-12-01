@@ -41,7 +41,7 @@
 
 // import { JXG } from "../Env.js";
 import { Type } from "./type.js";
-import { LooseObject } from "../jxg.js";
+import { LooseObject } from "../interfaces.js";
 import { GeometryElement } from "../base/element.js";
 import { Board } from '../base/board.js'
 import { Events } from '../utils/event.js'

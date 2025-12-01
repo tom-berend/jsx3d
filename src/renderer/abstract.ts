@@ -1,5 +1,5 @@
-const dbug = true;
-const dbugColor = `color:red;background-color:#f9ce90`;
+const dbug = false;
+const dbugColor = `color:green;background-color:#f9de90`;
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -49,7 +49,7 @@ const dbugColor = `color:red;background-color:#f9ce90`;
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-import { LooseObject, JXG } from "../jxg.js";
+import { LooseObject } from "../interfaces.js";
 import { Options } from "../options.js";
 // import { GeometryElementOptions } from "../optionInterfaces.js'
 import { Coords } from "../base/coords.js";
@@ -224,7 +224,7 @@ export abstract class AbstractRenderer {
      */
     _updateVisual(el: GeometryElement, not: LooseObject = {}, enhanced: boolean = false) {
 
-        if (dbug) console.log(`%c abstract: updateVisual(el)`, dbugColor, 'el.visProp = ',el.visProp, not)
+        if (dbug) console.log(`%c abstract: updateVisual(el)`, dbugColor, 'el.visProp = ', el.visProp, not)
 
         if (enhanced || this.enhancedRendering) {
             not = not || {};
@@ -1095,6 +1095,8 @@ export abstract class AbstractRenderer {
             // id, wrap_id,
             ax, ay, angle, co, si,
             to_h, to_v;
+
+        if (dbug) console.log(`%c abstract: updateText(el)`, dbugColor, el)
 
         if (el.visPropCalc.visible) {
             this.updateTextStyle(el, false);

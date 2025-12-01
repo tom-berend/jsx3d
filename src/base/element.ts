@@ -1,3 +1,5 @@
+const dbug = true;
+const dbugColor = `color:yellow;background-color:green`;
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -30,7 +32,8 @@
  */
 
 
-import { LooseObject, JXG } from "../jxg.js";
+import { LooseObject } from "../interfaces"
+import { JXG } from "../jxg.js";
 import { Board } from "../base/board.js";
 import { OBJECT_TYPE, OBJECT_CLASS, COORDS_BY } from "./constants.js";
 import { Coords } from "./coords.js";
@@ -473,10 +476,6 @@ export class GeometryElement extends Events {
         if (board == undefined) {
             throw new Error('someone did not send Board??')
         }
-
-        // console.log(476, this.visProp, Options.elements,attributes)
-        // this.visProp = Type.mergeVisProps(Options.elements, attributes)  // general stuff for GeometryElements
-        // // console.log(478,this.visProp)
 
 
         this.board = board;
@@ -1934,15 +1933,10 @@ export class GeometryElement extends Events {
      */
     createLabel() {
 
-        var attr
-        // that = this;
+        if (dbug) console.warn(`%c element: createLabel`, dbugColor)
 
-        // this is a dirty hack to resolve the text-dependency. If there is no text element available,
-        // just don't create a label. This method is usually not called by a user, so we won't throw
-        // an exception here and simply output a warning via JXG.debug.
 
-        // if (JXG_elements['text']) { //tbtb
-        attr = Type.deepCopy(Options.label, {});
+        let attr = Type.deepCopy(Options.label, {});
         attr.id = this.id + "Label";
         attr.isLabel = true;
         attr.anchor = this;
@@ -1967,11 +1961,6 @@ export class GeometryElement extends Events {
 
             this.hasLabel = true;
         }
-        // } else {
-        //     JXG.debug(
-        //         "JSXGraph: Can't create label: text element is not available. Make sure you include base/text"
-        //     );
-        // }
 
         return this.label;
     }

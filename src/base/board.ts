@@ -1,3 +1,6 @@
+const dbug = true;
+const dbugColor = `color:black;background-color:aliceblue`;
+
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -38,7 +41,8 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import { LooseObject, JXG, JXG_elements } from '../jxg.js';
+import { LooseObject } from '../interfaces.js';
+import {  JXG, JXG_elements } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
@@ -709,8 +713,6 @@ export class Board extends Events {
             throw new Error('\nJSXGraph: HTML container element "' + containerName + '" not found.');
         }
 
-
-
         // TODO
         // Why do we need this.id AND this.container?
         // There was never a board attribute "id".
@@ -972,7 +974,7 @@ export class Board extends Events {
      * @param {Number} type Type of the object.
      * @returns {String} Unique id for an element.
      */
-    setId(obj, type) {
+    setId(obj:GeometryElement, type:string) {
         var randomNumber,
             num = this.numObjects,
             elId = obj.id;
@@ -992,6 +994,8 @@ export class Board extends Events {
         this.objects[elId] = obj;
         obj._pos = this.objectsList.length;
         this.objectsList[this.objectsList.length] = obj;
+
+        if (dbug) console.warn(`%c board: setId(obj,type='${type}, this.id = '${this.id}', obj.id='${obj.id}') returns '${elId}`, dbugColor, obj)
 
         return elId;
     }

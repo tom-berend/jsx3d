@@ -38,7 +38,7 @@
 type argVals = string | number | Boolean  // arguments for event handlers
 
 
-import { LooseObject } from "../jxg.js";
+import { LooseObject } from "../interfaces.js";
 import { Type } from "./type.js";
 import { GeometryElement } from "../base/element.js";
 import { Board } from "../base/board.js"

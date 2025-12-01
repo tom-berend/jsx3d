@@ -93,10 +93,11 @@ export class Point extends CoordsElement {
 
         this.createGradient();
 
+        // this.visProp.withlabel = true;
         let label = this.createLabel();
+
+        // tbtb - this wasn't in original, but font is wrong
         label.visProp = Type.mergeVisProps(Options.text, Options.label)
-        label.visProp = Type.mergeVisProps(label.visProp, attributes.label)
-        console.log(99,label.visProp)
 
 
 

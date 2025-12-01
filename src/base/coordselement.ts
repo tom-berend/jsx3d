@@ -35,7 +35,8 @@
  * This object provides the coordinate handling of points, images and texts.
  */
 
-import { LooseObject, JXG } from "../jxg.js";
+import { LooseObject } from "../interfaces.js";
+import {  JXG } from "../jxg.js";
 import { Board } from "../base/board.js"
 import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";

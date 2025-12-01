@@ -61,6 +61,7 @@ import { Coords } from "./coords.js";
 import { TextOptions } from "../optionInterfaces.js";
 import { Board } from "./board.js"
 import { Options } from "../options.js"
+import { LooseObject } from "../interfaces.js";
 
 var priv = {
     /**
@@ -104,16 +105,21 @@ export class Text extends CoordsElement {
     updateText: Function = () => console.warn('updateText not set')
     // rendNode: HTMLElement;
 
-    rendNodeRange: HTMLElement
-    rendNodeForm: HTMLElement
 
+    // this stuff for HTMLslider
+    rendNodeRange: LooseObject
+    rendNodeForm: LooseObject
+    rendNodeOut: LooseObject
+    _val
+    Value
+    HTMLSliderInputEventHandler = () => { }
 
 
     constructor(board: Board, coordinates: number[] | Object | Function, attributes: TextOptions, content: string | Function) {
         super(board, COORDS_BY.USER, coordinates, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT)
 
         this.elType = "text";
-        this.visProp = Type.merge(this.visProp, Options)
+        this.visProp = Type.merge(this.visProp, Options.text)
 
         this.relativeCoords = new Coords(COORDS_BY.USER, coordinates, board)
 
@@ -485,8 +491,6 @@ export class Text extends CoordsElement {
         if (node === undefined) {
             console.warn('Text node is undefined')
             return this;
-        } else {
-            console.warn('node', node)
         }
 
         // offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
@@ -1939,85 +1943,97 @@ export function createText(board: Board, parents: any[], attributes: TextOptions
  */
 //  See element.js#createLabel
 
+// tbtb - should become a stub class like....
+// export class Label extends Text {
+//     constructor(board: Board, coordinates: number[], attributes: TextOptions, content: string | Function) {
+//         super(board, coordinates, attributes, content)
+
+//         this.elType = "text";
+//         this.visProp = Type.merge(this.visProp, Options.text)
+//         this.id = board.setId(this,'label')
+//     }
+// }
+
 /**
  * [[x,y], [w px, h px], [range]
  */
-// export class HTMLSlider extends Text {
-//     constructor(board, parents, attributes) {
-//         super(board,parents[0],parents,attributes)
+export class HTMLSlider extends Text {
+    constructor(board, parents, attributes) {
+        super(board, parents[0], parents, attributes)
 
-//     var
-//             par,
-//             attr = Type.copyAttributes(attributes, board.options, "htmlslider");
+        var
+            par,
+            attr = Type.copyAttributes(attributes, board.options, "htmlslider");
 
-//         if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
-//             throw new Error(
-//                 "JSXGraph: Can't create htmlslider with parent types '" +
-//                 typeof parents[0] +
-//                 "' and '" +
-//                 typeof parents[1] +
-//                 "'." +
-//                 "\nPossible parents are: [[x,y], [min, start, max]]"
-//             );
-//         }
+        if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
+            throw new Error(
+                "JSXGraph: Can't create htmlslider with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parents are: [[x,y], [min, start, max]]"
+            );
+        }
 
-//         // Backwards compatibility
-//         attr.anchor = attr.parent || attr.anchor;
-//         attr.fixed = attr.fixed || true;
+        // Backwards compatibility
+        attr.anchor = attr.parent || attr.anchor;
+        attr.fixed = attr.fixed || true;
 
-//         par = [
-//             parents[0][0],
-//             parents[0][1],
-//             '<form style="display:inline">' +
-//             '<input type="range" /><span></span><input type="text" />' +
-//             "</form>"
-//         ];
+        par = [
+            parents[0][0],
+            parents[0][1],
+            '<form style="display:inline">' +
+            '<input type="range" /><span></span><input type="text" />' +
+            "</form>"
+        ];
 
-//         let t = createText(board, par, attr);
-//         t.type = OBJECT_TYPE.HTMLSLIDER;
+        let t = createText(board, par, attr);
+        t.otype = OBJECT_TYPE.HTMLSLIDER;
 
-//         t.rendNodeForm = t.rendNode.childNodes[0];
+        t.rendNodeForm = t.rendNode.childNodes[0];
 
-//         t.rendNodeRange = t.rendNodeForm.childNodes[0];
-//         t.rendNodeRange.min = parents[1][0];
-//         t.rendNodeRange.max = parents[1][2];
-//         t.rendNodeRange.step = attr.step;
-//         t.rendNodeRange.value = parents[1][1];
+        t.rendNodeRange = t.rendNodeForm.childNodes[0];
+        t.rendNodeRange.min = parents[1][0];
+        t.rendNodeRange.max = parents[1][2];
+        t.rendNodeRange.step = attr.step;
+        t.rendNodeRange.value = parents[1][1];
 
-//         t.rendNodeLabel = t.rendNodeForm.childNodes[1];
-//         t.rendNodeLabel.id = t.rendNode.id + "_label";
+        t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+        t.rendNodeLabel.id = t.rendNode.id + "_label";
 
-//         if (attr.withlabel) {
-//             t.rendNodeLabel.innerHTML = t.name + "=";
-//         }
+        if (attr.withlabel) {
+            t.rendNodeLabel.innerHTML = t.name + "=";
+        }
 
-//         t.rendNodeOut = t.rendNodeForm.childNodes[2];
-//         t.rendNodeOut.value = parents[1][1];
+        t.rendNodeOut = t.rendNodeForm.childNodes[2];
+        t.rendNodeOut.value = parents[1][1];
 
-//         try {
-//             t.rendNodeForm.id = t.rendNode.id + "_form";
-//             t.rendNodeRange.id = t.rendNode.id + "_range";
-//             t.rendNodeOut.id = t.rendNode.id + "_out";
-//         } catch (e) {
-//             JXG.debug(e);
-//         }
+        try {
+            t.rendNodeForm.id = t.rendNode.id + "_form";
+            t.rendNodeRange.id = t.rendNode.id + "_range";
+            t.rendNodeOut.id = t.rendNode.id + "_out";
+        } catch (e) {
+            JXG.debug(e);
+        }
 
-//         t.rendNodeRange.style.width = attr.widthrange + "px";
-//         t.rendNodeRange.style.verticalAlign = "middle";
-//         t.rendNodeOut.style.width = attr.widthout + "px";
+        t.rendNodeRange.style.width = attr.widthrange + "px";
+        t.rendNodeRange.style.verticalAlign = "middle";
+        t.rendNodeOut.style.width = attr.widthout + "px";
 
-//         t._val = parents[1][1];
+        t._val = parents[1][1];
 
-//         Env.addEvent(t.rendNodeForm, "input", t.HTMLSliderInputEventHandler, t);
+        Env.addEvent(t.rendNodeForm as HTMLElement, "input", t.HTMLSliderInputEventHandler, board);  // tbtb - board param was 't'
 
-//         t.Value = function () {
-//             return this._val;
-//         };
+        t.Value = function () {
+            return this._val;
+        };
 
-//         return t;
-//     };
+        return t;
+    };
 
-// }
+}
 
 
 JXG_registerElement("text", createText);
+JXG_registerElement("htmlslider", createText);

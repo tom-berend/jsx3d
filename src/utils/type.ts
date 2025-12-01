@@ -57,7 +57,7 @@
 // TS has strong types - get rid of whatever we can
 
 import { OBJECT_CLASS, OBJECT_TYPE } from '../base/constants.js';
-import { LooseObject } from '../jxg.js';
+import { LooseObject } from "../interfaces.js";
 import type { Board } from '../base/board.js';
 import { GeometryElement } from "../base/element.js";
 import { JSXMath } from '../math/jsxmath.js';

@@ -60,15 +60,13 @@
  * defined in this file directly in the JXG namespace.
  */
 
-// import { Board } from "./base/board.js"
-// import { JSXGraph } from "./jsxgraph.js";
-// import { Type, LooseObject } from "./utils/type.js";
-// import { GeometryElement } from "./base/element.js";
 
 
 // side-effect imports
 import  './base/text.js'
 import './base/point.js'
+
+import { LooseObject } from "./interfaces.js";
 
 // // calling the files this way lets them register their element
 // import './base/text.js'
@@ -76,11 +74,6 @@ import './base/point.js'
 // import "./base/element.js";
 // import "./options.js";
 
-
-// TODO: this needs to be replace with real types
-export interface LooseObject {
-    [key: string]: any
-}
 
 
 

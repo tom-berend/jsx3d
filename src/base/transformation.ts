@@ -36,7 +36,8 @@
  * @fileoverview This file contains code for transformations of geometrical objects.
  */
 
-import { LooseObject, JXG } from "../jxg.js";
+import { LooseObject } from "../interfaces.js";
+import { JXG } from "../jxg.js";
 import { OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from "./constants.js";
 import { Board } from "./board.js";
 import { JSXMath } from "../math/jsxmath.js";
