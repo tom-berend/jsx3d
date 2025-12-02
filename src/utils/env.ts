@@ -1,3 +1,6 @@
+const dbug = true;
+const dbugColor = `color:blue;background-color:#c0feac`;
+
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -467,11 +470,14 @@ export class Env {
      */
     static addEvent(obj: Node | Window, type: string, fn: Function, owner: Board, options: object | boolean = false) {
 
+        if (dbug) console.log(`%c env:addEvent(obj:node, type: ${type}, fn:Function, options:'${JSON.stringify(options)}')`, dbugColor, fn,options)
+
+
         let callback = function () {
             return fn.apply(owner, arguments);
         };
 
-        // callback.origin = fn;  // TBTB ????
+        // callback.origin = fn;  // TBTB ????  .origin has no effect (mdn)
 
         // Check if owner is a board
         if (typeof owner === 'object' && Type.exists(owner.mode)) {
@@ -1001,11 +1007,11 @@ export class Env {
 
 
     static debug(msg: string) {
-        throw new Error('debug')
-        // console.warn("Debug: " + msg)
+        // throw new Error('debug')
+        console.warn("Debug: " + msg)
     }
     static warn(msg: string) {
-        throw new Error('warn')
+        // throw new Error('warn')
         console.warn("Warning: " + msg)
     }
     static deprecated(old: string, replace: string = '') {

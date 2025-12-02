@@ -20,17 +20,18 @@ export class IndexTests {
         });
 
         this.point()
-        // this.text()
+        this.text()
 
     }
 
     point() {
         let a = this.newBoard.create('point', [1, 3])
         let b = this.oldBoard.create('point', [1, 3])
+        let c = this.newBoard.create('point',[a.X()+1,a.Y()+1])
     }
     text() {
-        let a = this.newBoard.create('text', [2, 3,"test"],{name:'foo',strokecolor:'red'})
-        let b = this.oldBoard.create('text', [2, 3,"test"],{name:'foo',strokecolor:'red'})
+    //     let a = this.newBoard.create('text', [2, 3,"test"],{name:'foo',strokecolor:'red'})
+    //     let b = this.oldBoard.create('text', [2, 3,"test"],{name:'foo',strokecolor:'red'})
     }
 
 }

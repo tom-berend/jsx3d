@@ -479,7 +479,6 @@ export class Text extends CoordsElement {
      */
     updateSize() {
         var tmp,
-            that,
             node: HTMLElement,
             ev_d = this.evalVisProp('display');
 
@@ -496,11 +495,10 @@ export class Text extends CoordsElement {
         // offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
         if (ev_d === "html") {
             if (Type.exists(node.offsetWidth)) {
-                that = this;
-                window.setTimeout(function () {
-                    that.size = [node.offsetWidth, node.offsetHeight];
-                    that.needsUpdate = true;
-                    that.updateRenderer();
+                window.setTimeout(() => {
+                    this.size = [node.offsetWidth, node.offsetHeight];
+                    this.needsUpdate = true;
+                    this.updateRenderer();
                 }, 0);
                 // In case, there is non-zero padding or borders
                 // the following approach does not longer work.
@@ -520,13 +518,12 @@ export class Text extends CoordsElement {
             }
         } else if (ev_d === "internal") {
             if (this.board.renderer.type === "svg") {
-                that = this;
-                window.setTimeout(function () {
+                window.setTimeout(() => {
                     try {
                         // TODO ?? tmp = node.getBBox();
-                        that.size = [tmp.width, tmp.height];
-                        that.needsUpdate = true;
-                        that.updateRenderer();
+                        this.size = [tmp.width, tmp.height];
+                        this.needsUpdate = true;
+                        this.updateRenderer();
                     } catch (e) { }
                 }, 0);
             } else if (this.board.renderer.type === "canvas") {
@@ -721,7 +718,7 @@ export class Text extends CoordsElement {
      */
     updateRenderer() {
         if (
-            //this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
+            // this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
             this.evalVisProp('autoposition')
         ) {
             this.setAutoPosition().updateConstraint();

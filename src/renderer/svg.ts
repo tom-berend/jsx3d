@@ -660,13 +660,15 @@ export class SVGRenderer extends AbstractRenderer {
      * @see JXG.AbstractRenderer#displayLogo
      * @see Text#fontSize
      */
-    displayCopyright(str, fontsize) {
+    displayCopyright(str: string, fontsize: number) {
         var node, t,
             x = 4 + 1.8 * fontsize,
             y = 6 + fontsize,
             alpha = 0.2;
 
         this.assertNonNullish(this.container, 'expected container')
+
+        if (dbug) console.log(`%c svg: displayCopyright(str: ${str},fontsize: ${fontsize})`, dbugColor)
 
         node = this.createPrim("text", 'licenseText');
         node.setAttributeNS(null, 'x', x + 'px');
@@ -725,7 +727,7 @@ export class SVGRenderer extends AbstractRenderer {
         if (dbug) console.log(`%c svg: drawInternalText(el)`, dbugColor, el)
 
 
-        //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
+        // node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         // Preserve spaces
         //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
         node.style.whiteSpace = "nowrap";
@@ -768,6 +770,8 @@ export class SVGRenderer extends AbstractRenderer {
             if (el.visPropOld.left !== ev_ax + v) {
                 el.rendNode.setAttributeNS(null, "x", v + "px");
 
+                if (dbug) console.log(`%c svg: updateInternalText/[x,y] x:${v + 'px'}`, dbugColor, el)
+
                 if (ev_ax === "left") {
                     el.rendNode.setAttributeNS(null, "text-anchor", "start");
                 } else if (ev_ax === "right") {
@@ -782,6 +786,8 @@ export class SVGRenderer extends AbstractRenderer {
             v = el.coords.scrCoords[2];
             if (el.visPropOld.top !== ev_ay + v) {
                 el.rendNode.setAttributeNS(null, "y", v + this.vOffsetText * 0.5 + "px");
+
+                if (dbug) console.log(`%c svg: updateInternalText/[x,y] y:${v + this.vOffsetText * 0.5 + 'px'}`, dbugColor, el)
 
                 // Not supported by IE, edge
                 // el.rendNode.setAttributeNS(null, "dy", "0");
@@ -860,7 +866,7 @@ export class SVGRenderer extends AbstractRenderer {
             cx, cy,
             len = t.length;
 
-        if (dbug) console.log(`%c svg: transformRect(el,t)'`, dbugColor,el)
+        if (dbug) console.log(`%c svg: transformRect(el,t)'`, dbugColor, el)
 
         if (len > 0) {
             node = el.rendNode;
@@ -969,6 +975,8 @@ export class SVGRenderer extends AbstractRenderer {
      * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in SVGRenderer.
      */
     appendChildPrim(node: Node, level: number = 0) {  // trace nodes have level not set
+
+        if (dbug) console.log(`%c svg: appendChildPrim: node:${node.nodeName}, level:${level},'`, dbugColor)
 
         if (typeof level !== 'number') {      // someone is misbehaving
             console.warn('level is not a number', (typeof level))
@@ -1121,6 +1129,8 @@ export class SVGRenderer extends AbstractRenderer {
      */
     updateEllipsePrim(node: HTMLElement, x: number, y: number, rx: number, ry: number) {
         var huge = 1000000;
+
+        if (dbug) console.log(`%c svg: updateEllipsePrim(node, x:${x}, y:${y}, rx:${rx}, ry:${ry} )`, dbugColor)
 
         huge = 200000; // IE
         // webkit does not like huge values if the object is dashed
@@ -1647,10 +1657,10 @@ export class SVGRenderer extends AbstractRenderer {
      */
     setCssClass(el, cssClass) {
 
-        if (el.visPropOld.cssclass !== cssClass) {
+        // if (true){//tbtb(el.visPropOld.cssclass !== cssClass) {
             this.setPropertyPrim(el.rendNode, 'class', cssClass);
             el.visPropOld.cssclass = cssClass;
-        }
+        // }
     }
 
     /**

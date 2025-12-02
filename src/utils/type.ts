@@ -1344,17 +1344,17 @@ export class Type {
 
     // mergeVisProps is testable.
     static mergeVisProps(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false, depth = 0,): object {
-        let maxDepth = 10
+        let maxDepth = 8
         if (depth > 5) {
             console.warn(depth, attr, special)
         }
 
         let result = {}
+        let result2 = {}
 
         for (let e in attr) {
             let e2 = toLower ? e.toLowerCase() : e;
-            let o = attr[e] // check if this was an object
-            if (depth < maxDepth && this.isObject(attr[e]) && attr[e] !== null && !this.isDocumentOrFragment(attr[e]) && !(attr instanceof Element)) {  // missing test for 'new String'
+            if ( depth < maxDepth && this.isObject(attr[e]) && attr[e] !== null && Object.keys(attr[e]).length > 0  && !this.isDocumentOrFragment(attr[e]) && !(attr instanceof Element)) {  // missing test for 'new String'
                 // console.log(`copying ${e} from attr`)
                 result[e2] = this.mergeVisProps({}, attr[e], toLower, true, depth + 1);
             } else {
@@ -1365,15 +1365,14 @@ export class Type {
 
         for (let e in special) {
             let e2 = toLower ? e.toLowerCase() : e;
-            if (depth < maxDepth && this.isObject(special[e]) && special[e] !== null && !this.isDocumentOrFragment(special[e]) && !(special instanceof Element)) {  // missing test for 'new String'
+            if (depth < maxDepth && this.isObject(special[e]) && special[e] !== null && Object.keys(special[e]).length > 0  && !this.isDocumentOrFragment(special[e]) && !(special instanceof Element)) {  // missing test for 'new String'
                 // console.log(`copying ${e} from special`)
-                result[e2] = this.mergeVisProps({}, special[e], toLower, true, depth + 1);
+                result2[e2] = this.mergeVisProps(result2[e2], special[e], toLower, true, depth + 1);
             } else {
-                result[e2] = special[e];
+                result2[e2] = special[e];
             }
-
         }
-        return result
+        return result2
     }
 
 
@@ -1457,7 +1456,7 @@ export class Type {
     // attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
     // attr_curve = Type.copyAttributes(attributes, board.options, "conic");
 
-    static copyAttributes(attributes: LooseObject, options: LooseObject, ...s: string[]): LooseObject {
+    static copyAttributes(attributes: LooseObject, options?: LooseObject, ...s: string[]): LooseObject {
         var defaultOptions: LooseObject,
             arg,
             i,

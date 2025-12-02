@@ -42,7 +42,7 @@ const dbugColor = `color:black;background-color:aliceblue`;
  */
 
 import { LooseObject } from '../interfaces.js';
-import {  JXG, JXG_elements } from '../jxg.js';
+import { JXG, JXG_elements } from '../jxg.js';
 import { BOARD_MODE, BOARD_QUALITY, OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from './constants.js';
 import { Coords } from './coords.js';
 import { Options } from '../options.js';
@@ -974,7 +974,7 @@ export class Board extends Events {
      * @param {Number} type Type of the object.
      * @returns {String} Unique id for an element.
      */
-    setId(obj:GeometryElement, type:string) {
+    setId(obj: GeometryElement, type: string) {
         var randomNumber,
             num = this.numObjects,
             elId = obj.id;
@@ -2070,7 +2070,7 @@ export class Board extends Events {
     addEventHandlers() {
         if (Env.supportsPointerEvents()) {
             this.addPointerEventHandlers();
-        } else {
+            // } else {   // tbtb add all of them
             this.addMouseEventHandlers();
             this.addTouchEventHandlers();
         }
@@ -8048,14 +8048,14 @@ export class Board extends Events {
             return this;
         }
 
-        this.resizeObserver = new ResizeObserver(function (entries) {
+        this.resizeObserver = new ResizeObserver((entries) => {
             var inner_id,
                 fullscreenElement,
                 doc = that.document;
 
             if (!that._isResizing) {
                 that._isResizing = true;
-                window.setTimeout(function () {
+                window.setTimeout(() => {
                     try {
                         inner_id = that._fullscreen_inner_id;
                         if (doc.fullscreenElement !== undefined) {

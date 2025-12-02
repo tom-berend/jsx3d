@@ -84,8 +84,6 @@ export class Point extends CoordsElement {
 
         this.elType = "point";
 
-        this.visProp = Type.mergeVisProps(Options.point, attributes)
-
         /* Register point at board. */
         this.id = this.board.setId(this, 'P');
         this.board.renderer.drawPoint(this);
@@ -93,11 +91,12 @@ export class Point extends CoordsElement {
 
         this.createGradient();
 
-        // this.visProp.withlabel = true;
         let label = this.createLabel();
+        this.visProp.withlabel = true;
 
         // tbtb - this wasn't in original, but font is wrong
         label.visProp = Type.mergeVisProps(Options.text, Options.label)
+
 
 
 
@@ -445,10 +444,10 @@ export class Point extends CoordsElement {
 
     // Already documented in GeometryElement
     cloneToBackground() {
-        // TODO used for tracingn  // var copy = Type.getCloneObject(this);
+        var copy = Type.getCloneObject(this);
 
-        // this.board.renderer.drawPoint(copy);
-        // this.traces[copy.id] = copy.rendNode;
+        this.board.renderer.drawPoint(copy);
+        this.traces[copy.id] = copy.rendNode;
 
         return this;
     }

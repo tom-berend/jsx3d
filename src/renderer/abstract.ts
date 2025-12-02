@@ -224,7 +224,7 @@ export abstract class AbstractRenderer {
      */
     _updateVisual(el: GeometryElement, not: LooseObject = {}, enhanced: boolean = false) {
 
-        if (dbug) console.log(`%c abstract: updateVisual(el)`, dbugColor, 'el.visProp = ', el.visProp, not)
+        if (dbug) console.warn(`%c abstract: updateVisual(el)`, dbugColor, 'el.visProp = ', el.visProp, not)
 
         if (enhanced || this.enhancedRendering) {
             not = not || {};
@@ -1053,24 +1053,24 @@ export abstract class AbstractRenderer {
 
                 node.style.zIndex = z + level;
                 this.container.appendChild(node);
-                // el.rendNode = node  // TODO tbtb - added but i think this is wrong
 
                 node.setAttribute("id", this.container.id + "_" + el.id);
             } else {
                 node = this.drawInternalText(el);
-
-                el.rendNode = node;
-                el.htmlStr = "";
-
-                // Set el.visPropCalc.visible
-                if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
-                    ev_visible = el.visProp.anchor.evalVisProp('visible');
-                    el.prepareUpdate().updateVisibility(ev_visible);
-                } else {
-                    el.prepareUpdate().updateVisibility();
-                }
-                this.updateText(el);
             }
+
+            el.rendNode = node;
+            el.htmlStr = "";
+
+            // Set el.visPropCalc.visible
+            if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
+                ev_visible = el.visProp.anchor.evalVisProp('visible');
+                el.prepareUpdate().updateVisibility(ev_visible);
+            } else {
+                el.prepareUpdate().updateVisibility();
+            }
+            this.updateText(el);
+
         } else {
             throw new Error('container was null')
         }
@@ -1139,6 +1139,8 @@ export abstract class AbstractRenderer {
                             el.rendNode.style.right = "auto";
                         }
                         el.visPropOld.left = ax + v;
+                        if (dbug) console.log(`%c abstract: updateText:left/right ${v + 'px'}`, dbugColor, el)
+
                     }
 
                     // Vertical
@@ -1175,6 +1177,7 @@ export abstract class AbstractRenderer {
                             el.rendNode.style.top = v + "px";
                         }
                         el.visPropOld.top = ay + v;
+                        if (dbug) console.log(`%c abstract: updateText:top/bottom ${v + 'px'}`, dbugColor, el)
                     }
                 }
 
@@ -1303,7 +1306,7 @@ export abstract class AbstractRenderer {
      * @param  {String} cssString String containing CSS properties
      * @return {Array}           Array of CSS key-value pairs
      */
-    _css2js(cssString) {
+    _css2js(cssString:string) {
         var pairs: object[] = [],
             i,
             len,
@@ -1357,6 +1360,7 @@ export abstract class AbstractRenderer {
             styleList = ["cssdefaultstyle", "cssstyle"],
             lenS = styleList.length;
 
+        if (dbug) console.log(`%c abstract: updateTextStyle(el, doHighlight: ${doHighlight})`, dbugColor)
 
         if (doHighlight) {
             sc = el.evalVisProp('highlightstrokecolor');
@@ -1640,6 +1644,8 @@ export abstract class AbstractRenderer {
     noHighlight(el) {
         var i, sw;
 
+        if (dbug) console.warn(`%c abstract: noHighlight(el)`, dbugColor, 'el.visProp = ', el)
+
         this.setObjectTransition(el);
         if (!el.evalVisProp('draft')) {
             if (el.type === OBJECT_TYPE.POLYGON) {
@@ -1737,13 +1743,7 @@ export abstract class AbstractRenderer {
                 if (!e) {
                     e = window.event;
                 }
-
-                if (e.stopPropagation) {
-                    // Non IE<=8
-                    e.stopPropagation();
-                } else {
-                    e.cancelBubble = true;
-                }
+                e.stopPropagation();
             }
         let createNavButton = (label, handler, board_id, type) => {
             var button;
