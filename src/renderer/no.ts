@@ -226,7 +226,7 @@ export class NoRenderer extends AbstractRenderer {
     removeToInsertLater() { return function () { }; }
 
     /*  stuff missing when we started conversion to TS */
-    
+
     _setArrowWidth() { }
     _setLineCap() { }
     displayLogo() { }
@@ -234,7 +234,7 @@ export class NoRenderer extends AbstractRenderer {
     setLineCap() { }
     drawForeignObject() { }
     updateForeignObject() { }
-    createPrim() { }
+    createPrim():HTMLElement { return null as HTMLElement}
     display() { }
     setARIA() { }
     setCssClass() { }

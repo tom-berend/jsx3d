@@ -1,4 +1,4 @@
-const dbug = true;
+const dbug = false;
 const dbugColor = `color:blue;background-color:#c0feac`;
 
 /*
@@ -470,7 +470,7 @@ export class Env {
      */
     static addEvent(obj: Node | Window, type: string, fn: Function, owner: Board, options: object | boolean = false) {
 
-        if (dbug) console.log(`%c env:addEvent(obj:node, type: ${type}, fn:Function, options:'${JSON.stringify(options)}')`, dbugColor, fn,options)
+        if (dbug) console.log(`%c env:addEvent(obj:node, type: ${type}, fn:Function, options:'${JSON.stringify(options)}')`, dbugColor, options)
 
 
         let callback = function () {

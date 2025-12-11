@@ -78,7 +78,7 @@ export class SVGRenderer extends AbstractRenderer {
 
     foreignObjLayer: any
 
-    layer: Node[]
+    layers: Node[]
 
     touchpoints: HTMLElement[] = []
 
@@ -146,10 +146,10 @@ export class SVGRenderer extends AbstractRenderer {
          * there, too. The higher the number, the "more on top" are the elements on this layer.
          * @type Array
          */
-        this.layer = [];
+        this.layers = [];
         for (let i = 0; i < Options.layers.numlayers; i++) {
-            this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
-            this.svgRoot.appendChild(this.layer[i]);
+            this.layers[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
+            this.svgRoot.appendChild(this.layers[i]);
         }
 
         try {
@@ -965,7 +965,17 @@ export class SVGRenderer extends AbstractRenderer {
     * @param {JXG.GeometryElement} el A JSXGraph element.
     * @param {String} type The XML node name. Only used in VMLRenderer.
     */
-    appendNodesToElement(el, type) { /* stub */ }  // TODO: this was never implemented !!
+    // Already documented in JXG.AbstractRenderer
+    appendNodesToElement(el, type) {
+        if (type === "shape" || type === "path" || type === 'polygon') {
+            el.rendNodePath = this.getElementById(el.id + "_path");
+        }
+        el.rendNodeFill = this.getElementById(el.id + "_fill");
+        el.rendNodeStroke = this.getElementById(el.id + "_stroke");
+        el.rendNodeShadow = this.getElementById(el.id + "_shadow");
+        el.rendNode = this.getElementById(el.id);
+    }
+
 
     /**
      * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
@@ -988,10 +998,11 @@ export class SVGRenderer extends AbstractRenderer {
         } else if (level >= Options.layers.numlayers) {
             level = Options.layers.numlayers - 1;
         }
-        this.layer[level].appendChild(node);
+        this.layers[level].appendChild(node);
 
         return node;
     }
+
 
     /**
      * Creates a node of a given type with a given id.
@@ -1039,7 +1050,7 @@ export class SVGRenderer extends AbstractRenderer {
             level = Options.layers.numlayers - 1;
         }
 
-        this.layer[level].appendChild(el.rendNode);
+        this.layers[level].appendChild(el.rendNode);
     }
 
     /**
@@ -1656,11 +1667,10 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {String} cssClass String containing a space separated list of CSS classes.
      */
     setCssClass(el, cssClass) {
-
-        // if (true){//tbtb(el.visPropOld.cssclass !== cssClass) {
+        if (el.visPropOld.cssclass !== cssClass) {
             this.setPropertyPrim(el.rendNode, 'class', cssClass);
             el.visPropOld.cssclass = cssClass;
-        // }
+        }
     }
 
     /**
@@ -1835,7 +1845,7 @@ export class SVGRenderer extends AbstractRenderer {
      * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
      */
     setObjectStrokeColor(el, color, opacity) {
-        if (dbug) console.log(`%c svg: setObjectSrokeColor(el, color:${color},opacity:'${opacity}'`, dbugColor)
+        if (dbug) console.warn(`%c svg: setObjectSrokeColor(el, color:${color},opacity:'${opacity}'`, dbugColor)
 
         var rgba = color,
             c, rgbo,

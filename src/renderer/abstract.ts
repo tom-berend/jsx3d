@@ -1,4 +1,4 @@
-const dbug = false;
+const dbug = true;
 const dbugColor = `color:green;background-color:#f9de90`;
 /*
     Copyright 2008-2025
@@ -332,6 +332,10 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#changePointStyle
      */
     drawPoint(el) {
+
+        if (dbug) console.warn(`%c abstract: drawPoint(el)`, dbugColor, el.visprop)
+
+
         var prim: SVGType
         // Sometimes el is not a real point and lacks the methods of a JXG.Point instance,
         // in these cases to not use el directly.
@@ -350,10 +354,16 @@ export abstract class AbstractRenderer {
 
         if (dbug) console.log(`%c abstract: drawPoint(el)`, dbugColor)
 
-        el.rendNode = this.appendChildPrim(
-            this.createPrim(prim, el.id),
-            el.evalVisProp('layer')
-        );
+        // el.rendNode = this.appendChildPrim(
+        //     this.createPrim(prim, el.id),
+        //     el.evalVisProp('layer')
+        // );
+        let layer = el.evalVisProp('layer')
+        layer = 9
+        let tempPrim = this.createPrim(prim, el.id)
+        el.rendNode = this.appendChildPrim(tempPrim, layer)
+
+
         this.appendNodesToElement(el, prim);
 
         // Adjust visual properties
@@ -373,6 +383,9 @@ export abstract class AbstractRenderer {
      * @see JXG.AbstractRenderer#changePointStyle
      */
     updatePoint(el) {
+
+        if (dbug) console.warn(`%c abstract: drawPoint(el)`, dbugColor, el.visprop)
+
         var size = el.evalVisProp('size'),
             // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
             // in these cases to not use el directly.
@@ -1096,7 +1109,10 @@ export abstract class AbstractRenderer {
             ax, ay, angle, co, si,
             to_h, to_v;
 
-        if (dbug) console.log(`%c abstract: updateText(el)`, dbugColor, el)
+        if (dbug) console.warn(`%c abstract: updateText(el)`, dbugColor, el.id)
+
+        if (el.id === 'jxgBoard1P0Label')
+            console.warn('%c jxgBoard1P0Label','background-color:red;')
 
         if (el.visPropCalc.visible) {
             this.updateTextStyle(el, false);
@@ -1139,8 +1155,9 @@ export abstract class AbstractRenderer {
                             el.rendNode.style.right = "auto";
                         }
                         el.visPropOld.left = ax + v;
-                        if (dbug) console.log(`%c abstract: updateText:left/right ${v + 'px'}`, dbugColor, el)
 
+                        if (dbug) console.log(`%c abstract: updateText:left/right ${v + 'px'}`, dbugColor, el)
+                         console.log(`%c abstract: updateText:left/right ${v + 'px'}`, 'background-color:red;', el)
                     }
 
                     // Vertical
@@ -1178,6 +1195,7 @@ export abstract class AbstractRenderer {
                         }
                         el.visPropOld.top = ay + v;
                         if (dbug) console.log(`%c abstract: updateText:top/bottom ${v + 'px'}`, dbugColor, el)
+                         console.log(`%c abstract: updateText:top/bottomt ${v + 'px'}`, 'background-color:red;', el)
                     }
                 }
 
@@ -1306,7 +1324,7 @@ export abstract class AbstractRenderer {
      * @param  {String} cssString String containing CSS properties
      * @return {Array}           Array of CSS key-value pairs
      */
-    _css2js(cssString:string) {
+    _css2js(cssString: string) {
         var pairs: object[] = [],
             i,
             len,
@@ -1934,7 +1952,7 @@ export abstract class AbstractRenderer {
     abstract updateForeignObject(el)
     abstract appendChildPrim(node, level)
     abstract appendNodesToElement(el, type)
-    abstract createPrim(type, id)
+    abstract createPrim(type, id): HTMLElement
     abstract remove(node)
     abstract makeArrows(el, arrowData)
     abstract updateEllipsePrim(node, x, y, rx, ry)

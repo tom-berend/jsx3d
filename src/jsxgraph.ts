@@ -154,7 +154,7 @@ export class JSXGraph {
      */
     static _setAttributes(attributes, options = {}): object {
         // merge attributes
-        let attr = Type.copyAttributes(attributes, options, 'board'),
+        let attr = Type.copyAttributes(Options.board, attributes),
             // These attributes - which are objects - have to be copied separately.
             list = [
                 'drag',
@@ -174,9 +174,11 @@ export class JSXGraph {
 
         for (i = 0; i < len; i++) {
             key = list[i];
-            attr[key] = Type.copyAttributes(attr, options, 'board', key);
+            attr[key] = Type.copyAttributes(Options.board, key);
         }
-        attr.navbar = Type.copyAttributes(attr.navbar, options, 'navbar');
+
+
+        attr.navbar = Type.copyAttributes(attr, Options.navbar);
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
@@ -260,8 +262,21 @@ export class JSXGraph {
         ) {
             theme = JXG.themes[attributes.theme];
         }
-        options = Type.deepCopy(Options, theme);
-        attr = this._setAttributes(attributes, options);
+
+        // TODO: what are options ?!?
+        // options = Type.deepCopy(Options, theme);
+
+        options = {
+            board: Type.keysToLowerCase(Options.board),
+            point: Type.keysToLowerCase(Options.point),
+            text: Type.keysToLowerCase(Options.text),
+            layers: Type.keysToLowerCase(Options.layers),
+            navbar: Type.keysToLowerCase(Options.navbar),
+        }
+
+
+        attr = Type.copyAttributes(Options.board,attributes);
+        console.log(attr)
 
         dimensions = Env.getDimensions(box, attr.document);
 
@@ -320,7 +335,6 @@ export class JSXGraph {
         }
 
 
-
         // Create the board.
         // board.options will contain the user supplied board attributes
         let board = new Board(
@@ -337,11 +351,15 @@ export class JSXGraph {
             attr,
         );
 
+        // TODO: make this generic
+        board.options = options
+
         board._setARIA(box, attr);
 
         // TODO:  board.keepaspectratio = attr.keepaspectratio;
 
-        board._fillBoard(board, attr, dimensions);
+
+        // TODO:  board._fillBoard(board, Options.navbar, dimensions);
 
         // Create elements like axes, grid, navigation, ...
         board.suspendUpdate();

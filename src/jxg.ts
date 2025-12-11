@@ -65,6 +65,7 @@
 // side-effect imports
 import  './base/text.js'
 import './base/point.js'
+import './base/transformation.js'
 
 import { LooseObject } from "./interfaces.js";
 

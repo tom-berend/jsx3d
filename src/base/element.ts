@@ -477,10 +477,10 @@ export class GeometryElement extends Events {
             throw new Error('someone did not send Board??')
         }
 
+        if (dbug) console.warn(`%c element: constructor ${ JSON.stringify(attributes).substring(0, 30) }`, dbugColor)
 
         this.board = board;
 
-        console.log(this)
         this.otype = otype;
         this.oclass = oclass;
         this._org_type = otype
@@ -510,9 +510,10 @@ export class GeometryElement extends Events {
 
             this.needsRegularUpdate = attributes.needsRegularUpdate;
 
-            // create this.visPropOld and set default values
+            // create this.visPropOld and set default valuesy defaults
             Type.clearVisPropOld(this);
 
+            // load visprop with element-level propert
             attr = this.resolveShortcuts(attributes);
             for (key in attr) {
                 if (attr.hasOwnProperty(key)) {
@@ -1362,7 +1363,10 @@ export class GeometryElement extends Events {
      *     visible: true
      * });
      */
-    setAttribute(attr) {
+    setAttribute(attr: LooseObject) {
+
+        if (dbug) console.warn(`%c element: setAttribute ${ JSON.stringify(attr).substring(0, 30) }`, dbugColor)
+
         var i, j, le, key, value, arg,
             opacity, pair, oldvalue,
             attributes = {};
@@ -1402,14 +1406,14 @@ export class GeometryElement extends Events {
                 // Now, only the supplied label attributes are overwritten.
                 // Otherwise, the value of label would be {visible:false} only.
                 if (Type.isObject(value) && Type.exists(this.visProp[key])) {
-                    // this.visProp[key] = Type.merge(this.visProp[key], value);
                     if (!Type.isObject(this.visProp[key]) && value !== null && Type.isObject(value)) {
                         // Handle cases like key=firstarrow and
                         // firstarrow==false and value = { type:1 }.
                         // That is a primitive type is replaced by an object.
                         this.visProp[key] = {};
                     }
-                    this.visProp[key] = Type.mergeVisProps(this.visProp[key], value);
+                    this.visProp[key] = Type.merge(this.visProp[key], value);
+                    // this.visProp[key] = Type.mergeVisProps(this.visProp[key], value);
 
                     // First, handle the special case
                     // ticks.setAttribute({label: {anchorX: "right", ..., visible: true});
@@ -1727,11 +1731,12 @@ export class GeometryElement extends Events {
             throw new Error('evalVisProp, key should be a string')
 
 
-        // tbtb run through visprop and force to lower case
+        // tbtb check that all visprops are lowercase
         for (let propKey in this.visProp) {
             if (propKey !== propKey.toLowerCase()) { // object is not lowercase
-                console.error('visProps not lower case', this,this.visProp)
-                this.visProp = Type.mergeVisProps({}, this.visProp) // now lowercase
+                console.error(`visProps '${propKey}' not lower case `, this, this.visProp)
+                this.visProp = Type.keysToLowerCase(this.visProp) // now lowercase
+                break;
             }
         }
 
@@ -1926,10 +1931,9 @@ export class GeometryElement extends Events {
      */
     createLabel() {
 
-        if (dbug) console.warn(`%c element: createLabel`, dbugColor)
 
 
-        let attr = Type.deepCopy(Options.label, {});
+        let attr = Type.copyAttributes(Options.label);
         attr.id = this.id + "Label";
         attr.isLabel = true;
         attr.anchor = this;
@@ -1956,6 +1960,7 @@ export class GeometryElement extends Events {
             this.hasLabel = true;
         }
 
+        if (dbug) console.warn(`%c element: createLabel`, dbugColor, attr.id)
         return this.label;
     }
 

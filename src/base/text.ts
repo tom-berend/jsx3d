@@ -119,7 +119,9 @@ export class Text extends CoordsElement {
         super(board, COORDS_BY.USER, coordinates, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT)
 
         this.elType = "text";
-        this.visProp = Type.merge(this.visProp, Options.text)
+        this.visProp = Type.copyAttributes(Options.board, Options.elements, Options.text, attributes)
+
+        // this.visProp = Type.merge(this.visProp, Type.keysToLowerCase(Options.text))
 
         this.relativeCoords = new Coords(COORDS_BY.USER, coordinates, board)
 
@@ -1883,16 +1885,20 @@ export class Text extends CoordsElement {
  * </script><pre>
  *
  */
-export function createText(board: Board, parents: any[], attributes: TextOptions): Text {
-    var t,
-        attr = Type.copyAttributes(attributes, board.options, "text"),
-        coords = parents.slice(0, -1),
+export function createText(board: Board, parents: any[], attributes: TextOptions = {}): Text {
+    var t
+    let coords = parents.slice(0, -1),
         content = parents[parents.length - 1];
-    console.log('createText', coords, content, parents)
+
 
     // Backwards compatibility
-    attr.anchor = attr.parent || attr.anchor;
-    t = new Text(board, coords, attr, content);
+
+    // TBTB??
+    // attributes.anchor = parent.attributes.anchor || attributes.anchor;
+
+
+    t = new Text(board, coords, attributes, content);
+    console.log('t.visprop', t.visProp)
 
 
     if (!t) {
@@ -1906,9 +1912,9 @@ export function createText(board: Board, parents: any[], attributes: TextOptions
         );
     }
 
-    if (attr.rotate !== 0) {
+    if (attributes.rotate !== 0) {
         // This is the default value, i.e. no rotation
-        t.addRotation(attr.rotate);
+        t.addRotation(attributes.rotate);
     }
 
     return t;
@@ -1960,7 +1966,7 @@ export class HTMLSlider extends Text {
 
         var
             par,
-            attr = Type.copyAttributes(attributes, board.options, "htmlslider");
+            attr = Type.copyAttributes(Options.board, attributes, Options.htmlslider);
 
         if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
             throw new Error(

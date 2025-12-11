@@ -37,7 +37,7 @@
  */
 
 import { LooseObject } from "../interfaces.js";
-import { JXG } from "../jxg.js";
+import { JXG, JXG_registerElement } from "../jxg.js";
 import { OBJECT_CLASS, OBJECT_TYPE, COORDS_BY } from "./constants.js";
 import { Board } from "./board.js";
 import { JSXMath } from "../math/jsxmath.js";
@@ -164,6 +164,39 @@ export class Transformation {
             meltTo: "meltTo"
         };
     };
+
+    // moved from type.ts - only used by transformations  TBTB
+    // /**
+    //  * Convert a String, a number or a function into a function. This method is used in Transformation.js
+    //  * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
+    //  * by a JessieCode string, thus it must be a valid reference only in case one of the param
+    //  * values is of type string.
+    //  * @param {Array} param An array containing strings, numbers, or functions.
+    //  * @param {Number} n Length of <tt>param</tt>.
+    //  * @returns {Function} A function taking one parameter k which specifies the index of the param element
+    //  * to evaluate.
+    //  */
+    createEvalFunction(board, param, n):Function {
+        var f: Function[] = [],
+            func,
+            i,
+            e,
+            deps = {};
+
+        for (i = 0; i < n; i++) {
+            f[i] = Type.createFunction(param[i], board);
+            for (e in f[i]["deps"]) {
+                deps[e] = f[i]["deps"]   // was f[i].deps;
+            }
+        }
+
+        func = function (k) {
+            return f[k]();
+        };
+        func.deps = deps;
+
+        return func;
+    }
 
 
     /**
@@ -791,24 +824,7 @@ export class Transformation {
     //     return p;
     // }
 
-
-    /* Convert a String, a number or a function into a function. This method is used in Transformation.js
-    * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
-    * by a JessieCode string, thus it must be a valid reference only in case one of the param
-    * values is of type string.
-    * @param {Array} param An array containing strings, numbers, or functions.
-    * @param {Number} n Length of <tt>param</tt>.
-    * @returns {Function} A function taking one parameter k which specifies the index of the param element
-    * to evaluate.
-    */
-    // static createEvalFunction(board, param, n):Function {
-
-    createEvalFunction(board: Board, param: any[], parmLength?: Number): Function {
-        console.error('is this just for jessiecode?', param)
-        return () => console.error('createEvalFunction')
-    }
 }
-
 
 /**
  * @class Define projective 2D transformations like translation, rotation, reflection.
@@ -1218,11 +1234,11 @@ export class Transformation {
  * </script><pre>
  *
  */
-// JXG.createTransform = function (board, parents, attributes) {
-//     return new JXG.Transformation(board, attributes.type, parents);
-// };
+export function createTransform(board, parents, attributes) {
+    return new Transformation(board, attributes.type, parents);
+};
 
-// JXG.registerElement('transform', JXG.createTransform);
+JXG_registerElement('transform', createTransform);
 
 /**
  * @class Define projective 3D transformations like translation, rotation, reflection.

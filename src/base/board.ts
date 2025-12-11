@@ -676,10 +676,11 @@ export class Board extends Events {
         unitY: number = Infinity,
         canvasWidth: number = 500,
         canvasHeight: number = 500,
-        attributes: LooseObject = Options.board   // the full default attrs with overrides
+        attributes: LooseObject = {}  //    = Options.board   // the full default attrs with overrides
     ) {
         super()
 
+        attributes = Type.copyAttributes(Options.board, attributes)
 
         if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
@@ -726,9 +727,10 @@ export class Board extends Events {
 
         this.attr = attributes;
 
-        if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
-            Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
-        }
+        ///TBTB
+        // if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
+        //     Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
+        // }
 
 
         // if (this.attr.registerevents === true) {
@@ -4623,8 +4625,10 @@ export class Board extends Events {
      * the coordinates of points near the mouse pointer,
      * @returns {JXG.Board} Reference to the board
      */
-    initInfobox(attributes) {
-        var attr = Type.copyAttributes(attributes, this.options, 'infobox');
+    initInfobox(attributes={}) {
+
+
+        var attr = Type.copyAttributes(Options.infobox,attributes);
 
         attr.id = this.id + '_infobox';
 
@@ -5016,6 +5020,7 @@ export class Board extends Events {
                 [this.canvasWidth, this.canvasHeight],
                 this
             ).usrCoords;
+            console.log(this)
             if (
                 ul[1] < this.maxboundingbox[0] - JSXMath.eps ||
                 ul[2] > this.maxboundingbox[1] + JSXMath.eps ||
@@ -6278,10 +6283,6 @@ export class Board extends Events {
             parents = [];
         }
 
-        if (!Type.exists(attributes)) {
-            attributes = {};
-        }
-
         for (i = 0; i < parents.length; i++) {
             if (
                 Type.isString(parents[i]) &&
@@ -6308,8 +6309,10 @@ export class Board extends Events {
             }
         }
 
+
         if (Type.isFunction(JXG_elements[elementType])) {
             el = JXG_elements[elementType](this, parents, attributes);
+        if (dbug) console.warn(`%c board: creating elementType '${elementType}', el.id = '${el.id}'`, dbugColor)
         } else {
             throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
         }
@@ -7436,7 +7439,7 @@ export class Board extends Events {
         var selectionattr;
 
         if (!Type.exists(this.selectionPolygon)) {
-            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+            selectionattr = Type.copyAttributes(Options.board, attr)
             if (selectionattr.enabled === true) {
                 this.selectionPolygon = this.create(
                     'polygon',
@@ -8191,7 +8194,7 @@ export class Board extends Events {
         board.maxboundingbox = attr.maxboundingbox;
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
-        board.renderer.drawNavigationBar(board, attr.navbar);
+        board.renderer.drawNavigationBar(board,board.visprop.navbar);
         JXG.boards[board.id] = board;
     }
 

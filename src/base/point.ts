@@ -91,14 +91,11 @@ export class Point extends CoordsElement {
 
         this.createGradient();
 
-        let label = this.createLabel();
-        this.visProp.withlabel = true;
 
         // tbtb - this wasn't in original, but font is wrong
-        label.visProp = Type.mergeVisProps(Options.text, Options.label)
+        this.visProp = Type.copyAttributes(Options.elements, Options.point, attributes);
 
-
-
+        this.addChild(this.createLabel());  // add label as a descendant
 
 
     }
@@ -507,7 +504,8 @@ export class Point extends CoordsElement {
 export function createPoint(board, parents, attributes) {
     var el, attr;
 
-    attr = Type.copyAttributes(attributes, Options.board, "point");
+    attr = Type.copyAttributes(Options.elements, Options.point, attributes);
+
     el = new Point(board, parents, attr);
     if (!el) {
         throw new Error(
@@ -584,7 +582,7 @@ export function createGlider(board, parents, attributes) {
 
     var el,
         coords,
-        attr = Type.copyAttributes(attributes, board.options, "glider");
+        attr = Type.copyAttributes(board.options, Options.glider, attributes);
 
     if (parents.length === 1) {
         coords = [0, 0];
@@ -640,7 +638,7 @@ export function createGlider(board, parents, attributes) {
 export function createIntersectionPoint(board, parents, attributes) {
     var el, el1, el2, func,
         i, j,
-        attr = Type.copyAttributes(attributes, board.options, "intersection");
+        attr = Type.copyAttributes(Options.board, Options.intersection, attributes);
 
     // make sure we definitely have the indices
     parents.push(0, 0);
@@ -811,7 +809,7 @@ export function createOtherIntersectionPoint(board, parents, attributes) {
     var el, el1, el2, i,
         others, func, input,
         isGood = true,
-        attr = Type.copyAttributes(attributes, board.options, 'otherintersection');
+        attr = Type.copyAttributes(Options.board, Options.otherintersection, attributes);
 
     if (parents.length !== 3) {
         isGood = false;
