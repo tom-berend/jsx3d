@@ -1,4 +1,4 @@
-const dbug = true;
+const dbug = false;
 const dbugColor = `color:black;background-color:aliceblue`;
 
 /*
@@ -59,13 +59,14 @@ import { Env } from '../utils/env.js';
 import { GeometryElement } from './element.js';
 import { SVGRenderer } from '../renderer/svg.js';
 import { JSXMath } from '../math/jsxmath.js';
-import { createText } from '../base/text.js'
+import { createText, Text } from '../base/text.js'
 import { createPoint } from '../base/point.js'
 import { BoardOptions } from '../optionInterfaces.js';
 import { Statistics } from '../math/statistics.js';
 import { AbstractRenderer } from '../renderer/abstract.js';
 import { JSXFileReader } from '../reader/filereader.js';
 import { Dim } from '../interfaces.js'
+// import { Infobox } from './infobox.js';
 
 
 
@@ -199,10 +200,10 @@ export class Board extends Events {
     grids = [];
 
     /**
-     * Copy of the default options
+     * Copy of the default options for all objects
      * @type JXG.Options
      */
-    options = Type.deepCopy(Options);  // A possible theme is not yet merged in
+    options
 
     /**
      * Board attributes
@@ -303,7 +304,7 @@ export class Board extends Events {
      * An associative array containing all geometric objects belonging to the board. Key is the id of the object and value is a reference to the object.
      * @type Object
      */
-    objects = {};
+    objects: LooseObject = {};
 
     /**
      * An array containing all geometric objects on the board in the order of construction.
@@ -454,7 +455,7 @@ export class Board extends Events {
      * Elements are stored with their id.
      * @type Array
      */
-    focusObjects = [];
+    focusObjects: GeometryElement[] = [];
 
 
     /**
@@ -639,7 +640,8 @@ export class Board extends Events {
     cssTransMat: number[][];
     animationIntervalCode: number
     resizeObserver: any
-    infobox: any
+    infobox: Text    // there is one infobox per board
+
     _prevDim: { w: number, h: number }
     isSuspendedUpdate: boolean
     _fullscreen_inner_id: string = ''
@@ -680,7 +682,13 @@ export class Board extends Events {
     ) {
         super()
 
-        attributes = Type.copyAttributes(Options.board, attributes)
+        // load the default options for the board.
+        // TODO why do we need this?  can we change the board andelement default values?
+
+        this.options = {}
+        Object.keys(Options).map((key) => this.options[key] = Options[key])
+
+        attributes = Type.initVisProps(Options.board, attributes)
 
         if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
@@ -727,10 +735,9 @@ export class Board extends Events {
 
         this.attr = attributes;
 
-        ///TBTB
-        // if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
-        //     Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
-        // }
+        if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
+            Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
+        }
 
 
         // if (this.attr.registerevents === true) {
@@ -783,7 +790,6 @@ export class Board extends Events {
 
         // this.jc = new JessieCode();
         // this.jc.use(this);
-
 
 
         this.origin = {
@@ -853,6 +859,9 @@ export class Board extends Events {
 
         this.eventify(this);
 
+        // since this.infobox should never be null
+        this.infobox = new Text(this, [0, 0], {}, '[0,0]')
+        this.displayInfobox(false)
 
     }
 
@@ -1442,7 +1451,7 @@ export class Board extends Events {
      * @param {String} type What type of event? 'touch', 'mouse' or 'pen'.
      * @returns {Array} A list of geometric elements.
      */
-    initMoveObject(x, y, evt, type) {
+    initMoveObject(x: number, y: number, evt: any /*Event*/, type: string) {
         var pEl,
             el,
             collect = [],
@@ -1450,6 +1459,8 @@ export class Board extends Events {
             haspoint,
             len = this.objectsList.length,
             dragEl: LooseObject = { visProp: { layer: -10000 } };
+
+        if (dbug) console.warn(`%c board: initMoveObject(x:${x},y:${y},evt: '${evt.type},  type:${type}')`, dbugColor)
 
         // Store status of key presses for 3D movement
         this._shiftKey = evt.shiftKey;
@@ -2218,6 +2229,7 @@ export class Board extends Events {
      * Registers pointer event handlers.
      */
     addPointerEventHandlers() {
+
         if (!this.hasPointerHandlers && Env.isBrowser) {
             var moveTarget = this.attr.movetarget || this.containerObj;
             Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
@@ -2828,7 +2840,11 @@ export class Board extends Events {
      * @param {Boolean} [allowDefaultEventHandling=false] If true event is not canceled, i.e. prevent call of evt.preventDefault()
      * @returns {Boolean} false if the first finger event is sent twice, or not a browser, or in selection mode. Otherwise returns true.
      */
-    pointerDownListener(evt, object, allowDefaultEventHandling) {
+    pointerDownListener(evt: any, object: GeometryElement, allowDefaultEventHandling = false) {
+
+        // if (dbug) console.warn(`%c board: pointerDownListener(evt: '${evt.type},  obj.id='${object.id}')`, dbugColor)
+        console.log('%c pointerDownEvent', 'background-color:red', evt, object)
+
         var i, j, k, pos,
             elements, sel, target_obj,
             type = 'mouse', // Used in case of no browser
@@ -2839,6 +2855,7 @@ export class Board extends Events {
         if (!object && this._isPointerRegistered(evt)) {
             return false;
         }
+
 
         if (Type.evaluate(this.attr.movetarget) === null &&
             Type.exists(evt.target) && Type.exists(evt.target.releasePointerCapture)) {
@@ -3194,6 +3211,7 @@ export class Board extends Events {
         // Mouse, touch or pen device
         this._inputDevice = this._getPointerInputDevice(evt);
         type = this._inputDevice;
+
         this.options.precision.hasPoint = this.options.precision[type];
         eps = this.options.precision.hasPoint * 0.3333;
 
@@ -4625,12 +4643,10 @@ export class Board extends Events {
      * the coordinates of points near the mouse pointer,
      * @returns {JXG.Board} Reference to the board
      */
-    initInfobox(attributes={}) {
+    initInfobox(attributes = {}) {
+        if (dbug) console.warn(`%c board: initInfobox(attributes: '${JSON.stringify(attributes)}, this.id = '${this.id}'`, dbugColor)
 
 
-        var attr = Type.copyAttributes(Options.infobox,attributes);
-
-        attr.id = this.id + '_infobox';
 
         /**
          * Infobox close to points in which the points' coordinates are displayed.
@@ -4691,7 +4707,14 @@ export class Board extends Events {
          * </script><pre>
          *
          */
-        this.infobox = this.create('text', [0, 0, '0,0'], attr);
+
+        // moved to constructor        this.infobox = this.create('text', [0, 0, '0,0'], attr);
+        // this.infobox.visProp =
+
+        var attr = Type.initVisProps(Options.text, Options.infobox, attributes);
+
+        attr.id = this.id + '_infobox';
+
         // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
         this.infobox.dump = false;
 
@@ -4721,6 +4744,7 @@ export class Board extends Events {
         if (Type.isPoint(el)) {
             xc = el.coords.usrCoords[1];
             yc = el.coords.usrCoords[2];
+
             distX = this.infobox.evalVisProp('distancex');
             distY = this.infobox.evalVisProp('distancey');
 
@@ -4774,13 +4798,18 @@ export class Board extends Events {
      * @see JXG.Board#updateInfobox
      *
      */
-    displayInfobox(val) {
+    displayInfobox(val: boolean): this {
+
+
         if (!val && this.focusObjects.length > 0 &&
             this.select(this.focusObjects[0]).elementClass === OBJECT_CLASS.POINT) {
             // If an element has focus we do not hide its infobox
             return this;
         }
+
         if (this.infobox.hiddenByParent === val) {
+            if (dbug) console.warn(`%c board: displayInfobox(val: '${val}, this.id = '${this.id}, hiddenByParent = ${this.infobox.hiddenByParent}'`, dbugColor)
+
             this.infobox.hiddenByParent = !val;
             this.infobox.prepareUpdate().updateVisibility(val).updateRenderer();
         }
@@ -4789,7 +4818,9 @@ export class Board extends Events {
 
     // Alias for displayInfobox to be backwards compatible.
     // The method showInfobox clashes with the board attribute showInfobox
+    /** depricated */
     showInfobox(val) {
+        throw new Error('do not use this function')
         return this.displayInfobox(val);
     }
 
@@ -5002,6 +5033,9 @@ export class Board extends Events {
      */
     moveOrigin(x, y, diff = false) {
         var ox, oy, ul, lr;
+
+        if (dbug) console.warn(`%c board: moveOrigin(x:${x}, y:${y}, diff:${diff}`, dbugColor)
+
         if (Type.exists(x) && Type.exists(y)) {
             ox = this.origin.scrCoords[1];
             oy = this.origin.scrCoords[2];
@@ -5020,7 +5054,6 @@ export class Board extends Events {
                 [this.canvasWidth, this.canvasHeight],
                 this
             ).usrCoords;
-            console.log(this)
             if (
                 ul[1] < this.maxboundingbox[0] - JSXMath.eps ||
                 ul[2] > this.maxboundingbox[1] + JSXMath.eps ||
@@ -6274,10 +6307,11 @@ export class Board extends Events {
      * @returns {Object} Reference to the created element. This is usually a GeometryElement, but can be an array containing
      * two or more elements.
      */
-    create(elementType: string, parents: any[], attributes: LooseObject = {}) {
+    create(elementType: string, parents: any[] = [], attributes: LooseObject = {}) {
         var el, i;
 
         elementType = elementType.toLowerCase();
+
 
         if (!Type.exists(parents)) {
             parents = [];
@@ -6312,7 +6346,7 @@ export class Board extends Events {
 
         if (Type.isFunction(JXG_elements[elementType])) {
             el = JXG_elements[elementType](this, parents, attributes);
-        if (dbug) console.warn(`%c board: creating elementType '${elementType}', el.id = '${el.id}'`, dbugColor)
+            if (dbug) console.warn(`%c board: creating elementType '${elementType}', el.id = '${el.id}'`, dbugColor)
         } else {
             throw new Error('JSXGraph: create: Unknown element type given: ' + elementType);
         }
@@ -7128,6 +7162,9 @@ export class Board extends Events {
             // Search by ID
             if (Type.exists(this.objects[s])) {
                 s = this.objects[s];
+
+                if (dbug) console.warn(`%c board: select(str: '${str}') found '${s['id']}`, dbugColor)
+
                 // Search by name
             } else if (Type.exists(this.elementsByName[s])) {
                 s = this.elementsByName[s];
@@ -7439,7 +7476,7 @@ export class Board extends Events {
         var selectionattr;
 
         if (!Type.exists(this.selectionPolygon)) {
-            selectionattr = Type.copyAttributes(Options.board, attr)
+            selectionattr = Type.initVisProps(Options.board, attr)
             if (selectionattr.enabled === true) {
                 this.selectionPolygon = this.create(
                     'polygon',
@@ -8194,7 +8231,7 @@ export class Board extends Events {
         board.maxboundingbox = attr.maxboundingbox;
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
-        board.renderer.drawNavigationBar(board,board.visprop.navbar);
+        board.renderer.drawNavigationBar(board, board.visprop.navbar);
         JXG.boards[board.id] = board;
     }
 

@@ -93,9 +93,9 @@ export class Point extends CoordsElement {
 
 
         // tbtb - this wasn't in original, but font is wrong
-        this.visProp = Type.copyAttributes(Options.elements, Options.point, attributes);
+        this.visProp = Type.initVisProps(Options.elements, Options.point, attributes);
 
-        this.addChild(this.createLabel());  // add label as a descendant
+        this.createLabel();  // add label
 
 
     }
@@ -501,10 +501,10 @@ export class Point extends CoordsElement {
  *   var fpex2_p3 = fpex2_board.create('point', [fpex2_p2, fpex2_trans]);
  * </script><pre>
  */
-export function createPoint(board, parents, attributes) {
+export function createPoint(board:Board, parents:any[], attributes={}):Point {
     var el, attr;
 
-    attr = Type.copyAttributes(Options.elements, Options.point, attributes);
+    attr = Type.initVisProps(Options.elements, Options.point, attributes);
 
     el = new Point(board, parents, attr);
     if (!el) {
@@ -582,7 +582,7 @@ export function createGlider(board, parents, attributes) {
 
     var el,
         coords,
-        attr = Type.copyAttributes(board.options, Options.glider, attributes);
+        attr = Type.initVisProps(board.options, Options.glider, attributes);
 
     if (parents.length === 1) {
         coords = [0, 0];
@@ -638,7 +638,7 @@ export function createGlider(board, parents, attributes) {
 export function createIntersectionPoint(board, parents, attributes) {
     var el, el1, el2, func,
         i, j,
-        attr = Type.copyAttributes(Options.board, Options.intersection, attributes);
+        attr = Type.initVisProps(Options.board, Options.intersection, attributes);
 
     // make sure we definitely have the indices
     parents.push(0, 0);
@@ -809,7 +809,7 @@ export function createOtherIntersectionPoint(board, parents, attributes) {
     var el, el1, el2, i,
         others, func, input,
         isGood = true,
-        attr = Type.copyAttributes(Options.board, Options.otherintersection, attributes);
+        attr = Type.initVisProps(Options.board, Options.otherintersection, attributes);
 
     if (parents.length !== 3) {
         isGood = false;

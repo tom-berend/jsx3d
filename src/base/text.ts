@@ -1,3 +1,5 @@
+const dbug = (elem: GeometryElement) => true     //elem.id === 'jxgBoard1P1Label';
+const dbugColor = `color:yellow;background-color:#8080f0`;
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -119,7 +121,7 @@ export class Text extends CoordsElement {
         super(board, COORDS_BY.USER, coordinates, attributes, OBJECT_TYPE.TEXT, OBJECT_CLASS.TEXT)
 
         this.elType = "text";
-        this.visProp = Type.copyAttributes(Options.board, Options.elements, Options.text, attributes)
+        this.visProp = Type.initVisProps(Options.board, Options.elements, Options.text, attributes)
 
         // this.visProp = Type.merge(this.visProp, Type.keysToLowerCase(Options.text))
 
@@ -298,7 +300,7 @@ export class Text extends CoordsElement {
                 } else {
                     digits = this.evalVisProp('digits');
                     if (this.useLocale()) {
-                        this.content = this.formatNumberLocale(text, digits);
+                        this.content = this.formatNumberLocale(text, Number(digits));
                     } else {
                         this.content = Type.toFixed(text, digits);
                     }
@@ -639,6 +641,9 @@ export class Text extends CoordsElement {
      * @returns {object} reference to the text object.
      */
     setCoords(x, y) {
+
+        if (dbug(this)) console.warn(`%c text: setCoords(${this.id} scr [${x},${y}] )`, dbugColor)
+
         var coordsAnchor, dx, dy;
         if (Array.isArray(x) && x.length > 1) {
             y = x[1];
@@ -1396,7 +1401,7 @@ export class Text extends CoordsElement {
             numRadius = 4;
 
         if (
-            this === this.board.infobox ||
+            // tbtb ??? this === this.board.infobox ||
             !this.element ||
             !this.visPropCalc.visible ||
             !this.evalVisProp('islabel')
@@ -1898,8 +1903,6 @@ export function createText(board: Board, parents: any[], attributes: TextOptions
 
 
     t = new Text(board, coords, attributes, content);
-    console.log('t.visprop', t.visProp)
-
 
     if (!t) {
         throw new Error(
@@ -1966,7 +1969,7 @@ export class HTMLSlider extends Text {
 
         var
             par,
-            attr = Type.copyAttributes(Options.board, attributes, Options.htmlslider);
+            attr = Type.initVisProps(Options.board, attributes, Options.htmlslider);
 
         if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
             throw new Error(
@@ -2036,7 +2039,6 @@ export class HTMLSlider extends Text {
     };
 
 }
-
 
 JXG_registerElement("text", createText);
 JXG_registerElement("htmlslider", createText);

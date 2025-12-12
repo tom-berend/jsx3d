@@ -46,6 +46,7 @@ import { Numerics } from "../math/numerics.js";
 import { LayerOptions } from "../optionInterfaces.js";
 import { GeometryElement } from "../base/element.js";
 import { Board } from "../base/board.js";
+import {Env} from "../utils/env.js"
 
 import { Dim, SVGType } from "../interfaces.js"
 
@@ -350,19 +351,23 @@ export class SVGRenderer extends AbstractRenderer {
         }
         node2 = this.createPrim("marker", id);
 
-        node2.setAttributeNS(null, "stroke", el.evalVisProp('strokecolor'));
-        node2.setAttributeNS(
-            null,
-            "stroke-opacity",
-            el.evalVisProp('strokeopacity')
-        );
-        node2.setAttributeNS(null, "fill", el.evalVisProp('strokecolor'));
-        node2.setAttributeNS(null, "fill-opacity", el.evalVisProp('strokeopacity'));
-        node2.setAttributeNS(null, "stroke-width", 0); // this is the stroke-width of the arrow head.
+        // 'context-stroke': property is inherited from line or curve
+        if (Env.isWebkitApple()) {
+            // 2025: Safari does not support 'context-stroke'
+            node2.setAttributeNS(null, 'fill', el.evalVisProp('strokecolor'));
+            node2.setAttributeNS(null, 'stroke', el.evalVisProp('strokecolor'));
+        } else {
+            node2.setAttributeNS(null, 'fill', 'context-stroke');
+            node2.setAttributeNS(null, 'stroke', 'context-stroke');
+        }
+
+        // node2.setAttributeNS(null, 'fill-opacity', 'context-stroke'); // Not available
+        // node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+        node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
         // Should be zero to simplify the calculations
 
-        node2.setAttributeNS(null, "orient", "auto");
-        node2.setAttributeNS(null, "markerUnits", "strokeWidth"); // 'strokeWidth' 'userSpaceOnUse');
+        node2.setAttributeNS(null, 'orient', 'auto');
+        node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
 
         /*
            Types 1, 2:
@@ -534,16 +539,21 @@ export class SVGRenderer extends AbstractRenderer {
             if (Type.isString(color)) {
                 if (type !== 7) {
                     this._setAttribute(function () {
-                        node.setAttributeNS(null, "stroke", color);
-                        node.setAttributeNS(null, "fill", color);
-                        node.setAttributeNS(null, "stroke-opacity", opacity);
-                        node.setAttributeNS(null, "fill-opacity", opacity);
+                        if (Env.isWebkitApple()) {
+                            // 2025: Safari does not support 'context-stroke'
+                            node.setAttributeNS(null, 'fill', color);
+                        } else {
+                            node.setAttributeNS(null, 'fill', 'context-stroke');
+                        }
                     }, el.visPropOld.fillcolor);
                 } else {
                     this._setAttribute(function () {
-                        node.setAttributeNS(null, "fill", "none");
-                        node.setAttributeNS(null, "stroke", color);
-                        node.setAttributeNS(null, "stroke-opacity", opacity);
+                        node.setAttributeNS(null, 'fill', 'none');
+                        if (Env.isWebkitApple()) {
+                            node.setAttributeNS(null, 'stroke', color);
+                        } else {
+                            node.setAttributeNS(null, 'stroke', 'context-stroke');
+                        }
                     }, el.visPropOld.fillcolor);
                 }
             }
@@ -2822,5 +2832,6 @@ export class SVGRenderer extends AbstractRenderer {
         }
 
         return this;
+
     }
 }

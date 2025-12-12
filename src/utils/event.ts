@@ -1,3 +1,7 @@
+const dbug = false;
+const dbugColor = `color:pink;background-color:darkblue`;
+
+
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -68,7 +72,8 @@ export class Events {
      * @returns Reference to the object.
      */
     trigger(event: string[], args: argVals[]) {
-        console.log()
+        if (dbug) console.warn(`%c event: trigger(event: ${JSON.stringify(event)}, args: ${JSON.stringify(args)}`, dbugColor)
+
 
         let len1 = event.length;
         for (let j = 0; j < len1; j++) {
@@ -103,6 +108,8 @@ export class Events {
      * @returns Reference to the object.
      */
     on(event: string, handler: Function, context: Object = this) {
+        if (dbug) console.warn(`%c event: on(event: ${event}`, dbugColor)
+
         // have we initialized this event yet?
         if (!Array.isArray(this.eventHandlers[event])) {
             this.eventHandlers[event] = [];
@@ -157,14 +164,18 @@ export class Events {
      * @param {Object} o
      */
     eventify(o: Board | GeometryElement) {
+        if (dbug) console.warn(`%c event: eventify ${o.id}`, dbugColor)
+
         o.eventHandlers = {
             clicks: 0 // Needed to handle dblclicks
         };
-        //// TODO: do we need this code?  we have clean inheritance
+        //// TODO: do we need this code?  we have clean inheritance.  o IS SAME AS this
+        // what does it mean?  board.on is a function
+
         // o.on = this.on;
-        // o.off = this.off;
-        // o.triggerEventHandlers = this.trigger;
+        o.off = this.off;
+        o.triggerEventHandlers = this.trigger;
         // o.trigger = this.trigger;
-        // o.suspended = {};
+        o.suspended = {};
     }
 }

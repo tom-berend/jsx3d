@@ -1,4 +1,4 @@
-const dbug = true;
+const dbug = false;
 const dbugColor = `color:yellow;background-color:green`;
 /*
     Copyright 2008-2025
@@ -237,7 +237,7 @@ export class GeometryElement extends Events {
     */
     public id: string
 
-    public hiddenByParent
+    public hiddenByParent = true
     /**
      * Stores the SVG (or VML) rendering node for the element. This enables low-level
      * access to SVG nodes. The properties of such an SVG node can then be changed
@@ -471,13 +471,13 @@ export class GeometryElement extends Events {
     constructor(board: Board, attributes: GeometryElementOptions, otype: OBJECT_TYPE, oclass: OBJECT_CLASS) {
         super()
 
-        var name, key, attr;
+        let name, key, attr;
 
         if (board == undefined) {
             throw new Error('someone did not send Board??')
         }
 
-        if (dbug) console.warn(`%c element: constructor ${ JSON.stringify(attributes).substring(0, 30) }`, dbugColor)
+        if (dbug) console.warn(`%c element: constructor ${JSON.stringify(attributes).substring(0, 30)}`, dbugColor)
 
         this.board = board;
 
@@ -1365,7 +1365,7 @@ export class GeometryElement extends Events {
      */
     setAttribute(attr: LooseObject) {
 
-        if (dbug) console.warn(`%c element: setAttribute ${ JSON.stringify(attr).substring(0, 30) }`, dbugColor)
+        if (dbug) console.warn(`%c element: setAttribute ${JSON.stringify(attr).substring(0, 30)}`, dbugColor)
 
         var i, j, le, key, value, arg,
             opacity, pair, oldvalue,
@@ -1731,14 +1731,14 @@ export class GeometryElement extends Events {
             throw new Error('evalVisProp, key should be a string')
 
 
-        // tbtb check that all visprops are lowercase
-        for (let propKey in this.visProp) {
-            if (propKey !== propKey.toLowerCase()) { // object is not lowercase
-                console.error(`visProps '${propKey}' not lower case `, this, this.visProp)
-                this.visProp = Type.keysToLowerCase(this.visProp) // now lowercase
-                break;
-            }
-        }
+        // // tbtb check that all visprops are lowercase
+        // for (let propKey in this.visProp) {
+        //     if (propKey !== propKey.toLowerCase()) { // object is not lowercase
+        //         console.error(`visProps '${propKey}' not lower case `, this, this.visProp)
+        //         this.visProp = Type.keysToLowerCase(this.visProp) // now lowercase
+        //         break;
+        //     }
+        // }
 
 
 
@@ -1931,14 +1931,16 @@ export class GeometryElement extends Events {
      */
     createLabel() {
 
-
-
-        let attr = Type.copyAttributes(Options.label);
+        let attr:LooseObject
         attr.id = this.id + "Label";
         attr.isLabel = true;
         attr.anchor = this;
         attr.priv = this.visProp.priv;
 
+        if (this.label === undefined) {
+            this.visProp.label = Type.initVisProps(this.label, Options.label,attr)
+            this.label = attr.id;
+        }
 
         if (this.visProp.withlabel) {
             this.label = new Text(
@@ -2631,7 +2633,7 @@ export class GeometryElement extends Events {
      * @returns {String|Number} string containing the formatted number according to the locale
      * or the number itself of the formatting is not possible.
      */
-    formatNumberLocale(value, digits) {
+    formatNumberLocale(value:number, digits?):string {
         var loc, opt, key,
             optCalc = {}
         // These options are case sensitive:
@@ -2688,7 +2690,7 @@ export class GeometryElement extends Events {
             return Intl.NumberFormat(loc, optCalc).format(value);
         }
 
-        return value;
+        return value.toString();
     }
 
     /**

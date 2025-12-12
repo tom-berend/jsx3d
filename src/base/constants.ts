@@ -32,6 +32,10 @@
  */
 
 
+// using enum allows us to treat the class as an enforced type
+// but enums generate ugly code
+
+
 export enum COORDS_BY {
     /**  Constant: user coordinates relative to the coordinates system defined by the bounding box.  */
    SCREEN = 0x0001,

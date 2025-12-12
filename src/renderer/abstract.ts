@@ -1,5 +1,7 @@
-const dbug = true;
-const dbugColor = `color:green;background-color:#f9de90`;
+const dbug = false;
+const dbugColor = `color:green;background-color:#f9c0c0`;
+const warnP0Label = false;  // remove these
+
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -1111,8 +1113,8 @@ export abstract class AbstractRenderer {
 
         if (dbug) console.warn(`%c abstract: updateText(el)`, dbugColor, el.id)
 
-        if (el.id === 'jxgBoard1P0Label')
-            console.warn('%c jxgBoard1P0Label','background-color:red;')
+        if (warnP0Label && el.id === 'jxgBoard1P0Label')
+            console.warn('%c jxgBoard1P0Label', dbugColor)
 
         if (el.visPropCalc.visible) {
             this.updateTextStyle(el, false);
@@ -1157,7 +1159,7 @@ export abstract class AbstractRenderer {
                         el.visPropOld.left = ax + v;
 
                         if (dbug) console.log(`%c abstract: updateText:left/right ${v + 'px'}`, dbugColor, el)
-                         console.log(`%c abstract: updateText:left/right ${v + 'px'}`, 'background-color:red;', el)
+                        if (warnP0Label) console.log(`%c abstract: updateText:left/right ${v + 'px'}`, 'background-color:red;', el)
                     }
 
                     // Vertical
@@ -1195,7 +1197,7 @@ export abstract class AbstractRenderer {
                         }
                         el.visPropOld.top = ay + v;
                         if (dbug) console.log(`%c abstract: updateText:top/bottom ${v + 'px'}`, dbugColor, el)
-                         console.log(`%c abstract: updateText:top/bottomt ${v + 'px'}`, 'background-color:red;', el)
+                        if (warnP0Label) console.log(`%c abstract: updateText:top/bottomt ${v + 'px'}`, 'background-color:red;', el)
                     }
                 }
 
@@ -1902,8 +1904,8 @@ export abstract class AbstractRenderer {
             // and ShadowDOM fragments.
             str = this.container.id + '_' + id;
             // Mask special symbols like '/' and '\' in id
-            if (Type.exists(CSS) && Type.exists(CSS.escape)) {
-                str = CSS.escape(str);
+            if ((window as any).CSS !== undefined && Type.exists((window as any).CSS.escape)) {
+                str = (window as any).CSS.escape(str);
             }
             return this.container.querySelector('#' + str);
         }

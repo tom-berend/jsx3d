@@ -72,32 +72,16 @@ import { isPrimitive } from 'util';
 export class Type {
 
 
-    // /**
-    //  * Checks if the given object is an JSXGraph board.
-    //  * @param {Object} v
-    //  * @returns {Boolean}
-    //  */
-    // static isBoard(v: any): boolean {
-    //     return (v instanceof Board)
-
-    //     //     this.isObject(v) &&
-    //     //     this.isNumber(v.BOARD_MODE_NONE) &&
-    //     //     this.isObject(v.objects) &&
-    //     //     this.isObject(v.jc) &&
-    //     //     this.isFunction(v.update) &&
-    //     //     !!v.containerObj &&
-    //     //     this.isString(v.id)
-    //     // );
-    // }
-
     /**
      * Checks if the given string is an id within the given board.
      * @param {JXG.Board} board
      * @param {String} s
      * @returns {Boolean}
      */
-    static isId(board, s: any): boolean {
-        return typeof s === 'string' && !!board.objects[s];
+    static isId(board:Board, s: string): boolean {
+        // TODO: this belongs on Board object  also below
+        // undefined is falsy, but empty object is truthy.  be carefu
+        return !!board.objects[s];
     }
 
     /**
@@ -189,6 +173,7 @@ export class Type {
      * @returns {Boolean} True, if v is of type JXG.Point.
      */
     static isPoint(v) {
+        console.log(v !== null, typeof v === 'object', Type.exists(v.elementClass),v.elementClass,OBJECT_CLASS.POINT)
         if (v !== null && typeof v === 'object' && Type.exists(v.elementClass)) {
             return v.elementClass === OBJECT_CLASS.POINT;
         }
@@ -1371,90 +1356,28 @@ export class Type {
     }
 
     /**
-     * Generates an attributes object that is filled with default values from the Options object
-     * and overwritten by the user specified attributes.
-     * @param {Object} attributes user specified attributes
-     * @param {Object} options defaults options
-     * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'. Must be provided in lower case!
-     * @returns {Object} The resulting attributes object
+     * Generates a visProp object (all keys in lowercase) from objects presented in order and overwritten
+     * by subsequent objects.  Put the most general defaults first and user specified attributes last.
+     * @returns {Object} The resulting visProp object
      */
-    static copyAttributes(...s: LooseObject[]) {
+    static initVisProps(...s: LooseObject[]) {
         // options is ALWAYS the Options object but lowercase
         if (dbug) console.warn(`%c type: copyAttibutes(attributes,  s='${JSON.stringify(s).substring(0, 30)}' )'`, dbugColor, s)
 
-        // if (dbug) console.warn(`%c type: copyAttibutes(attributes,  s='${s}' returns a)'`, dbugColor, attributes, a)
+        // tbtb - what to do with this?
+        let primitives = {
+            circle: 1,
+            curve: 1,
+            foreignobject: 1,
+            image: 1,
+            line: 1,
+            point: 1,
+            polygon: 1,
+            text: 1,
+            ticks: 1,
+            integral: 1
+        };
 
-        let arg, i, len, o, isAvail,
-            primitives = {
-                circle: 1,
-                curve: 1,
-                foreignobject: 1,
-                image: 1,
-                line: 1,
-                point: 1,
-                polygon: 1,
-                text: 1,
-                ticks: 1,
-                integral: 1
-            };
-
-
-        // if (Type.exists(attributes)) {
-        //     a = Type.keysToLowerCase(attributes)
-        // }else{
-        //     throw new Error()
-        // }
-
-        // s.map((prim) => {
-        //     if (prim in primitives) {
-        //         // Default options from Options.elements
-        //         Type.mergeAttr(a, Options[prim], true);
-        //     }
-        // })
-
-
-        // Only the layer of the main element is set.
-        // s.map((visProps) => {
-        //     if (this.exists(Options.layers[visProps])) {
-        //         a.layer = Options.layers[visProps];
-        //     }
-        // })
-
-
-        // // Default options from the specific element like 'line' in
-        // //     copyAttribute(attributes, board.options, 'line')
-        // // but also like in
-        // //     Type.copyAttributes(attributes, board.options, 'view3d', 'az', 'slider');
-        // o = options;
-        // isAvail = true;
-        // for (i = 2; i < len; i++) {
-        //     arg = arguments[i];
-        //     if (this.exists(o[arg])) {
-        //         o = o[arg];
-        //     } else {
-        //         isAvail = false;
-        //         break;
-        //     }
-        // }
-        // if (isAvail) {
-        //     a = Type.deepCopy(a, o, true);
-        // }
-
-        // Merge the specific options given in the parameter 'attributes'
-        // into the default options.
-        // Additionally, we step into a sub-element of attribute like line.point1 -
-        // in case it is supplied as in
-        //     copyAttribute(attributes, board.options, 'line', 'point1')
-        // In this case we would merge attributes.point1 into the global line.point1 attributes.
-
-        // o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
-        // isAvail = false;
-        // s.map((arg) => {            // TODO: this should be a filter
-        //     if (this.exists(o[arg])) {
-        //         isAvail = true;
-        //         o = o[arg];
-        //     }
-        // })
 
         let a: LooseObject = {}
         s.map((visProps) => {
@@ -1464,466 +1387,109 @@ export class Type {
         return a;
 
 
-    //     // Special treatment of labels
-    //     if (!s.includes('board')) {
-    //         if (a.label == undefined) {
-    //             console.log(a, a.label, Options.label)
-    //             a.label = Options.label
-    //         } else {      // add label to Options.board
-    //             Type.mergeAttr(a.label, Options.label, true)
-    //         }
-    //     }
-    //     return a;
-    // }
 
 
 
 
-    // /**
-    //  * Recursively merges obj2 into obj1 in-place. Contrary to {@link JXG#deepCopy} this won't create a new object
-    //  * but instead will overwrite obj1.
-    //  * <p>
-    //  * In contrast to method JXG.mergeAttr, merge recurses into any kind of object, e.g. DOM object and JSXGraph objects.
-    //  * So, please be careful.
-    //  * @param {Object} obj1
-    //  * @param {Object} obj2
-    //  * @returns {Object}
-    //  * @see JXG.mergeAttr
-    //  *
-    //  * @example
-    //  * JXG.Options = JXG.merge(JXG.Options, {
-    //  *     board: {
-    //  *         showNavigation: false,
-    //  *         showInfobox: true
-    //  *     }
-    //  *     point: {
-    //  *         face: 'o',
-    //  *         size: 4,
-    //  *         fillColor: '#eeeeee',
-    //  *         highlightFillColor: '#eeeeee',
-    //  *         strokeColor: 'white',
-    //  *         highlightStrokeColor: 'white',
-    //  *         showInfobox: 'inherit'
-    //  *     }
-    //  * });
-    //  *
-    //  * </pre><div id="JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-    //  * <script type="text/javascript">
-    //  *     (function() {
-    //  *         var board = JXG.JSXGraph.initBoard('JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b',
-    //  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-    //  *     JXG.Options = JXG.merge(JXG.Options, {
-    //  *         board: {
-    //  *             showNavigation: false,
-    //  *             showInfobox: true
-    //  *         }
-    //  *         point: {
-    //  *             face: 'o',
-    //  *             size: 4,
-    //  *             fillColor: '#eeeeee',
-    //  *             highlightFillColor: '#eeeeee',
-    //  *             strokeColor: 'white',
-    //  *             highlightStrokeColor: 'white',
-    //  *             showInfobox: 'inherit'
-    //  *         }
-    //  *     });
-    //  *
-    //  *
-    //  *     })();
-    //  *
-    //  * </script><pre>
-    //  */
-    // static merge(obj1, obj2) {
-    //     var i, j, o, oo;
+        // /**
+        //  * Recursively merges obj2 into obj1 in-place. Contrary to {@link JXG#deepCopy} this won't create a new object
+        //  * but instead will overwrite obj1.
+        //  * <p>
+        //  * In contrast to method JXG.mergeAttr, merge recurses into any kind of object, e.g. DOM object and JSXGraph objects.
+        //  * So, please be careful.
+        //  * @param {Object} obj1
+        //  * @param {Object} obj2
+        //  * @returns {Object}
+        //  * @see JXG.mergeAttr
+        //  *
+        //  * @example
+        //  * JXG.Options = JXG.merge(JXG.Options, {
+        //  *     board: {
+        //  *         showNavigation: false,
+        //  *         showInfobox: true
+        //  *     }
+        //  *     point: {
+        //  *         face: 'o',
+        //  *         size: 4,
+        //  *         fillColor: '#eeeeee',
+        //  *         highlightFillColor: '#eeeeee',
+        //  *         strokeColor: 'white',
+        //  *         highlightStrokeColor: 'white',
+        //  *         showInfobox: 'inherit'
+        //  *     }
+        //  * });
+        //  *
+        //  * </pre><div id="JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+        //  * <script type="text/javascript">
+        //  *     (function() {
+        //  *         var board = JXG.JSXGraph.initBoard('JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b',
+        //  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+        //  *     JXG.Options = JXG.merge(JXG.Options, {
+        //  *         board: {
+        //  *             showNavigation: false,
+        //  *             showInfobox: true
+        //  *         }
+        //  *         point: {
+        //  *             face: 'o',
+        //  *             size: 4,
+        //  *             fillColor: '#eeeeee',
+        //  *             highlightFillColor: '#eeeeee',
+        //  *             strokeColor: 'white',
+        //  *             highlightStrokeColor: 'white',
+        //  *             showInfobox: 'inherit'
+        //  *         }
+        //  *     });
+        //  *
+        //  *
+        //  *     })();
+        //  *
+        //  * </script><pre>
+        //  */
+        // static merge(obj1, obj2) {
+        //     var i, j, o, oo;
 
-    //     for (i in obj2) {
-    //         if (obj2.hasOwnProperty(i)) {
-    //             o = obj2[i];
-    //             if (Array.isArray(o)) {
-    //                 if (obj1[i] == undefined) {
-    //                     obj1[i] = [];
-    //                 }
+        //     for (i in obj2) {
+        //         if (obj2.hasOwnProperty(i)) {
+        //             o = obj2[i];
+        //             if (Array.isArray(o)) {
+        //                 if (obj1[i] == undefined) {
+        //                     obj1[i] = [];
+        //                 }
 
-    //                 for (j = 0; j < o.length; j++) {
-    //                     oo = obj2[i][j];
-    //                     if (typeof obj2[i][j] === 'object') {
-    //                         if (obj1[i][j] == undefined) {
-    //                             obj1[i][j] = obj2[i][j]
-    //                         } else {
-    //                             obj1[i][j] = this.merge(obj1[i][j], oo);
-    //                         }
-    //                     } else {
-    //                         obj1[i][j] = obj2[i][j];
-    //                     }
-    //                 }
-    //             } else if (typeof o === 'object') {
-    //                 if (typeof obj1[i] !== 'object') {
-    //                     obj1[i] = o//{};
-    //                 }
+        //                 for (j = 0; j < o.length; j++) {
+        //                     oo = obj2[i][j];
+        //                     if (typeof obj2[i][j] === 'object') {
+        //                         if (obj1[i][j] == undefined) {
+        //                             obj1[i][j] = obj2[i][j]
+        //                         } else {
+        //                             obj1[i][j] = this.merge(obj1[i][j], oo);
+        //                         }
+        //                     } else {
+        //                         obj1[i][j] = obj2[i][j];
+        //                     }
+        //                 }
+        //             } else if (typeof o === 'object') {
+        //                 if (typeof obj1[i] !== 'object') {
+        //                     obj1[i] = o//{};
+        //                 }
 
-    //                 obj1[i] = this.merge(obj1[i], o);
-    //             } else {
-    //                 if (typeof obj1 === 'boolean') {
-    //                     // This is necessary in the following scenario:
-    //                     //   lastArrow == false
-    //                     // and call of
-    //                     //   setAttribute({lastArrow: {type: 7}})
-    //                     obj1 = {};
-    //                 }
-    //                 obj1[i] = o;
-    //             }
-    //         }
-    //     }
+        //                 obj1[i] = this.merge(obj1[i], o);
+        //             } else {
+        //                 if (typeof obj1 === 'boolean') {
+        //                     // This is necessary in the following scenario:
+        //                     //   lastArrow == false
+        //                     // and call of
+        //                     //   setAttribute({lastArrow: {type: 7}})
+        //                     obj1 = {};
+        //                 }
+        //                 obj1[i] = o;
+        //             }
+        //         }
+        //     }
 
-    //     return obj1;
-    // }
+        //     return obj1;
+        // }
 
-    // /**
-    //  * Creates a deep copy of an existing object, i.e. arrays or sub-objects are copied component resp.
-    //  * element-wise instead of just copying the reference. If a second object is supplied, the two objects
-    //  * are merged into one object. The properties of the second object have priority.
-    //  * @param  obj This object will be copied.
-    //  * @param  obj2 This object will merged into the newly created object
-    //  * @param  [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
-    //  * @returns {Object} copy of obj or merge of obj and obj2.
-    //  */
-    // static deepCopy(obj: Object, obj2: Object = {}, toLower: boolean = false): LooseObject {
-    //     var c, i, prop, i2;
-
-    //     toLower = toLower || false;
-    //     if (typeof obj !== 'object' || obj === null) {
-    //         return obj;
-    //     }
-
-    //     // Missing hasOwnProperty is on purpose in this function
-    //     if (Array.isArray(obj)) {
-    //         c = [];
-    //         for (i = 0; i < Object.keys(obj).length; i++) {  // warning: Object.keys() can be slow!
-    //             prop = obj[i];
-    //             // Attention: typeof null === 'object'
-    //             if (prop !== null && typeof prop === 'object') {
-    //                 // We certainly do not want to recurse into a JSXGraph object.
-    //                 // This would for sure result in an infinite recursion.
-    //                 // As alternative we copy the id of the object.
-    //                 if (Type.exists(prop.board)) {
-    //                     c[i] = prop.id;
-    //                 } else {
-    //                     c[i] = this.deepCopy(prop, {}, toLower);
-    //                 }
-    //             } else {
-    //                 c[i] = prop;
-    //             }
-    //         }
-    //     } else {
-    //         c = {};
-    //         for (i in obj) {
-    //             if (obj.hasOwnProperty(i)) {
-    //                 i2 = toLower ? i.toLowerCase() : i;
-    //                 prop = obj[i];
-    //                 if (prop !== null && typeof prop === 'object') {
-    //                     if (Type.exists(prop.board)) {
-    //                         c[i2] = prop.id;
-    //                     } else {
-    //                         c[i2] = this.deepCopy(prop, {}, toLower);
-    //                     }
-    //                 } else {
-    //                     c[i2] = prop;
-    //                 }
-    //             }
-    //         }
-
-    //         for (i in obj2) {
-    //             if (obj2.hasOwnProperty(i)) {
-    //                 i2 = toLower ? i.toLowerCase() : i;
-
-    //                 prop = obj2[i];
-    //                 if (prop !== null && typeof prop === 'object') {
-    //                     if (Array.isArray(prop) || !Type.exists(c[i2])) {
-    //                         c[i2] = this.deepCopy(prop, {}, toLower);
-    //                     } else {
-    //                         c[i2] = this.deepCopy(c[i2], prop, toLower);
-    //                     }
-    //                 } else {
-    //                     c[i2] = prop;
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     return c;
-    // }
-
-    // /**
-    //  * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
-    //  * <p>
-    //  * In contrast to method JXG.merge, mergeAttr does not recurse into DOM objects and JSXGraph objects. Instead
-    //  * handles (pointers) to these objects are used.
-    //  *
-    //  * @param {Object} attr Object with attributes - usually containing default options - that will be changed in-place.
-    //  * @param {Object} special Special option values which overwrite (recursively) the default options
-    //  * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
-    //  * @param {Boolean} [ignoreUndefinedSpecials=false] If true the values in special that are undefined are not used.
-    //  *
-    //  * @see JXG.merge
-    //  *
-    //  */
-    // static mergeAttr(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false): void {
-    //     var e, e2, o;
-
-    //     for (e in special) {
-    //         if (special.hasOwnProperty(e)) {
-    //             e2 = (toLower) ? e.toLowerCase() : e;
-    //             // Key already exists, but not in lower case
-    //             if (e2 !== e && attr.hasOwnProperty(e)) {
-    //                 if (attr.hasOwnProperty(e2)) {
-    //                     // Lower case key already exists - this should not happen
-    //                     // We have to unify the two key-value pairs
-    //                     // It is not clear which has precedence.
-    //                     this.mergeAttr(attr[e2], attr[e], toLower);
-    //                 } else {
-    //                     attr[e2] = attr[e];
-    //                 }
-    //                 delete attr[e];
-    //             }
-
-    //             o = special[e];
-    //             if (this.isObject(o) && o !== null &&
-    //                 // Do not recurse into a document object or a JSXGraph object
-    //                 !this.isDocumentOrFragment(o) && !this.exists(o.board) &&
-    //                 // Do not recurse if a string is provided as "new String(...)"
-    //                 typeof o.valueOf() !== 'string') {
-    //                 if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
-    //                     // The last test handles the case:
-    //                     //   attr.draft = false;
-    //                     //   special.draft = { strokewidth: 4}
-    //                     attr[e2] = {};
-    //                 }
-    //                 this.mergeAttr(attr[e2], o, toLower);
-    //             } else if (!ignoreUndefinedSpecials || this.exists(o)) {
-    //                 // Flat copy
-    //                 // This is also used in the cases
-    //                 //   attr.shadow = { enabled: true ...}
-    //                 //   special.shadow = false;
-    //                 // and
-    //                 //   special.anchor is a JSXGraph element
-    //                 attr[e2] = o;
-    //             }
-    //         }
-    //     }
-    // }
-
-    // // mergeVisProps is testable.
-    // static mergeVisProps(attr: object, special: object, toLower: boolean = true, ignoreUndefinedSpecials: boolean = false, depth = 0,): object {
-    //     let maxDepth = 8
-    //     if (depth > 5) {
-    //         console.warn(depth, attr, special)
-    //     }
-
-    //     let result = {}
-    //     let result2 = {}
-
-    //     for (let e in attr) {
-    //         let e2 = toLower ? e.toLowerCase() : e;
-    //         if ( depth < maxDepth && this.isObject(attr[e]) && attr[e] !== null && Object.keys(attr[e]).length > 0  && !this.isDocumentOrFragment(attr[e]) && !(attr instanceof Element)) {  // missing test for 'new String'
-    //             // console.log(`copying ${e} from attr`)
-    //             result[e2] = this.mergeVisProps({}, attr[e], toLower, true, depth + 1);
-    //         } else {
-    //             result[e2] = attr[e];
-    //         }
-    //     }
-
-
-    //     for (let e in special) {
-    //         let e2 = toLower ? e.toLowerCase() : e;
-    //         if (depth < maxDepth && this.isObject(special[e]) && special[e] !== null && Object.keys(special[e]).length > 0  && !this.isDocumentOrFragment(special[e]) && !(special instanceof Element)) {  // missing test for 'new String'
-    //             // console.log(`copying ${e} from special`)
-    //             result2[e2] = this.mergeVisProps(result2[e2], special[e], toLower, true, depth + 1);
-    //         } else {
-    //             result2[e2] = special[e];
-    //         }
-    //     }
-    //     return result2
-    // }
-
-
-    // // for (let e in special) {
-    // //     if (special.hasOwnProperty(e)) {    // only direct properties, not inherited ones
-    // //         let e2 = toLower ? e.toLowerCase() : e;
-    // //         // Key already exists, but not in lower case
-    // //         if (e2 !== e && result.hasOwnProperty(e)) {
-    // //             if (result.hasOwnProperty(e2)) {
-    // //                 // Lower case key already exists - this should not happen
-    // //                 // We have to unify the two key-value pairs
-    // //                 // It is not clear which has precedence.
-    // //                 result = this.mergeAttrHelper(result[e2], result[e], toLower);
-    // //             } else {
-    // //                 result[e2] = result[e];
-    // //             }
-    // //             delete result[e];
-    // //         }
-
-    // //         let o = special[e];
-    // //         if (
-    // //             this.isObject(o) &&
-    // //             o !== null &&
-    // //             // Do not recurse into a document object or a JSXGraph object
-    // //             !this.isDocumentOrFragment(o) &&
-    // //             !Type.exists(o.board) &&
-    // //             // Do not recurse if a string is provided as "new String(...)"
-    // //             typeof o.valueOf() !== 'string'
-    // //         ) {
-    // //             if (
-    // //                 result[e2] === undefined ||
-    // //                 result[e2] === null ||
-    // //                 !this.isObject(result[e2])
-    // //             ) {
-    // //                 // The last test handles the case:
-    // //                 //   attr.draft = false;
-    // //                 //   special.draft = { strokewidth: 4}
-    // //                 result[e2] = {};
-    // //             }
-    // //             result[e2] = this.mergeAttrHelper(result[e2], o, toLower);
-    // //         } else if (!ignoreUndefinedSpecials || Type.exists(o)) {
-    // //             // Flat copy
-    // //             // This is also used in the cases
-    // //             //   attr.shadow = { enabled: true ...}
-    // //             //   special.shadow = false;
-    // //             // and
-    // //             //   special.anchor is a JSXGraph element
-    // //             result[e2] = o;
-    // //         }
-    // //     }
-    // // }
-    // // }
-
-    // /**
-    //  * Convert a n object to a new object containing only
-    //  * lower case properties.
-    //  *
-    //  * @param {Object} obj
-    //  * @returns Object
-    //  * @example
-    //  * var attr = JXG.keysToLowerCase({radiusPoint: {visible: false}});
-    //  *
-    //  * // return {radiuspoint: {visible: false}}
-    //  */
-    // static keysToLowerCase(obj: object): object {
-    //     return Type.mergeVisProps({}, obj)  // merge converts to lower by default
-    // }
-
-
-    // /**
-    //  * Generates an attributes object that is filled with default values from the Options object
-    //  * and overwritten by the user specified attributes.
-    //  * @param {Object} attributes user specified attributes
-    //  * @param {Object} options defaults options
-    //  * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'. Must be provided in lower case!
-    //  * @returns {Object} The resulting attributes object
-    //  */
-
-    // // examples:
-    // // attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
-    // // attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-    // // attr_curve = Type.copyAttributes(attributes, board.options, "conic");
-
-    // static copyAttributes(attributes: LooseObject, options?: LooseObject, ...s: string[]): LooseObject {
-    //     var defaultOptions: LooseObject,
-    //         arg,
-    //         i,
-    //         len,
-    //         o,
-    //         isAvail,
-    //         primitives = {
-    //             circle: 1,
-    //             curve: 1,
-    //             foreignobject: 1,
-    //             image: 1,
-    //             line: 1,
-    //             point: 1,
-    //             polygon: 1,
-    //             text: 1,
-    //             ticks: 1,
-    //             integral: 1,
-    //         };
-
-    //     len = arguments.length;
-    //     if (len < 3 || primitives[s[0]]) {
-    //         // Default options from Options.elements
-    //         defaultOptions = this.deepCopy(Options.elements, {}, true);
-    //     } else {
-    //         defaultOptions = {};
-    //     }
-
-    //     // Only the layer of the main element is set.
-    //     if (len < 4 && Type.exists(s) && Type.exists(Options.layer[s[2]])) {
-    //         defaultOptions.layer = Options.layer[s[2]];
-    //     }
-
-    //     // Default options from the specific element like 'line' in
-    //     //     copyAttribute(attributes, board.options, 'line')
-    //     // but also like in
-    //     //     Type.copyAttributes(attributes, board.options, 'view3d', 'az', 'slider');
-    //     o = options;
-    //     isAvail = true;
-    //     for (i = 2; i < len; i++) {
-    //         arg = arguments[i];
-    //         let a = Options[arg]
-    //         if (Options[arg]) {
-    //             o = Options[arg];
-    //         } else {
-    //             isAvail = false;
-    //             break;
-    //         }
-    //     }
-    //     if (isAvail) {
-    //         defaultOptions = this.deepCopy(defaultOptions, o, true);
-    //     }
-
-    //     // Merge the specific options given in the parameter 'attributes'
-    //     // into the default options.
-    //     // Additionally, we step into a sub-element of attribute like line.point1 -
-    //     // in case it is supplied as in
-    //     //     copyAttribute(attributes, board.options, 'line', 'point1')
-    //     // In this case we would merge attributes.point1 into the global line.point1 attributes.
-    //     // o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
-    //     // isAvail = true;
-    //     // for (i = 2; i < len; i++) {
-    //     //     arg = arguments[i].toLowerCase();
-
-    //     //     if (o[arg]) {
-    //     //         o = o[arg];
-    //     //     } else {
-    //     //         isAvail = false;
-    //     //         break;
-    //     //     }
-    //     // }
-    //     // if (isAvail) {
-    //     this.mergeAttr(defaultOptions, attributes, true);
-    //     // }
-
-    //     if (arguments[2] === 'board') {
-    //         // For board attributes we are done now.
-    //         return defaultOptions;
-    //     }
-
-    //     // Special treatment of labels
-    //     o = options;
-    //     isAvail = true;
-    //     for (i = 2; i < len; i++) {
-    //         arg = arguments[i];
-    //         if (Type.exists(o[arg])) {
-    //             o = o[arg];
-    //         } else {
-    //             isAvail = false;
-    //             break;
-    //         }
-    //     }
-    //     if (isAvail && Type.exists(o.label)) {
-    //         defaultOptions.label = this.deepCopy(o.label, defaultOptions.label, true);
-    //     }
-    //     defaultOptions.label = this.deepCopy(Options.label, defaultOptions.label, true);
-
-    //     return defaultOptions;
     }
 
     /**

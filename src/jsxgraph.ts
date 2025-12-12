@@ -144,6 +144,7 @@ export class JSXGraph {
     //     return renderer;
     // }
 
+
     /**
      * Merge the user supplied attributes with the attributes in options.js
      *
@@ -154,7 +155,7 @@ export class JSXGraph {
      */
     static _setAttributes(attributes, options = {}): object {
         // merge attributes
-        let attr = Type.copyAttributes(Options.board, attributes),
+        let attr = Type.initVisProps(Options.board, attributes),
             // These attributes - which are objects - have to be copied separately.
             list = [
                 'drag',
@@ -174,11 +175,11 @@ export class JSXGraph {
 
         for (i = 0; i < len; i++) {
             key = list[i];
-            attr[key] = Type.copyAttributes(Options.board, key);
+            attr[key] = Type.initVisProps(Options.board, key);
         }
 
 
-        attr.navbar = Type.copyAttributes(attr, Options.navbar);
+        attr.navbar = Type.initVisProps(attr, Options.navbar);
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
@@ -263,20 +264,8 @@ export class JSXGraph {
             theme = JXG.themes[attributes.theme];
         }
 
-        // TODO: what are options ?!?
-        // options = Type.deepCopy(Options, theme);
 
-        options = {
-            board: Type.keysToLowerCase(Options.board),
-            point: Type.keysToLowerCase(Options.point),
-            text: Type.keysToLowerCase(Options.text),
-            layers: Type.keysToLowerCase(Options.layers),
-            navbar: Type.keysToLowerCase(Options.navbar),
-        }
-
-
-        attr = Type.copyAttributes(Options.board,attributes);
-        console.log(attr)
+        attr = Type.initVisProps(Options.board, attributes);
 
         dimensions = Env.getDimensions(box, attr.document);
 
@@ -351,8 +340,6 @@ export class JSXGraph {
             attr,
         );
 
-        // TODO: make this generic
-        board.options = options
 
         board._setARIA(box, attr);
 

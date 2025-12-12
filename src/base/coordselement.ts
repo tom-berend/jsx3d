@@ -1,3 +1,6 @@
+const dbug = (elem: GeometryElement) => elem.id === 'jxgBoard1P1Label';
+const dbugColor = `color:yellow;background-color:#803030`;
+
 /*
     Copyright 2008-2025
         Matthias Ehmann,
@@ -36,7 +39,7 @@
  */
 
 import { LooseObject } from "../interfaces.js";
-import {  JXG } from "../jxg.js";
+import { JXG } from "../jxg.js";
 import { Board } from "../base/board.js"
 import { JSXMath } from "../math/jsxmath.js";
 import { Geometry } from "../math/geometry.js";
@@ -109,6 +112,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         this.usrCoords = new Coords(COORDS_BY.USER, coordinates, board).usrCoords
         this.scrCoords = new Coords(COORDS_BY.SCREEN, coordinates, board).scrCoords
 
+        if (dbug(this)) console.warn(`%c coordselements: constructor, ${this.id}`, dbugColor)
 
         /**
          * Coordinates of the element.
@@ -221,10 +225,8 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         /*
          * this.element may have been set by the object constructor.
          */
-        // TODO: what is isLable??  not defined
-        let isLabel = false;
         if (Type.exists(this.element)) {
-            this.addAnchor(coordinates, isLabel);
+            this.addAnchor(coordinates, attributes['isLabel']);
         }
         this.isDraggable = true;
     };
@@ -241,13 +243,10 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * Updates the coordinates of the element.
      * @private
      */
-    updateCoords(fromParent) {
+    updateCoords(fromParent=false) {
+
         if (!this.needsUpdate) {
             return this;
-        }
-
-        if (!Type.exists(fromParent)) {
-            fromParent = false;
         }
 
         // if (!this.evalVisProp('frozen')) {
@@ -278,6 +277,8 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
         if (!Type.exists(this._initialized)) {
             this._initialized = true;
         }
+
+        if (dbug(this)) console.warn(`%c coordselements: updateCoords(fromParent: ${fromParent}, ${this.id} scr [${this.scrCoords[1]},${this.scrCoords[2]}] )`, dbugColor)
 
         return this;
     }
@@ -612,6 +613,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      * @private
      */
     findClosestSnapValue(pos) {
+        if (dbug(this)) console.warn(`%c coordselements: findClosestSnapValue, ${this.id}`, dbugColor)
         var i, d,
             snapValues, snapValueDistance,
             snappedTo = null;
@@ -831,6 +833,7 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
 
     updateRendererGeneric(rendererMethod) {
         //var wasReal;
+        if (dbug(this)) console.warn(`%c coordselements: updateRendererGeneric, ${this.id}`, dbugColor)
 
         if (!this.needsUpdate || !this.board.renderer) {
             return this;
@@ -1239,6 +1242,8 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
                 this.relativeCoords.usrCoords[1] += dc[1];
                 this.relativeCoords.usrCoords[2] += dc[2];
             }
+
+            if (dbug(this)) console.warn(`%c coordselements: setPositionDirectly, ${this.id}`, dbugColor)
 
             return this;
         }
@@ -1728,6 +1733,8 @@ export class CoordsElement extends GeometryElement implements CoordsMethods {
      */
     updateTransform(fromParent) {
         var c, i;
+
+        if (dbug(this)) console.warn(`%c coordselements: updateTransform( ${this.id} scr [${this.scrCoords[1]},${this.scrCoords[2]}] )`, dbugColor)
 
         if (this.transformations.length === 0 || this.baseElement === null) {
             return this;

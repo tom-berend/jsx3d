@@ -296,14 +296,21 @@ export class Env {
 
     /**
      * Detects if the user is using Safari on an Apple device.
+     * See https://evilmartians.com/chronicles/how-to-detect-safari-and-ios-versions-with-ease (2025)
      * @returns {Boolean}
-     * @deprecated
      */
     static isWebkitApple() {
-        return (
-            this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
-        );
+        var is = ('GestureEvent' in window) && // Desktop and mobile
+            (
+                ('ongesturechange' in window) || // mobile webkit browsers and webview iOS
+                (window !== undefined && // Desktop SafariisMetroApp
+                    'safari' in window &&
+                    'pushNotification' in (window as any).safari)
+            );
+        return is;
     }
+
+
 
     /**
      * Returns true if the run inside a Windows 8 "Metro" App.
@@ -470,7 +477,7 @@ export class Env {
      */
     static addEvent(obj: Node | Window, type: string, fn: Function, owner: Board, options: object | boolean = false) {
 
-        if (dbug) console.log(`%c env:addEvent(obj:node, type: ${type}, fn:Function, options:'${JSON.stringify(options)}')`, dbugColor, options)
+        if (dbug) console.log(`%c env:addEvent(obj:node, type: ${type}, fn:Function, owner: ${owner.id}, options:'${JSON.stringify(options)}')`, dbugColor, options)
 
 
         let callback = function () {

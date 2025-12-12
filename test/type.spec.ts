@@ -1,3 +1,5 @@
+import { Board } from '../src/base/board.js';
+
 ////////////////// prototype test
 describe('type suite description', () => {
     it('test description', () => {
@@ -6,9 +8,10 @@ describe('type suite description', () => {
     });
 });
 //////////////////////////////////////////////////
-import { LooseObject } from '../src/jxg.js'
+import { LooseObject } from '../src/interfaces.js'
 import { Type } from '../src/utils/type.js';
 import { Options } from '../src/options.js';
+import { createPoint } from '../src/base/point.js';
 
 // // temporary for testing
 // class Board {
@@ -46,12 +49,8 @@ describe('deepcopy', () => {
         expect(Type.deepCopy(obj1, obj4, true)).toEqual({ a: 1, b: 4, c: { d: 5, e: { f: 6 } } });
     });
 });
-// describe("isBoard", function () {
-//     it("tests whether the parameter is really a Board", function () {
-//         let b = new Board()
-//         expect(Type.isBoard(b)).toBeTrue();
-//     });
-// });
+
+
 describe("isObject", function () {
     it('surprisingly hard to verify that something is an object', () => {
         expect(Type.isObject({})).toBe(true);
@@ -59,14 +58,14 @@ describe("isObject", function () {
         expect(Type.isObject(() => { })).toBe(false);
     });
 });
-describe('mergeVisProps(attr, special, toLower, ignoreUndefinedSpecials)', () => {
+describe('copyAttributes(attr, special, toLower, ignoreUndefinedSpecials)', () => {
     it('in-place (deep) merge of attributes', () => {
-        expect(Type.mergeVisProps({}, {})).toEqual({})
+        expect(Type.initVisProps({}, {})).toEqual({})
 
-        expect(Type.mergeVisProps({}, { Compile: true })).toEqual({ compile: true })
-        expect(Type.mergeVisProps({ Compile: true }, {})).toEqual({ compile: true })
+        expect(Type.initVisProps({}, { Compile: true })).toEqual({ compile: true })
+        expect(Type.initVisProps({ Compile: true }, {})).toEqual({ compile: true })
 
-        expect(Type.mergeVisProps({ Enabled: false, compile: false }, { Compile: true })).toEqual({ enabled: false, compile: true })
+        expect(Type.initVisProps({ Enabled: false, compile: false }, { Compile: true })).toEqual({ enabled: false, compile: true })
 
 
         let a = {
@@ -90,25 +89,23 @@ describe('mergeVisProps(attr, special, toLower, ignoreUndefinedSpecials)', () =>
             a2: { enabled: true },
             a4: false
         }
-        expect(Type.mergeVisProps(a, b)).toEqual({ a1: 'string', a2: true, a3: 3.14, a4: { x: { y: 1, z: [1] } }, b1: 'alien', b2: false, b3: 123456 })
-        expect(Type.mergeVisProps(a, b, false)).toEqual({ a1: 'string', a2: true, a3: 3.14, a4: { x: { y: 1, z: [1] } }, B1: 'alien', B2: false, B3: 123456 })
-        expect(Type.mergeVisProps(a, c)).toEqual({ a1: 'STRING', a2: true, a3: 3.14, a4: { x: { y: 1, z: [1] } } })
-        expect(Type.mergeVisProps(a, d)).toEqual({ a1: 'string', a2: true, a3: 3.14, a4: { x: { y: 1, z: [2] } } })
-        expect(Type.mergeVisProps(a, e)).toEqual({ a1: 'string', a2: { enabled: true }, a3: 3.14, a4: false })
+        expect(Type.initVisProps(a, b)).toEqual({ a1: 'string', a2: true, a3: 3.14, a4: { x: { y: 1, z: [1] } }, b1: 'alien', b2: false, b3: 123456 })
+        expect(Type.initVisProps(a, c)).toEqual({ a1: 'STRING', a2: true, a3: 3.14, a4: { x: { y: 1, z: [1] } } })
+        expect(Type.initVisProps(a, d)).toEqual({ a1: 'string', a2: true, a3: 3.14, a4: { x: { y: 1, z: [2] } } })
+        expect(Type.initVisProps(a, e)).toEqual({ a1: 'string', a2: { enabled: true }, a3: 3.14, a4: false })
 
         // only the second element is converted to lowercase
         let x = { A: true }
         let y = { B: true }
-        expect(Type.mergeVisProps(x, y, false)).toEqual({ A: true, B: true })
-        expect(Type.mergeVisProps(x, y)).toEqual({ a: true, b: true })
+        expect(Type.initVisProps(x, y)).toEqual({ a: true, b: true })
 
 
         let x1 = { enabled: true, compile: true }
         let y1 = { enabled: false }
-        let z1 = Type.mergeVisProps(x1, y1)
+        let z1 = Type.initVisProps(x1, y1)
         expect(z1).toEqual({ enabled: false, compile: true })
         let y2 = { Enabled: false }
-        let z2 = Type.mergeVisProps(x1, y2)  // 'enabled' vs 'Enabled', merge always takes to lowercase
+        let z2 = Type.initVisProps(x1, y2)  // 'enabled' vs 'Enabled', merge always takes to lowercase
         expect(z1).toEqual({ enabled: false, compile: true })
     });
 });
@@ -124,39 +121,31 @@ describe('getObjectDiff(a:object, b:object): object)', () => {
         expect(Type.getObjectDiff(a, d)).toEqual({ f: { expect: undefined, found: 'added' } })
     });
 });
+
+describe('check a few isSomething() methods', () => {
+    it('checks', () => {
+        document.body.innerHTML =
+            `<!DOCTYPE html><html lang="en"><head></head><body><div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div></body></html>`
+
+        let b = new Board('box')
+        expect(Type.isId(b, 'foo')).toBe(false)
+
+        let p = createPoint(b, [0, 0])
+        expect(Type.isId(b, p.id)).toBe(true)
+
+        // adding a point also adds a label so we should see its id too
+        expect(p.label).toBeTruthy()    // should not be null
+        if (p.label)    //
+            expect(Type.isId(b, p.label.id)).toBe(true)
+
+       expect(Type.isPoint(b)).toBe(false)
+       expect(Type.isPoint(p)).toBe(true)
+    });
+});
 ////////////////// prototype test
 describe(' keysToLowerCase(obj:object):object', () => {
     it('Converts an object to a new object containing only lower case properties', () => {
         let a: LooseObject = { A: 1 }
         expect(Type.keysToLowerCase(a)).toEqual({ a: 1 })
-    });
-});
-describe('mergeVisProps)', () => {
-    it('Generates a lowercase visProp object overwritten by the user specified attributes.', () => {
-
-
-        // we lose 'boo' because ??
-        // we lose 'dummy' because ??
-        // dummyOption asks for partial from jc
-        // expect(Type.copyAttributes({}, Options.board, 'jc')).toEqual({ enabled: true, compile:true, label: lowerCaseLabelOptions })
-        // expect(Type.copyAttributes({enabled:true}, Options.board, 'jc')).toEqual({ enabled: true, compile:true, label: lowerCaseLabelOptions })
-        // expect(Type.copyAttributes({enabled:false}, Options.board, 'jc')).toEqual({ enabled: false, compile:true, label: lowerCaseLabelOptions })
-        // expect(Type.copyAttributes({Enabled:false}, Options.board, 'jc')).toEqual({ enabled: false, compile:true, label: lowerCaseLabelOptions })
-        // expect(Type.copyAttributes({ compile: true }, dummyOption, 'jc')).toEqual({ enabled: false, label: lowerCaseLabelOptions })
-
-
-        /*
-                // this grabs the 'jc' options, plus the default label options in lower case
-                expect(Type.copyAttributes({}, Options, 'jc')).toEqual({ enabled: true, compile: true, label: lowerCaseLabelOptions })
-                // this grabs the 'jc' options, plus the default label options in lower case
-                expect(Type.copyAttributes({}, Options, 'board')).toEqual({ enabled: true, compile: true, label: lowerCaseLabelOptions })
-
-
-                // expect(Type.copyAttributes({ boo: 'boo' }, Options.dummyOption, 'jc')).toEqual({ boo: 'boo', enabled: false, label: lowerCaseLabelOptions })
-
-                // let exp = Type.mergeVisProps( Options.navbar,Options.label  )
-                // expect(Type.copyAttributes(Options.elements, Options, 'navbar')).toEqual( exp )
-
-        */
     });
 });
